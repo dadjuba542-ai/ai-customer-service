@@ -50,6 +50,8 @@ async function loadAgents() {
         id: a.agent_id,
         name: a.name,
         type: a.type,
+        description: a.description || '',
+        chatDesc: a.chat_desc || '',
         icon: a.icon || 'robot',
         color: a.color || '#4F46E5',
         bg: (a.color || '#4F46E5') + '20',
@@ -184,7 +186,12 @@ function switchAgent(id) {
   state.activeAgentId = id;
   renderAgentTabs();
   const agent = AGENTS.find(a => a.id === id);
-  if (agent) replaceSystemMessage(`已切换到「${agent.name}」`);
+  if (agent) {
+    const msg = agent.chatDesc
+      ? `<div class="sb-title">已切换到「${agent.name}」</div><div class="sb-desc">${agent.chatDesc}</div>`
+      : `<div class="sb-title">已切换到「${agent.name}」</div>`;
+    replaceSystemMessage(msg);
+  }
 }
 
 function updateChatAgentInfo() {
@@ -207,8 +214,8 @@ function renderQuickFunctions() {
 }
 
 function getAgentDesc(agentId) {
-  const map = { aura: '快速获取产品详情', coder: '解决使用中的困惑', translator: '建立个人影响力', creative: '深度剖析核心难题' };
-  return map[agentId] || '';
+  const agent = AGENTS.find(a => a.id === agentId);
+  return agent ? agent.description : '';
 }
 
 function quickSend(agentId, text) {
@@ -221,7 +228,10 @@ function quickSend(agentId, text) {
   } else {
     switchView('chat');
     const agent = AGENTS.find(a => a.id === agentId);
-    replaceSystemMessage(`已切换到「${agent ? agent.name : agentId}」`);
+    const msg = agent && agent.chatDesc
+      ? `<div class="sb-title">已切换到「${agent.name}」</div><div class="sb-desc">${agent.chatDesc}</div>`
+      : `<div class="sb-title">已切换到「${agent ? agent.name : agentId}」</div>`;
+    replaceSystemMessage(msg);
   }
 }
 
@@ -322,7 +332,7 @@ function renderMessages() {
     const div = document.createElement('div');
     div.className = `msg ${msg.role}`;
     if (msg.role === 'system') {
-      div.innerHTML = `<div class="system-bubble"><i class="ph ph-check-circle"></i> ${escapeHtml(msg.content)}</div>`;
+      div.innerHTML = `<div class="system-bubble"><i class="ph ph-check-circle"></i><div class="sb-text">${msg.content}</div></div>`;
     } else if (msg.role === 'bot') {
       const icon = agent ? agent.icon : 'sparkle';
       const color = agent ? agent.color : '#4F46E5';

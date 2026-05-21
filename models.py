@@ -108,6 +108,10 @@ def init_db():
         cursor.execute('ALTER TABLE agent_configs ADD COLUMN icon TEXT DEFAULT "robot"')
     except sqlite3.OperationalError:
         pass
+    try:
+        cursor.execute('ALTER TABLE agent_configs ADD COLUMN chat_desc TEXT DEFAULT ""')
+    except sqlite3.OperationalError:
+        pass
 
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS settings (
@@ -387,24 +391,24 @@ def get_agent_config(agent_id):
     conn.close()
     return dict(row) if row else None
 
-def update_agent_config(agent_id, name, description, prompt, avatar_url, color, bot_id, icon):
+def update_agent_config(agent_id, name, description, prompt, avatar_url, color, bot_id, icon, chat_desc=''):
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute('''
-        UPDATE agent_configs SET name=?, description=?, prompt=?, avatar_url=?, color=?, bot_id=?, icon=?, updated_at=CURRENT_TIMESTAMP
+        UPDATE agent_configs SET name=?, description=?, prompt=?, avatar_url=?, color=?, bot_id=?, icon=?, chat_desc=?, updated_at=CURRENT_TIMESTAMP
         WHERE agent_id=?
-    ''', (name, description, prompt, avatar_url, color, bot_id, icon, agent_id))
+    ''', (name, description, prompt, avatar_url, color, bot_id, icon, chat_desc, agent_id))
     conn.commit()
     conn.close()
 
-def create_agent_config(agent_id, name, type_, description, prompt, avatar_url, color, bot_id, icon):
+def create_agent_config(agent_id, name, type_, description, prompt, avatar_url, color, bot_id, icon, chat_desc=''):
     conn = get_db_connection()
     cursor = conn.cursor()
     try:
         cursor.execute('''
-            INSERT INTO agent_configs (agent_id, name, type, description, prompt, avatar_url, color, bot_id, icon)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-        ''', (agent_id, name, type_, description, prompt, avatar_url, color, bot_id, icon))
+            INSERT INTO agent_configs (agent_id, name, type, description, prompt, avatar_url, color, bot_id, icon, chat_desc)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ''', (agent_id, name, type_, description, prompt, avatar_url, color, bot_id, icon, chat_desc))
         conn.commit()
         conn.close()
         return True
