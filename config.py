@@ -1,9 +1,9 @@
 import os
 
 class Config:
-    SECRET_KEY = os.environ.get('SECRET_KEY', 'your-secret-key-change-in-production')
+    SECRET_KEY = os.environ.get('SECRET_KEY', '')
     COZE_API_URL = os.environ.get('COZE_API_URL', 'https://api.coze.cn/open_api/v2/chat')
-    COZE_API_KEY = os.environ.get('COZE_API_KEY', 'pat_B83Mnn2UsbEf8jc7R5MCGY4uaWI5Obz5xIFjjCVCG8kcJCyZcBYkTHhjDDIz0jQI')
+    COZE_API_KEY = os.environ.get('COZE_API_KEY', '')
     DATABASE_DIR = os.environ.get('DATABASE_DIR', os.path.dirname(__file__))
     DATABASE_PATH = os.path.join(DATABASE_DIR, 'ai_customer_service.db')
 
