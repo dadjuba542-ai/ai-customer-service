@@ -627,6 +627,12 @@
           </div>
         </div>
         <div class="admin-card">
+          <h3><i class="ph ph-sort-ascending"></i>分类排序</h3>
+          <p style="font-size:12px;color:var(--slate-500);margin-bottom:8px">拖动调整分类在前端的展示顺序</p>
+          <div id="category-sort-list"></div>
+          <button class="btn btn-primary btn-sm" onclick="saveCategoryOrder()" style="margin-top:8px"><i class="ph ph-check"></i> 保存排序</button>
+        </div>
+        <div class="admin-card">
           <h3 style="display:flex;align-items:center;justify-content:space-between">
             <span><i class="ph ph-list"></i>产品列表</span>
             <button class="btn btn-primary btn-sm" onclick="showProdForm()"><i class="ph ph-plus"></i> 新增</button>
@@ -1949,7 +1955,50 @@ async function loadAdminProducts() {
         </div>
       `).join('');
     }
+    // 分类排序列表
+    const cats = data.categories || [];
+    const sortList = document.getElementById('category-sort-list');
+    if (sortList) {
+      categorySortState = [...cats];
+      sortList.innerHTML = cats.map((c, i) =>
+        `<div class="category-sort-item" data-idx="${i}" style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--slate-100)">
+          <span style="flex:1;font-size:13px;font-weight:500">${esc(c)}</span>
+          <span style="font-size:11px;color:var(--slate-400);margin-right:8px">${i === 0 ? '顶部' : i === cats.length - 1 ? '底部' : ''}</span>
+          <button class="btn btn-secondary btn-sm" onclick="moveCatUp(${i})" ${i === 0 ? 'disabled' : ''}>↑</button>
+          <button class="btn btn-secondary btn-sm" onclick="moveCatDown(${i})" ${i === cats.length - 1 ? 'disabled' : ''}>↓</button>
+        </div>`
+      ).join('');
+    }
   } catch {}
+}
+
+function moveCatUp(i) { moveCategory(i, i - 1); }
+function moveCatDown(i) { moveCategory(i, i + 1); }
+
+function moveCategory(from, to) {
+  const arr = categorySortState;
+  if (to < 0 || to >= arr.length) return;
+  const el = arr.splice(from, 1);
+  arr.splice(to, 0, el[0]);
+  const list = document.getElementById('category-sort-list');
+  list.innerHTML = arr.map((c, i) =>
+    `<div class="category-sort-item" style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--slate-100)">
+      <span style="flex:1;font-size:13px;font-weight:500">${esc(c)}</span>
+      <button class="btn btn-secondary btn-sm" onclick="moveCatUp(${i})" ${i === 0 ? 'disabled' : ''}>↑</button>
+      <button class="btn btn-secondary btn-sm" onclick="moveCatDown(${i})" ${i === arr.length - 1 ? 'disabled' : ''}>↓</button>
+    </div>`
+  ).join('');
+}
+
+async function saveCategoryOrder() {
+  try {
+    const res = await fetch(`${API}/api/products/category-order`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${getToken()}` },
+      body: JSON.stringify({ categories: categorySortState }),
+    });
+    if (res.ok) showToast('分类排序已保存', 'success');
+  } catch { showToast('保存失败', 'error'); }
 }
 
 async function saveProduct() {
