@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from models import get_db_connection, get_setting
+from models import get_db_connection, get_setting, set_setting
 from routes.auth import admin_required
 
 dashboard_bp = Blueprint('dashboard', __name__)
@@ -208,3 +208,12 @@ def feedback_reasons(current_user):
         request.args.get('end_date')
     )
     return jsonify({'reasons': rows})
+
+@dashboard_bp.route('/hot-questions/save', methods=['POST'])
+@admin_required
+def save_hot_questions(current_user):
+    import json
+    data = request.get_json()
+    questions = data.get('questions', [])
+    set_setting('approved_hot_questions', json.dumps(questions, ensure_ascii=False))
+    return jsonify({'message': 'Saved', 'count': len(questions)})
