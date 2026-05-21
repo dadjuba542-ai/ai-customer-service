@@ -1343,11 +1343,11 @@ async function loadProducts() {
     const res = await fetch(`${API_BASE}/api/products`);
     if (!res.ok) return;
     const data = await res.json();
-    renderProducts(data.products || []);
+    renderProducts(data.products || [], data.categories || []);
   } catch {}
 }
 
-function renderProducts(products) {
+function renderProducts(products, categories) {
   const container = document.getElementById('products-content');
   if (!products.length) {
     container.innerHTML = '<div class="products-empty"><i class="ph ph-package"></i><p>暂无产品</p></div>';
@@ -1355,16 +1355,18 @@ function renderProducts(products) {
   }
 
   const grouped = {};
-  const order = [];
   for (const p of products) {
     const cat = p.category || '其他';
-    if (!grouped[cat]) { grouped[cat] = []; order.push(cat); }
+    if (!grouped[cat]) grouped[cat] = [];
     grouped[cat].push(p);
   }
 
+  const cats = categories || Object.keys(grouped);
+
   const colors = ['#8B5CF6', '#3B82F6', '#059669', '#EA580C', '#D97706', '#0284C7'];
   let html = '';
-  for (const cat of order) {
+  for (const cat of cats) {
+    const c = cat.replace(/\s+/g, '');
     html += `<div class="product-category">
       <h3 class="product-category-title">${escapeHtml(cat)}</h3>
       <div class="product-cloud">`;

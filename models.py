@@ -374,6 +374,18 @@ def reorder_products(order_list):
     conn.commit()
     conn.close()
 
+def get_product_category_order():
+    import json
+    raw = get_setting('product_category_order', '[]')
+    try:
+        return json.loads(raw)
+    except:
+        return []
+
+def set_product_category_order(order_list):
+    import json
+    set_setting('product_category_order', json.dumps(order_list, ensure_ascii=False))
+
 # ===== Agent Configs =====
 def get_all_agent_configs():
     conn = get_db_connection()
