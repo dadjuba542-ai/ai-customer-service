@@ -37,6 +37,7 @@ def edit_agent(current_user, agent_id):
         data.get('color', '#4F46E5'),
         data.get('bot_id', ''),
         data.get('icon', 'robot'),
+        data.get('chat_desc', ''),
     )
     return jsonify({'message': 'Agent updated'})
 
@@ -57,6 +58,7 @@ def add_agent(current_user):
         data.get('color', '#4F46E5'),
         data.get('bot_id', ''),
         data.get('icon', 'robot'),
+        data.get('chat_desc', ''),
     )
     if not ok:
         return jsonify({'error': 'agent_id already exists'}), 409

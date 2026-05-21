@@ -677,7 +677,8 @@
           <div class="agent-header"><div class="agent-name">新建智能体</div></div>
           <div class="field"><label>标识 ID（英文唯一，如 mybot）</label><input type="text" id="new-agent-id" placeholder="mybot"></div>
           <div class="field"><label>名称</label><input type="text" id="new-agent-name" placeholder="智能体名称"></div>
-          <div class="field"><label>描述</label><input type="text" id="new-agent-desc" placeholder="简短描述"></div>
+          <div class="field"><label>首页描述（简洁）</label><input type="text" id="new-agent-desc" placeholder="如：快速获取产品详情"></div>
+          <div class="field"><label>聊天描述（详细，切换时展示）</label><textarea id="new-agent-chat-desc" rows="2" placeholder="如：帮你查询产品成分、功效、使用方法等，支持多轮对话"></textarea></div>
           <div class="field"><label>快捷消息</label><input type="text" id="new-agent-prompt" placeholder="点击后自动发送的消息"></div>
           <div style="display:flex;gap:12px">
             <div class="field" style="flex:1"><label>颜色</label><input type="color" id="new-agent-color" value="#4F46E5"></div>
@@ -1576,7 +1577,8 @@ async function loadAdminAgents() {
           <div class="agent-name">${esc(a.name)}</div>
         </div>
         <div class="field"><label>名称</label><input type="text" id="ag-name-${a.agent_id}" value="${esc(a.name)}"></div>
-        <div class="field"><label>描述</label><input type="text" id="ag-desc-${a.agent_id}" value="${esc(a.description || '')}"></div>
+        <div class="field"><label>首页描述（简洁）</label><input type="text" id="ag-desc-${a.agent_id}" value="${esc(a.description || '')}"></div>
+        <div class="field"><label>聊天描述（详细、切换时展示）</label><textarea id="ag-chat-desc-${a.agent_id}" rows="2">${esc(a.chat_desc || '')}</textarea></div>
         <div class="field"><label>快捷消息</label><input type="text" id="ag-prompt-${a.agent_id}" value="${esc(a.prompt || '')}"></div>
         <div style="display:flex;gap:12px">
           <div class="field" style="flex:1"><label>颜色</label><input type="color" id="ag-color-${a.agent_id}" value="${a.color}"></div>
@@ -1638,6 +1640,7 @@ async function createAgent() {
         agent_id, name,
         type: 'custom',
         description: document.getElementById('new-agent-desc').value,
+        chat_desc: document.getElementById('new-agent-chat-desc').value,
         prompt: document.getElementById('new-agent-prompt').value,
         color: document.getElementById('new-agent-color').value,
         icon: document.getElementById('new-agent-icon').value || 'robot',
@@ -1650,6 +1653,7 @@ async function createAgent() {
       document.getElementById('new-agent-id').value = '';
       document.getElementById('new-agent-name').value = '';
       document.getElementById('new-agent-desc').value = '';
+      document.getElementById('new-agent-chat-desc').value = '';
       document.getElementById('new-agent-prompt').value = '';
       document.getElementById('new-agent-icon').value = '';
       document.getElementById('new-agent-bot').value = '';
@@ -1697,6 +1701,7 @@ async function saveAgent(agentId) {
       body: JSON.stringify({
         name,
         description: document.getElementById(`ag-desc-${agentId}`).value,
+        chat_desc: document.getElementById(`ag-chat-desc-${agentId}`).value,
         prompt: document.getElementById(`ag-prompt-${agentId}`).value,
         color: document.getElementById(`ag-color-${agentId}`).value,
         icon: document.getElementById(`ag-icon-${agentId}`).value || 'robot',
