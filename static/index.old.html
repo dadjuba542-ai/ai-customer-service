@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>AI宝儿智能体</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/@phosphor-icons/web@2.0.3"></script>
+  <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet">
+</head>
+<body>
+  <div id="app" class="page active">
+    <div id="app-container">
+      <!-- Home View -->
+      <div id="home-view" class="view active">
+        <div class="home-content">
+          <div class="home-header">
+            <div class="home-greeting">
+              <p class="greeting-line1">你好，今天想让我</p>
+              <p class="greeting-line2">为你做点什么？ <span class="bounce-emoji">👋</span></p>
+            </div>
+            <div class="avatar-ring" id="avatar-trigger" onclick="onAvatarTap()">
+              <img src="/avatar.png" class="avatar-img" alt="avatar">
+            </div>
+          </div>
+          <div class="section">
+            <div class="section-header">
+              <h3 class="section-title">快捷功能</h3>
+            </div>
+            <div class="quick-grid" id="quick-grid"></div>
+          </div>
+          <div class="section">
+            <div class="section-header">
+              <h3 class="section-title">热门问题</h3>
+            </div>
+            <div class="hot-tags" id="hot-tags"></div>
+          </div>
+          <div class="section">
+            <div class="section-header">
+              <h3 class="section-title">最新资讯</h3>
+              <button class="section-more" id="admin-btn" onclick="openAdmin()" style="display:none"><i class="ph ph-gear"></i> 管理</button>
+            </div>
+            <div class="news-list" id="home-news"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Chat View -->
+      <div id="chat-view" class="view">
+        <header class="chat-header">
+          <div class="chat-header-top">
+            <button class="icon-btn" onclick="switchView('home')"><i class="ph ph-caret-left"></i></button>
+            <div class="chat-agent-info">
+              <span class="chat-agent-name" id="chat-agent-name">产品资料查询</span>
+            </div>
+            <button class="icon-btn"><i class="ph ph-dots-three-vertical"></i></button>
+          </div>
+          <div class="agent-tabs" id="agent-tabs"></div>
+        </header>
+        <div class="chat-messages" id="chat-messages">
+          <div class="empty-chat" id="empty-chat">
+            <i class="ph ph-sparkle"></i>
+            <p>开始一段新的对话吧</p>
+          </div>
+        </div>
+        <div class="chat-input-area">
+          <div class="input-wrapper">
+            <button class="input-plus"><i class="ph ph-plus"></i></button>
+            <textarea id="message-input" rows="1" placeholder="说点什么..." onkeydown="handleInputKeydown(event)"></textarea>
+            <button class="send-btn" id="send-btn" onclick="sendMessage()"><i class="ph ph-paper-plane-right"></i></button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Memory View -->
+      <div id="memory-view" class="view">
+        <header class="memory-header">
+          <h1 class="memory-title">我的记忆</h1>
+        </header>
+        <div class="memory-content">
+          <div class="memory-filter">
+            <select id="memory-filter" onchange="loadHistory(this.value)">
+              <option value="">全部类型</option>
+              <option value="产品咨询">产品咨询</option>
+              <option value="使用答疑">使用答疑</option>
+              <option value="朋友圈帮写">朋友圈帮写</option>
+              <option value="口播文案帮写">口播文案</option>
+            </select>
+          </div>
+          <div class="memory-list" id="memory-list"></div>
+        </div>
+      </div>
+
+      <!-- Bottom Navigation -->
+      <nav class="bottom-nav">
+        <button class="nav-item active" onclick="switchView('home')" data-view="home">
+          <i class="ph ph-house"></i><span>首页</span>
+        </button>
+        <div class="nav-ai-wrap">
+          <button class="nav-ai-btn" onclick="switchView('chat')"><i class="ph ph-sparkle"></i></button>
+        </div>
+        <button class="nav-item" onclick="switchView('memory')" data-view="memory">
+          <i class="ph ph-folder"></i><span>记忆</span>
+        </button>
+      </nav>
+
+      <!-- Admin Login Modal -->
+      <div id="admin-login-overlay" class="admin-overlay">
+        <div class="admin-login-panel">
+          <div class="admin-login-header">
+            <div class="admin-login-logo"><i class="ph ph-shield-check"></i></div>
+            <h3>管理员验证</h3>
+          </div>
+          <div class="admin-field">
+            <label>用户名</label>
+            <input type="text" id="admin-login-username" placeholder="输入管理员账号">
+          </div>
+          <div class="admin-field">
+            <label>密码</label>
+            <input type="password" id="admin-login-password" placeholder="输入密码" onkeydown="if(event.key==='Enter')submitAdminLogin()">
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <button class="admin-btn admin-btn-secondary" style="flex:1" onclick="closeAdminLogin()">取消</button>
+            <button class="admin-btn admin-btn-primary" style="flex:1" onclick="submitAdminLogin()">验证</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- News Detail Overlay -->
+      <div id="news-detail-overlay" class="admin-overlay">
+        <div class="news-detail-panel">
+          <header class="news-detail-header">
+            <button class="icon-btn" onclick="closeNewsDetail()"><i class="ph ph-x"></i></button>
+          </header>
+          <div class="news-detail-scroll" id="news-detail-content"></div>
+        </div>
+      </div>
+
+      <!-- Admin Overlay -->
+      <div id="admin-overlay" class="admin-overlay">
+        <div class="admin-panel">
+          <header class="admin-header">
+            <h2>管理中心</h2>
+            <button class="icon-btn" onclick="closeAdmin()"><i class="ph ph-x"></i></button>
+          </header>
+          <div class="admin-tabs">
+            <button class="admin-tab active" data-tab="news" onclick="switchAdminTab('news')"><i class="ph ph-newspaper"></i> 资讯管理</button>
+            <button class="admin-tab" data-tab="agents" onclick="switchAdminTab('agents')"><i class="ph ph-robot"></i> 智能体配置</button>
+          </div>
+          <div class="admin-scroll">
+            <div id="admin-news" class="admin-tc active">
+              <div class="admin-form-card">
+                <h4 id="news-form-title">添加资讯</h4>
+                <div class="admin-field">
+                  <label>标题</label>
+                  <input type="text" id="news-title" placeholder="输入资讯标题">
+                </div>
+                <div class="admin-field">
+                  <label>摘要</label>
+                  <input type="text" id="news-summary" placeholder="简短描述">
+                </div>
+                <div class="admin-field">
+                  <label>详细内容</label>
+                  <div id="editor"></div>
+                </div>
+                <div class="admin-field">
+                  <label>封面图片</label>
+                  <div class="upload-area" id="news-upload-area" onclick="document.getElementById('news-image-input').click()">
+                    <img id="news-image-preview" class="upload-preview hidden">
+                    <div class="upload-placeholder" id="news-upload-placeholder"><i class="ph ph-image"></i><span>点击上传封面图</span></div>
+                  </div>
+                  <input type="file" id="news-image-input" accept="image/*" class="hidden" onchange="handleNewsImageUpload(this)">
+                </div>
+                <div class="admin-form-actions">
+                  <button class="admin-btn admin-btn-secondary" onclick="resetNewsForm()">取消</button>
+                  <button class="admin-btn admin-btn-primary" onclick="saveNews()">保存</button>
+                </div>
+              </div>
+              <div class="admin-list" id="admin-news-list"></div>
+            </div>
+            <div id="admin-agents" class="admin-tc">
+              <div class="admin-list" id="admin-agents-list"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast"></div>
+  <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

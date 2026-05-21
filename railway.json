@@ -1,0 +1,21 @@
+{
+  "$schema": "https://railway.app/schema.json",
+  "build": {
+    "builder": "NIXPACKS",
+    "nixpacks": {
+      "pythonVersion": "3.11"
+    }
+  },
+  "deploy": {
+    "numReplicas": 1,
+    "restartPolicyType": "ON_FAILURE",
+    "restartPolicyLimit": 3,
+    "startCommand": "gunicorn app:app -b 0.0.0.0:$PORT -w 4",
+    "volumeMounts": [
+      {
+        "name": "data",
+        "mountPath": "/data"
+      }
+    ]
+  }
+}

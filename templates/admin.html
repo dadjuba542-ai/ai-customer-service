@@ -1,0 +1,2078 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI宝儿 · 管理后台</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/@phosphor-icons/web@2.0.3"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --primary: #4F46E5;
+      --primary-light: #EEF2FF;
+      --primary-dark: #4338CA;
+      --slate-900: #0F172A;
+      --slate-800: #1E293B;
+      --slate-700: #334155;
+      --slate-600: #475569;
+      --slate-500: #64748B;
+      --slate-400: #94A3B8;
+      --slate-300: #CBD5E1;
+      --slate-200: #E2E8F0;
+      --slate-100: #F1F5F9;
+      --slate-50: #F8FAFC;
+      --white: #FFFFFF;
+      --emerald: #059669;
+      --emerald-light: #ECFDF5;
+      --amber: #D97706;
+      --amber-light: #FFFBEB;
+      --rose: #E11D48;
+      --rose-light: #FFF1F2;
+      --sky: #0284C7;
+      --sky-light: #F0F9FF;
+      --radius: 12px;
+      --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+      --shadow-md: 0 4px 16px -4px rgba(0,0,0,0.08);
+      --sidebar-w: 240px;
+    }
+    html, body { height: 100%; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--slate-50);
+      color: var(--slate-800);
+      -webkit-font-smoothing: antialiased;
+    }
+    a { text-decoration: none; }
+
+    /* ===== Login ===== */
+    #login-page {
+      display: flex; align-items: center; justify-content: center;
+      min-height: 100vh; padding: 24px;
+      background: linear-gradient(135deg, #EEF2FF 0%, #F8FAFC 50%, #ECFDF5 100%);
+    }
+    .login-card {
+      background: var(--white); border-radius: 20px;
+      padding: 48px 40px 40px; width: 100%; max-width: 400px;
+      box-shadow: 0 20px 60px -20px rgba(79,70,229,0.15);
+    }
+    .login-card h1 { font-size: 24px; font-weight: 700; margin-bottom: 4px; }
+    .login-card p { color: var(--slate-500); font-size: 14px; margin-bottom: 32px; }
+    .login-card .logo {
+      width: 48px; height: 48px; border-radius: 14px;
+      background: linear-gradient(135deg, var(--primary), #7C3AED);
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 24px; font-size: 24px; color: white;
+    }
+    .login-field { margin-bottom: 16px; }
+    .login-field label {
+      display: block; font-size: 13px; font-weight: 600;
+      color: var(--slate-700); margin-bottom: 6px;
+    }
+    .login-field input, .login-field textarea {
+      width: 100%; padding: 10px 14px; border: 1.5px solid var(--slate-200);
+      border-radius: 10px; font-size: 14px; outline: none; transition: 0.2s;
+      font-family: inherit;
+    }
+    .login-field input:focus, .login-field textarea:focus {
+      border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79,70,229,0.1);
+    }
+    .login-error { color: var(--rose); font-size: 13px; margin-bottom: 12px; display: none; }
+    .login-btn {
+      width: 100%; padding: 11px; border: none; border-radius: 10px;
+      background: var(--primary); color: white; font-size: 15px; font-weight: 600;
+      cursor: pointer; transition: 0.2s; font-family: inherit;
+    }
+    .login-btn:hover { background: var(--primary-dark); }
+    .login-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .login-back { text-align: center; margin-top: 16px; }
+    .login-back a { color: var(--slate-500); font-size: 13px; text-decoration: none; }
+    .login-back a:hover { color: var(--primary); }
+
+    /* ===== Layout ===== */
+    #dashboard-page { display: none; height: 100vh; overflow: hidden; }
+    .layout { display: flex; height: 100%; }
+
+    /* ===== Sidebar ===== */
+    .sidebar {
+      width: var(--sidebar-w); background: var(--white); border-right: 1px solid var(--slate-200);
+      display: flex; flex-direction: column; flex-shrink: 0;
+    }
+    .sidebar-brand {
+      padding: 20px 20px 16px; display: flex; align-items: center; gap: 10px;
+      border-bottom: 1px solid var(--slate-100);
+    }
+    .sidebar-brand .brand-icon {
+      width: 32px; height: 32px; border-radius: 10px;
+      background: linear-gradient(135deg, var(--primary), #7C3AED);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; color: white; flex-shrink: 0;
+    }
+    .sidebar-brand span { font-size: 15px; font-weight: 700; color: var(--slate-900); }
+    .sidebar-nav { padding: 12px; flex: 1; }
+    .sidebar-nav .nav-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 12px; border-radius: 10px; font-size: 14px; font-weight: 500;
+      color: var(--slate-600); cursor: pointer; transition: 0.15s;
+      margin-bottom: 2px;
+    }
+    .sidebar-nav .nav-item:hover { background: var(--slate-100); color: var(--slate-800); }
+    .sidebar-nav .nav-item.active { background: var(--primary-light); color: var(--primary); font-weight: 600; }
+    .sidebar-nav .nav-item i { font-size: 18px; }
+    .sidebar-footer { padding: 12px; border-top: 1px solid var(--slate-100); }
+    .sidebar-footer .nav-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 12px; border-radius: 10px; font-size: 13px; font-weight: 500;
+      color: var(--slate-500); cursor: pointer; transition: 0.15s;
+    }
+    .sidebar-footer .nav-item:hover { background: var(--slate-100); color: var(--slate-700); }
+
+    /* ===== Main ===== */
+    .main {
+      flex: 1; overflow-y: auto; padding: 28px 32px 40px;
+      min-width: 0;
+    }
+    .main-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 28px;
+    }
+    .main-header h1 { font-size: 22px; font-weight: 700; color: var(--slate-900); }
+    .main-header .sub { font-size: 14px; color: var(--slate-500); font-weight: 400; margin-left: 8px; }
+    .main-header .user-badge {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 13px; color: var(--slate-600);
+      background: var(--white); padding: 6px 14px 6px 10px;
+      border-radius: 20px; border: 1px solid var(--slate-200);
+    }
+    .main-header .user-badge .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--emerald); }
+    .page-content { display: none; }
+    .page-content.active { display: block; }
+
+    /* ===== Stats Cards ===== */
+    .stats-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px; margin-bottom: 28px;
+    }
+    .stat-card {
+      background: var(--white); border-radius: var(--radius); padding: 20px;
+      box-shadow: var(--shadow); border: 1px solid var(--slate-100);
+    }
+    .stat-card .stat-icon {
+      width: 40px; height: 40px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px; margin-bottom: 16px;
+    }
+    .stat-card .stat-label { font-size: 13px; color: var(--slate-500); margin-bottom: 4px; }
+    .stat-card .stat-value { font-size: 28px; font-weight: 800; color: var(--slate-900); line-height: 1.2; }
+    .stat-card .stat-change { font-size: 12px; margin-top: 6px; }
+
+    /* ===== Date Filter ===== */
+    .date-filter {
+      display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+      margin-bottom: 20px; padding: 12px 16px;
+      background: var(--white); border-radius: var(--radius);
+      box-shadow: var(--shadow); border: 1px solid var(--slate-100);
+    }
+    .date-filter label { font-size: 13px; color: var(--slate-600); font-weight: 500; }
+    .date-filter input[type="date"] {
+      padding: 6px 10px; border: 1.5px solid var(--slate-200); border-radius: 8px;
+      font-size: 13px; font-family: inherit; outline: none; color: var(--slate-700);
+    }
+    .date-filter input[type="date"]:focus { border-color: var(--primary); }
+    .date-filter .quick-btn {
+      padding: 5px 12px; border: 1px solid var(--slate-200); border-radius: 8px;
+      background: var(--white); font-size: 12px; font-weight: 500; color: var(--slate-600);
+      cursor: pointer; transition: 0.15s; font-family: inherit;
+    }
+    .date-filter .quick-btn:hover { border-color: var(--primary); color: var(--primary); }
+    .date-filter .quick-btn.active { background: var(--primary-light); border-color: var(--primary); color: var(--primary); }
+
+    /* ===== Word Cloud ===== */
+    .word-cloud {
+      display: flex; flex-wrap: wrap; align-items: center; justify-content: center;
+      gap: 8px 12px; padding: 16px 8px; min-height: 100px;
+    }
+    .word-cloud .wc-item {
+      display: inline-block; cursor: default; transition: 0.15s;
+      line-height: 1.4; padding: 2px 0;
+    }
+    .word-cloud .wc-item:hover { transform: scale(1.1); opacity: 1 !important; }
+
+    .charts-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; margin-bottom: 28px; }
+    .chart-card {
+      background: var(--white); border-radius: var(--radius); padding: 20px;
+      box-shadow: var(--shadow); border: 1px solid var(--slate-100);
+    }
+    .chart-card .chart-title { font-size: 14px; font-weight: 600; margin-bottom: 16px; color: var(--slate-700); }
+    .chart-card .chart-title i { margin-right: 6px; color: var(--primary); }
+    .chart-card canvas { width: 100% !important; }
+
+    .tables-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 28px; }
+    .table-card {
+      background: var(--white); border-radius: var(--radius); padding: 20px;
+      box-shadow: var(--shadow); border: 1px solid var(--slate-100);
+    }
+    .table-card .table-title {
+      font-size: 14px; font-weight: 600; margin-bottom: 12px;
+      color: var(--slate-700); display: flex; justify-content: space-between; align-items: center;
+    }
+    .table-card .table-title i { margin-right: 6px; color: var(--primary); }
+    .table-card .count-badge {
+      font-size: 11px; font-weight: 600; color: var(--slate-500);
+      background: var(--slate-100); padding: 2px 8px; border-radius: 20px;
+    }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    thead th { text-align: left; padding: 8px 0; font-weight: 600; color: var(--slate-500); border-bottom: 1px solid var(--slate-200); font-size: 12px; }
+    tbody td { padding: 8px 0; border-bottom: 1px solid var(--slate-100); color: var(--slate-700); }
+    tbody tr:last-child td { border-bottom: none; }
+    .text-mono { color: var(--slate-500); font-size: 12px; }
+    .text-truncate { max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .tag { display: inline-block; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 20px; }
+    .tag-amber { background: var(--amber-light); color: var(--amber); }
+    .tag-emerald { background: var(--emerald-light); color: var(--emerald); }
+    .tag-sky { background: var(--sky-light); color: var(--sky); }
+    .tag-rose { background: var(--rose-light); color: var(--rose); }
+    .q-text { max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .loading {
+      display: flex; align-items: center; justify-content: center;
+      padding: 40px; color: var(--slate-400); font-size: 14px;
+    }
+    .loading i { animation: spin 1s linear infinite; margin-right: 8px; }
+    @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+    /* ===== Feedback Agent Bars ===== */
+    .fb-agent-row {
+      display: flex; align-items: center;
+      padding: 14px 4px;
+      border-bottom: 1px solid var(--slate-100);
+      gap: 16px;
+    }
+    .fb-agent-row:last-child { border-bottom: none; }
+    .fb-agent-info {
+      min-width: 140px; flex-shrink: 0;
+    }
+    .fb-agent-name {
+      display: block; font-size: 14px; font-weight: 600; color: var(--slate-800); margin-bottom: 2px;
+    }
+    .fb-agent-stats {
+      font-size: 12px; color: var(--slate-500);
+    }
+    .fb-bar-wrap {
+      flex: 1; display: flex; align-items: center; gap: 10px;
+    }
+    .fb-bar-bg {
+      flex: 1; height: 20px; background: var(--slate-100);
+      border-radius: 999px; overflow: hidden;
+    }
+    .fb-bar-fill {
+      height: 100%; border-radius: 999px;
+      transition: width 0.4s ease;
+      min-width: 4px;
+    }
+    .fb-bar-label {
+      font-size: 14px; font-weight: 700; min-width: 44px; text-align: right;
+    }
+
+    /* ===== Admin Form Styles ===== */
+    .admin-card {
+      background: var(--white); border-radius: var(--radius); padding: 24px;
+      box-shadow: var(--shadow); border: 1px solid var(--slate-100); margin-bottom: 16px;
+    }
+    .admin-card h3 {
+      font-size: 16px; font-weight: 600; margin-bottom: 16px; color: var(--slate-800);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .admin-card h3 i { color: var(--primary); }
+    .admin-row { display: flex; gap: 12px; margin-bottom: 12px; align-items: flex-start; }
+    .admin-row .field { flex: 1; }
+    .admin-row .field label {
+      display: block; font-size: 12px; font-weight: 600; color: var(--slate-600); margin-bottom: 4px;
+    }
+    .admin-row .field input, .admin-row .field textarea {
+      width: 100%; padding: 8px 12px; border: 1.5px solid var(--slate-200);
+      border-radius: 8px; font-size: 13px; outline: none; font-family: inherit;
+      transition: 0.2s;
+    }
+    .admin-row .field input:focus, .admin-row .field textarea:focus {
+      border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79,70,229,0.1);
+    }
+    .admin-row .field textarea { resize: vertical; min-height: 60px; }
+    .btn {
+      padding: 8px 16px; border: none; border-radius: 8px; font-size: 13px; font-weight: 600;
+      cursor: pointer; transition: 0.15s; font-family: inherit; display: inline-flex;
+      align-items: center; gap: 4px;
+    }
+    .btn-primary { background: var(--primary); color: white; }
+    .btn-primary:hover { background: var(--primary-dark); }
+    .btn-secondary { background: var(--slate-100); color: var(--slate-700); }
+    .btn-secondary:hover { background: var(--slate-200); }
+    .btn-danger { background: var(--rose-light); color: var(--rose); }
+    .btn-danger:hover { background: #FFE4E6; }
+    .btn-sm { padding: 6px 12px; font-size: 12px; }
+    .admin-list-item {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 0; border-bottom: 1px solid var(--slate-100);
+    }
+    .admin-list-item:last-child { border-bottom: none; }
+    .admin-list-item .item-title { font-weight: 600; font-size: 14px; color: var(--slate-800); }
+    .admin-list-item .item-meta { font-size: 12px; color: var(--slate-400); margin-top: 2px; }
+    .admin-list-item .item-actions { display: flex; gap: 8px; flex-shrink: 0; }
+    .empty-state { text-align: center; padding: 40px 20px; color: var(--slate-400); font-size: 14px; }
+    .empty-state i { font-size: 32px; display: block; margin-bottom: 8px; }
+    .upload-area {
+      border: 2px dashed var(--slate-300); border-radius: 8px; padding: 16px;
+      text-align: center; cursor: pointer; transition: 0.2s;
+    }
+    .upload-area:hover { border-color: var(--primary); background: var(--primary-light); }
+    .upload-area img { max-height: 80px; border-radius: 6px; }
+    .upload-area .ph-upload { font-size: 20px; color: var(--slate-400); display: block; margin-bottom: 4px; }
+    .upload-area span { font-size: 12px; color: var(--slate-400); }
+    .hidden { display: none !important; }
+
+    .agent-card {
+      background: var(--white); border-radius: var(--radius); padding: 20px;
+      box-shadow: var(--shadow); border: 1px solid var(--slate-100); margin-bottom: 12px;
+    }
+    .agent-card .agent-header {
+      display: flex; align-items: center; gap: 10px; margin-bottom: 16px;
+    }
+    .agent-card .agent-avatar {
+      width: 36px; height: 36px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center; font-size: 18px; color: white;
+    }
+    .agent-card .agent-name { font-size: 15px; font-weight: 600; color: var(--slate-800); }
+    .agent-card .field { margin-bottom: 10px; }
+    .agent-card .field label {
+      display: block; font-size: 11px; font-weight: 600; color: var(--slate-500); margin-bottom: 3px; text-transform: uppercase; letter-spacing: 0.3px;
+    }
+    .agent-card .field input, .agent-card .field textarea {
+      width: 100%; padding: 7px 10px; border: 1.5px solid var(--slate-200);
+      border-radius: 8px; font-size: 13px; outline: none; font-family: inherit;
+      transition: 0.2s;
+    }
+    .agent-card .field input:focus, .agent-card .field textarea:focus {
+      border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79,70,229,0.1);
+    }
+    .agent-card .field input[type="color"] { height: 36px; padding: 2px; cursor: pointer; }
+    .agent-card .agent-actions { display: flex; gap: 8px; margin-top: 12px; }
+    .agent-card .agent-actions .btn { flex: 1; justify-content: center; }
+    .add-agent-card {
+      border: 2px dashed var(--slate-300); border-radius: var(--radius);
+      padding: 20px; text-align: center; cursor: pointer; transition: 0.2s;
+      background: transparent;
+    }
+    .add-agent-card:hover { border-color: var(--primary); background: var(--primary-light); }
+    .add-agent-card i { font-size: 24px; color: var(--slate-400); display: block; margin-bottom: 6px; }
+    .add-agent-card span { font-size: 13px; color: var(--slate-400); font-weight: 600; }
+
+    .tip-card {
+      display: flex; align-items: center; gap: 8px;
+      padding: 10px 12px; background: var(--slate-50);
+      border-radius: 8px; margin-bottom: 6px;
+      border: 1px solid var(--slate-100); cursor: grab;
+      font-size: 13px; color: var(--slate-700); transition: 0.15s;
+    }
+    .tip-card:hover { border-color: var(--slate-300); background: var(--white); }
+    .tip-card.dragging { opacity: 0.5; border-style: dashed; }
+    .tip-card .tip-drag { color: var(--slate-300); font-size: 14px; cursor: grab; flex-shrink: 0; }
+    .tip-card .tip-text { flex: 1; }
+    .tip-card .tip-del {
+      background: none; border: none; cursor: pointer;
+      color: var(--slate-300); font-size: 16px; padding: 2px; flex-shrink: 0;
+    }
+    .tip-card .tip-del:hover { color: var(--rose); }
+
+    .toast {
+      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+      padding: 10px 20px; border-radius: 10px; font-size: 13px; font-weight: 500;
+      color: white; z-index: 1000; opacity: 0; transition: 0.3s; pointer-events: none;
+    }
+    .toast.show { opacity: 1; }
+    .toast.success { background: var(--emerald); }
+    .toast.error { background: var(--rose); }
+    .toast.info { background: var(--slate-700); }
+
+    @media (max-width: 1024px) {
+      .charts-grid { grid-template-columns: 1fr; }
+      .tables-grid { grid-template-columns: 1fr; }
+      .sidebar { width: 60px; }
+      .sidebar-brand span, .sidebar-nav .nav-item span, .sidebar-footer .nav-item span { display: none; }
+      .sidebar-brand { justify-content: center; }
+    }
+    @media (max-width: 640px) {
+      .main { padding: 16px; }
+      .stats-grid { grid-template-columns: 1fr 1fr; }
+      .admin-row { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ===== Login ===== -->
+<div id="login-page">
+  <div class="login-card">
+    <div class="logo"><i class="ph ph-shield-check"></i></div>
+    <h1>管理员登录</h1>
+    <p>AI宝儿智能体 · 管理后台</p>
+    <div class="login-error" id="login-error"></div>
+    <div class="login-field">
+      <label>账号</label>
+      <input type="text" id="login-username" placeholder="输入管理员账号" autocomplete="username">
+    </div>
+    <div class="login-field">
+      <label>密码</label>
+      <input type="password" id="login-password" placeholder="输入密码" autocomplete="current-password" onkeydown="if(event.key==='Enter') doLogin()">
+    </div>
+    <button class="login-btn" id="login-btn" onclick="doLogin()">登录</button>
+    <div class="login-back"><a href="/">&larr; 返回首页</a></div>
+  </div>
+</div>
+
+<!-- ===== Dashboard ===== -->
+<div id="dashboard-page">
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <div class="brand-icon"><i class="ph ph-robot"></i></div>
+        <span>AI宝儿后台</span>
+      </div>
+      <nav class="sidebar-nav">
+        <div class="nav-item active" data-page="dashboard" onclick="switchPage('dashboard')">
+          <i class="ph ph-chart-bar"></i><span>数据看板</span>
+        </div>
+        <div class="nav-item" data-page="news" onclick="switchPage('news')">
+          <i class="ph ph-newspaper"></i><span>资讯管理</span>
+        </div>
+        <div class="nav-item" data-page="products" onclick="switchPage('products')">
+          <i class="ph ph-shopping-bag"></i><span>产品管理</span>
+        </div>
+        <div class="nav-item" data-page="agents" onclick="switchPage('agents')">
+          <i class="ph ph-robot"></i><span>智能体配置</span>
+        </div>
+        <div class="nav-item" data-page="feedback" onclick="switchPage('feedback')">
+          <i class="ph ph-star"></i><span>评价看板</span>
+        </div>
+        <div class="nav-item" data-page="community" onclick="switchPage('community')">
+          <i class="ph ph-users-three"></i><span>问答管理</span>
+        </div>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="nav-item" onclick="logout()">
+          <i class="ph ph-sign-out"></i><span>退出登录</span>
+        </div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="main-header">
+        <div><h1><span id="page-title-text">数据看板</span> <span class="sub" id="last-update"></span></h1></div>
+        <div class="user-badge">
+          <span class="dot"></span>
+          <span id="admin-username">admin</span>
+        </div>
+      </div>
+
+      <!-- ===== Page: Dashboard ===== -->
+      <div id="page-dashboard" class="page-content active">
+        <div class="date-filter">
+          <label>日期：</label>
+          <input type="date" id="filter-start">
+          <span style="color:var(--slate-400)">~</span>
+          <input type="date" id="filter-end">
+          <button class="quick-btn active" data-days="30" onclick="setDateRange(30)">近30天</button>
+          <button class="quick-btn" data-days="7" onclick="setDateRange(7)">近7天</button>
+          <button class="quick-btn" data-days="90" onclick="setDateRange(90)">近90天</button>
+          <button class="quick-btn" data-days="0" onclick="setDateRange(0)">全部</button>
+          <button class="btn btn-primary btn-sm" onclick="applyDateFilter()" style="margin-left:4px">查询</button>
+          <button class="btn btn-secondary btn-sm" onclick="exportCSV()" style="margin-left:auto"><i class="ph ph-download"></i> 导出CSV</button>
+        </div>
+        <div class="stats-grid" id="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon" style="background:var(--primary-light);color:var(--primary)"><i class="ph ph-chats"></i></div>
+            <div class="stat-label">总对话数</div>
+            <div class="stat-value" id="stat-conversations">-</div>
+            <div class="stat-change" style="color:var(--slate-400)">今日 <span id="stat-today">-</span></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon" style="background:var(--emerald-light);color:var(--emerald)"><i class="ph ph-users"></i></div>
+            <div class="stat-label">独立用户</div>
+            <div class="stat-value" id="stat-users">-</div>
+            <div class="stat-change" style="color:var(--slate-400)">今日 <span id="stat-today-users">-</span></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon" style="background:var(--sky-light);color:var(--sky)"><i class="ph ph-robot"></i></div>
+            <div class="stat-label">智能体</div>
+            <div class="stat-value" id="stat-agents">-</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon" style="background:var(--amber-light);color:var(--amber)"><i class="ph ph-newspaper"></i></div>
+            <div class="stat-label">资讯</div>
+            <div class="stat-value" id="stat-news">-</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon" style="background:var(--rose-light);color:var(--rose)"><i class="ph ph-hand-thumbs-up"></i></div>
+            <div class="stat-label">用户反馈</div>
+            <div class="stat-value" id="stat-feedback">-</div>
+            <div class="stat-change" id="stat-feedback-detail" style="color:var(--slate-400)">加载中...</div>
+          </div>
+        </div>
+        <div class="charts-grid">
+          <div class="chart-card">
+            <div class="chart-title"><i class="ph ph-trend-up"></i>对话趋势（近14天）</div>
+            <canvas id="trendChart"></canvas>
+          </div>
+          <div class="chart-card">
+            <div class="chart-title"><i class="ph ph-pie-chart"></i>咨询类型分布</div>
+            <canvas id="typeChart"></canvas>
+          </div>
+        </div>
+        <div class="tables-grid">
+          <div class="table-card">
+            <div class="table-title"><span><i class="ph ph-clock-counter-clockwise"></i>最近对话</span><span class="count-badge" id="recent-count">0</span></div>
+            <div id="recent-loading" class="loading"><i class="ph ph-spinner"></i>加载中...</div>
+            <div id="recent-table-wrap" style="display:none">
+              <table><thead><tr><th>消息</th><th>类型</th><th>时间</th></tr></thead><tbody id="recent-body"></tbody></table>
+            </div>
+          </div>
+          <div class="table-card">
+            <div class="table-title"><span><i class="ph ph-lightbulb"></i>热门提问词云</span><span class="count-badge" id="hot-count">0</span></div>
+            <div id="hot-loading" class="loading"><i class="ph ph-spinner"></i>加载中...</div>
+            <div id="word-cloud" class="word-cloud" style="display:none"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== Page: News ===== -->
+      <div id="page-news" class="page-content">
+        <div class="admin-card">
+          <h3><i class="ph ph-pencil"></i><span id="news-form-title">添加资讯</span></h3>
+          <div class="admin-row">
+            <div class="field" style="flex:1"><label>标题</label><input type="text" id="news-title" placeholder="资讯标题"></div>
+            <div class="field" style="flex:1"><label>分类</label><input type="text" id="news-category" placeholder="如：产品动态"></div>
+          </div>
+          <div class="admin-row">
+            <div class="field"><label>摘要</label><textarea id="news-summary" rows="2" placeholder="简短摘要"></textarea></div>
+          </div>
+          <div class="admin-row">
+            <div class="field"><label>正文内容</label><div id="news-editor" style="height:280px;border:1.5px solid var(--slate-200);border-radius:8px"></div></div>
+          </div>
+          <div class="admin-row">
+            <div class="field">
+              <label>封面图</label>
+              <div class="upload-area" onclick="document.getElementById('news-image-input').click()">
+                <img id="news-image-preview" class="hidden" style="max-height:80px;border-radius:6px">
+                <div id="news-upload-placeholder"><i class="ph ph-upload"></i><span>点击上传</span></div>
+              </div>
+              <input type="file" id="news-image-input" accept="image/*" class="hidden" onchange="uploadNewsImage(this)">
+            </div>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:4px">
+            <button class="btn btn-secondary" onclick="resetNewsForm()">取消</button>
+            <button class="btn btn-primary" onclick="saveNews()">保存</button>
+          </div>
+        </div>
+        <div class="admin-card">
+          <h3><i class="ph ph-list"></i>所有资讯</h3>
+          <div id="admin-news-list"></div>
+        </div>
+      </div>
+
+      <!-- ===== Page: Products ===== -->
+      <div id="page-products" class="page-content">
+        <div class="admin-card" id="prod-form-card" style="display:none">
+          <h3 id="prod-form-title"><i class="ph ph-pencil"></i> 新增产品</h3>
+          <input type="hidden" id="prod-editing-id">
+          <div class="admin-row">
+            <div class="field"><label>产品名称</label><input type="text" id="prod-name" placeholder="如：胶原蛋白肽饮品"></div>
+          </div>
+          <div class="admin-row">
+            <div class="field"><label>分类</label><input type="text" id="prod-category" placeholder="如：护肤系列"></div>
+          </div>
+          <div class="admin-row">
+            <div class="field"><label>一句话介绍</label><input type="text" id="prod-summary" placeholder="简短描述产品亮点"></div>
+          </div>
+          <div class="admin-row">
+            <div class="field"><label>亮点标签（逗号分隔）</label><input type="text" id="prod-highlights" placeholder="小分子, 易吸收, 零添加"></div>
+          </div>
+          <div class="admin-row">
+            <div class="field">
+              <label>主图</label>
+              <div style="display:flex;gap:8px">
+                <input type="text" id="prod-image-url" placeholder="图片URL 或点击右侧上传" style="flex:1">
+                <label class="btn btn-secondary btn-sm" style="cursor:pointer;white-space:nowrap">
+                  <i class="ph ph-upload"></i> 上传
+                  <input type="file" accept="image/*" onchange="uploadProductImage(this)" style="display:none">
+                </label>
+              </div>
+            </div>
+          </div>
+          <div class="admin-row">
+            <div class="field"><label>详情</label><div id="prod-editor" style="height:220px"></div></div>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <button class="btn btn-secondary" onclick="hideProdForm()">取消</button>
+            <button class="btn btn-primary" onclick="saveProduct()">保存</button>
+          </div>
+        </div>
+        <div class="admin-card">
+          <h3 style="display:flex;align-items:center;justify-content:space-between">
+            <span><i class="ph ph-list"></i>产品列表</span>
+            <button class="btn btn-primary btn-sm" onclick="showProdForm()"><i class="ph ph-plus"></i> 新增</button>
+          </h3>
+          <div id="admin-products-list"></div>
+        </div>
+      </div>
+
+      <!-- ===== Page: Agents ===== -->
+      <div id="page-agents" class="page-content">
+        <div class="admin-card">
+          <h3><i class="ph ph-key"></i>系统配置</h3>
+          <div class="admin-row">
+            <div class="field">
+              <label id="coze-key-label">Coze API Key（当前: 未设置）</label>
+              <div style="display:flex;gap:8px">
+                <input type="password" id="coze-api-key-input" placeholder="粘贴新的 API Key" style="flex:1;padding:8px 12px;font-size:13px;font-family:inherit;border:1.5px solid var(--slate-200);border-radius:8px;outline:none">
+                <button class="btn btn-primary" onclick="updateCozeApiKey()">更新</button>
+              </div>
+            </div>
+          </div>
+          <div class="admin-row">
+            <div class="field">
+              <label>屏蔽关键词（逗号分隔）</label>
+              <textarea id="blocked-keywords-input" rows="3" style="width:100%;padding:8px 12px;font-size:13px;font-family:inherit;border:1.5px solid var(--slate-200);border-radius:8px;outline:none;resize:vertical"></textarea>
+              <div style="margin-top:4px;font-size:11px;color:var(--slate-400)" id="blocked-hint"></div>
+              <button class="btn btn-primary btn-sm" style="margin-top:6px" onclick="saveBlockedKeywords()">保存屏蔽词</button>
+            </div>
+          </div>
+        </div>
+        <div class="admin-card">
+          <h3><i class="ph ph-hourglass"></i>等待小贴士</h3>
+          <p style="font-size:12px;color:var(--slate-500);margin-bottom:12px">用户等待时轮播的小贴士，每 10 秒切一条。可拖拽排序，右侧 ✕ 删除。</p>
+          <p style="font-size:12px;color:var(--slate-500);margin-bottom:12px" id="tip-count">当前共 0 条</p>
+          <div id="tip-list"></div>
+          <div style="display:flex;gap:8px;margin-top:12px">
+            <input type="text" id="tip-input" placeholder="输入新提示语..." style="flex:1;padding:8px 12px;font-size:13px;font-family:inherit;border:1.5px solid var(--slate-200);border-radius:8px;outline:none" onkeydown="if(event.key==='Enter') addTip()">
+            <button class="btn btn-primary" onclick="addTip()">添加</button>
+          </div>
+          <div style="margin-top:10px;display:flex;gap:8px">
+            <button class="btn btn-primary" onclick="saveWaitingTips()">保存全部</button>
+          </div>
+        </div>
+        <div class="add-agent-card" onclick="showCreateAgentForm()">
+          <i class="ph ph-plus"></i><span>新建智能体</span>
+        </div>
+        <div id="create-agent-form" class="agent-card" style="display:none">
+          <div class="agent-header"><div class="agent-name">新建智能体</div></div>
+          <div class="field"><label>标识 ID（英文唯一，如 mybot）</label><input type="text" id="new-agent-id" placeholder="mybot"></div>
+          <div class="field"><label>名称</label><input type="text" id="new-agent-name" placeholder="智能体名称"></div>
+          <div class="field"><label>描述</label><input type="text" id="new-agent-desc" placeholder="简短描述"></div>
+          <div class="field"><label>快捷消息</label><input type="text" id="new-agent-prompt" placeholder="点击后自动发送的消息"></div>
+          <div style="display:flex;gap:12px">
+            <div class="field" style="flex:1"><label>颜色</label><input type="color" id="new-agent-color" value="#4F46E5"></div>
+            <div class="field" style="flex:1"><label>图标（Phosphor 名）</label><input type="text" id="new-agent-icon" placeholder="robot"></div>
+          </div>
+          <div class="field"><label>机器人 ID（Coze Bot ID）</label><input type="text" id="new-agent-bot" placeholder=""></div>
+          <div class="agent-actions">
+            <button class="btn btn-secondary" onclick="hideCreateAgentForm()">取消</button>
+            <button class="btn btn-primary" onclick="createAgent()">创建</button>
+          </div>
+        </div>
+        <div id="admin-agents-list"></div>
+      </div>
+
+      <!-- ===== Feedback Page ===== -->
+      <div id="page-feedback" class="page-content">
+        <div class="date-filter">
+          <label>日期：</label>
+          <input type="date" id="fb-filter-start">
+          <span style="color:var(--slate-400)">~</span>
+          <input type="date" id="fb-filter-end">
+          <button class="quick-btn active" data-days="30" onclick="setFbDateRange(30)">近30天</button>
+          <button class="quick-btn" data-days="7" onclick="setFbDateRange(7)">近7天</button>
+          <button class="quick-btn" data-days="90" onclick="setFbDateRange(90)">近90天</button>
+          <button class="quick-btn" data-days="0" onclick="setFbDateRange(0)">全部</button>
+          <button class="btn btn-primary btn-sm" onclick="applyFbDateFilter()" style="margin-left:4px">查询</button>
+          <button class="btn btn-secondary btn-sm" onclick="exportFbCSV()" style="margin-left:auto"><i class="ph ph-download"></i> 导出CSV</button>
+        </div>
+
+        <div class="stats-grid" id="fb-stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon" style="background:var(--emerald-light);color:var(--emerald)"><i class="ph ph-hand-thumbs-up"></i></div>
+            <div class="stat-label">好评率</div>
+            <div class="stat-value" id="fb-ratio">-</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon" style="background:var(--primary-light);color:var(--primary)"><i class="ph ph-thumbs-up"></i></div>
+            <div class="stat-label">好评数</div>
+            <div class="stat-value" id="fb-likes">-</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon" style="background:var(--rose-light);color:var(--rose)"><i class="ph ph-thumbs-down"></i></div>
+            <div class="stat-label">差评数</div>
+            <div class="stat-value" id="fb-dislikes">-</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon" style="background:var(--amber-light);color:var(--amber)"><i class="ph ph-chats"></i></div>
+            <div class="stat-label">评价总数</div>
+            <div class="stat-value" id="fb-total">-</div>
+          </div>
+        </div>
+
+        <div class="table-card" style="margin-bottom:20px">
+          <div class="table-title">
+            <span><i class="ph ph-gauge"></i>各智能体评价详情</span>
+          </div>
+          <div id="fb-agent-loading" class="loading"><i class="ph ph-spinner"></i> 加载中...</div>
+          <div id="fb-agent-wrap" style="display:none">
+            <div id="fb-agent-list"></div>
+          </div>
+        </div>
+
+        <div class="table-card">
+          <div class="table-title">
+            <span><i class="ph ph-warning"></i>差评问题</span>
+            <span class="count-badge" id="fb-negative-count">0</span>
+          </div>
+          <div id="fb-negative-loading" class="loading"><i class="ph ph-spinner"></i> 加载中...</div>
+          <div id="fb-negative-wrap" style="display:none">
+            <table><thead><tr><th>智能体</th><th style="width:30%">用户问题</th><th style="width:30%">AI回答</th><th>时间</th></tr></thead><tbody id="fb-negative-body"></tbody></table>
+          </div>
+        </div>
+
+        <div class="table-card">
+          <div class="table-title">
+            <span><i class="ph ph-barricade"></i>差评原因分布</span>
+          </div>
+          <div id="fb-reasons-loading" class="loading"><i class="ph ph-spinner"></i> 加载中...</div>
+          <div id="fb-reasons-wrap" style="display:none">
+            <table><thead><tr><th>智能体</th><th>差评原因</th><th>次数</th></tr></thead><tbody id="fb-reasons-body"></tbody></table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== Page: Community ===== -->
+      <div id="page-community" class="page-content">
+        <div class="admin-card">
+          <h3 id="qa-form-title"><i class="ph ph-pencil"></i> 新增问答</h3>
+          <input type="hidden" id="qa-editing-id">
+          <div class="admin-row">
+            <div class="field" style="flex:1"><label>问题（Q）</label><input type="text" id="qa-question" placeholder="如：胶原蛋白肽怎么吃效果最好？"></div>
+            <div class="field" style="flex:1"><label>分类</label><input type="text" id="qa-category" placeholder="如：产品知识 / 使用技巧"></div>
+          </div>
+          <div class="admin-row">
+            <div class="field"><label>答案（A）</label><textarea id="qa-answer" rows="5" placeholder="回答正文"></textarea></div>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:4px">
+            <button class="btn btn-secondary" onclick="resetQAForm()">取消</button>
+            <button class="btn btn-primary" onclick="saveQA()">保存</button>
+          </div>
+        </div>
+        <div class="admin-card">
+          <h3><i class="ph ph-list"></i>问答列表</h3>
+          <div id="admin-qa-list"></div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const API = '';
+
+// ===== Auth =====
+function getToken() { return localStorage.getItem('token'); }
+function getUser() {
+  try { return JSON.parse(localStorage.getItem('user') || 'null'); }
+  catch { return null; }
+}
+
+async function checkAuth() {
+  const token = getToken();
+  if (!token) { showLogin(); return; }
+  try {
+    const res = await fetch(`${API}/api/user/profile`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    if (!res.ok) throw new Error('not authorized');
+    const user = await res.json();
+    if (!user.is_admin) { showLogin(); return; }
+    localStorage.setItem('user', JSON.stringify(user));
+    showDashboard(user);
+  } catch { showLogin(); }
+}
+
+function showLogin() {
+  document.getElementById('login-page').style.display = 'flex';
+  document.getElementById('dashboard-page').style.display = 'none';
+  document.getElementById('login-username').focus();
+}
+
+function showDashboard(user) {
+  document.getElementById('login-page').style.display = 'none';
+  document.getElementById('dashboard-page').style.display = 'block';
+  document.getElementById('admin-username').textContent = user.username;
+  switchPage('dashboard');
+}
+
+async function doLogin() {
+  const username = document.getElementById('login-username').value.trim();
+  const password = document.getElementById('login-password').value.trim();
+  const errEl = document.getElementById('login-error');
+  const btn = document.getElementById('login-btn');
+  if (!username || !password) { errEl.textContent = '请输入账号和密码'; errEl.style.display = 'block'; return; }
+  errEl.style.display = 'none';
+  btn.disabled = true; btn.textContent = '登录中...';
+  try {
+    const res = await fetch(`${API}/api/auth/login`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password })
+    });
+    const data = await res.json();
+    if (!res.ok) { throw new Error(data.error || '登录失败'); }
+    if (!data.is_admin) { throw new Error('该账号不是管理员'); }
+    localStorage.setItem('token', data.token);
+    localStorage.setItem('user', JSON.stringify(data));
+    showDashboard(data);
+  } catch (e) {
+    errEl.textContent = e.message; errEl.style.display = 'block';
+  } finally {
+    btn.disabled = false; btn.textContent = '登录';
+  }
+}
+
+function logout() {
+  localStorage.removeItem('token');
+  localStorage.removeItem('user');
+  showLogin();
+  document.getElementById('login-password').value = '';
+}
+
+// ===== Page Switching =====
+function switchPage(page) {
+  document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
+  document.getElementById(`page-${page}`).classList.add('active');
+  document.querySelectorAll('.sidebar-nav .nav-item').forEach(n => n.classList.remove('active'));
+  document.querySelector(`.sidebar-nav .nav-item[data-page="${page}"]`).classList.add('active');
+
+  const titles = { dashboard: '数据看板', news: '资讯管理', products: '产品管理', agents: '智能体配置', feedback: '评价看板', community: '问答管理' };
+  document.getElementById('page-title-text').textContent = titles[page] || '数据看板';
+
+  if (page === 'dashboard') loadAll();
+  if (page === 'news') { loadAdminNews(); setTimeout(initQuill, 100); }
+  if (page === 'products') loadAdminProducts();
+  if (page === 'agents') loadAdminAgents();
+  if (page === 'feedback') loadFeedbackDashboard();
+  if (page === 'community') loadAdminQA();
+}
+
+// ===== Dashboard Data =====
+let trendChartInstance = null;
+let typeChartInstance = null;
+let filterDays = 30;
+let filterStart = '';
+let filterEnd = '';
+
+function dateParams() {
+  const start = document.getElementById('filter-start')?.value || filterStart;
+  const end = document.getElementById('filter-end')?.value || filterEnd;
+  const p = new URLSearchParams();
+  if (start) p.set('start_date', start);
+  if (end) p.set('end_date', end);
+  const s = p.toString();
+  return s ? '&' + s : '';
+}
+
+function setDateRange(days) {
+  filterDays = days;
+  document.querySelectorAll('.date-filter .quick-btn').forEach(b => {
+    b.classList.toggle('active', parseInt(b.dataset.days) === days);
+  });
+  const now = new Date();
+  if (days === 0) {
+    document.getElementById('filter-start').value = '';
+    document.getElementById('filter-end').value = '';
+  } else {
+    const start = new Date(now);
+    start.setDate(start.getDate() - days);
+    document.getElementById('filter-start').value = start.toISOString().slice(0, 10);
+    document.getElementById('filter-end').value = now.toISOString().slice(0, 10);
+  }
+  applyDateFilter();
+}
+
+function applyDateFilter() {
+  filterStart = document.getElementById('filter-start').value;
+  filterEnd = document.getElementById('filter-end').value;
+  loadAll();
+}
+
+/* ===== Feedback Date Filter ===== */
+let fbFilterDays = 30;
+
+function setFbDateRange(days) {
+  fbFilterDays = days;
+  document.querySelectorAll('#page-feedback .quick-btn').forEach(b => {
+    b.classList.toggle('active', parseInt(b.dataset.days) === days);
+  });
+  const now = new Date();
+  if (days === 0) {
+    document.getElementById('fb-filter-start').value = '';
+    document.getElementById('fb-filter-end').value = '';
+  } else {
+    const start = new Date(now);
+    start.setDate(start.getDate() - days);
+    document.getElementById('fb-filter-start').value = start.toISOString().slice(0, 10);
+    document.getElementById('fb-filter-end').value = now.toISOString().slice(0, 10);
+  }
+  applyFbDateFilter();
+}
+
+function applyFbDateFilter() {
+  loadFeedbackDashboard();
+}
+
+function fbDateParams() {
+  const s = document.getElementById('fb-filter-start').value;
+  const e = document.getElementById('fb-filter-end').value;
+  let q = '';
+  if (s) q += `&start_date=${s}`;
+  if (e) q += `&end_date=${e}`;
+  return q;
+}
+
+function fbApiUrl(path) {
+  const dp = fbDateParams();
+  return `${API}${path}${dp ? '?' + dp.slice(1) : ''}`;
+}
+
+async function loadFeedbackDashboard() {
+  // 首次加载默认 30 天（手动设日期，避免循环调用）
+  if (!document.getElementById('fb-filter-start').value) {
+    const now = new Date();
+    const start = new Date(now);
+    start.setDate(start.getDate() - 30);
+    document.getElementById('fb-filter-start').value = start.toISOString().slice(0, 10);
+    document.getElementById('fb-filter-end').value = now.toISOString().slice(0, 10);
+    document.querySelectorAll('#page-feedback .quick-btn').forEach(b => {
+      b.classList.toggle('active', parseInt(b.dataset.days) === 30);
+    });
+  }
+  await Promise.all([loadFeedbackOverview(), loadFeedbackByAgent(), loadNegativeFeedback(), loadFeedbackReasons()]);
+}
+
+async function loadFeedbackOverview() {
+  try {
+    const res = await fetch(fbApiUrl('/api/admin/dashboard/feedback-overview'), {
+      headers: { 'Authorization': `Bearer ${getToken()}` }
+    });
+    const d = await res.json();
+    document.getElementById('fb-ratio').textContent = d.total > 0 ? d.ratio + '%' : '-';
+    document.getElementById('fb-likes').textContent = d.likes.toLocaleString();
+    document.getElementById('fb-dislikes').textContent = d.dislikes.toLocaleString();
+    document.getElementById('fb-total').textContent = d.total.toLocaleString();
+  } catch {}
+}
+
+async function loadFeedbackByAgent() {
+  try {
+    const res = await fetch(fbApiUrl('/api/admin/dashboard/feedback-by-agent'), {
+      headers: { 'Authorization': `Bearer ${getToken()}` }
+    });
+    const d = await res.json();
+    const list = document.getElementById('fb-agent-list');
+    const wrap = document.getElementById('fb-agent-wrap');
+    const loading = document.getElementById('fb-agent-loading');
+    if (!d.agents || d.agents.length === 0) {
+      list.innerHTML = '<div style="padding:20px;text-align:center;color:var(--slate-400)">暂无评价数据</div>';
+    } else {
+      list.innerHTML = d.agents.map(a => {
+        const pct = a.ratio;
+        const barColor = pct >= 80 ? '#059669' : pct >= 60 ? '#D97706' : '#E11D48';
+        return `<div class="fb-agent-row">
+          <div class="fb-agent-info">
+            <span class="fb-agent-name">${a.agent_name}</span>
+            <span class="fb-agent-stats">👍 ${a.likes} &nbsp; 👎 ${a.dislikes}</span>
+          </div>
+          <div class="fb-bar-wrap">
+            <div class="fb-bar-bg">
+              <div class="fb-bar-fill" style="width:${pct}%;background:${barColor}"></div>
+            </div>
+            <span class="fb-bar-label" style="color:${barColor}">${pct}%</span>
+          </div>
+        </div>`;
+      }).join('');
+    }
+    wrap.style.display = 'block';
+    loading.style.display = 'none';
+  } catch {}
+}
+
+async function loadNegativeFeedback() {
+  try {
+    const res = await fetch(fbApiUrl('/api/admin/dashboard/negative-feedback'), {
+      headers: { 'Authorization': `Bearer ${getToken()}` }
+    });
+    const d = await res.json();
+    const body = document.getElementById('fb-negative-body');
+    const wrap = document.getElementById('fb-negative-wrap');
+    const loading = document.getElementById('fb-negative-loading');
+    const count = document.getElementById('fb-negative-count');
+    count.textContent = (d.items || []).length;
+    if (!d.items || d.items.length === 0) {
+      body.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--slate-400);padding:20px">暂无差评</td></tr>';
+    } else {
+      body.innerHTML = d.items.map(item => {
+        const agentName = item.agent_name || item.query_type || '未知';
+        const time = new Date(item.created_at).toLocaleString('zh-CN', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
+        const question = item.user_message ? item.user_message.substring(0, 60) + (item.user_message.length > 60 ? '...' : '') : '(空)';
+        const answer = item.bot_response ? item.bot_response.substring(0, 80) + (item.bot_response.length > 80 ? '...' : '') : '(空)';
+        return `<tr><td><span class="tag tag-${getTypeTag(item.query_type)}">${agentName}</span></td><td title="${escapeHtml(item.user_message || '')}">${escapeHtml(question)}</td><td title="${escapeHtml(item.bot_response || '')}">${escapeHtml(answer)}</td><td class="time">${time}</td></tr>`;
+      }).join('');
+    }
+    wrap.style.display = 'block';
+    loading.style.display = 'none';
+  } catch {}
+}
+
+async function loadFeedbackReasons() {
+  try {
+    const res = await fetch(fbApiUrl('/api/admin/dashboard/feedback-reasons'), {
+      headers: { 'Authorization': `Bearer ${getToken()}` }
+    });
+    const d = await res.json();
+    const body = document.getElementById('fb-reasons-body');
+    const wrap = document.getElementById('fb-reasons-wrap');
+    const loading = document.getElementById('fb-reasons-loading');
+    if (!d.reasons || !d.reasons.length) {
+      body.innerHTML = '<tr><td colspan="3" style="text-align:center;color:var(--slate-400);padding:20px">暂无差评原因数据</td></tr>';
+    } else {
+      body.innerHTML = d.reasons.map(r => {
+        const agent = r.agent_name || r.query_type || '未知';
+        return `<tr><td><span class="tag tag-${getTypeTag(r.query_type)}">${escapeHtml(agent)}</span></td><td>${escapeHtml(r.feedback_reason)}</td><td><strong>${r.cnt}</strong></td></tr>`;
+      }).join('');
+    }
+    wrap.style.display = 'block';
+    loading.style.display = 'none';
+  } catch {}
+}
+
+function getTypeTag(type) {
+  const map = { '产品咨询': 'primary', '使用答疑': 'sky', '朋友圈帮写': 'emerald', '口播文案帮写': 'rose' };
+  return map[type] || 'slate';
+}
+
+function escapeHtml(t) {
+  if (!t) return '';
+  const d = document.createElement('div');
+  d.textContent = t;
+  return d.innerHTML;
+}
+
+function exportCSV() {
+  const start = document.getElementById('filter-start').value || '全部';
+  const end = document.getElementById('filter-end').value || '全部';
+  const lines = [];
+
+  const push = (...cells) => lines.push(cells.join(','));
+
+  push(`周报,${start},~,${end}`);
+  push('');
+
+  // Stats
+  push('统计概览');
+  const stats = [
+    ['总对话数', g('stat-conversations')],
+    ['独立用户', g('stat-users')],
+    ['智能体数', g('stat-agents')],
+    ['资讯数', g('stat-news')],
+    ['今日对话', g('stat-today')],
+    ['今日用户', g('stat-today-users')],
+  ];
+  stats.forEach(s => push(s[0], s[1]));
+  push('');
+
+  // Trends
+  const trendLabels = document.querySelectorAll('#trendChart + *') ? [] : [];
+  const trendCanvas = document.getElementById('trendChart');
+  let trendData = [];
+  if (trendChartInstance) {
+    trendData = trendChartInstance.data.labels.map((l, i) => [l, trendChartInstance.data.datasets[0].data[i]]);
+  }
+  if (trendData.length > 0) {
+    push('日期,对话数');
+    trendData.forEach(t => push(t[0], t[1]));
+    push('');
+  }
+
+  // Agent usage
+  if (typeChartInstance) {
+    const labels = typeChartInstance.data.labels;
+    const vals = typeChartInstance.data.datasets[0].data;
+    push('咨询类型,对话数');
+    labels.forEach((l, i) => push(l, vals[i]));
+    push('');
+  }
+
+  // Hot questions
+  const wcItems = document.querySelectorAll('.wc-item');
+  if (wcItems.length > 0) {
+    push('热门问题');
+    wcItems.forEach(el => {
+      const text = el.textContent.trim();
+      const title = el.getAttribute('title') || '';
+      push(`"${text}",${title}`);
+    });
+  }
+
+  const csv = '\uFEFF' + lines.join('\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `周报_${start}_${end}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function g(id) { return document.getElementById(id)?.textContent || '-'; }
+
+/* ===== Feedback Export ===== */
+function exportFbCSV() {
+  const start = document.getElementById('fb-filter-start').value || '全部';
+  const end = document.getElementById('fb-filter-end').value || '全部';
+  const lines = [];
+
+  const push = (...cells) => lines.push(cells.join(','));
+
+  push(`评价看板,${start},~,${end}`);
+  push('');
+
+  // Overview
+  push('统计概览');
+  push('好评率,' + g('fb-ratio'));
+  push('好评数,' + g('fb-likes'));
+  push('差评数,' + g('fb-dislikes'));
+  push('评价总数,' + g('fb-total'));
+  push('');
+
+  // Per-agent
+  const agentRows = document.querySelectorAll('.fb-agent-row');
+  if (agentRows.length > 0) {
+    push('各智能体评价详情');
+    push('智能体,好评,差评,好评率');
+    agentRows.forEach(row => {
+      const name = row.querySelector('.fb-agent-name')?.textContent || '';
+      const stats = row.querySelector('.fb-agent-stats')?.textContent || '';
+      const pct = row.querySelector('.fb-bar-label')?.textContent || '';
+      push(name, stats, pct);
+    });
+    push('');
+  }
+
+  // Negative feedback
+  const negRows = document.querySelectorAll('#fb-negative-body tr');
+  if (negRows.length > 0 && !negRows[0].textContent.includes('暂无差评')) {
+    push('差评问题');
+    push('智能体,用户问题,AI回答,时间');
+    negRows.forEach(row => {
+      const cells = row.querySelectorAll('td');
+      if (cells.length >= 4) {
+        const agent = cells[0].textContent.trim();
+        const question = cells[1].textContent.trim();
+        const answer = cells[2].textContent.trim();
+        const time = cells[3].textContent.trim();
+        push(`"${agent}","${question}","${answer}",${time}`);
+      }
+    });
+  }
+
+  const csv = '\uFEFF' + lines.join('\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `评价看板_${start}_${end}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+async function loadAll() {
+  document.getElementById('last-update').textContent = '加载中...';
+  await Promise.all([
+    loadStats(), loadTrends(), loadAgentUsage(), loadRecent(), loadHotQuestions(),
+  ]);
+  document.getElementById('last-update').textContent = `更新于 ${new Date().toLocaleTimeString()}`;
+}
+
+function apiUrl(path) {
+  const dp = dateParams();
+  return `${API}${path}${dp ? '?' + dp.slice(1) : ''}`;
+}
+
+async function loadStats() {
+  try {
+    const res = await fetch(apiUrl('/api/admin/dashboard/stats'), {
+      headers: { 'Authorization': `Bearer ${getToken()}` }
+    });
+    const data = await res.json();
+    document.getElementById('stat-conversations').textContent = data.total_conversations.toLocaleString();
+    document.getElementById('stat-users').textContent = data.unique_users.toLocaleString();
+    document.getElementById('stat-agents').textContent = data.total_agents;
+    document.getElementById('stat-news').textContent = data.total_news;
+    document.getElementById('stat-today').textContent = data.today_conversations.toLocaleString();
+    document.getElementById('stat-today-users').textContent = data.today_users.toLocaleString();
+  } catch (e) { console.error('stats error:', e); }
+
+  try {
+    const fbRes = await fetch(apiUrl('/api/admin/dashboard/feedback-stats'), {
+      headers: { 'Authorization': `Bearer ${getToken()}` }
+    });
+    const fb = await fbRes.json();
+    document.getElementById('stat-feedback').textContent = fb.total > 0 ? fb.ratio + '%' : '-';
+    document.getElementById('stat-feedback-detail').innerHTML = fb.total > 0
+      ? `<span style="color:var(--emerald)">👍 ${fb.likes}</span> · <span style="color:var(--rose)">👎 ${fb.dislikes}</span> · ${fb.total}条评价`
+      : '暂无人评价';
+  } catch (e) { console.error('feedback stats error:', e); }
+}
+
+async function loadTrends() {
+  try {
+    const days = filterDays > 0 ? filterDays : 30;
+    const url = apiUrl('/api/admin/dashboard/trends') + (dateParams() ? `&days=${days}` : `?days=${days}`);
+    const res = await fetch(url, { headers: { 'Authorization': `Bearer ${getToken()}` } });
+    renderTrendChart((await res.json()).trends);
+  } catch (e) { console.error('trends error:', e); }
+}
+
+async function loadAgentUsage() {
+  try {
+    const res = await fetch(apiUrl('/api/admin/dashboard/agent-usage'), {
+      headers: { 'Authorization': `Bearer ${getToken()}` }
+    });
+    renderTypeChart((await res.json()).usage);
+  } catch (e) { console.error('usage error:', e); }
+}
+
+async function loadRecent() {
+  try {
+    const url = apiUrl('/api/admin/dashboard/recent') + (dateParams() ? '&limit=12' : '?limit=12');
+    const res = await fetch(url, { headers: { 'Authorization': `Bearer ${getToken()}` } });
+    renderRecent((await res.json()).recent);
+  } catch (e) { console.error('recent error:', e); }
+}
+
+async function loadHotQuestions() {
+  try {
+    const res = await fetch(apiUrl('/api/admin/dashboard/hot-questions'), {
+      headers: { 'Authorization': `Bearer ${getToken()}` }
+    });
+    renderWordCloud((await res.json()).questions);
+  } catch (e) { console.error('hot error:', e); }
+}
+
+function renderTrendChart(trends) {
+  const labels = trends.map(t => t.day.slice(5));
+  const values = trends.map(t => t.cnt);
+  const ctx = document.getElementById('trendChart').getContext('2d');
+  if (trendChartInstance) trendChartInstance.destroy();
+  trendChartInstance = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [{
+        label: '对话数', data: values,
+        borderColor: '#4F46E5', backgroundColor: 'rgba(79,70,229,0.08)',
+        fill: true, tension: 0.4, pointRadius: 3,
+        pointBackgroundColor: '#4F46E5', borderWidth: 2,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: true,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { display: false }, ticks: { font: { size: 11 }, color: '#94A3B8' } },
+        y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.04)' }, ticks: { font: { size: 11 }, color: '#94A3B8', stepSize: 1 } }
+      }
+    }
+  });
+}
+
+function renderTypeChart(usage) {
+  const colors = ['#4F46E5', '#059669', '#D97706', '#E11D48', '#0284C7', '#7C3AED'];
+  const labels = usage.map(u => u.query_type || '未分类');
+  const values = usage.map(u => u.cnt);
+  const ctx = document.getElementById('typeChart').getContext('2d');
+  if (typeChartInstance) typeChartInstance.destroy();
+  typeChartInstance = new Chart(ctx, {
+    type: 'doughnut',
+    data: { labels, datasets: [{ data: values, backgroundColor: colors.slice(0, labels.length), borderWidth: 0 }] },
+    options: {
+      responsive: true, maintainAspectRatio: true,
+      plugins: { legend: { position: 'bottom', labels: { padding: 12, font: { size: 11 }, color: '#475569' } } },
+      cutout: '65%',
+    }
+  });
+}
+
+function renderRecent(items) {
+  document.getElementById('recent-loading').style.display = 'none';
+  document.getElementById('recent-table-wrap').style.display = '';
+  document.getElementById('recent-count').textContent = items.length;
+  document.getElementById('recent-body').innerHTML = items.map(item => {
+    const time = item.created_at ? item.created_at.slice(5, 16) : '-';
+    return `<tr><td><div class="text-truncate q-text">${esc(item.user_message)}</div></td><td><span class="tag ${tagForType(item.query_type)}">${item.query_type || '未知'}</span></td><td class="text-mono">${time}</td></tr>`;
+  }).join('');
+}
+
+function renderWordCloud(items) {
+  document.getElementById('hot-loading').style.display = 'none';
+  document.getElementById('hot-count').textContent = items.length;
+  if (!items || items.length === 0) {
+    document.getElementById('word-cloud').style.display = 'flex';
+    document.getElementById('word-cloud').innerHTML = '<div class="empty-state" style="padding:20px"><i class="ph ph-chats"></i><p>暂无热门提问</p></div>';
+    return;
+  }
+  const maxUsers = Math.max(...items.map(i => i.users), 1);
+  const cloudColors = ['#4F46E5','#059669','#D97706','#E11D48','#0284C7','#7C3AED','#DB2777','#EA580C'];
+  document.getElementById('word-cloud').style.display = 'flex';
+  document.getElementById('word-cloud').innerHTML = items.map(item => {
+    const ratio = item.users / maxUsers;
+    const size = 13 + Math.round(ratio * 14);
+    const color = cloudColors[Math.floor(Math.random() * cloudColors.length)];
+    const opacity = 0.55 + ratio * 0.45;
+    return `<span class="wc-item" style="font-size:${size}px;color:${color};opacity:${opacity}" title="提问用户: ${item.users} · 总次数: ${item.total}">${esc(item.text)}</span>`;
+  }).join('');
+}
+
+function tagForType(type) {
+  const map = { '产品咨询': 'tag-sky', '使用答疑': 'tag-emerald', '朋友圈帮写': 'tag-amber', '口播文案帮写': 'tag-rose' };
+  return map[type] || 'tag-sky';
+}
+
+// ===== News Management =====
+let newsEditingId = null;
+let quill = null;
+let quillInited = false;
+
+function initQuill() {
+  if (quillInited) return;
+  const container = document.getElementById('news-editor');
+  if (!container || container.style.display === 'none') return;
+  try {
+    quill = new Quill('#news-editor', {
+      theme: 'snow',
+      modules: {
+        toolbar: [
+          [{ header: [1, 2, 3, false] }],
+          ['bold', 'italic', 'underline', 'strike'],
+          [{ color: [] }, { background: [] }],
+          [{ list: 'ordered' }, { list: 'bullet' }],
+          ['blockquote', 'code-block'],
+          ['link', 'image'],
+          ['clean'],
+        ]
+      },
+      placeholder: '输入正文内容...',
+    });
+    quillInited = true;
+  } catch (e) { console.error('Quill init error:', e); }
+}
+
+async function loadAdminNews() {
+  try {
+    const res = await fetch(`${API}/api/news`);
+    if (!res.ok) return;
+    const data = await res.json();
+    const container = document.getElementById('admin-news-list');
+    if (!data.news || data.news.length === 0) {
+      container.innerHTML = '<div class="empty-state"><i class="ph ph-newspaper"></i>暂无资讯，在上方添加</div>';
+      return;
+    }
+    container.innerHTML = data.news.map(item => `
+      <div class="admin-list-item">
+        <div>
+          <div class="item-title">${esc(item.title)}</div>
+          <div class="item-meta">
+            ${item.category ? `🏷 ${esc(item.category)} · ` : ''}${fmt(item.created_at)}${item.image_url ? ' · 有配图' : ''}${item.views !== undefined ? ` · 阅读 ${item.views} 次` : ''}
+            ${item.pinned ? ' · 📌置顶' : ''}${item.featured ? ' · 🏠首页' : ''}
+          </div>
+        </div>
+        <div class="item-actions">
+          <button class="btn btn-secondary btn-sm" onclick="toggleNewsPin(${item.id})" style="${item.pinned ? 'color:var(--primary);font-weight:700' : ''}">📌</button>
+          <button class="btn btn-secondary btn-sm" onclick="toggleNewsFeature(${item.id})" style="${item.featured ? 'color:var(--emerald);font-weight:700' : ''}">🏠</button>
+          <button class="btn btn-secondary btn-sm" onclick="editNews(${item.id})">编辑</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteNews(${item.id})">删除</button>
+        </div>
+      </div>
+    `).join('');
+  } catch {}
+}
+
+async function toggleNewsPin(id) {
+  try {
+    const res = await fetch(`${API}/api/news/${id}/pin`, {
+      method: 'PUT', headers: { 'Authorization': `Bearer ${getToken()}` }
+    });
+    if (res.ok) loadAdminNews();
+  } catch {}
+}
+
+async function toggleNewsFeature(id) {
+  try {
+    const res = await fetch(`${API}/api/news/${id}/feature`, {
+      method: 'PUT', headers: { 'Authorization': `Bearer ${getToken()}` }
+    });
+    if (res.ok) loadAdminNews();
+  } catch {}
+}
+
+function resetNewsForm() {
+  document.getElementById('news-title').value = '';
+  document.getElementById('news-category').value = '';
+  document.getElementById('news-summary').value = '';
+  if (quill) quill.root.innerHTML = '';
+  document.getElementById('news-image-preview').classList.add('hidden');
+  document.getElementById('news-upload-placeholder').classList.remove('hidden');
+  document.getElementById('news-image-input').value = '';
+  document.getElementById('news-form-title').textContent = '添加资讯';
+  newsEditingId = null;
+}
+
+async function saveNews() {
+  const title = document.getElementById('news-title').value.trim();
+  const category = document.getElementById('news-category').value.trim();
+  const summary = document.getElementById('news-summary').value.trim();
+  const content = quill ? quill.root.innerHTML.trim() : '';
+  const preview = document.getElementById('news-image-preview');
+  const imageUrl = preview.classList.contains('hidden') ? '' : (preview.dataset.url || '');
+  if (!title) return showToast('请输入标题', 'error');
+  try {
+    const method = newsEditingId ? 'PUT' : 'POST';
+    const url = newsEditingId ? `${API}/api/news/${newsEditingId}` : `${API}/api/news`;
+    const res = await fetch(url, {
+      method, headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${getToken()}` },
+      body: JSON.stringify({ title, summary, content, image_url: imageUrl, category }),
+    });
+    if (res.ok) {
+      showToast(newsEditingId ? '资讯已更新' : '资讯已添加', 'success');
+      resetNewsForm();
+      loadAdminNews();
+    } else { showToast('保存失败', 'error'); }
+  } catch { showToast('保存失败', 'error'); }
+}
+
+async function editNews(id) {
+  try {
+    const res = await fetch(`${API}/api/news/${id}`);
+    if (res.ok) {
+      const item = await res.json();
+      document.getElementById('news-title').value = item.title;
+      document.getElementById('news-category').value = item.category || '';
+      document.getElementById('news-summary').value = item.summary || '';
+      if (quill) quill.root.innerHTML = item.content || '';
+      document.getElementById('news-form-title').textContent = '编辑资讯';
+      newsEditingId = id;
+      if (item.image_url) {
+        const preview = document.getElementById('news-image-preview');
+        preview.src = item.image_url;
+        preview.classList.remove('hidden');
+        document.getElementById('news-upload-placeholder').classList.add('hidden');
+        preview.dataset.url = item.image_url;
+      }
+    }
+  } catch {}
+}
+
+async function deleteNews(id) {
+  if (!confirm('确定删除这条资讯？')) return;
+  try {
+    const res = await fetch(`${API}/api/news/${id}`, {
+      method: 'DELETE', headers: { 'Authorization': `Bearer ${getToken()}` },
+    });
+    if (res.ok) { showToast('已删除', 'success'); loadAdminNews(); }
+  } catch {}
+}
+
+async function uploadNewsImage(input) {
+  if (!input.files[0]) return;
+  const formData = new FormData();
+  formData.append('file', input.files[0]);
+  try {
+    const res = await fetch(`${API}/api/admin/upload`, {
+      method: 'POST', headers: { 'Authorization': `Bearer ${getToken()}` }, body: formData,
+    });
+    const data = await res.json();
+    if (res.ok) {
+      const preview = document.getElementById('news-image-preview');
+      preview.src = data.url;
+      preview.classList.remove('hidden');
+      document.getElementById('news-upload-placeholder').classList.add('hidden');
+      preview.dataset.url = data.url;
+    } else { showToast('上传失败', 'error'); }
+  } catch { showToast('上传失败', 'error'); }
+}
+
+// ===== Agent Management =====
+async function loadAdminAgents() {
+  try {
+    const res = await fetch(`${API}/api/admin/agents`, { headers: { 'Authorization': `Bearer ${getToken()}` } });
+    if (!res.ok) return;
+    const data = await res.json();
+    const agents = data.agents || [];
+    const container = document.getElementById('admin-agents-list');
+    if (!container) return;
+
+    container.innerHTML = agents.map(a => `
+      <div class="agent-card">
+        <div class="agent-header">
+          <div class="agent-avatar" style="background:${a.color}"><i class="ph ph-${a.icon || 'robot'}"></i></div>
+          <div class="agent-name">${esc(a.name)}</div>
+        </div>
+        <div class="field"><label>名称</label><input type="text" id="ag-name-${a.agent_id}" value="${esc(a.name)}"></div>
+        <div class="field"><label>描述</label><input type="text" id="ag-desc-${a.agent_id}" value="${esc(a.description || '')}"></div>
+        <div class="field"><label>快捷消息</label><input type="text" id="ag-prompt-${a.agent_id}" value="${esc(a.prompt || '')}"></div>
+        <div style="display:flex;gap:12px">
+          <div class="field" style="flex:1"><label>颜色</label><input type="color" id="ag-color-${a.agent_id}" value="${a.color}"></div>
+          <div class="field" style="flex:1"><label>图标（Phosphor 名）</label><input type="text" id="ag-icon-${a.agent_id}" value="${esc(a.icon || 'robot')}"></div>
+        </div>
+        <div class="field"><label>机器人 ID</label><input type="text" id="ag-bot-${a.agent_id}" value="${esc(a.bot_id || '')}"></div>
+        <div class="field">
+          <label>头像图片</label>
+          <div class="upload-area" onclick="document.getElementById('ag-avatar-input-${a.agent_id}').click()">
+            ${a.avatar_url ? '<img src="' + esc(a.avatar_url) + '" id="ag-avatar-preview-' + a.agent_id + '">' : '<div id="ag-avatar-ph-' + a.agent_id + '"><i class="ph ph-upload"></i><span>点击上传头像</span></div>'}
+          </div>
+          <input type="file" id="ag-avatar-input-${a.agent_id}" accept="image/*" class="hidden" onchange="uploadAgentAvatar('${a.agent_id}', this)">
+          <input type="hidden" id="ag-avatar-${a.agent_id}" value="${esc(a.avatar_url || '')}">
+        </div>
+        <div class="agent-actions">
+          <button class="btn btn-primary" onclick="saveAgent('${a.agent_id}')">保存</button>
+          <button class="btn btn-danger" onclick="deleteAgent('${a.agent_id}')">删除</button>
+        </div>
+      </div>
+    `).join('');
+  } catch (e) { console.error('loadAdminAgents error:', e); }
+
+  // Load system config too
+  loadAdminSystemConfig();
+  loadWaitingSettings();
+}
+
+async function loadAdminSystemConfig() {
+  try {
+    const [keyRes, blockRes] = await Promise.all([
+      fetch(`${API}/api/admin/settings/coze-api-key`, { headers: { 'Authorization': `Bearer ${getToken()}` } }),
+      fetch(`${API}/api/admin/settings/blocked-keywords`, { headers: { 'Authorization': `Bearer ${getToken()}` } }),
+    ]);
+    let currentKey = '', blockedKW = '', defaultHint = '';
+    if (keyRes.ok) { const kd = await keyRes.json(); currentKey = kd.api_key || ''; }
+    if (blockRes.ok) { const bd = await blockRes.json(); blockedKW = bd.keywords || ''; defaultHint = bd.defaultHint || ''; }
+    const masked = currentKey ? currentKey.slice(0, 8) + '****' + currentKey.slice(-4) : '未设置';
+    document.getElementById('coze-key-label').textContent = `Coze API Key（当前: ${masked}）`;
+    document.getElementById('blocked-keywords-input').value = blockedKW;
+    document.getElementById('blocked-hint').textContent = `参考: ${defaultHint}`;
+  } catch { console.error('loadAdminSystemConfig error'); }
+}
+
+function showCreateAgentForm() {
+  document.getElementById('create-agent-form').style.display = 'block';
+}
+function hideCreateAgentForm() {
+  document.getElementById('create-agent-form').style.display = 'none';
+}
+
+async function createAgent() {
+  const agent_id = document.getElementById('new-agent-id').value.trim();
+  const name = document.getElementById('new-agent-name').value.trim();
+  if (!agent_id || !name) return showToast('标识ID和名称不能为空', 'error');
+  try {
+    const res = await fetch(`${API}/api/admin/agents`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${getToken()}` },
+      body: JSON.stringify({
+        agent_id, name,
+        type: 'custom',
+        description: document.getElementById('new-agent-desc').value,
+        prompt: document.getElementById('new-agent-prompt').value,
+        color: document.getElementById('new-agent-color').value,
+        icon: document.getElementById('new-agent-icon').value || 'robot',
+        bot_id: document.getElementById('new-agent-bot').value,
+      }),
+    });
+    if (res.ok) {
+      showToast('智能体已创建', 'success');
+      hideCreateAgentForm();
+      document.getElementById('new-agent-id').value = '';
+      document.getElementById('new-agent-name').value = '';
+      document.getElementById('new-agent-desc').value = '';
+      document.getElementById('new-agent-prompt').value = '';
+      document.getElementById('new-agent-icon').value = '';
+      document.getElementById('new-agent-bot').value = '';
+      loadAdminAgents();
+    } else { const d = await res.json(); showToast(d.error || '创建失败', 'error'); }
+  } catch { showToast('创建失败', 'error'); }
+}
+
+async function deleteAgent(agentId) {
+  if (!confirm(`确定删除智能体？`)) return;
+  try {
+    const res = await fetch(`${API}/api/admin/agents/${agentId}`, {
+      method: 'DELETE', headers: { 'Authorization': `Bearer ${getToken()}` },
+    });
+    if (res.ok) { showToast('已删除', 'success'); loadAdminAgents(); }
+    else { showToast('删除失败', 'error'); }
+  } catch { showToast('删除失败', 'error'); }
+}
+
+async function uploadAgentAvatar(agentId, input) {
+  if (!input.files[0]) return;
+  const formData = new FormData();
+  formData.append('file', input.files[0]);
+  try {
+    const res = await fetch(`${API}/api/admin/upload`, {
+      method: 'POST', headers: { 'Authorization': `Bearer ${getToken()}` }, body: formData,
+    });
+    const data = await res.json();
+    if (res.ok) {
+      document.getElementById(`ag-avatar-${agentId}`).value = data.url;
+      const preview = document.getElementById(`ag-avatar-preview-${agentId}`);
+      if (preview) { preview.src = data.url; preview.classList.remove('hidden'); }
+      document.getElementById(`ag-avatar-ph-${agentId}`)?.classList.add('hidden');
+    } else { showToast('上传失败', 'error'); }
+  } catch { showToast('上传失败', 'error'); }
+}
+
+async function saveAgent(agentId) {
+  const name = document.getElementById(`ag-name-${agentId}`).value.trim();
+  if (!name) return showToast('名称不能为空', 'error');
+  try {
+    const res = await fetch(`${API}/api/admin/agents/${agentId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${getToken()}` },
+      body: JSON.stringify({
+        name,
+        description: document.getElementById(`ag-desc-${agentId}`).value,
+        prompt: document.getElementById(`ag-prompt-${agentId}`).value,
+        color: document.getElementById(`ag-color-${agentId}`).value,
+        icon: document.getElementById(`ag-icon-${agentId}`).value || 'robot',
+        bot_id: document.getElementById(`ag-bot-${agentId}`).value,
+        avatar_url: document.getElementById(`ag-avatar-${agentId}`).value,
+      }),
+    });
+    if (res.ok) { showToast('已保存', 'success'); }
+    else { showToast('保存失败', 'error'); }
+  } catch { showToast('保存失败', 'error'); }
+}
+
+// ===== System Config =====
+async function updateCozeApiKey() {
+  const input = document.getElementById('coze-api-key-input');
+  const key = input.value.trim();
+  if (!key) return showToast('请粘贴 API Key', 'error');
+  try {
+    const res = await fetch(`${API}/api/admin/settings/coze-api-key`, {
+      method: 'PUT', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${getToken()}` },
+      body: JSON.stringify({ api_key: key }),
+    });
+    if (res.ok) {
+      showToast('API Key 已更新', 'success');
+      input.value = '';
+      loadAdminAgents();
+    } else { const d = await res.json(); showToast(d.error || '更新失败', 'error'); }
+  } catch { showToast('更新失败', 'error'); }
+}
+
+async function saveBlockedKeywords() {
+  const val = document.getElementById('blocked-keywords-input').value.trim();
+  try {
+    const res = await fetch(`${API}/api/admin/settings/blocked-keywords`, {
+      method: 'PUT', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${getToken()}` },
+      body: JSON.stringify({ keywords: val }),
+    });
+    if (res.ok) { showToast('屏蔽词已保存', 'success'); }
+    else { showToast('保存失败', 'error'); }
+  } catch { showToast('保存失败', 'error'); }
+}
+
+// ===== Waiting Tips =====
+let tipItems = [];
+let tipStepsCache = [];
+
+async function loadWaitingSettings() {
+  try {
+    const res = await fetch(`${API}/api/admin/settings/waiting-content`, {
+      headers: { 'Authorization': `Bearer ${getToken()}` }
+    });
+    if (res.ok) {
+      const data = await res.json();
+      tipStepsCache = (data.steps || []).length > 0 ? data.steps : [
+        '正在理解您的问题...', '正在匹配最佳智能体...', '正在检索产品知识库...',
+        '正在分析问题关键点...', '正在构思回答框架...', '正在组织语言表达...',
+        '正在校验回答准确性...', '正在润色语言风格...', '正在生成完整回复...', '即将完成...',
+      ];
+      tipItems = data.tips || [];
+      renderTipList();
+    }
+  } catch { console.error('loadWaitingSettings error'); }
+}
+
+function renderTipList() {
+  const container = document.getElementById('tip-list');
+  document.getElementById('tip-count').textContent = `当前共 ${tipItems.length} 条`;
+  if (tipItems.length === 0) {
+    container.innerHTML = '<div class="empty-state" style="padding:20px"><i class="ph ph-chats"></i><p>暂无小贴士，在上方添加</p></div>';
+    return;
+  }
+  container.innerHTML = tipItems.map((t, i) =>
+    `<div class="tip-card" draggable="true" data-idx="${i}">
+      <span class="tip-drag"><i class="ph ph-grip-vertical"></i></span>
+      <span class="tip-text">${esc(t)}</span>
+      <button class="tip-del" onclick="removeTip(${i})"><i class="ph ph-x"></i></button>
+    </div>`
+  ).join('');
+
+  container.querySelectorAll('.tip-card').forEach(el => {
+    el.addEventListener('dragstart', onTipDragStart);
+    el.addEventListener('dragover', onTipDragOver);
+    el.addEventListener('drop', onTipDrop);
+    el.addEventListener('dragend', onTipDragEnd);
+  });
+}
+
+let dragSrcIdx = null;
+function onTipDragStart(e) {
+  dragSrcIdx = parseInt(e.target.closest('.tip-card').dataset.idx);
+  e.target.closest('.tip-card').classList.add('dragging');
+}
+function onTipDragOver(e) { e.preventDefault(); }
+function onTipDrop(e) {
+  e.preventDefault();
+  const target = e.target.closest('.tip-card');
+  if (!target) return;
+  const targetIdx = parseInt(target.dataset.idx);
+  if (dragSrcIdx === targetIdx) return;
+  const [moved] = tipItems.splice(dragSrcIdx, 1);
+  tipItems.splice(targetIdx, 0, moved);
+  renderTipList();
+}
+function onTipDragEnd(e) {
+  document.querySelectorAll('.tip-card').forEach(el => el.classList.remove('dragging'));
+}
+
+function addTip() {
+  const input = document.getElementById('tip-input');
+  const val = input.value.trim();
+  if (!val) return;
+  tipItems.push(val);
+  input.value = '';
+  renderTipList();
+  input.focus();
+}
+
+function removeTip(idx) {
+  tipItems.splice(idx, 1);
+  renderTipList();
+}
+
+async function saveWaitingTips() {
+  if (tipItems.length === 0) return showToast('至少需要一条小贴士', 'error');
+  try {
+    const res = await fetch(`${API}/api/admin/settings/waiting-content`, {
+      method: 'PUT', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${getToken()}` },
+      body: JSON.stringify({
+        steps: JSON.stringify(tipStepsCache),
+        tips: JSON.stringify(tipItems),
+      }),
+    });
+    if (res.ok) { showToast('小贴士已保存', 'success'); }
+    else { showToast('保存失败', 'error'); }
+  } catch { showToast('保存失败', 'error'); }
+}
+
+// ===== Utilities =====
+function fmt(d) {
+  if (!d) return '';
+  return new Date(d).toLocaleString('zh-CN', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+}
+
+function esc(s) {
+  const d = document.createElement('div');
+  d.textContent = s || '';
+  return d.innerHTML;
+}
+
+function showToast(msg, type) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast ' + (type || 'info');
+  requestAnimationFrame(() => requestAnimationFrame(() => t.classList.add('show')));
+  clearTimeout(t._timeout);
+  t._timeout = setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ===== Product Admin =====
+let prodQuill = null;
+
+function initProdQuill() {
+  const card = document.getElementById('prod-form-card');
+  if (!card || card.style.display === 'none') return;
+  if (prodQuill) {
+    prodQuill.destroy();
+    prodQuill = null;
+  }
+  prodQuill = new Quill('#prod-editor', {
+    theme: 'snow',
+    modules: {
+      toolbar: [
+        [{ header: [1, 2, 3, false] }],
+        ['bold', 'italic', 'underline'],
+        [{ list: 'ordered' }, { list: 'bullet' }],
+        ['link', 'clean'],
+      ]
+    },
+    placeholder: '输入产品详细介绍...',
+  });
+}
+
+function showProdForm() {
+  document.getElementById('prod-form-card').style.display = 'block';
+  document.getElementById('prod-form-title').innerHTML = '<i class="ph ph-pencil"></i> 新增产品';
+  document.getElementById('prod-editing-id').value = '';
+  document.getElementById('prod-name').value = '';
+  document.getElementById('prod-category').value = '';
+  document.getElementById('prod-summary').value = '';
+  document.getElementById('prod-highlights').value = '';
+  document.getElementById('prod-image-url').value = '';
+  setTimeout(initProdQuill, 200);
+}
+
+function hideProdForm() {
+  document.getElementById('prod-form-card').style.display = 'none';
+}
+
+function resetProdForm() {
+  hideProdForm();
+}
+
+function editProduct(id) {
+  const p = prodCache.find(x => x.id === id);
+  if (!p) return;
+  document.getElementById('prod-form-card').style.display = 'block';
+  document.getElementById('prod-form-title').innerHTML = `<i class="ph ph-pencil"></i> 编辑「${escapeHtml(p.name)}」`;
+  document.getElementById('prod-editing-id').value = p.id;
+  document.getElementById('prod-name').value = p.name || '';
+  document.getElementById('prod-category').value = p.category || '';
+  document.getElementById('prod-summary').value = p.summary || '';
+  document.getElementById('prod-highlights').value = p.highlights || '';
+  document.getElementById('prod-image-url').value = p.image_url || '';
+  setTimeout(() => {
+    initProdQuill();
+    if (prodQuill) prodQuill.root.innerHTML = p.content || '';
+  }, 200);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+let prodCache = [];
+
+async function loadAdminProducts() {
+  try {
+    const res = await fetch(API + '/api/products', {
+      headers: { 'Authorization': `Bearer ${getToken()}` }
+    });
+    if (!res.ok) return;
+    const data = await res.json();
+    prodCache = data.products || [];
+    const list = document.getElementById('admin-products-list');
+    if (!prodCache.length) {
+      list.innerHTML = '<div class="empty-state"><i class="ph ph-package"></i><p>暂无产品，点击右上角「新增」添加</p></div>';
+    } else {
+      list.innerHTML = prodCache.map(p => `
+        <div class="admin-list-item">
+          <div>
+            <div class="item-title">${escapeHtml(p.name)}</div>
+            <div class="item-meta">${escapeHtml(p.category || '未分类')} · ${escapeHtml(p.summary || '')}</div>
+          </div>
+          <div class="item-actions">
+            <button class="btn btn-secondary btn-sm" onclick="editProduct(${p.id})"><i class="ph ph-pencil"></i></button>
+            <button class="btn btn-secondary btn-sm" onclick="deleteProduct(${p.id})" style="color:var(--rose)"><i class="ph ph-trash"></i></button>
+          </div>
+        </div>
+      `).join('');
+    }
+  } catch {}
+}
+
+async function saveProduct() {
+  const id = document.getElementById('prod-editing-id').value;
+  const body = {
+    name: document.getElementById('prod-name').value.trim(),
+    category: document.getElementById('prod-category').value.trim(),
+    summary: document.getElementById('prod-summary').value.trim(),
+    highlights: document.getElementById('prod-highlights').value.trim(),
+    image_url: document.getElementById('prod-image-url').value.trim(),
+    content: prodQuill ? prodQuill.root.innerHTML : '',
+    sort_order: id ? (prodCache.find(x => x.id === parseInt(id)) || {}).sort_order || 0 : (prodCache.length + 1) * 10,
+  };
+  if (!body.name) { alert('请输入产品名称'); return; }
+
+  const url = id ? `${API}/api/products/${id}` : `${API}/api/products`;
+  const method = id ? 'PUT' : 'POST';
+
+  try {
+    const res = await fetch(url, {
+      method,
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${getToken()}` },
+      body: JSON.stringify(body),
+    });
+    if (res.ok) {
+      hideProdForm();
+      loadAdminProducts();
+    }
+  } catch {}
+}
+
+async function deleteProduct(id) {
+  if (!confirm('确定删除该产品？')) return;
+  try {
+    const res = await fetch(`${API}/api/products/${id}`, {
+      method: 'DELETE',
+      headers: { 'Authorization': `Bearer ${getToken()}` }
+    });
+    if (res.ok) loadAdminProducts();
+  } catch {}
+}
+
+function uploadProductImage(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const formData = new FormData();
+  formData.append('file', file);
+  fetch(`${API}/api/admin/upload`, {
+    method: 'POST',
+    headers: { 'Authorization': `Bearer ${getToken()}` },
+    body: formData,
+  }).then(r => r.json()).then(d => {
+    if (d.url) document.getElementById('prod-image-url').value = d.url;
+  }).catch(() => {});
+}
+
+// ===== Admin Q&A =====
+let qaEditingId = null;
+
+function resetQAForm() {
+  qaEditingId = null;
+  document.getElementById('qa-editing-id').value = '';
+  document.getElementById('qa-question').value = '';
+  document.getElementById('qa-category').value = '';
+  document.getElementById('qa-answer').value = '';
+  document.getElementById('qa-form-title').innerHTML = '<i class="ph ph-pencil"></i> 新增问答';
+}
+
+async function loadAdminQA() {
+  try {
+    const res = await fetch(`${API}/api/community/admin/questions?page=1&limit=50`, {
+      headers: { 'Authorization': `Bearer ${getToken()}` }
+    });
+    if (!res.ok) return;
+    const data = await res.json();
+    const list = document.getElementById('admin-qa-list');
+    if (!data.items || !data.items.length) {
+      list.innerHTML = '<div class="empty-state"><i class="ph ph-chats"></i><p>暂无问答，在上方新增</p></div>';
+      return;
+    }
+    list.innerHTML = data.items.map(q => `
+      <div class="admin-list-item">
+        <div>
+          <div class="item-title">${esc(q.title)} <span style="font-weight:400;font-size:12px;color:var(--slate-400)">${esc(q.category || '')}</span></div>
+          <div class="item-meta">${q.reply_count}条评论 · ${fmt(q.created_at)} · ${q.status ? '✅ 显示' : '🚫 隐藏'}</div>
+        </div>
+        <div class="item-actions">
+          <button class="btn btn-secondary btn-sm" onclick="editQA(${q.id})">编辑</button>
+          <button class="btn btn-secondary btn-sm" onclick="toggleQAStatus(${q.id})" style="${q.status ? 'color:var(--emerald)' : 'color:var(--rose)'}">${q.status ? '隐藏' : '显示'}</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteQA(${q.id})">删除</button>
+        </div>
+      </div>
+    `).join('');
+  } catch {}
+}
+
+async function editQA(id) {
+  try {
+    const res = await fetch(`${API}/api/community/questions/${id}`);
+    if (!res.ok) return;
+    const q = await res.json();
+    qaEditingId = id;
+    document.getElementById('qa-editing-id').value = id;
+    document.getElementById('qa-question').value = q.title || '';
+    document.getElementById('qa-category').value = q.category || '';
+    document.getElementById('qa-answer').value = q.content || '';
+    document.getElementById('qa-form-title').innerHTML = `<i class="ph ph-pencil"></i> 编辑问答`;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  } catch {}
+}
+
+async function saveQA() {
+  const id = document.getElementById('qa-editing-id').value;
+  const title = document.getElementById('qa-question').value.trim();
+  const category = document.getElementById('qa-category').value.trim();
+  const content = document.getElementById('qa-answer').value.trim();
+  if (!title) { showToast('请输入问题', 'error'); return; }
+  try {
+    const method = id ? 'PUT' : 'POST';
+    const url = id ? `${API}/api/community/admin/questions/${id}` : `${API}/api/community/admin/questions`;
+    const res = await fetch(url, {
+      method,
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${getToken()}` },
+      body: JSON.stringify({ title, content, category }),
+    });
+    if (res.ok) {
+      showToast(id ? '已更新' : '已创建', 'success');
+      resetQAForm();
+      loadAdminQA();
+    } else { showToast('保存失败', 'error'); }
+  } catch { showToast('网络错误', 'error'); }
+}
+
+async function toggleQAStatus(id) {
+  try {
+    const res = await fetch(`${API}/api/community/admin/questions/${id}/status`, {
+      method: 'PUT', headers: { 'Authorization': `Bearer ${getToken()}` }
+    });
+    if (res.ok) loadAdminQA();
+  } catch {}
+}
+
+async function deleteQA(id) {
+  if (!confirm('确定删除？')) return;
+  try {
+    const res = await fetch(`${API}/api/community/admin/questions/${id}`, {
+      method: 'DELETE', headers: { 'Authorization': `Bearer ${getToken()}` }
+    });
+    if (res.ok) { showToast('已删除', 'success'); loadAdminQA(); }
+  } catch {}
+}
+
+async function deleteQA(id) {
+  if (!confirm('确定删除该帖子及其所有回复？')) return;
+  try {
+    const res = await fetch(`${API}/api/community/admin/questions/${id}`, {
+      method: 'DELETE', headers: { 'Authorization': `Bearer ${getToken()}` }
+    });
+    if (res.ok) { showToast('已删除', 'success'); loadAdminQA(); }
+  } catch {}
+}
+
+// ===== Init =====
+checkAuth();
+</script>
+</body>
+</html>
