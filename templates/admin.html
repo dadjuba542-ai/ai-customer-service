@@ -540,9 +540,16 @@
             </div>
           </div>
           <div class="table-card">
-            <div class="table-title"><span><i class="ph ph-lightbulb"></i>热门提问词云</span><span class="count-badge" id="hot-count">0</span></div>
+            <div class="table-title"><span><i class="ph ph-lightbulb"></i>首页热门问题（最多5条）</span></div>
             <div id="hot-loading" class="loading"><i class="ph ph-spinner"></i>加载中...</div>
-            <div id="word-cloud" class="word-cloud" style="display:none"></div>
+            <div id="hot-check-wrap" style="display:none;padding:12px 0">
+              <div id="hot-check-list" style="display:flex;flex-direction:column;gap:4px;max-height:300px;overflow-y:auto;margin-bottom:12px"></div>
+              <div style="display:flex;align-items:center;gap:8px">
+                <button class="btn btn-primary btn-sm" onclick="saveHotQuestions()"><i class="ph ph-check"></i> 保存</button>
+                <span class="count-badge" id="hot-selected-count">0</span>
+                <span style="font-size:12px;color:var(--slate-400)">已选 / 最多5条</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -1337,22 +1344,51 @@ function renderRecent(items) {
 
 function renderWordCloud(items) {
   document.getElementById('hot-loading').style.display = 'none';
-  document.getElementById('hot-count').textContent = items.length;
+  const wrap = document.getElementById('hot-check-wrap');
+  const list = document.getElementById('hot-check-list');
   if (!items || items.length === 0) {
-    document.getElementById('word-cloud').style.display = 'flex';
-    document.getElementById('word-cloud').innerHTML = '<div class="empty-state" style="padding:20px"><i class="ph ph-chats"></i><p>暂无热门提问</p></div>';
+    list.innerHTML = '<div class="empty-state" style="padding:10px"><p>暂无热门提问候选</p></div>';
+    wrap.style.display = 'block';
     return;
   }
-  const maxUsers = Math.max(...items.map(i => i.users), 1);
-  const cloudColors = ['#4F46E5','#059669','#D97706','#E11D48','#0284C7','#7C3AED','#DB2777','#EA580C'];
-  document.getElementById('word-cloud').style.display = 'flex';
-  document.getElementById('word-cloud').innerHTML = items.map(item => {
-    const ratio = item.users / maxUsers;
-    const size = 13 + Math.round(ratio * 14);
-    const color = cloudColors[Math.floor(Math.random() * cloudColors.length)];
-    const opacity = 0.55 + ratio * 0.45;
-    return `<span class="wc-item" style="font-size:${size}px;color:${color};opacity:${opacity}" title="提问用户: ${item.users} · 总次数: ${item.total}">${esc(item.text)}</span>`;
-  }).join('');
+  // Get currently approved questions
+  fetch(`${API}/api/history/hot-questions`)
+    .then(r => r.json())
+    .then(d => {
+      const approved = (d.questions || []).map(q => q.text);
+      const max = 5;
+      list.innerHTML = items.map((item, i) => {
+        const checked = approved.includes(item.text);
+        return `<label class="hot-check-item" style="display:flex;align-items:center;gap:8px;cursor:pointer;padding:6px 0">
+          <input type="checkbox" class="hot-checkbox" value="${esc(item.text)}" data-count="${item.users}" ${checked ? 'checked' : ''} onchange="updateHotCheck()">
+          <span style="font-size:13px">${esc(item.text)}</span>
+          <span style="font-size:11px;color:var(--slate-400)">${item.users}人以此提问</span>
+        </label>`;
+      }).join('');
+      wrap.style.display = 'block';
+      updateHotCheck();
+    });
+}
+
+function updateHotCheck() {
+  const checked = document.querySelectorAll('.hot-checkbox:checked');
+  const max = 5;
+  checked.forEach((cb, i) => { if (i >= max) cb.checked = false; });
+  document.getElementById('hot-selected-count').textContent = Math.min(checked.length, max);
+  const overs = document.querySelectorAll('.hot-checkbox');
+  overs.forEach(cb => { cb.disabled = document.querySelectorAll('.hot-checkbox:checked').length >= max && !cb.checked; });
+}
+
+async function saveHotQuestions() {
+  const checked = Array.from(document.querySelectorAll('.hot-checkbox:checked')).slice(0, 5).map(cb => cb.value);
+  try {
+    const res = await fetch(`${API}/api/admin/dashboard/hot-questions/save`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${getToken()}` },
+      body: JSON.stringify({ questions: checked }),
+    });
+    if (res.ok) showToast('热门问题已更新', 'success');
+  } catch { showToast('保存失败', 'error'); }
 }
 
 function tagForType(type) {

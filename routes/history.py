@@ -36,24 +36,11 @@ def batch_delete():
 
 @history_bp.route('/hot-questions')
 def hot_questions():
-    raw = get_setting('blocked_keywords', '')
-    blocked = [k.strip() for k in raw.split(',') if k.strip()]
-
-    conn = get_db_connection()
-    rows = conn.execute('''
-        SELECT user_message, COUNT(DISTINCT user_id) as cnt
-        FROM chat_history
-        GROUP BY user_message
-        ORDER BY cnt DESC
-        LIMIT 30
-    ''').fetchall()
-    conn.close()
-
-    result = []
-    for r in rows:
-        msg = r['user_message']
-        if any(k in msg for k in blocked):
-            continue
-        result.append({'text': msg, 'count': r['cnt']})
-
-    return jsonify({'questions': result[:12]})
+    import json
+    raw = get_setting('approved_hot_questions', '[]')
+    try:
+        questions = json.loads(raw)
+    except:
+        questions = []
+    result = [{'text': q, 'count': 1} for q in questions[:5]]
+    return jsonify({'questions': result})
