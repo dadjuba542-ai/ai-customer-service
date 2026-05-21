@@ -15,7 +15,7 @@ def send_to_coze():
     if not message:
         return jsonify({'error': 'Message is required'}), 400
 
-    user_id = 'anonymous'
+    user_id = data.get('user_id', '').strip() or 'anonymous'
     api_key = get_setting('coze_api_key', Config.COZE_API_KEY)
     headers = {
         "Authorization": f"Bearer {api_key}",

@@ -20,6 +20,15 @@ let state = {
   user: JSON.parse(localStorage.getItem('user') || 'null'),
 };
 
+function getUserId() {
+  let id = localStorage.getItem('user_uuid');
+  if (!id) {
+    id = 'u' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+    localStorage.setItem('user_uuid', id);
+  }
+  return id;
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   loadAgents();
   loadWaitingContent();
@@ -259,7 +268,7 @@ async function sendMessage() {
     const res = await fetchWithTimeout(`${API_BASE}/api/chat/send`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: text, query_type: agent.type, agent_id: agent.id }),
+      body: JSON.stringify({ message: text, query_type: agent.type, agent_id: agent.id, user_id: getUserId() }),
     }, 120000); // 2分钟超时
     hideWaitingPanel();
     state.isTyping = false;
@@ -514,9 +523,8 @@ async function streamResponse(text, historyId) {
 /* ===== History ===== */
 async function loadHistory(queryType = '') {
   try {
-    const url = queryType
-      ? `${API_BASE}/api/history/sessions?query_type=${encodeURIComponent(queryType)}`
-      : `${API_BASE}/api/history/sessions`;
+    const base = `${API_BASE}/api/history/sessions?user_id=${getUserId()}`;
+    const url = queryType ? `${base}&query_type=${encodeURIComponent(queryType)}` : base;
     const res = await fetch(url);
     if (res.ok) {
       const data = await res.json();
@@ -751,7 +759,7 @@ async function loadSession(itemIds) {
   if (!itemIds || itemIds.length === 0) return;
   const firstItemId = itemIds[0];
   try {
-    const res = await fetch(`${API_BASE}/api/history/${firstItemId}`);
+    const res = await fetch(`${API_BASE}/api/history/${firstItemId}?user_id=${getUserId()}`);
     if (!res.ok) return;
     const first = await res.json();
     const agent = AGENTS.find(a => a.type === first.query_type) || AGENTS[0];
@@ -760,7 +768,7 @@ async function loadSession(itemIds) {
     state.messages = [];
     for (const id of itemIds.reverse()) {
       try {
-        const r = await fetch(`${API_BASE}/api/history/${id}`);
+        const r = await fetch(`${API_BASE}/api/history/${id}?user_id=${getUserId()}`);
         if (r.ok) {
           const item = await r.json();
           addMessage({ id: Date.now(), role: 'user', content: item.user_message, time: formatTime(item.created_at, true) });
