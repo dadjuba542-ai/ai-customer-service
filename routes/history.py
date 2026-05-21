@@ -3,15 +3,18 @@ from models import get_chat_history, get_chat_history_by_id, get_db_connection, 
 
 history_bp = Blueprint('history', __name__)
 
+def _get_uid():
+    return request.args.get('user_id', 'anonymous')
+
 @history_bp.route('', methods=['GET'])
 def get_history():
     query_type = request.args.get('query_type')
-    history = get_chat_history('anonymous', query_type)
+    history = get_chat_history(_get_uid(), query_type)
     return jsonify({'history': history})
 
 @history_bp.route('/<int:history_id>', methods=['GET'])
 def get_history_detail(history_id):
-    history = get_chat_history_by_id(history_id, 'anonymous')
+    history = get_chat_history_by_id(history_id, _get_uid())
     if not history:
         return jsonify({'error': 'Not found'}), 404
     return jsonify(history)
@@ -19,7 +22,7 @@ def get_history_detail(history_id):
 @history_bp.route('/sessions')
 def get_sessions():
     query_type = request.args.get('query_type')
-    sessions = get_chat_sessions('anonymous', query_type)
+    sessions = get_chat_sessions(_get_uid(), query_type)
     return jsonify({'sessions': sessions})
 
 @history_bp.route('/batch-delete', methods=['POST'])
