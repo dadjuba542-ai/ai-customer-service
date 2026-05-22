@@ -543,6 +543,10 @@
             <div class="table-title"><span><i class="ph ph-lightbulb"></i>首页热门问题（最多5条）</span></div>
             <div id="hot-loading" class="loading"><i class="ph ph-spinner"></i>加载中...</div>
             <div id="hot-check-wrap" style="display:none;padding:12px 0">
+              <div style="display:flex;gap:8px;margin-bottom:12px">
+                <input type="text" id="hot-manual-input" placeholder="自行输入热门问题..." style="flex:1;padding:8px 12px;font-size:13px;font-family:inherit;border:1.5px solid var(--slate-200);border-radius:8px;outline:none" onkeydown="if(event.key==='Enter') addManualHot()">
+                <button class="btn btn-secondary btn-sm" onclick="addManualHot()"><i class="ph ph-plus"></i> 添加</button>
+              </div>
               <div id="hot-check-list" style="display:flex;flex-direction:column;gap:4px;max-height:300px;overflow-y:auto;margin-bottom:12px"></div>
               <div style="display:flex;align-items:center;gap:8px">
                 <button class="btn btn-primary btn-sm" onclick="saveHotQuestions()"><i class="ph ph-check"></i> 保存</button>
@@ -1352,32 +1356,56 @@ function renderRecent(items) {
   }).join('');
 }
 
+let manualHotItems = [];
+
 function renderWordCloud(items) {
   document.getElementById('hot-loading').style.display = 'none';
   const wrap = document.getElementById('hot-check-wrap');
   const list = document.getElementById('hot-check-list');
-  if (!items || items.length === 0) {
-    list.innerHTML = '<div class="empty-state" style="padding:10px"><p>暂无热门提问候选</p></div>';
-    wrap.style.display = 'block';
-    return;
-  }
-  // Get currently approved questions
   fetch(`${API}/api/history/hot-questions`)
     .then(r => r.json())
     .then(d => {
       const approved = (d.questions || []).map(q => q.text);
-      const max = 5;
-      list.innerHTML = items.map((item, i) => {
+      // Deduplicate: manual items should not appear as checkboxes too
+      const manualSet = new Set(manualHotItems);
+      const autoItems = (items || []).filter(item => !manualSet.has(item.text));
+      let html = autoItems.map(item => {
         const checked = approved.includes(item.text);
         return `<label class="hot-check-item" style="display:flex;align-items:center;gap:8px;cursor:pointer;padding:6px 0">
-          <input type="checkbox" class="hot-checkbox" value="${esc(item.text)}" data-count="${item.users}" ${checked ? 'checked' : ''} onchange="updateHotCheck()">
+          <input type="checkbox" class="hot-checkbox" value="${esc(item.text)}" ${checked ? 'checked' : ''} onchange="updateHotCheck()">
           <span style="font-size:13px">${esc(item.text)}</span>
           <span style="font-size:11px;color:var(--slate-400)">${item.users}人以此提问</span>
         </label>`;
       }).join('');
+      // Manual items section
+      if (manualHotItems.length) {
+        html += `<div style="border-top:1px solid var(--slate-100);margin:8px 0 4px;padding-top:8px;font-size:11px;color:var(--slate-400)">手动添加</div>`;
+        html += manualHotItems.map(t => `<div class="hot-check-item" style="display:flex;align-items:center;gap:8px;padding:6px 0">
+          <input type="checkbox" class="hot-checkbox" value="${esc(t)}" checked onchange="updateHotCheck()">
+          <span style="font-size:13px">${esc(t)}</span>
+          <button class="btn btn-secondary btn-sm" onclick="removeManualHot('${esc(t)}')" style="margin-left:auto;color:var(--rose)">✕</button>
+        </div>`).join('');
+      }
+      list.innerHTML = html || '<div class="empty-state" style="padding:10px"><p>暂无候选，自行输入即可</p></div>';
       wrap.style.display = 'block';
       updateHotCheck();
     });
+}
+
+function addManualHot() {
+  const input = document.getElementById('hot-manual-input');
+  const text = input.value.trim();
+  if (!text) return;
+  if (manualHotItems.includes(text)) { showToast('已存在', 'info'); return; }
+  manualHotItems.push(text);
+  input.value = '';
+  // Reload word cloud (will use stored items)
+  loadHotQuestions();
+}
+
+function removeManualHot(text) {
+  manualHotItems = manualHotItems.filter(t => t !== text);
+  loadHotQuestions();
 }
 
 function updateHotCheck() {
@@ -1385,8 +1413,8 @@ function updateHotCheck() {
   const max = 5;
   checked.forEach((cb, i) => { if (i >= max) cb.checked = false; });
   document.getElementById('hot-selected-count').textContent = Math.min(checked.length, max);
-  const overs = document.querySelectorAll('.hot-checkbox');
-  overs.forEach(cb => { cb.disabled = document.querySelectorAll('.hot-checkbox:checked').length >= max && !cb.checked; });
+  const allCb = document.querySelectorAll('.hot-checkbox');
+  allCb.forEach(cb => { cb.disabled = document.querySelectorAll('.hot-checkbox:checked').length >= max && !cb.checked; });
 }
 
 async function saveHotQuestions() {
