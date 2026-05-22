@@ -1,6 +1,8 @@
 import os
 import uuid
 import json
+from io import BytesIO
+from PIL import Image
 from flask import Blueprint, request, jsonify, current_app
 from models import get_all_agent_configs, get_agent_config, update_agent_config, create_agent_config, delete_agent_config, get_setting, set_setting
 from config import Config
@@ -83,10 +85,28 @@ def upload_file(current_user):
     if ext not in ALLOWED_EXT:
         return jsonify({'error': 'File type not allowed'}), 400
 
-    filename = f"{uuid.uuid4().hex}.{ext}"
+    file.seek(0, 2)
+    size = file.tell()
+    file.seek(0)
+    if size > 2 * 1024 * 1024:
+        return jsonify({'error': '文件超过 2MB，请压缩后再上传'}), 400
+
+    image = Image.open(file)
+    if image.mode in ('RGBA', 'P'):
+        image = image.convert('RGB')
+    max_size = 1200
+    if max(image.size) > max_size:
+        ratio = max_size / max(image.size)
+        new_size = (int(image.size[0] * ratio), int(image.size[1] * ratio))
+        image = image.resize(new_size, Image.LANCZOS)
+    output = BytesIO()
+    image.save(output, format='JPEG', quality=85, optimize=True)
+    output.seek(0)
+    filename = f"{uuid.uuid4().hex}.jpg"
     upload_dir = os.path.join(current_app.root_path, 'static', 'uploads')
     os.makedirs(upload_dir, exist_ok=True)
-    file.save(os.path.join(upload_dir, filename))
+    with open(os.path.join(upload_dir, filename), 'wb') as f:
+        f.write(output.read())
     return jsonify({'url': f'/uploads/{filename}'})
 
 @admin_bp.route('/settings/coze-api-key', methods=['GET', 'PUT'])

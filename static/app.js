@@ -229,7 +229,7 @@ function quickSend(agentId, text) {
     switchView('chat');
     const agent = AGENTS.find(a => a.id === agentId);
     const msg = agent && agent.chatDesc
-      ? `<div class="sb-title">已切换到「${agent.name}」</div><div class="sb-desc">${agent.chatDesc}</div>`
+      ? `<div class="sb-text"><div class="sb-title">已切换到「${agent.name}」</div><div class="sb-desc">${agent.chatDesc}</div></div>`
       : `<div class="sb-title">已切换到「${agent ? agent.name : agentId}」</div>`;
     replaceSystemMessage(msg);
   }

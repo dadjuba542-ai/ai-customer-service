@@ -225,7 +225,7 @@ def create_news(title, summary='', content='', image_url='', category=''):
 def get_all_news():
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute('SELECT * FROM news ORDER BY created_at DESC')
+    cursor.execute('SELECT id, title, summary, image_url, created_at, views, pinned, featured, category FROM news ORDER BY created_at DESC')
     rows = cursor.fetchall()
     conn.close()
     return [dict(r) for r in rows]
@@ -264,7 +264,7 @@ def increment_news_views(id):
 def get_pinned_news(limit=3):
     conn = get_db_connection()
     rows = conn.execute(
-        'SELECT * FROM news WHERE pinned = 1 ORDER BY created_at DESC LIMIT ?', (limit,)
+        'SELECT id, title, summary, image_url, created_at, views, pinned, featured, category FROM news WHERE pinned = 1 ORDER BY created_at DESC LIMIT ?', (limit,)
     ).fetchall()
     conn.close()
     return [dict(r) for r in rows]
@@ -272,7 +272,7 @@ def get_pinned_news(limit=3):
 def get_featured_news(limit=3):
     conn = get_db_connection()
     rows = conn.execute(
-        'SELECT * FROM news WHERE featured = 1 ORDER BY created_at DESC LIMIT ?', (limit,)
+        'SELECT id, title, summary, image_url, created_at, views, pinned, featured, category FROM news WHERE featured = 1 ORDER BY created_at DESC LIMIT ?', (limit,)
     ).fetchall()
     conn.close()
     return [dict(r) for r in rows]
@@ -290,7 +290,7 @@ def get_news_page(page=1, limit=10, exclude_pinned=False, category=None):
     total = conn.execute(f'SELECT COUNT(*) as cnt FROM news {where}', params).fetchone()['cnt']
     offset = (page - 1) * limit
     rows = conn.execute(
-        f'SELECT * FROM news {where} ORDER BY created_at DESC LIMIT ? OFFSET ?',
+        f'SELECT id, title, summary, image_url, created_at, views, pinned, featured, category FROM news {where} ORDER BY created_at DESC LIMIT ? OFFSET ?',
         params + [limit, offset]
     ).fetchall()
     conn.close()
