@@ -16,6 +16,8 @@ def send_to_coze():
         return jsonify({'error': 'Message is required'}), 400
 
     user_id = data.get('user_id', '').strip() or 'anonymous'
+    team_name = (data.get('team_name') or '').strip()
+    member_name = (data.get('member_name') or '').strip()
     api_key = get_setting('coze_api_key', Config.COZE_API_KEY)
     headers = {
         "Authorization": f"Bearer {api_key}",
@@ -66,7 +68,9 @@ def send_to_coze():
             query_type=query_type,
             user_message=message,
             bot_response=bot_response,
-            coze_message_id=coze_message_id
+            coze_message_id=coze_message_id,
+            team_name=team_name,
+            member_name=member_name,
         )
 
         return jsonify({

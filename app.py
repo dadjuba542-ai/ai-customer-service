@@ -39,7 +39,8 @@ from routes.agents import agents_bp
 from routes.dashboard import dashboard_bp
 
 app = Flask(__name__, static_folder='static', static_url_path='')
-CORS(app)
+Config.validate()
+CORS(app, resources={r"/api/*": {"origins": Config.CORS_ORIGINS}})
 app.config.from_object(Config)
 
 os.makedirs(os.path.join(app.root_path, 'static', 'uploads'), exist_ok=True)
@@ -78,6 +79,23 @@ def waiting_content():
     if not tips: tips = DEFAULT_TIPS
     if not steps: steps = DEFAULT_STEPS
     return jsonify({'tips': tips, 'steps': steps})
+
+@app.route('/api/default-team')
+def default_team():
+    from models import get_setting
+    import json
+    raw = get_setting('default_team_names', '[]')
+    try:
+        teams = json.loads(raw)
+        if not isinstance(teams, list):
+            teams = []
+    except:
+        teams = []
+    if not teams:
+        single = get_setting('default_team_name', '').strip()
+        if single:
+            teams = [single]
+    return jsonify({'team_names': teams})
 
 @app.route('/api/user/profile')
 def user_profile():

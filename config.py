@@ -6,6 +6,9 @@ class Config:
     COZE_API_KEY = os.environ.get('COZE_API_KEY', '')
     DATABASE_DIR = os.environ.get('DATABASE_DIR', os.path.dirname(__file__))
     DATABASE_PATH = os.path.join(DATABASE_DIR, 'ai_customer_service.db')
+    CORS_ORIGINS = os.environ.get('CORS_ORIGINS', '*')
+    STRICT_SECURITY = os.environ.get('STRICT_SECURITY', 'false').lower() == 'true'
+    HIDE_ADMIN_API_KEY = os.environ.get('HIDE_ADMIN_API_KEY', 'false').lower() == 'true'
 
     # 四大模块对应的机器人ID
     BOT_MAPPING = {
@@ -19,3 +22,8 @@ class Config:
 
     # 管理员账号：用该用户名注册的用户自动成为管理员
     ADMIN_USERNAME = os.environ.get('ADMIN_USERNAME', 'admin8')
+
+    @classmethod
+    def validate(cls):
+        if cls.STRICT_SECURITY and not cls.SECRET_KEY:
+            raise RuntimeError('SECRET_KEY is required and cannot be empty')

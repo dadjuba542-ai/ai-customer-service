@@ -48,6 +48,14 @@ def init_db():
         cursor.execute('ALTER TABLE chat_history ADD COLUMN feedback_reason TEXT DEFAULT NULL')
     except sqlite3.OperationalError:
         pass
+    try:
+        cursor.execute('ALTER TABLE chat_history ADD COLUMN team_name TEXT DEFAULT ""')
+    except sqlite3.OperationalError:
+        pass
+    try:
+        cursor.execute('ALTER TABLE chat_history ADD COLUMN member_name TEXT DEFAULT ""')
+    except sqlite3.OperationalError:
+        pass
 
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS news (
@@ -181,14 +189,25 @@ def cleanup_old_history():
     conn.commit()
     conn.close()
 
-def delete_chat_history_batch(ids):
+def delete_chat_history_batch(ids, user_id=None):
     if not ids:
-        return
+        return 0
     conn = get_db_connection()
     placeholders = ','.join(['?'] * len(ids))
-    conn.execute(f'DELETE FROM chat_history WHERE id IN ({placeholders})', ids)
+    if user_id:
+        cursor = conn.execute(
+            f'DELETE FROM chat_history WHERE user_id = ? AND id IN ({placeholders})',
+            [user_id] + ids
+        )
+    else:
+        cursor = conn.execute(
+            f'DELETE FROM chat_history WHERE id IN ({placeholders})',
+            ids
+        )
     conn.commit()
+    deleted = cursor.rowcount if cursor.rowcount is not None else 0
     conn.close()
+    return deleted
 
 # ===== Settings =====
 def get_setting(key, default=''):
@@ -469,13 +488,24 @@ def get_user_by_id(user_id):
     conn.close()
     return dict(user) if user else None
 
+def update_user_password_hash(user_id, password_hash):
+    conn = get_db_connection()
+    conn.execute(
+        'UPDATE users SET password_hash = ? WHERE user_id = ?',
+        (password_hash, user_id)
+    )
+    conn.commit()
+    conn.close()
+
 # ===== Chat History =====
-def save_chat_history(user_id, query_type, user_message, bot_response=None, coze_message_id=None):
+def save_chat_history(user_id, query_type, user_message, bot_response=None, coze_message_id=None, team_name='', member_name=''):
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute(
-        'INSERT INTO chat_history (user_id, query_type, user_message, bot_response, coze_message_id) VALUES (?, ?, ?, ?, ?)',
-        (user_id, query_type, user_message, bot_response, coze_message_id)
+        '''INSERT INTO chat_history
+           (user_id, query_type, user_message, bot_response, coze_message_id, team_name, member_name)
+           VALUES (?, ?, ?, ?, ?, ?, ?)''',
+        (user_id, query_type, user_message, bot_response, coze_message_id, team_name, member_name)
     )
     conn.commit()
     history_id = cursor.lastrowid

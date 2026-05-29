@@ -3,16 +3,22 @@ import hashlib
 from datetime import datetime, timedelta
 from flask import Blueprint, request, jsonify
 from functools import wraps
+from werkzeug.security import generate_password_hash, check_password_hash
 from config import Config
-from models import create_user, get_user_by_username, get_user_by_id
+from models import create_user, get_user_by_username, get_user_by_id, update_user_password_hash
 
 auth_bp = Blueprint('auth', __name__)
 
 def hash_password(password):
-    return hashlib.sha256(password.encode()).hexdigest()
+    return generate_password_hash(password)
 
 def verify_password(password, password_hash):
-    return hash_password(password) == password_hash
+    if not password_hash:
+        return False
+    # Backward compatibility for old sha256 records.
+    if len(password_hash) == 64 and all(c in '0123456789abcdef' for c in password_hash.lower()):
+        return hashlib.sha256(password.encode()).hexdigest() == password_hash
+    return check_password_hash(password_hash, password)
 
 def generate_token(user_id):
     payload = {
@@ -99,6 +105,11 @@ def login():
     user = get_user_by_username(username)
     if not user or not verify_password(password, user['password_hash']):
         return jsonify({'error': 'Invalid username or password'}), 401
+
+    # Upgrade legacy sha256 password hash after successful login.
+    current_hash = user.get('password_hash') or ''
+    if len(current_hash) == 64 and all(c in '0123456789abcdef' for c in current_hash.lower()):
+        update_user_password_hash(user['user_id'], hash_password(password))
 
     token = generate_token(user['user_id'])
     return jsonify({

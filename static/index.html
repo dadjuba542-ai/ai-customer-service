@@ -12,6 +12,26 @@
   <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 </head>
 <body>
+  <div id="identity-gate" class="admin-overlay active" onclick="event.stopPropagation();">
+    <div class="login-card" style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(90vw,360px);">
+      <div class="login-header" style="margin-bottom:18px;">
+        <div class="login-title" style="font-size:22px;">开始咨询</div>
+        <div class="login-subtitle">请选择团队并输入姓名</div>
+      </div>
+      <div class="input-group">
+        <i class="ph ph-users-three"></i>
+        <select id="team-select" style="width:100%;padding:14px 16px 14px 46px;font-size:15px;font-family:inherit;background:var(--slate-50);border:2px solid transparent;border-radius:var(--radius-xl);outline:none;">
+          <option value="">请选择团队</option>
+        </select>
+      </div>
+      <div class="input-group">
+        <i class="ph ph-user"></i>
+        <input id="member-name-input" type="text" placeholder="请输入姓名" maxlength="20">
+      </div>
+      <button class="btn-primary" onclick="submitIdentity()">进入系统</button>
+    </div>
+  </div>
+
   <div id="app" class="page active">
     <div id="app-container">
       <!-- Home View -->

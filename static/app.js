@@ -18,6 +18,8 @@ let state = {
   isStreaming: false,
   token: localStorage.getItem('token'),
   user: JSON.parse(localStorage.getItem('user') || 'null'),
+  profile: JSON.parse(localStorage.getItem('chat_profile') || 'null'),
+  teamOptions: [],
 };
 
 function getUserId() {
@@ -39,6 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   // Agent tab long-press drag
   initAgentTabDrag();
+  bindIdentityEvents();
 });
 
 async function loadAgents() {
@@ -62,9 +65,26 @@ async function loadAgents() {
   } catch {
     AGENTS = [...FALLBACK_AGENTS];
   }
+  await loadDefaultTeamSetting();
   renderAgentTabs();
   renderQuickFunctions();
-  enterApp();
+  ensureIdentity();
+}
+
+async function loadDefaultTeamSetting() {
+  try {
+    const res = await fetch(`${API_BASE}/api/default-team`);
+    if (!res.ok) return;
+    const data = await res.json();
+    state.teamOptions = (data.team_names || []).map(t => String(t).trim()).filter(Boolean);
+    localStorage.setItem('team_options_cache', JSON.stringify(state.teamOptions));
+  } catch {
+    try {
+      state.teamOptions = JSON.parse(localStorage.getItem('team_options_cache') || '[]');
+    } catch {
+      state.teamOptions = [];
+    }
+  }
 }
 
 
@@ -73,6 +93,72 @@ function enterApp() {
   document.getElementById('app').classList.add('active');
   loadNews();
   loadHotQuestions();
+}
+
+function bindIdentityEvents() {
+  const nameInput = document.getElementById('member-name-input');
+  const teamSelect = document.getElementById('team-select');
+  if (nameInput) {
+    nameInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') submitIdentity();
+    });
+  }
+  if (teamSelect) {
+    teamSelect.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') submitIdentity();
+    });
+  }
+}
+
+function ensureIdentity() {
+  const gate = document.getElementById('identity-gate');
+  const teamSelect = document.getElementById('team-select');
+  if (teamSelect) {
+    const options = ['<option value="">请选择团队</option>'].concat(
+      state.teamOptions.map(t => `<option value="${escapeHtml(t)}">${escapeHtml(t)}</option>`)
+    );
+    teamSelect.innerHTML = options.join('');
+  }
+  if (state.profile && state.profile.team && state.profile.name) {
+    const isAllowed = !state.teamOptions.length || state.teamOptions.includes(state.profile.team);
+    if (!isAllowed) {
+      state.profile = null;
+      localStorage.removeItem('chat_profile');
+    } else {
+      if (gate) gate.classList.remove('active');
+      if (!state.teamOptions.length) showToast('团队配置加载失败，已使用上次身份进入', 'info');
+      enterApp();
+      return;
+    }
+  }
+  if (!state.teamOptions.length) {
+    if (gate) gate.classList.add('active');
+    const input = document.getElementById('member-name-input');
+    const btn = document.querySelector('#identity-gate .btn-primary');
+    if (input) input.disabled = true;
+    if (teamSelect) teamSelect.disabled = true;
+    if (btn) btn.disabled = true;
+    showToast('未配置可选团队，请联系管理员', 'error');
+    return;
+  }
+  if (teamSelect) teamSelect.disabled = false;
+  const input = document.getElementById('member-name-input');
+  const btn = document.querySelector('#identity-gate .btn-primary');
+  if (input) input.disabled = false;
+  if (btn) btn.disabled = false;
+  if (gate) gate.classList.add('active');
+}
+
+function submitIdentity() {
+  const team = (document.getElementById('team-select')?.value || '').trim();
+  const name = (document.getElementById('member-name-input')?.value || '').trim();
+  if (!team) { showToast('请选择团队', 'error'); return; }
+  if (!state.teamOptions.includes(team)) { showToast('请选择管理员配置的团队', 'error'); return; }
+  if (!name) { showToast('请输入姓名', 'error'); return; }
+  state.profile = { team, name };
+  localStorage.setItem('chat_profile', JSON.stringify(state.profile));
+  document.getElementById('identity-gate')?.classList.remove('active');
+  enterApp();
 }
 
 /* ===== View Switching ===== */
@@ -278,7 +364,14 @@ async function sendMessage() {
     const res = await fetchWithTimeout(`${API_BASE}/api/chat/send`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: text, query_type: agent.type, agent_id: agent.id, user_id: getUserId() }),
+      body: JSON.stringify({
+        message: text,
+        query_type: agent.type,
+        agent_id: agent.id,
+        user_id: getUserId(),
+        team_name: state.profile?.team || '',
+        member_name: state.profile?.name || '',
+      }),
     }, 120000); // 2分钟超时
     hideWaitingPanel();
     state.isTyping = false;
@@ -1264,7 +1357,14 @@ async function regenerateMsg(msgIdx) {
     const res = await fetchWithTimeout(`${API_BASE}/api/chat/send`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: userText, query_type: agent.type, agent_id: agent.id }),
+      body: JSON.stringify({
+        message: userText,
+        query_type: agent.type,
+        agent_id: agent.id,
+        user_id: getUserId(),
+        team_name: state.profile?.team || '',
+        member_name: state.profile?.name || '',
+      }),
     }, 120000);
     hideWaitingPanel();
     state.isTyping = false;

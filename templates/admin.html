@@ -397,6 +397,175 @@
     .toast.error { background: var(--rose); }
     .toast.info { background: var(--slate-700); }
 
+    /* ===== Team Stats Design Upgrade ===== */
+    #page-team-stats .team-settings-card {
+      background:
+        radial-gradient(120% 110% at 0% 0%, rgba(79,70,229,0.08) 0%, rgba(79,70,229,0) 60%),
+        radial-gradient(100% 90% at 100% 0%, rgba(2,132,199,0.07) 0%, rgba(2,132,199,0) 55%),
+        var(--white);
+      border: 1px solid rgba(79,70,229,0.14);
+      box-shadow: 0 10px 30px -18px rgba(79,70,229,0.32);
+    }
+    #page-team-stats .team-settings-card h3 {
+      margin-bottom: 18px;
+    }
+    #page-team-stats .team-settings-card .field label {
+      color: var(--slate-700);
+    }
+    #page-team-stats .team-settings-card .hint {
+      margin-top: 6px;
+      font-size: 12px;
+      color: var(--slate-500);
+    }
+    #page-team-stats .team-settings-card input {
+      background: rgba(255,255,255,0.9);
+    }
+    #page-team-stats .team-settings-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: end;
+      column-gap: 14px;
+      margin-bottom: 0;
+      width: 100%;
+    }
+    #page-team-stats .team-settings-row .team-input-field {
+      max-width: none;
+      min-width: 0;
+    }
+    #page-team-stats .team-settings-row .team-save-field {
+      display: flex;
+      justify-content: flex-end;
+      align-items: flex-end;
+      margin: 0;
+    }
+    #page-team-stats .team-filter {
+      border: 1px solid var(--slate-200);
+      box-shadow: var(--shadow);
+      background: linear-gradient(180deg, #FFFFFF 0%, #FBFCFF 100%);
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      align-items: stretch;
+    }
+    #page-team-stats .team-filter-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+      flex-wrap: wrap;
+    }
+    #page-team-stats .team-filter-row.top {
+      justify-content: space-between;
+    }
+    #page-team-stats .team-filter-main {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      min-width: 0;
+      flex: 1;
+    }
+    #page-team-stats .team-filter .filter-label {
+      font-size: 13px;
+      color: var(--slate-600);
+      font-weight: 600;
+    }
+    #page-team-stats .team-filter input,
+    #page-team-stats .team-filter select {
+      height: 32px;
+      border: 1px solid var(--slate-200);
+      border-radius: 8px;
+      padding: 0 10px;
+      font-size: 13px;
+      background: #fff;
+      color: var(--slate-800);
+      outline: none;
+    }
+    #page-team-stats .team-filter input:focus,
+    #page-team-stats .team-filter select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(79,70,229,0.1);
+    }
+    #page-team-stats .team-filter .range-sep {
+      color: var(--slate-400);
+      font-size: 14px;
+      font-weight: 600;
+    }
+    #page-team-stats .team-filter .team-select {
+      min-width: 140px;
+      max-width: 220px;
+    }
+    #page-team-stats .team-filter .member-input {
+      min-width: 160px;
+      max-width: 240px;
+    }
+    #page-team-stats .team-filter .quick-group {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    #page-team-stats .team-filter .action-group {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+    }
+    #page-team-stats .team-table-card {
+      border: 1px solid var(--slate-200);
+      box-shadow: 0 12px 30px -22px rgba(15,23,42,0.45);
+      padding-top: 16px;
+    }
+    #page-team-stats .table-title {
+      font-size: 16px;
+      margin-bottom: 14px;
+      color: var(--slate-800);
+      padding: 0 2px;
+    }
+    #page-team-stats .team-table {
+      border-collapse: separate;
+      border-spacing: 0;
+      overflow: hidden;
+      border-radius: 12px;
+      border: 1px solid var(--slate-200);
+      background: var(--white);
+    }
+    #page-team-stats .team-table thead th {
+      background: linear-gradient(180deg, #F8FAFC 0%, #F1F5F9 100%);
+      color: var(--slate-600);
+      font-size: 12px;
+      letter-spacing: 0.2px;
+      padding: 11px 12px;
+      border-bottom: 1px solid var(--slate-200);
+    }
+    #page-team-stats .team-table tbody td {
+      padding: 10px 12px;
+      vertical-align: top;
+      border-bottom: 1px solid var(--slate-100);
+    }
+    #page-team-stats .team-table tbody tr:nth-child(even) {
+      background: #FCFDFF;
+    }
+    #page-team-stats .team-table tbody tr:hover {
+      background: #F8FAFF;
+    }
+    #page-team-stats .team-table .q {
+      max-width: 560px;
+      color: var(--slate-700);
+      line-height: 1.5;
+      word-break: break-word;
+    }
+    #page-team-stats .team-table .times {
+      color: var(--slate-900);
+      font-weight: 700;
+      font-feature-settings: "tnum";
+    }
+    #page-team-stats .team-empty {
+      text-align: center;
+      color: var(--slate-400);
+      padding: 26px 12px;
+    }
+
     @media (max-width: 1024px) {
       .charts-grid { grid-template-columns: 1fr; }
       .tables-grid { grid-template-columns: 1fr; }
@@ -408,6 +577,18 @@
       .main { padding: 16px; }
       .stats-grid { grid-template-columns: 1fr 1fr; }
       .admin-row { flex-direction: column; }
+      #page-team-stats .team-settings-row {
+        grid-template-columns: 1fr;
+        row-gap: 10px;
+      }
+      #page-team-stats .team-settings-row .team-save-field {
+        width: 100%;
+        justify-content: flex-start;
+      }
+      #page-team-stats .team-settings-row .team-save-field .btn {
+        width: 100%;
+        justify-content: center;
+      }
     }
   </style>
 </head>
@@ -459,6 +640,9 @@
         </div>
         <div class="nav-item" data-page="community" onclick="switchPage('community')">
           <i class="ph ph-users-three"></i><span>问答管理</span>
+        </div>
+        <div class="nav-item" data-page="team-stats" onclick="switchPage('team-stats')">
+          <i class="ph ph-buildings"></i><span>团队提问统计</span>
         </div>
       </nav>
       <div class="sidebar-footer">
@@ -798,6 +982,67 @@
           <div id="admin-qa-list"></div>
         </div>
       </div>
+
+      <!-- ===== Page: Team Stats ===== -->
+      <div id="page-team-stats" class="page-content">
+        <div class="admin-card team-settings-card">
+          <h3><i class="ph ph-gear"></i>默认团队设置</h3>
+          <div class="admin-row team-settings-row">
+            <div class="field team-input-field">
+              <label>团队名单（逗号分隔，登录页仅可选这些团队）</label>
+              <input type="text" id="default-team-input" placeholder="如：一团队,二团队,三团队">
+              <div class="hint">示例：一团队,二团队,三团队。前台登录时只能选择这里配置的团队。</div>
+            </div>
+            <div class="field team-save-field">
+              <button class="btn btn-primary" onclick="saveDefaultTeam()">保存团队名单</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="date-filter team-filter">
+          <div class="team-filter-row top">
+            <div class="team-filter-main">
+              <span class="filter-label">日期：</span>
+              <input type="date" id="team-filter-start">
+              <span class="range-sep">~</span>
+              <input type="date" id="team-filter-end">
+              <span class="filter-label">团队：</span>
+              <select id="team-filter-team" class="team-select">
+                <option value="">全部团队</option>
+              </select>
+              <span class="filter-label">姓名：</span>
+              <input type="text" id="team-filter-member" class="member-input" placeholder="输入姓名筛选" onkeydown="if(event.key==='Enter') loadTeamQuestionStats()">
+            </div>
+          </div>
+          <div class="team-filter-row">
+            <div class="quick-group">
+              <button class="quick-btn active" data-days="30" onclick="setTeamDateRange(30)">近30天</button>
+              <button class="quick-btn" data-days="7" onclick="setTeamDateRange(7)">近7天</button>
+              <button class="quick-btn" data-days="90" onclick="setTeamDateRange(90)">近90天</button>
+              <button class="quick-btn" data-days="0" onclick="setTeamDateRange(0)">全部</button>
+            </div>
+            <div class="action-group">
+              <button class="btn btn-primary btn-sm" onclick="loadTeamQuestionStats()">查询</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="table-card team-table-card">
+          <div class="table-title">
+            <span><i class="ph ph-chart-bar"></i>团队提问统计（团队/成员/问题）</span>
+            <span class="count-badge" id="team-stats-count">0</span>
+          </div>
+          <div id="team-stats-loading" class="loading"><i class="ph ph-spinner"></i> 加载中...</div>
+          <div id="team-stats-wrap" style="display:none">
+            <table class="team-table">
+              <thead>
+                <tr><th>团队</th><th>姓名</th><th>问题</th><th>次数</th></tr>
+              </thead>
+              <tbody id="team-stats-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
     </main>
   </div>
 </div>
@@ -882,7 +1127,15 @@ function switchPage(page) {
   document.querySelectorAll('.sidebar-nav .nav-item').forEach(n => n.classList.remove('active'));
   document.querySelector(`.sidebar-nav .nav-item[data-page="${page}"]`).classList.add('active');
 
-  const titles = { dashboard: '数据看板', news: '资讯管理', products: '产品管理', agents: '智能体配置', feedback: '评价看板', community: '问答管理' };
+  const titles = {
+    dashboard: '数据看板',
+    news: '资讯管理',
+    products: '产品管理',
+    agents: '智能体配置',
+    feedback: '评价看板',
+    community: '问答管理',
+    'team-stats': '团队提问统计'
+  };
   document.getElementById('page-title-text').textContent = titles[page] || '数据看板';
 
   if (page === 'dashboard') loadAll();
@@ -891,6 +1144,7 @@ function switchPage(page) {
   if (page === 'agents') loadAdminAgents();
   if (page === 'feedback') loadFeedbackDashboard();
   if (page === 'community') loadAdminQA();
+  if (page === 'team-stats') loadTeamStatsPage();
 }
 
 // ===== Dashboard Data =====
@@ -971,6 +1225,128 @@ function fbDateParams() {
 function fbApiUrl(path) {
   const dp = fbDateParams();
   return `${API}${path}${dp ? '?' + dp.slice(1) : ''}`;
+}
+
+/* ===== Team Question Stats ===== */
+function teamDateParams() {
+  const start = document.getElementById('team-filter-start')?.value || '';
+  const end = document.getElementById('team-filter-end')?.value || '';
+  const team = document.getElementById('team-filter-team')?.value || '';
+  const member = (document.getElementById('team-filter-member')?.value || '').trim();
+  const p = new URLSearchParams();
+  if (start) p.set('start_date', start);
+  if (end) p.set('end_date', end);
+  if (team) p.set('team_name', team);
+  if (member) p.set('member_name', member);
+  return p.toString();
+}
+
+function setTeamDateRange(days) {
+  document.querySelectorAll('#page-team-stats .quick-btn').forEach(b => {
+    b.classList.toggle('active', parseInt(b.dataset.days) === days);
+  });
+  const now = new Date();
+  if (days === 0) {
+    document.getElementById('team-filter-start').value = '';
+    document.getElementById('team-filter-end').value = '';
+  } else {
+    const start = new Date(now);
+    start.setDate(start.getDate() - days);
+    document.getElementById('team-filter-start').value = start.toISOString().slice(0, 10);
+    document.getElementById('team-filter-end').value = now.toISOString().slice(0, 10);
+  }
+  loadTeamQuestionStats();
+}
+
+async function loadTeamStatsPage() {
+  if (!document.getElementById('team-filter-start').value) {
+    setTeamDateRange(30);
+  } else {
+    await loadTeamQuestionStats();
+  }
+  await loadDefaultTeamSetting();
+}
+
+async function loadDefaultTeamSetting() {
+  try {
+    const res = await fetch(`${API}/api/admin/settings/default-team`, {
+      headers: { 'Authorization': `Bearer ${getToken()}` }
+    });
+    const data = await res.json();
+    if (res.ok) {
+      const teams = data.team_names || [];
+      document.getElementById('default-team-input').value = teams.join(',');
+      fillTeamFilterOptions(teams);
+    }
+  } catch {}
+}
+
+async function saveDefaultTeam() {
+  const team_names = (document.getElementById('default-team-input').value || '')
+    .split(',')
+    .map(t => t.trim())
+    .filter(Boolean);
+  if (!team_names.length) return showToast('请至少填写一个团队', 'error');
+  try {
+    const res = await fetch(`${API}/api/admin/settings/default-team`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${getToken()}` },
+      body: JSON.stringify({ team_names }),
+    });
+    if (res.ok) {
+      fillTeamFilterOptions(team_names);
+      showToast('团队名单已保存', 'success');
+    }
+    else showToast('保存失败', 'error');
+  } catch { showToast('保存失败', 'error'); }
+}
+
+function fillTeamFilterOptions(teams) {
+  const select = document.getElementById('team-filter-team');
+  if (!select) return;
+  const current = select.value || '';
+  const unique = [...new Set((teams || []).map(t => (t || '').trim()).filter(Boolean))];
+  select.innerHTML = '<option value="">全部团队</option>' + unique.map(t => `<option value="${esc(t)}">${esc(t)}</option>`).join('');
+  if (current && unique.includes(current)) select.value = current;
+}
+
+async function loadTeamQuestionStats() {
+  const loading = document.getElementById('team-stats-loading');
+  const wrap = document.getElementById('team-stats-wrap');
+  const body = document.getElementById('team-stats-body');
+  const count = document.getElementById('team-stats-count');
+  loading.style.display = '';
+  wrap.style.display = 'none';
+  try {
+    const qs = teamDateParams();
+    const url = `${API}/api/admin/dashboard/team-question-stats?limit=200${qs ? '&' + qs : ''}`;
+    const res = await fetch(url, { headers: { 'Authorization': `Bearer ${getToken()}` } });
+    const data = await res.json();
+    const items = data.items || [];
+    fillTeamFilterOptions([
+      ...(document.getElementById('default-team-input').value || '').split(',').map(t => t.trim()),
+      ...items.map(it => it.team_name || '')
+    ]);
+    count.textContent = items.length;
+    if (!items.length) {
+      body.innerHTML = '<tr><td colspan="4" class="team-empty">暂无数据</td></tr>';
+    } else {
+      body.innerHTML = items.map(it => `
+        <tr>
+          <td><span class="tag tag-sky">${esc(it.team_name)}</span></td>
+          <td>${esc(it.member_name)}</td>
+          <td class="q" title="${esc(it.user_message)}">${esc(it.user_message).slice(0, 120)}${it.user_message.length > 120 ? '...' : ''}</td>
+          <td class="times">${it.total}</td>
+        </tr>
+      `).join('');
+    }
+    wrap.style.display = '';
+  } catch {
+    body.innerHTML = '<tr><td colspan="4" class="team-empty" style="color:var(--rose)">加载失败</td></tr>';
+    wrap.style.display = '';
+  } finally {
+    loading.style.display = 'none';
+  }
 }
 
 async function loadFeedbackDashboard() {
