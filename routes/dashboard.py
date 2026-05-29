@@ -217,3 +217,36 @@ def save_hot_questions(current_user):
     questions = data.get('questions', [])
     set_setting('approved_hot_questions', json.dumps(questions, ensure_ascii=False))
     return jsonify({'message': 'Saved', 'count': len(questions)})
+
+@dashboard_bp.route('/team-question-stats')
+@admin_required
+def team_question_stats(current_user):
+    limit = min(request.args.get('limit', 100, type=int), 500)
+    dclause, dparams = date_filter()
+    team_name = (request.args.get('team_name') or '').strip()
+    member_name = (request.args.get('member_name') or '').strip()
+    extra_clause = ''
+    extra_params = []
+    if team_name:
+        extra_clause += ' AND COALESCE(NULLIF(team_name, \'\'), \'未分组\') = ?'
+        extra_params.append(team_name)
+    if member_name:
+        member_name = member_name.replace('\\', '\\\\').replace('%', '\\%').replace('_', '\\_')
+        extra_clause += ' AND COALESCE(NULLIF(member_name, \'\'), \'未命名\') LIKE ? ESCAPE \'\\\''
+        extra_params.append(f'%{member_name}%')
+    conn = get_db_connection()
+    rows = conn.execute(
+        f'''SELECT
+            COALESCE(NULLIF(team_name, ''), '未分组') as team_name,
+            COALESCE(NULLIF(member_name, ''), '未命名') as member_name,
+            user_message,
+            COUNT(*) as total
+        FROM chat_history
+        WHERE 1=1{dclause}{extra_clause}
+        GROUP BY team_name, member_name, user_message
+        ORDER BY total DESC
+        LIMIT ?''',
+        dparams + extra_params + [limit]
+    ).fetchall()
+    conn.close()
+    return jsonify({'items': [dict(r) for r in rows]})

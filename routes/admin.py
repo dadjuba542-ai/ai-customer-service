@@ -121,6 +121,8 @@ def coze_api_key(current_user):
         return jsonify({'message': 'API Key updated'})
     current_key = get_setting('coze_api_key', '')
     masked = current_key[:8] + '****' + current_key[-4:] if len(current_key) > 12 else ''
+    if Config.HIDE_ADMIN_API_KEY:
+        return jsonify({'masked': masked or '未设置'})
     return jsonify({'api_key': current_key, 'masked': masked or '未设置'})
 
 @admin_bp.route('/settings/blocked-keywords', methods=['GET', 'PUT'])
@@ -156,3 +158,31 @@ def waiting_content(current_user):
     if not steps:
         steps = ["正在理解您的问题...","正在匹配最佳智能体...","正在检索产品知识库...","正在分析问题关键点...","正在构思回答框架...","正在组织语言表达...","正在校验回答准确性...","正在润色语言风格...","正在生成完整回复...","即将完成..."]
     return jsonify({'tips': tips, 'steps': steps})
+
+@admin_bp.route('/settings/default-team', methods=['GET', 'PUT'])
+@admin_required
+def default_team(current_user):
+    if request.method == 'PUT':
+        data = request.get_json(silent=True) or {}
+        raw = data.get('team_names')
+        if isinstance(raw, list):
+            teams = [str(x).strip() for x in raw if str(x).strip()]
+        else:
+            text = str(raw or data.get('team_name') or '')
+            teams = [t.strip() for t in text.split(',') if t.strip()]
+        set_setting('default_team_names', json.dumps(teams, ensure_ascii=False))
+        # Keep legacy key for compatibility.
+        set_setting('default_team_name', teams[0] if teams else '')
+        return jsonify({'message': '默认团队名单已更新', 'team_names': teams})
+    raw = get_setting('default_team_names', '[]')
+    try:
+        teams = json.loads(raw)
+        if not isinstance(teams, list):
+            teams = []
+    except:
+        teams = []
+    if not teams:
+        single = get_setting('default_team_name', '').strip()
+        if single:
+            teams = [single]
+    return jsonify({'team_names': teams})
