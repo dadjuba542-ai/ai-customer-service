@@ -31,6 +31,15 @@ function getUserId() {
   return id;
 }
 
+function getViewerId() {
+  let id = localStorage.getItem('qa_viewer_id');
+  if (!id) {
+    id = 'qa' + Date.now().toString(36) + Math.random().toString(36).slice(2, 10);
+    localStorage.setItem('qa_viewer_id', id);
+  }
+  return id;
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   loadAgents();
   loadWaitingContent();
@@ -698,6 +707,20 @@ let qaPages = 0;
 let currentQId = null;
 let nicknameResolve = null;
 
+function getLikedReplyIds() {
+  try {
+    return new Set(JSON.parse(localStorage.getItem('liked_reply_ids') || '[]').map(String));
+  } catch {
+    return new Set();
+  }
+}
+
+function markReplyLiked(replyId) {
+  const ids = getLikedReplyIds();
+  ids.add(String(replyId));
+  localStorage.setItem('liked_reply_ids', JSON.stringify([...ids]));
+}
+
 function getNickname() {
   return new Promise(resolve => {
     const stored = localStorage.getItem('community_nickname');
@@ -784,7 +807,7 @@ async function loadMoreQA() {
 async function showQDetail(id) {
   currentQId = id;
   try {
-    const res = await fetch(`${API_BASE}/api/community/questions/${id}`);
+    const res = await fetch(`${API_BASE}/api/community/questions/${id}?viewer_id=${encodeURIComponent(getViewerId())}`);
     if (!res.ok) return;
     const q = await res.json();
     let html = `
@@ -793,12 +816,19 @@ async function showQDetail(id) {
       <div class="qdetail-divider">💬 ${q.reply_count} 条评论</div>`;
 
     if (q.replies && q.replies.length) {
+      const likedReplies = getLikedReplyIds();
       q.replies.forEach(r => {
+        const liked = likedReplies.has(String(r.id));
         html += `<div class="qdetail-reply">
           <span class="qdetail-reply-avatar">${(r.nickname || '匿').charAt(0)}</span>
           <div class="qdetail-reply-body">
-            <div class="qdetail-reply-author">${escapeHtml(r.nickname || '匿名')}</div>
+            <div class="qdetail-reply-author">
+              ${escapeHtml(r.nickname || '匿名')}
+            </div>
             <div class="qdetail-reply-text">${escapeHtml(r.content)}</div>
+            <button class="qdetail-reply-like ${liked ? 'liked' : ''}" onclick="likeReply(${r.id}, this)" ${liked ? 'disabled' : ''}>
+              <i class="ph ph-thumbs-up"></i><span>${r.like_count || 0}</span>
+            </button>
           </div>
         </div>`;
       });
@@ -809,6 +839,23 @@ async function showQDetail(id) {
     document.getElementById('qdetail-reply-input').value = '';
     document.getElementById('qdetail-overlay').classList.add('active');
   } catch {}
+}
+
+async function likeReply(replyId, btn) {
+  if (!replyId || !btn || btn.disabled) return;
+  btn.disabled = true;
+  try {
+    const res = await fetch(`${API_BASE}/api/community/replies/${replyId}/like`, { method: 'POST' });
+    if (!res.ok) throw new Error('like failed');
+    const data = await res.json();
+    markReplyLiked(replyId);
+    btn.classList.add('liked');
+    const countEl = btn.querySelector('span');
+    if (countEl) countEl.textContent = data.like_count || 0;
+  } catch {
+    btn.disabled = false;
+    showToast('点赞失败', 'error');
+  }
 }
 
 function closeQDetail(e) {
@@ -839,17 +886,16 @@ function submitSurvey(score) {
 
 async function submitReply() {
   if (!currentQId) return;
-  const nickname = await getNickname();
   const content = document.getElementById('qdetail-reply-input').value.trim();
   if (!content) { showToast('请输入回复内容', 'error'); return; }
   try {
     const res = await fetch(`${API_BASE}/api/community/questions/${currentQId}/replies`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ nickname, content }),
+      body: JSON.stringify({ nickname: '匿名用户', content, viewer_id: getViewerId() }),
     });
     if (res.ok) {
-      showToast('评论成功', 'success');
+      showToast('评论已提交，精选后公开展示', 'success');
       showQDetail(currentQId);
     } else {
       const data = await res.json();

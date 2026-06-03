@@ -322,6 +322,14 @@
     .admin-list-item .item-title { font-weight: 600; font-size: 14px; color: var(--slate-800); }
     .admin-list-item .item-meta { font-size: 12px; color: var(--slate-400); margin-top: 2px; }
     .admin-list-item .item-actions { display: flex; gap: 8px; flex-shrink: 0; }
+    .qa-replies { margin-top: 12px; padding-top: 10px; border-top: 1px dashed var(--slate-200); }
+    .qa-reply-item { display: flex; justify-content: space-between; gap: 12px; padding: 8px 0; }
+    .qa-reply-item + .qa-reply-item { border-top: 1px solid var(--slate-100); }
+    .qa-reply-main { min-width: 0; }
+    .qa-reply-meta { font-size: 12px; color: var(--slate-400); margin-bottom: 3px; }
+    .qa-reply-text { font-size: 13px; color: var(--slate-700); line-height: 1.5; overflow-wrap: anywhere; }
+    .qa-reply-actions { display: flex; gap: 6px; align-items: flex-start; flex-shrink: 0; }
+    .qa-reply-status { font-weight: 600; }
     .empty-state { text-align: center; padding: 40px 20px; color: var(--slate-400); font-size: 14px; }
     .empty-state i { font-size: 32px; display: block; margin-bottom: 8px; }
     .upload-area {
@@ -2488,9 +2496,10 @@ async function loadAdminQA() {
     }
     list.innerHTML = data.items.map(q => `
       <div class="admin-list-item">
-        <div>
+        <div style="min-width:0;flex:1">
           <div class="item-title">${esc(q.title)} <span style="font-weight:400;font-size:12px;color:var(--slate-400)">${esc(q.category || '')}</span></div>
-          <div class="item-meta">${q.reply_count}条评论 · ${fmt(q.created_at)} · ${q.status ? '✅ 显示' : '🚫 隐藏'}</div>
+          <div class="item-meta">${q.reply_count}条已精选 · ${q.pending_reply_count || 0}条待精选 · ${fmt(q.created_at)} · ${q.status ? '✅ 显示' : '🚫 隐藏'}</div>
+          ${renderQAReplies(q.replies || [])}
         </div>
         <div class="item-actions">
           <button class="btn btn-secondary btn-sm" onclick="editQA(${q.id})">编辑</button>
@@ -2500,6 +2509,25 @@ async function loadAdminQA() {
       </div>
     `).join('');
   } catch {}
+}
+
+function renderQAReplies(replies) {
+  if (!replies.length) return '';
+  return `<div class="qa-replies">${replies.map(r => `
+    <div class="qa-reply-item">
+      <div class="qa-reply-main">
+        <div class="qa-reply-meta">
+          匿名用户 · ${fmt(r.created_at)} ·
+          <span class="qa-reply-status" style="color:${r.status ? 'var(--emerald)' : 'var(--amber)'}">${r.status ? '已精选' : '待精选'}</span>
+        </div>
+        <div class="qa-reply-text">${esc(r.content || '')}</div>
+      </div>
+      <div class="qa-reply-actions">
+        <button class="btn btn-secondary btn-sm" onclick="setReplyStatus(${r.id}, ${r.status ? 0 : 1})" style="${r.status ? 'color:var(--rose)' : 'color:var(--emerald)'}">${r.status ? '隐藏' : '精选'}</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteReply(${r.id})">删除</button>
+      </div>
+    </div>
+  `).join('')}</div>`;
 }
 
 async function editQA(id) {
@@ -2566,6 +2594,38 @@ async function deleteQA(id) {
     });
     if (res.ok) { showToast('已删除', 'success'); loadAdminQA(); }
   } catch {}
+}
+
+async function setReplyStatus(id, status) {
+  try {
+    const res = await fetch(`${API}/api/community/admin/replies/${id}/status`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${getToken()}` },
+      body: JSON.stringify({ status }),
+    });
+    if (res.ok) {
+      showToast(status ? '已精选' : '已隐藏', 'success');
+      loadAdminQA();
+    } else {
+      showToast('操作失败', 'error');
+    }
+  } catch { showToast('网络错误', 'error'); }
+}
+
+async function deleteReply(id) {
+  if (!confirm('确定删除这条评论？')) return;
+  try {
+    const res = await fetch(`${API}/api/community/admin/replies/${id}`, {
+      method: 'DELETE',
+      headers: { 'Authorization': `Bearer ${getToken()}` },
+    });
+    if (res.ok) {
+      showToast('已删除', 'success');
+      loadAdminQA();
+    } else {
+      showToast('删除失败', 'error');
+    }
+  } catch { showToast('网络错误', 'error'); }
 }
 
 // ===== Init =====

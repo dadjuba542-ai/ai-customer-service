@@ -157,10 +157,20 @@ def init_db():
             nickname TEXT DEFAULT '',
             content TEXT DEFAULT '',
             status INTEGER DEFAULT 1,
+            author_key TEXT DEFAULT '',
+            like_count INTEGER DEFAULT 0,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (question_id) REFERENCES questions(id)
         )
     ''')
+    try:
+        cursor.execute('ALTER TABLE replies ADD COLUMN author_key TEXT DEFAULT ""')
+    except sqlite3.OperationalError:
+        pass
+    try:
+        cursor.execute('ALTER TABLE replies ADD COLUMN like_count INTEGER DEFAULT 0')
+    except sqlite3.OperationalError:
+        pass
 
     conn.commit()
 
@@ -678,22 +688,29 @@ def get_questions(page=1, limit=10, category=None, status=1):
     conditions = []
     params = []
     if status is not None:
-        conditions.append('status = ?')
+        conditions.append('q.status = ?')
         params.append(status)
     if category:
-        conditions.append('category = ?')
+        conditions.append('q.category = ?')
         params.append(category)
     where = ('WHERE ' + ' AND '.join(conditions)) if conditions else ''
-    total = conn.execute(f'SELECT COUNT(*) as cnt FROM questions {where}', params).fetchone()['cnt']
+    total = conn.execute(f'SELECT COUNT(*) as cnt FROM questions q {where}', params).fetchone()['cnt']
     offset = (page - 1) * limit
     rows = conn.execute(
-        f'SELECT * FROM questions {where} ORDER BY created_at DESC LIMIT ? OFFSET ?',
+        f'''
+        SELECT q.id, q.nickname, q.title, q.content, q.category, q.status, q.view_count, q.created_at,
+               (SELECT COUNT(*) FROM replies r WHERE r.question_id = q.id AND r.status = 1) as reply_count,
+               (SELECT COUNT(*) FROM replies r WHERE r.question_id = q.id AND r.status = 0) as pending_reply_count
+        FROM questions q
+        {where}
+        ORDER BY q.created_at DESC LIMIT ? OFFSET ?
+        ''',
         params + [limit, offset]
     ).fetchall()
     conn.close()
     return {'items': [dict(r) for r in rows], 'total': total, 'page': page, 'pages': max(1, (total + limit - 1) // limit)}
 
-def get_question_detail(id):
+def get_question_detail(id, viewer_id=None):
     conn = get_db_connection()
     conn.execute('UPDATE questions SET view_count = view_count + 1 WHERE id = ?', (id,))
     row = conn.execute('SELECT * FROM questions WHERE id = ?', (id,)).fetchone()
@@ -701,21 +718,55 @@ def get_question_detail(id):
         conn.close()
         return None
     q = dict(row)
-    replies_rows = conn.execute(
-        'SELECT * FROM replies WHERE question_id = ? AND status = 1 ORDER BY created_at ASC',
+    q['reply_count'] = conn.execute(
+        'SELECT COUNT(*) as cnt FROM replies WHERE question_id = ? AND status = 1',
         (id,)
-    ).fetchall()
+    ).fetchone()['cnt']
+    if viewer_id:
+        replies_rows = conn.execute(
+            '''
+            SELECT *,
+                   CASE WHEN status = 0 AND author_key = ? THEN 1 ELSE 0 END as is_own_pending
+            FROM replies
+            WHERE question_id = ? AND (status = 1 OR (status = 0 AND author_key = ?))
+            ORDER BY status ASC, created_at ASC
+            ''',
+            (viewer_id, id, viewer_id)
+        ).fetchall()
+    else:
+        replies_rows = conn.execute(
+            'SELECT *, 0 as is_own_pending FROM replies WHERE question_id = ? AND status = 1 ORDER BY created_at ASC',
+            (id,)
+        ).fetchall()
     conn.close()
-    q['replies'] = [dict(r) for r in replies_rows]
+    q['replies'] = [mask_reply_author(dict(r)) for r in replies_rows]
     return q
 
-def create_reply(question_id, nickname, content, status=1):
+def mask_reply_author(reply):
+    reply['nickname'] = '匿名用户'
+    return reply
+
+def get_question_replies(question_id, status=None):
+    conn = get_db_connection()
+    if status is None:
+        rows = conn.execute(
+            'SELECT * FROM replies WHERE question_id = ? ORDER BY status ASC, created_at DESC',
+            (question_id,)
+        ).fetchall()
+    else:
+        rows = conn.execute(
+            'SELECT * FROM replies WHERE question_id = ? AND status = ? ORDER BY created_at DESC',
+            (question_id, status)
+        ).fetchall()
+    conn.close()
+    return [mask_reply_author(dict(r)) for r in rows]
+
+def create_reply(question_id, nickname, content, status=0, author_key=''):
     conn = get_db_connection()
     conn.execute(
-        'INSERT INTO replies (question_id, nickname, content, status) VALUES (?, ?, ?, ?)',
-        (question_id, nickname, content, status)
+        'INSERT INTO replies (question_id, nickname, content, status, author_key) VALUES (?, ?, ?, ?, ?)',
+        (question_id, '匿名用户', content, status, author_key)
     )
-    conn.execute('UPDATE questions SET reply_count = reply_count + 1 WHERE id = ?', (question_id,))
     conn.commit()
     id = conn.execute('SELECT last_insert_rowid()').fetchone()[0]
     conn.close()
@@ -731,7 +782,32 @@ def delete_question(id):
 def delete_reply(id):
     conn = get_db_connection()
     conn.execute('DELETE FROM replies WHERE id = ?', (id,))
+    conn.commit()
     conn.close()
+
+def set_reply_status(id, status):
+    conn = get_db_connection()
+    row = conn.execute('SELECT id FROM replies WHERE id = ?', (id,)).fetchone()
+    if not row:
+        conn.close()
+        return None
+    val = 1 if int(status) else 0
+    conn.execute('UPDATE replies SET status = ? WHERE id = ?', (val, id))
+    conn.commit()
+    conn.close()
+    return val
+
+def like_reply(id):
+    conn = get_db_connection()
+    row = conn.execute('SELECT like_count FROM replies WHERE id = ?', (id,)).fetchone()
+    if not row:
+        conn.close()
+        return None
+    conn.execute('UPDATE replies SET like_count = COALESCE(like_count, 0) + 1 WHERE id = ?', (id,))
+    conn.commit()
+    count = conn.execute('SELECT like_count FROM replies WHERE id = ?', (id,)).fetchone()['like_count']
+    conn.close()
+    return count
 
 def toggle_question_status(id):
     conn = get_db_connection()
