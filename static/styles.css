@@ -809,6 +809,29 @@ body {
 .qdetail-reply-body { flex: 1; }
 .qdetail-reply-author { font-size: 12px; font-weight: 600; color: var(--slate-600); margin-bottom: 4px; }
 .qdetail-reply-text { font-size: 14px; line-height: 1.6; color: var(--slate-700); }
+.qdetail-reply-like {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 8px;
+  padding: 4px 8px;
+  border: 1px solid var(--slate-200);
+  border-radius: 999px;
+  background: var(--white);
+  color: var(--slate-500);
+  font-size: 12px;
+  font-family: inherit;
+  cursor: pointer;
+}
+.qdetail-reply-like i { font-size: 14px; }
+.qdetail-reply-like:hover { border-color: var(--primary); color: var(--primary); }
+.qdetail-reply-like.liked,
+.qdetail-reply-like:disabled {
+  background: var(--primary-light);
+  border-color: var(--primary-light);
+  color: var(--primary);
+  cursor: default;
+}
 .qdetail-empty { text-align: center; padding: 20px; color: var(--slate-400); font-size: 14px; }
 
 .qdetail-reply-box {
