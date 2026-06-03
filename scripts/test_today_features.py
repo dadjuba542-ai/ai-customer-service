@@ -19,7 +19,7 @@ def main():
         os.environ["ADMIN_USERNAME"] = "admin8"
 
         from app import app
-        from models import save_chat_history
+        from models import create_question, save_chat_history
 
         client = app.test_client()
 
@@ -63,6 +63,18 @@ def main():
             len(items) == 1 and items[0]["member_name"] == "李%四",
             f"member wildcard escaping failed: {items}",
         )
+
+        # 5) Admin Q&A list should include all statuses; public list only visible questions.
+        visible_id = create_question("", "公开问答", "公开回答", "产品知识", 1)
+        hidden_id = create_question("", "隐藏问答", "隐藏回答", "产品知识", 0)
+        r = client.get("/api/community/admin/questions?page=1&limit=50", headers=auth)
+        assert_true(r.status_code == 200, f"admin question list failed: {r.status_code}")
+        admin_ids = {item["id"] for item in r.get_json().get("items", [])}
+        assert_true(visible_id in admin_ids and hidden_id in admin_ids, f"admin question list missing items: {admin_ids}")
+
+        r = client.get("/api/community/questions?page=1&limit=50")
+        public_ids = {item["id"] for item in r.get_json().get("items", [])}
+        assert_true(visible_id in public_ids and hidden_id not in public_ids, f"public question visibility failed: {public_ids}")
 
         print("PASS: today features smoke test")
 
