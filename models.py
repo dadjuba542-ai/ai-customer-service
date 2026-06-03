@@ -675,12 +675,15 @@ def update_question(id, title, content, category, status=1):
 
 def get_questions(page=1, limit=10, category=None, status=1):
     conn = get_db_connection()
-    conditions = ['status = ?']
-    params = [status]
+    conditions = []
+    params = []
+    if status is not None:
+        conditions.append('status = ?')
+        params.append(status)
     if category:
         conditions.append('category = ?')
         params.append(category)
-    where = 'WHERE ' + ' AND '.join(conditions)
+    where = ('WHERE ' + ' AND '.join(conditions)) if conditions else ''
     total = conn.execute(f'SELECT COUNT(*) as cnt FROM questions {where}', params).fetchone()['cnt']
     offset = (page - 1) * limit
     rows = conn.execute(
