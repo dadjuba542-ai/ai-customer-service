@@ -1,1 +1,0 @@
-Done. Generated the PNG and wrote `result.json` at the requested paths.

@@ -22,3 +22,6 @@ Thumbs.db
 # Uploads (keep folder but not files)
 static/uploads/*
 !static/uploads/.gitkeep
+
+# Generated intermediate execution cache under outputs
+outputs/**/.codex-exec/

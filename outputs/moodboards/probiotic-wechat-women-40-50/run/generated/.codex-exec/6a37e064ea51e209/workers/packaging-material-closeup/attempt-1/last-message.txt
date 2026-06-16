@@ -1,3 +1,0 @@
-Generated via `image_gen.imagegen`, but the tool did not expose savable PNG bytes or a local file path in this environment, so I wrote the required failed worker result JSON to:
-
-`generated/.codex-exec/6a37e064ea51e209/workers/packaging-material-closeup/attempt-1/result.json`
