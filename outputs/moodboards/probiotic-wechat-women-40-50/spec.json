@@ -1,0 +1,257 @@
+{
+  "meta": {
+    "title": "益生菌健康产品微信朋友圈视觉 mood board",
+    "summary": "面向40-50岁女性的朋友圈 campaign 视觉方向，围绕益生菌、产品包装盒、温和健康感、可信赖但不医疗化的生活场景。",
+    "businessContext": {
+      "product": "元气启航乐源胶原蛋白固体饮料，益生菌/健康产品方向",
+      "audience": "40-50岁女性",
+      "channel": "微信朋友圈",
+      "sourceImage": "/Users/test/Downloads/0产品.png"
+    },
+    "nextOutputs": [
+      "微信朋友圈单图",
+      "朋友圈九宫格素材方向",
+      "产品包装主视觉",
+      "健康生活方式广告图"
+    ],
+    "generationCount": 12
+  },
+  "signals": {
+    "palette": [
+      "包装绿色",
+      "干净白色",
+      "柔和金色",
+      "浅木色",
+      "自然米白"
+    ],
+    "audienceCue": "成熟、理性、关注健康管理和日常状态的40-50岁女性",
+    "emotionalRegister": "温和、可信、清爽、有生活质感，不夸张、不医疗化",
+    "mustInclude": [
+      "产品包装盒或抽象包装盒",
+      "益生菌/肠道健康的轻科学感",
+      "女性日常健康场景",
+      "适合微信朋友圈的真实生活感"
+    ],
+    "avoid": [
+      "医院、医生、药品疗效暗示",
+      "过度年轻化网红风",
+      "夸张瘦身或治疗承诺",
+      "可读文字、真实logo复刻、硬广排版"
+    ]
+  },
+  "items": [
+    {
+      "id": "product-morning-counter",
+      "title": "清晨厨房产品静物",
+      "caption": "白绿包装盒放在干净厨房台面，旁边有温水杯、燕麦和植物。",
+      "source": "产品包装图与微信朋友圈健康生活场景",
+      "tone": "清爽、可信、日常",
+      "motif": "包装盒、早餐、温水、自然光",
+      "palette": [
+        "#ffffff",
+        "#87ad32",
+        "#f0c84c",
+        "#e9efe4",
+        "#c9b892"
+      ],
+      "prompt": "Single editorial product photograph for a probiotic wellness campaign aimed at women age 40 to 50 in WeChat Moments. A generic white and fresh green supplement packaging box inspired by a probiotic product box sits on a clean morning kitchen counter, with a glass of warm water, oats, and a small green plant. Soft natural morning light, calm mature lifestyle, trustworthy health feeling, white green and gentle gold palette. No readable text, no real logo, no medical claims, no hospital cues, no collage, no grid.",
+      "remixSuggestions": {
+        "style": [
+          {
+            "label": "更生活化",
+            "description": "让画面像真实朋友圈随手记录，但仍保持干净质感。",
+            "promptHint": "make it more natural and lived-in, like a polished WeChat Moments lifestyle photo"
+          },
+          {
+            "label": "更高级",
+            "description": "加强光影、材质和产品主角感。",
+            "promptHint": "more premium editorial product lighting with restrained props"
+          }
+        ],
+        "palette": [
+          {
+            "label": "白绿更清爽",
+            "description": "强化包装绿色和白色空间。",
+            "promptHint": "increase clean white space and fresh green accents"
+          }
+        ]
+      }
+    },
+    {
+      "id": "woman-tea-window",
+      "title": "窗边饮用仪式",
+      "caption": "40-50岁女性在窗边拿着温水杯，包装盒在桌面边缘出现。",
+      "source": "目标人群与朋友圈日常场景",
+      "tone": "温和、安心、成熟",
+      "motif": "女性、温水、窗光、包装盒",
+      "palette": [
+        "#f8faf5",
+        "#7fa734",
+        "#e8c654",
+        "#d7c7a6",
+        "#50664f"
+      ],
+      "prompt": "Single lifestyle photograph for a probiotic wellness product campaign, showing an elegant Chinese woman in her 40s or early 50s sitting by a bright window with a warm water glass in hand. A generic white green supplement box is softly visible on the table, not dominant but recognizable as packaging. Calm self-care ritual, mature confidence, natural skin texture, soft daylight, clean white green and warm gold palette. No readable text, no real logo, no medical claim, no hospital, no doctor, no collage."
+    },
+    {
+      "id": "digestive-science-still-life",
+      "title": "轻科学益生菌静物",
+      "caption": "用玻璃器皿、乳白粉末、绿色植物表达轻科学，不像医疗实验室。",
+      "source": "益生菌和轻科学视觉暗示",
+      "tone": "科学、干净、柔和",
+      "motif": "玻璃、粉末、植物、分子感",
+      "palette": [
+        "#ffffff",
+        "#8bb23c",
+        "#f4d35e",
+        "#dce8d7",
+        "#b8c5a2"
+      ],
+      "prompt": "Single visual reference image, a soft wellness science still life for a probiotic product campaign. A generic white green supplement box beside glass vessels, a spoon with fine white powder, tiny natural botanical elements, and a subtle abstract probiotic microbe motif as physical decorative beads, not medical. Clean studio daylight, trustworthy, fresh, gentle gold accent, premium but approachable. No readable text, no logo, no lab coat, no hospital, no medical claim, no collage or layout."
+    },
+    {
+      "id": "wechat-feed-hero",
+      "title": "朋友圈主视觉留白",
+      "caption": "适合后期加朋友圈文案的竖向产品主图，产品在右下或中心偏下。",
+      "source": "微信朋友圈渠道",
+      "tone": "干净、传播友好、品牌感",
+      "motif": "竖图、留白、包装盒、自然光",
+      "palette": [
+        "#ffffff",
+        "#86ad35",
+        "#edc94e",
+        "#eef5e9",
+        "#cad8bd"
+      ],
+      "prompt": "Single vertical editorial product photograph designed for WeChat Moments, with generous clean white space and a generic white green probiotic supplement box placed in the lower part of the frame. Soft green botanical shadow, subtle gold accent object, premium health product atmosphere for women age 40 to 50. Leave empty space for later deterministic copy, but the image itself must contain no readable text, no logo, no advertising layout, no collage."
+    },
+    {
+      "id": "mother-daughter-health",
+      "title": "成熟女性与家庭关怀",
+      "caption": "家庭餐桌前的健康关怀感，强调陪伴而不是治疗。",
+      "source": "40-50岁女性家庭场景",
+      "tone": "温暖、可信、有人情味",
+      "motif": "家庭餐桌、女性、温水、包装盒",
+      "palette": [
+        "#f7f6ef",
+        "#7e9f35",
+        "#d9bd58",
+        "#b9a984",
+        "#ffffff"
+      ],
+      "prompt": "Single warm lifestyle photograph for a probiotic wellness campaign. A mature woman around 45 to 50 prepares a simple healthy breakfast at a family dining table, with a generic white green supplement box nearby and a glass of water. The feeling is care, balance, and everyday wellness, not treatment. Natural Chinese home setting, soft beige, white, green and muted gold palette. No readable text, no real brand mark, no medical claims, no doctor, no hospital, no collage."
+    },
+    {
+      "id": "packaging-material-closeup",
+      "title": "包装材质近景",
+      "caption": "包装盒边缘、绿色侧面、金色细节和白色主面形成高级质感。",
+      "source": "产品包装盒",
+      "tone": "精致、克制、品牌锚点",
+      "motif": "包装盒、绿色侧面、金色细节、纸盒材质",
+      "palette": [
+        "#ffffff",
+        "#82a934",
+        "#f0c94a",
+        "#e5e5d8",
+        "#3e6b48"
+      ],
+      "prompt": "Single macro product photograph focusing on a generic probiotic supplement box inspired by a white front, green side panel, and gentle gold graphic accent. Show premium paperboard texture, beveled box edge, clean studio lighting, crisp health product feeling. Abstract packaging only, no readable text, no actual logo, no medical claims. White green gold palette, high-end but not luxury cosmetic, no collage, no grid."
+    },
+    {
+      "id": "active-walk-wellness",
+      "title": "轻运动健康状态",
+      "caption": "中年女性晨间散步或瑜伽后的自然状态，包装作为生活用品出现。",
+      "source": "健康状态与目标人群",
+      "tone": "轻盈、自然、有状态",
+      "motif": "晨间、轻运动、女性、产品盒",
+      "palette": [
+        "#f3f7ef",
+        "#7fa536",
+        "#f0cf5b",
+        "#d8e3cc",
+        "#aab98f"
+      ],
+      "prompt": "Single natural lifestyle photograph for a probiotic wellness campaign. A healthy Chinese woman around 45 to 50 after a morning walk or light stretching sits on a bench with a water bottle and a generic white green supplement box in a tote bag. Fresh park-side light, calm energy, practical self-care, mature and believable. No readable text, no logo, no medical claim, no extreme fitness, no young influencer styling, no collage."
+    },
+    {
+      "id": "clean-bathroom-routine",
+      "title": "晨间洗漱台健康习惯",
+      "caption": "把产品放进日常习惯系统里，干净但不冷冰冰。",
+      "source": "每日服用习惯与家庭生活",
+      "tone": "规律、清爽、安心",
+      "motif": "洗漱台、温水杯、包装盒、毛巾",
+      "palette": [
+        "#ffffff",
+        "#88ab3b",
+        "#eac957",
+        "#d9e6d6",
+        "#c8c8ba"
+      ],
+      "prompt": "Single clean lifestyle still life in a bright bathroom or vanity area, showing a generic white green probiotic supplement box beside a warm water glass, soft towel, and small plant. The scene suggests a regular morning wellness habit for women age 40 to 50. Clean, fresh, trustworthy, not clinical, white green and gentle gold accents. No readable text, no real logo, no medical or treatment claim, no collage."
+    },
+    {
+      "id": "soft-gut-health-abstraction",
+      "title": "温和肠道健康抽象",
+      "caption": "用圆润、流动、植物和金色微生物符号暗示益生菌。",
+      "source": "益生菌视觉语言",
+      "tone": "轻科学、柔和、有识别度",
+      "motif": "圆润形态、微生态、植物、金色线条",
+      "palette": [
+        "#ffffff",
+        "#86ac3a",
+        "#f2cc53",
+        "#e7f0df",
+        "#aac292"
+      ],
+      "prompt": "Single abstract product-adjacent visual reference image for probiotic gut wellness, using soft rounded forms, botanical textures, and gentle gold microbe-like beads around a generic white green supplement box. The abstraction should feel friendly and credible for mature women, not medical or childish. Clean white background, fresh green and gold palette. No readable text, no logo, no organs, no diagnosis, no collage, no layout."
+    },
+    {
+      "id": "premium-shelf-display",
+      "title": "家庭健康柜陈列",
+      "caption": "产品和燕麦、坚果、茶包等放在家中健康角落。",
+      "source": "产品包装盒与家庭健康管理",
+      "tone": "有序、实用、可信",
+      "motif": "健康柜、包装盒、谷物、茶包",
+      "palette": [
+        "#f9faf4",
+        "#7fa43a",
+        "#e5c154",
+        "#cdbd94",
+        "#ffffff"
+      ],
+      "prompt": "Single realistic home shelf photograph for a probiotic wellness product. A generic white green supplement box sits neatly among oats, nuts, herbal tea, and a ceramic cup in a mature woman's organized health corner. Calm, credible, not over-styled, WeChat Moments friendly, fresh green white and muted gold. No readable text, no real logo, no medical claim, no pharmacy shelf, no collage."
+    },
+    {
+      "id": "hands-opening-box",
+      "title": "开盒手部细节",
+      "caption": "成熟女性手部打开包装盒，形成真实使用感。",
+      "source": "产品包装盒与使用动作",
+      "tone": "真实、亲近、细节感",
+      "motif": "手部、开盒、条包、温水",
+      "palette": [
+        "#ffffff",
+        "#85aa39",
+        "#efcc56",
+        "#e8eee0",
+        "#c8b98e"
+      ],
+      "prompt": "Single close-up lifestyle photograph of elegant mature female hands opening a generic white green probiotic supplement box on a clean table, with small sachets partly visible and a glass of warm water nearby. The product feels practical, trustworthy, and easy to use. Soft daylight, white green gold palette, natural hand detail. No readable text, no actual logo, no medical claims, no collage or grid."
+    },
+    {
+      "id": "wechat-nine-grid-style",
+      "title": "朋友圈九宫格单张候选",
+      "caption": "不是九宫格本身，而是一张可放进九宫格的生活方式图。",
+      "source": "微信朋友圈传播格式",
+      "tone": "轻松、可分享、不硬广",
+      "motif": "咖啡桌、产品、书、植物、温水",
+      "palette": [
+        "#fbfbf4",
+        "#7fa638",
+        "#e9c756",
+        "#d7dfcc",
+        "#a99f78"
+      ],
+      "prompt": "Single square lifestyle photograph that could be one tile in a WeChat Moments nine-image post, not a grid itself. A generic white green probiotic supplement box on a coffee table with a book, warm water, and fresh greenery, aimed at women age 40 to 50. Relaxed, tasteful, shareable, not hard-sell. Clean white green and gentle gold palette. No readable text, no logo, no medical claim, no collage, no contact sheet."
+    }
+  ]
+}
