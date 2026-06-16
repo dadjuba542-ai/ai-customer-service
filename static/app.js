@@ -383,63 +383,279 @@ async function fetchWithTimeout(url, options = {}, timeout = 35000) {
   }
 }
 
+function buildChatPayload(text, agent) {
+  return {
+    message: text,
+    query_type: agent.type,
+    agent_id: agent.id,
+    user_id: getUserId(),
+    team_name: state.profile?.team || '',
+    member_name: state.profile?.name || '',
+  };
+}
+
+function startChatRequest() {
+  const sendBtn = document.getElementById('send-btn');
+  sendBtn.disabled = true;
+  state.isTyping = true;
+  state.isStreaming = false;
+  showWaitingPanel();
+  updateChatAgentInfo();
+  return sendBtn;
+}
+
+function finishChatRequest(sendBtn) {
+  hideWaitingPanel();
+  hideTyping();
+  state.isTyping = false;
+  state.isStreaming = false;
+  if (sendBtn) sendBtn.disabled = false;
+  updateChatAgentInfo();
+}
+
+function createStreamingBotMessage(agentId) {
+  state.isStreaming = true;
+  const msgId = Date.now();
+  state.messages.push({
+    id: msgId,
+    role: 'bot',
+    content: '',
+    time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+    agentId,
+    isStreaming: true,
+    replyToText: lastUserText,
+  });
+  renderMessages();
+  updateChatAgentInfo();
+  return msgId;
+}
+
+function getMessageBubbleElement(msgId) {
+  return document.querySelector(`.msg[data-msg-id="${msgId}"] .msg-bubble`);
+}
+
+function updateStreamingMessageDom(msgId, content, isStreaming = true) {
+  const bubble = getMessageBubbleElement(msgId);
+  if (!bubble) {
+    renderMessages();
+    return;
+  }
+  bubble.innerHTML = `${escapeHtml(content)}${isStreaming ? '<span class="cursor-blink"></span>' : ''}`;
+  scrollToBottom();
+  updateScrollBtn();
+}
+
+function appendStreamingBotMessage(msgId, text) {
+  if (!text) return;
+  const msg = state.messages.find(m => m.id === msgId);
+  if (!msg) return;
+  msg.content += text;
+  updateStreamingMessageDom(msgId, msg.content, true);
+}
+
+function finalizeStreamingBotMessage(msgId, extras = {}) {
+  const msg = state.messages.find(m => m.id === msgId);
+  if (!msg) return;
+  msg.isStreaming = false;
+  if (extras.historyId) msg.historyId = extras.historyId;
+  if (extras.feedback !== undefined) msg.feedback = extras.feedback;
+  if (extras.content !== undefined) msg.content = extras.content;
+  renderMessages();
+}
+
+function addBotMessage(content, options = {}) {
+  addMessage({
+    id: Date.now(),
+    role: 'bot',
+    content,
+    time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+    agentId: options.agentId || state.activeAgentId,
+    historyId: options.historyId,
+    feedback: options.feedback,
+    replyToText: options.replyToText || lastUserText,
+  });
+}
+
+function parseSSEChunk(chunk) {
+  const lines = chunk.split('\n');
+  let event = 'message';
+  const dataLines = [];
+  for (const line of lines) {
+    if (!line) continue;
+    if (line.startsWith('event:')) {
+      event = line.slice(6).trim();
+    } else if (line.startsWith('data:')) {
+      dataLines.push(line.slice(5).trim());
+    }
+  }
+  if (!dataLines.length) return null;
+  try {
+    return {
+      event,
+      data: JSON.parse(dataLines.join('\n')),
+    };
+  } catch {
+    return null;
+  }
+}
+
+async function streamChatRequest(payload, agentId) {
+  const res = await fetch(`${API_BASE}/api/chat/stream`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+
+  if (!res.ok || !res.body) {
+    const errorPayload = await res.json().catch(() => ({}));
+    const error = new Error(errorPayload.error || '流式连接失败');
+    error.canFallback = true;
+    throw error;
+  }
+
+  const reader = res.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = '';
+  let botMsgId = null;
+  let sawOutput = false;
+
+  while (true) {
+    const { value, done } = await reader.read();
+    if (done) break;
+    buffer += decoder.decode(value, { stream: true });
+
+    while (buffer.includes('\n\n')) {
+      const boundary = buffer.indexOf('\n\n');
+      const chunk = buffer.slice(0, boundary);
+      buffer = buffer.slice(boundary + 2);
+      const parsed = parseSSEChunk(chunk);
+      if (!parsed) continue;
+
+      if (parsed.event === 'status') {
+        continue;
+      }
+
+      if (parsed.event === 'delta') {
+        if (!botMsgId) {
+          hideWaitingPanel();
+          botMsgId = createStreamingBotMessage(agentId);
+        }
+        sawOutput = true;
+        appendStreamingBotMessage(botMsgId, parsed.data?.text || '');
+        continue;
+      }
+
+      if (parsed.event === 'done') {
+        hideWaitingPanel();
+        const finalText = parsed.data?.full_text || '';
+        if (!botMsgId) {
+          botMsgId = createStreamingBotMessage(agentId);
+        }
+        if (!sawOutput && finalText) {
+          appendStreamingBotMessage(botMsgId, finalText);
+        }
+        finalizeStreamingBotMessage(botMsgId, {
+          historyId: parsed.data?.history_id,
+          content: finalText || (state.messages.find(m => m.id === botMsgId)?.content || ''),
+        });
+        state.isStreaming = false;
+        updateChatAgentInfo();
+        return parsed.data;
+      }
+
+      if (parsed.event === 'error') {
+        const error = new Error(parsed.data?.message || '流式回复失败');
+        if (botMsgId) {
+          const msg = state.messages.find(m => m.id === botMsgId);
+          const partial = msg?.content || '';
+          const nextContent = partial
+            ? `${partial}\n\n[本次回答未完成：${error.message}]`
+            : error.message;
+          finalizeStreamingBotMessage(botMsgId, { content: nextContent });
+          error.renderedInMessage = true;
+        } else {
+          error.canFallback = true;
+        }
+        throw error;
+      }
+    }
+  }
+
+  if (!sawOutput) {
+    const error = new Error('流式回复中断，请稍后重试');
+    error.canFallback = true;
+    throw error;
+  }
+
+  return null;
+}
+
+async function fallbackToSyncChat(payload, agentId) {
+  const res = await fetchWithTimeout(`${API_BASE}/api/chat/send`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  }, 120000);
+  const data = await res.json();
+  if (!res.ok) {
+    throw new Error(data.error || '发送失败');
+  }
+  addBotMessage(data.bot_response, { agentId, historyId: data.history_id });
+  return data;
+}
+
+async function executeChatRequest({ text, agentId }) {
+  const agent = AGENTS.find(a => a.id === agentId) || AGENTS[0];
+  const payload = buildChatPayload(text, agent);
+  const sendBtn = startChatRequest();
+
+  try {
+    const result = await streamChatRequest(payload, agentId);
+    checkSurvey();
+    return result;
+  } catch (error) {
+    if (error.canFallback) {
+      try {
+        const result = await fallbackToSyncChat(payload, agentId);
+        showToast('已切换为普通回复模式', 'info');
+        checkSurvey();
+        return result;
+      } catch (fallbackError) {
+        addBotMessage(fallbackError.message || '网络错误，请检查您的连接。', { agentId });
+        showToast(fallbackError.message || '发送失败', 'error');
+        throw fallbackError;
+      }
+    }
+
+    if (error.renderedInMessage) {
+      showToast(error.message || '回复中断', 'error');
+      throw error;
+    }
+
+    addBotMessage(error.message || '网络错误，请检查您的连接。', { agentId });
+    showToast(error.message || '发送失败', 'error');
+    throw error;
+  } finally {
+    finishChatRequest(sendBtn);
+  }
+}
+
 /* ===== Send Message ===== */
 async function sendMessage() {
   const input = document.getElementById('message-input');
   const text = input.value.trim();
   if (!text || state.isStreaming) return;
   if (state.currentView !== 'chat') { switchView('chat'); setTimeout(() => sendMessage(), 200); return; }
-
-  const agent = AGENTS.find(a => a.id === state.activeAgentId);
   const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
   lastUserText = text;
   lastUserAgentId = state.activeAgentId;
   addMessage({ id: Date.now(), role: 'user', content: text, time });
   input.value = '';
-  const sendBtn = document.getElementById('send-btn');
-  sendBtn.disabled = true;
-  state.isTyping = true;
-  showWaitingPanel();
 
   try {
-    const res = await fetchWithTimeout(`${API_BASE}/api/chat/send`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        message: text,
-        query_type: agent.type,
-        agent_id: agent.id,
-        user_id: getUserId(),
-        team_name: state.profile?.team || '',
-        member_name: state.profile?.name || '',
-      }),
-    }, 120000); // 2分钟超时
-    hideWaitingPanel();
-    state.isTyping = false;
-    showTyping();
-    const data = await res.json();
-    if (res.ok) {
-      hideTyping();
-      await streamResponse(data.bot_response, data.history_id);
-      checkSurvey();
-    } else {
-      hideTyping();
-      addMessage({ id: Date.now(), role: 'bot', content: data.error || '抱歉，发生了错误，请稍后重试。', time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })});
-      showToast(data.error || '发送失败', 'error');
-    }
-  } catch (error) {
-    hideWaitingPanel();
-    hideTyping();
-    state.isTyping = false;
-    state.isStreaming = false;
-    const errorMsg = error.message || '网络错误，请检查您的连接。';
-    addMessage({ id: Date.now(), role: 'bot', content: errorMsg, time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })});
-    showToast(errorMsg, 'error');
-  } finally {
-    sendBtn.disabled = false;
-    updateChatAgentInfo();
-  }
+    await executeChatRequest({ text, agentId: state.activeAgentId });
+  } catch {}
 }
 
 function handleInputKeydown(e) {
@@ -466,6 +682,7 @@ function renderMessages() {
     const agent = msg.agentId ? AGENTS.find(a => a.id === msg.agentId) : AGENTS[0];
     const div = document.createElement('div');
     div.className = `msg ${msg.role}`;
+    div.dataset.msgId = msg.id;
     if (msg.role === 'system') {
       div.innerHTML = `<div class="system-bubble"><i class="ph ph-check-circle"></i><div class="sb-text">${msg.content}</div></div>`;
     } else if (msg.role === 'bot') {
@@ -633,36 +850,7 @@ function hideWaitingPanel() {
 }
 
 async function streamResponse(text, historyId) {
-  state.isStreaming = true;
-  updateChatAgentInfo();
-  const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-  const msgId = Date.now();
-  const agent = AGENTS.find(a => a.id === state.activeAgentId);
-  state.messages.push({ id: msgId, role: 'bot', content: '', time, agentId: state.activeAgentId, isStreaming: true, replyToText: lastUserText, historyId });
-  renderMessages();
-
-  try {
-    let currentText = '';
-    const chars = text.split('');
-    for (let i = 0; i < chars.length; i++) {
-      await new Promise(r => setTimeout(r, 20));
-      currentText += chars[i];
-      const msg = state.messages.find(m => m.id === msgId);
-      if (msg) msg.content = currentText;
-      const bubbles = document.querySelectorAll('.msg.bot .msg-bubble');
-      if (bubbles.length > 0) {
-        bubbles[bubbles.length - 1].innerHTML = `${escapeHtml(currentText)}<span class="cursor-blink"></span>`;
-        document.getElementById('chat-messages').scrollTop = document.getElementById('chat-messages').scrollHeight;
-      }
-    }
-    const msg = state.messages.find(m => m.id === msgId);
-    if (msg) { msg.isStreaming = false; msg.content = text; }
-  } finally {
-    // 确保状态总是被重置，即使在流式输出过程中出错
-    state.isStreaming = false;
-    updateChatAgentInfo();
-    renderMessages();
-  }
+  addBotMessage(text, { historyId, agentId: state.activeAgentId });
 }
 
 /* ===== History ===== */
@@ -1425,53 +1613,12 @@ async function regenerateMsg(msgIdx) {
   // Re-send
   lastUserText = userText;
   lastUserAgentId = agentId;
-  const agent = AGENTS.find(a => a.id === agentId) || AGENTS[0];
   const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   addMessage({ id: Date.now(), role: 'user', content: userText, time });
-  
-  const sendBtn = document.getElementById('send-btn');
-  sendBtn.disabled = true;
-  state.isTyping = true;
-  showWaitingPanel();
-  
+
   try {
-    const res = await fetchWithTimeout(`${API_BASE}/api/chat/send`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        message: userText,
-        query_type: agent.type,
-        agent_id: agent.id,
-        user_id: getUserId(),
-        team_name: state.profile?.team || '',
-        member_name: state.profile?.name || '',
-      }),
-    }, 120000);
-    hideWaitingPanel();
-    state.isTyping = false;
-    showTyping();
-    const data = await res.json();
-    if (res.ok) {
-      hideTyping();
-      await streamResponse(data.bot_response, data.history_id);
-      checkSurvey();
-    } else {
-      hideTyping();
-      addMessage({ id: Date.now(), role: 'bot', content: data.error || '抱歉，发生了错误，请稍后重试。', time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })});
-      showToast(data.error || '重新回答失败', 'error');
-    }
-  } catch (error) {
-    hideWaitingPanel();
-    hideTyping();
-    state.isTyping = false;
-    state.isStreaming = false;
-    const errorMsg = error.message || '网络错误，请检查您的连接。';
-    addMessage({ id: Date.now(), role: 'bot', content: errorMsg, time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })});
-    showToast(errorMsg, 'error');
-  } finally {
-    sendBtn.disabled = false;
-    updateChatAgentInfo();
-  }
+    await executeChatRequest({ text: userText, agentId });
+  } catch {}
 }
 
 /* ===== Scroll to Bottom ===== */

@@ -1,88 +1,50 @@
-import requests
-from flask import Blueprint, request, jsonify
-from config import Config
-from models import save_chat_history, get_setting, get_agent_config
+import json
+
+from flask import Blueprint, Response, jsonify, request, stream_with_context
+
+from services.chat_service import ChatServiceError, build_chat_context, execute_sync_chat, iter_coze_stream
 
 chat_bp = Blueprint('chat', __name__)
 
+
 @chat_bp.route('/send', methods=['POST'])
 def send_to_coze():
-    data = request.get_json()
-    message = data.get('message')
-    query_type = data.get('query_type', '其他')
-    agent_id = data.get('agent_id', '')
-
-    if not message:
-        return jsonify({'error': 'Message is required'}), 400
-
-    user_id = data.get('user_id', '').strip() or 'anonymous'
-    team_name = (data.get('team_name') or '').strip()
-    member_name = (data.get('member_name') or '').strip()
-    api_key = get_setting('coze_api_key', Config.COZE_API_KEY)
-    headers = {
-        "Authorization": f"Bearer {api_key}",
-        "Content-Type": "application/json"
-    }
-    # 优先使用智能体自身的 bot_id，否则按 query_type 查映射
-    bot_id = ''
-    if agent_id:
-        agent = get_agent_config(agent_id)
-        if agent and agent.get('bot_id'):
-            bot_id = agent['bot_id']
-    if not bot_id:
-        bot_id = Config.BOT_MAPPING.get(query_type, Config.DEFAULT_BOT_ID)
-    payload = {
-        "bot_id": bot_id,
-        "user": user_id,
-        "query": message,
-        "stream": False
-    }
-
     try:
-        # 使用分离的超时设置：连接10秒，读取30秒
-        response = requests.post(
-            Config.COZE_API_URL, 
-            headers=headers, 
-            json=payload, 
-            timeout=(10, 90)  # (connect timeout, read timeout)
-        )
-        response.raise_for_status()
-        coze_response = response.json()
+        ctx = build_chat_context(request.get_json(silent=True) or {})
+        return jsonify(execute_sync_chat(ctx))
+    except ChatServiceError as exc:
+        return jsonify({'error': exc.message, 'retryable': exc.retryable}), exc.status_code
 
-        if coze_response.get('code') == 0:
-            messages = coze_response.get('messages', [])
-            bot_response = ''
-            for msg in messages:
-                if msg.get('type') == 'answer':
-                    bot_response = msg.get('content', '')
-                    break
-            if not bot_response:
-                bot_response = '抱歉，我现在无法回答您的问题。'
-            coze_message_id = coze_response.get('conversation_id', '')
-        else:
-            bot_response = f"Coze API错误: {coze_response.get('msg', '未知错误')}"
-            coze_message_id = None
 
-        history_id = save_chat_history(
-            user_id=user_id,
-            query_type=query_type,
-            user_message=message,
-            bot_response=bot_response,
-            coze_message_id=coze_message_id,
-            team_name=team_name,
-            member_name=member_name,
-        )
+@chat_bp.route('/stream', methods=['POST'])
+def stream_to_coze():
+    try:
+        ctx = build_chat_context(request.get_json(silent=True) or {})
+    except ChatServiceError as exc:
+        return jsonify({'error': exc.message, 'retryable': exc.retryable}), exc.status_code
 
-        return jsonify({
-            'message': 'Message sent successfully',
-            'bot_response': bot_response,
-            'history_id': history_id,
-            'coze_message_id': coze_message_id
-        })
-    except requests.exceptions.Timeout:
-        return jsonify({'error': '请求超时，请稍后重试'}), 504
-    except requests.exceptions.RequestException as e:
-        return jsonify({'error': f'网络错误: {str(e)}'}), 502
+    @stream_with_context
+    def generate():
+        try:
+            for event in iter_coze_stream(ctx):
+                yield _format_sse(event['event'], event['data'])
+        except ChatServiceError as exc:
+            yield _format_sse(
+                'error',
+                {
+                    'message': exc.message,
+                    'retryable': exc.retryable,
+                    'request_id': ctx.request_id,
+                },
+            )
+
+    headers = {
+        'Cache-Control': 'no-cache',
+        'Connection': 'keep-alive',
+        'X-Accel-Buffering': 'no',
+    }
+    return Response(generate(), mimetype='text/event-stream', headers=headers)
+
 
 @chat_bp.route('/feedback', methods=['POST'])
 def submit_feedback():
@@ -99,3 +61,7 @@ def submit_feedback():
     if feedback == 0 and reason:
         set_feedback_reason(history_id, reason)
     return jsonify({'message': 'Feedback saved'})
+
+
+def _format_sse(event_name, payload):
+    return f'event: {event_name}\ndata: {json.dumps(payload, ensure_ascii=False)}\n\n'
