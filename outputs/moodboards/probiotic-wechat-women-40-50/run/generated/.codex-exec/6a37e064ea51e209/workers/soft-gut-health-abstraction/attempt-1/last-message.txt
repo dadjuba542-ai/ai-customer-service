@@ -1,7 +1,0 @@
-Complete.
-
-PNG saved to:
-`generated/.codex-exec/6a37e064ea51e209/workers/soft-gut-health-abstraction/attempt-1/image.png`
-
-Result JSON saved to:
-`generated/.codex-exec/6a37e064ea51e209/workers/soft-gut-health-abstraction/attempt-1/result.json`
