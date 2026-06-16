@@ -10,6 +10,7 @@ const FALLBACK_AGENTS = [
 let AGENTS = [];
 let lastUserText = '';
 let lastUserAgentId = '';
+const assetLoaders = new Map();
 let state = {
   currentView: 'home',
   activeAgentId: 'aura',
@@ -21,6 +22,38 @@ let state = {
   profile: JSON.parse(localStorage.getItem('chat_profile') || 'null'),
   teamOptions: [],
 };
+
+function loadScriptOnce(src) {
+  if (assetLoaders.has(src)) return assetLoaders.get(src);
+  const promise = new Promise((resolve, reject) => {
+    const existing = document.querySelector(`script[src="${src}"]`);
+    if (existing) {
+      if (existing.dataset.loaded === 'true') {
+        resolve();
+        return;
+      }
+      existing.addEventListener('load', () => resolve(), { once: true });
+      existing.addEventListener('error', () => reject(new Error(`Failed to load script: ${src}`)), { once: true });
+      return;
+    }
+    const script = document.createElement('script');
+    script.src = src;
+    script.async = true;
+    script.onload = () => {
+      script.dataset.loaded = 'true';
+      resolve();
+    };
+    script.onerror = () => reject(new Error(`Failed to load script: ${src}`));
+    document.head.appendChild(script);
+  });
+  assetLoaders.set(src, promise);
+  return promise;
+}
+
+async function ensureHtml2Canvas() {
+  if (typeof html2canvas !== 'undefined') return;
+  await loadScriptOnce('https://html2canvas.hertzen.com/dist/html2canvas.min.js');
+}
 
 function getUserId() {
   let id = localStorage.getItem('user_uuid');
@@ -1189,7 +1222,7 @@ function copyText(text) {
 }
 
 /* ===== Share as Image ===== */
-function shareChat() {
+async function shareChat() {
   closeChatMenu();
   const msgs = state.messages.filter(m => m.content);
   if (msgs.length === 0) {
@@ -1238,8 +1271,10 @@ function shareChat() {
 
   showToast('正在生成分享图片...', 'info');
 
-  if (typeof html2canvas === 'undefined') {
-    showToast('生成失败，请重试', 'error');
+  try {
+    await ensureHtml2Canvas();
+  } catch {
+    showToast('分享组件加载失败，请稍后重试', 'error');
     return;
   }
 

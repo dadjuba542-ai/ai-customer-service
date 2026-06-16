@@ -7,6 +7,9 @@ from config import Config
 def get_db_connection():
     conn = sqlite3.connect(Config.DATABASE_PATH)
     conn.row_factory = sqlite3.Row
+    conn.execute('PRAGMA journal_mode=WAL')
+    conn.execute('PRAGMA synchronous=NORMAL')
+    conn.execute('PRAGMA foreign_keys=ON')
     return conn
 
 def init_db():
@@ -171,6 +174,18 @@ def init_db():
         cursor.execute('ALTER TABLE replies ADD COLUMN like_count INTEGER DEFAULT 0')
     except sqlite3.OperationalError:
         pass
+
+    cursor.execute('CREATE INDEX IF NOT EXISTS idx_chat_history_user_created ON chat_history(user_id, created_at DESC)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS idx_chat_history_user_type_created ON chat_history(user_id, query_type, created_at DESC)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS idx_chat_history_feedback_created ON chat_history(feedback, created_at DESC)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS idx_chat_history_query_type_created ON chat_history(query_type, created_at DESC)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS idx_news_created ON news(created_at DESC)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS idx_news_featured_created ON news(featured, created_at DESC)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS idx_news_pinned_created ON news(pinned, created_at DESC)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS idx_news_category_created ON news(category, created_at DESC)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS idx_products_sort_id ON products(sort_order ASC, id DESC)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS idx_questions_status_category_created ON questions(status, category, created_at DESC)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS idx_replies_question_status_created ON replies(question_id, status, created_at DESC)')
 
     conn.commit()
 

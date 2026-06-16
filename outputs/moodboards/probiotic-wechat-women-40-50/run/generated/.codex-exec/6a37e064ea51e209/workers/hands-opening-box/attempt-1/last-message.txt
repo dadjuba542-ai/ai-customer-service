@@ -1,0 +1,1 @@
+Done. Generated one PNG with `image_gen.imagegen`, saved it to the requested `image.png`, and wrote the required `result.json` with status `complete`.

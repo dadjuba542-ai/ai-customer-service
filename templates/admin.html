@@ -4,13 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AI宝儿 · 管理后台</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <script src="https://unpkg.com/@phosphor-icons/web@2.0.3"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
-  <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.min.js"></script>
+  <script defer src="https://unpkg.com/@phosphor-icons/web@2.0.3"></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     :root {
@@ -1059,6 +1053,66 @@
 
 <script>
 const API = '';
+const assetPromises = new Map();
+
+function loadScriptOnce(src) {
+  if (assetPromises.has(src)) return assetPromises.get(src);
+  const promise = new Promise((resolve, reject) => {
+    const existing = document.querySelector(`script[src="${src}"]`);
+    if (existing) {
+      if (existing.dataset.loaded === 'true') {
+        resolve();
+        return;
+      }
+      existing.addEventListener('load', () => resolve(), { once: true });
+      existing.addEventListener('error', () => reject(new Error(`Failed to load script: ${src}`)), { once: true });
+      return;
+    }
+    const script = document.createElement('script');
+    script.src = src;
+    script.async = true;
+    script.onload = () => {
+      script.dataset.loaded = 'true';
+      resolve();
+    };
+    script.onerror = () => reject(new Error(`Failed to load script: ${src}`));
+    document.head.appendChild(script);
+  });
+  assetPromises.set(src, promise);
+  return promise;
+}
+
+function loadStylesheetOnce(href) {
+  if (assetPromises.has(href)) return assetPromises.get(href);
+  const promise = new Promise((resolve, reject) => {
+    const existing = document.querySelector(`link[href="${href}"]`);
+    if (existing) {
+      resolve();
+      return;
+    }
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = href;
+    link.onload = () => resolve();
+    link.onerror = () => reject(new Error(`Failed to load stylesheet: ${href}`));
+    document.head.appendChild(link);
+  });
+  assetPromises.set(href, promise);
+  return promise;
+}
+
+async function ensureChartJs() {
+  if (typeof Chart !== 'undefined') return;
+  await loadScriptOnce('https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js');
+}
+
+async function ensureQuill() {
+  if (typeof Quill !== 'undefined') return;
+  await Promise.all([
+    loadStylesheetOnce('https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css'),
+    loadScriptOnce('https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.min.js'),
+  ]);
+}
 
 // ===== Auth =====
 function getToken() { return localStorage.getItem('token'); }
@@ -1129,7 +1183,7 @@ function logout() {
 }
 
 // ===== Page Switching =====
-function switchPage(page) {
+async function switchPage(page) {
   document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
   document.getElementById(`page-${page}`).classList.add('active');
   document.querySelectorAll('.sidebar-nav .nav-item').forEach(n => n.classList.remove('active'));
@@ -1147,7 +1201,15 @@ function switchPage(page) {
   document.getElementById('page-title-text').textContent = titles[page] || '数据看板';
 
   if (page === 'dashboard') loadAll();
-  if (page === 'news') { loadAdminNews(); setTimeout(initQuill, 100); }
+  if (page === 'news') {
+    try {
+      await ensureQuill();
+      loadAdminNews();
+      initQuill();
+    } catch (e) {
+      console.error('quill load error:', e);
+    }
+  }
   if (page === 'products') loadAdminProducts();
   if (page === 'agents') loadAdminAgents();
   if (page === 'feedback') loadFeedbackDashboard();
@@ -1614,6 +1676,7 @@ function exportFbCSV() {
 
 async function loadAll() {
   document.getElementById('last-update').textContent = '加载中...';
+  await ensureChartJs();
   await Promise.all([
     loadStats(), loadTrends(), loadAgentUsage(), loadRecent(), loadHotQuestions(),
   ]);
@@ -1827,6 +1890,7 @@ function initQuill() {
   if (quillInited) return;
   const container = document.getElementById('news-editor');
   if (!container || container.style.display === 'none') return;
+  if (typeof Quill === 'undefined') return;
   try {
     quill = new Quill('#news-editor', {
       theme: 'snow',
@@ -2287,6 +2351,7 @@ let prodQuill = null;
 function initProdQuill() {
   const card = document.getElementById('prod-form-card');
   if (!card || card.style.display === 'none') return;
+  if (typeof Quill === 'undefined') return;
   if (prodQuill) {
     prodQuill.destroy();
     prodQuill = null;
@@ -2314,7 +2379,7 @@ function showProdForm() {
   document.getElementById('prod-summary').value = '';
   document.getElementById('prod-highlights').value = '';
   document.getElementById('prod-image-url').value = '';
-  setTimeout(initProdQuill, 200);
+  ensureQuill().then(() => setTimeout(initProdQuill, 200)).catch(e => console.error('quill load error:', e));
 }
 
 function hideProdForm() {
@@ -2336,10 +2401,12 @@ function editProduct(id) {
   document.getElementById('prod-summary').value = p.summary || '';
   document.getElementById('prod-highlights').value = p.highlights || '';
   document.getElementById('prod-image-url').value = p.image_url || '';
-  setTimeout(() => {
-    initProdQuill();
-    if (prodQuill) prodQuill.root.innerHTML = p.content || '';
-  }, 200);
+  ensureQuill().then(() => {
+    setTimeout(() => {
+      initProdQuill();
+      if (prodQuill) prodQuill.root.innerHTML = p.content || '';
+    }, 200);
+  }).catch(e => console.error('quill load error:', e));
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
