@@ -3,6 +3,7 @@ import uuid
 import re
 from datetime import datetime
 from config import Config
+from db_migrations import run_migrations
 
 def get_db_connection():
     conn = sqlite3.connect(Config.DATABASE_PATH)
@@ -25,10 +26,6 @@ def init_db():
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     ''')
-    try:
-        cursor.execute('ALTER TABLE users ADD COLUMN is_admin INTEGER DEFAULT 0')
-    except sqlite3.OperationalError:
-        pass
 
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS chat_history (
@@ -42,22 +39,6 @@ def init_db():
             FOREIGN KEY (user_id) REFERENCES users(user_id)
         )
     ''')
-    try:
-        cursor.execute('ALTER TABLE chat_history ADD COLUMN feedback INTEGER DEFAULT NULL')
-    except sqlite3.OperationalError:
-        pass
-    try:
-        cursor.execute('ALTER TABLE chat_history ADD COLUMN feedback_reason TEXT DEFAULT NULL')
-    except sqlite3.OperationalError:
-        pass
-    try:
-        cursor.execute('ALTER TABLE chat_history ADD COLUMN team_name TEXT DEFAULT ""')
-    except sqlite3.OperationalError:
-        pass
-    try:
-        cursor.execute('ALTER TABLE chat_history ADD COLUMN member_name TEXT DEFAULT ""')
-    except sqlite3.OperationalError:
-        pass
 
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS news (
@@ -69,22 +50,6 @@ def init_db():
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     ''')
-    try:
-        cursor.execute('ALTER TABLE news ADD COLUMN views INTEGER DEFAULT 0')
-    except sqlite3.OperationalError:
-        pass
-    try:
-        cursor.execute('ALTER TABLE news ADD COLUMN pinned INTEGER DEFAULT 0')
-    except sqlite3.OperationalError:
-        pass
-    try:
-        cursor.execute('ALTER TABLE news ADD COLUMN featured INTEGER DEFAULT 0')
-    except sqlite3.OperationalError:
-        pass
-    try:
-        cursor.execute('ALTER TABLE news ADD COLUMN category TEXT DEFAULT ""')
-    except sqlite3.OperationalError:
-        pass
 
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS products (
@@ -114,14 +79,6 @@ def init_db():
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     ''')
-    try:
-        cursor.execute('ALTER TABLE agent_configs ADD COLUMN icon TEXT DEFAULT "robot"')
-    except sqlite3.OperationalError:
-        pass
-    try:
-        cursor.execute('ALTER TABLE agent_configs ADD COLUMN chat_desc TEXT DEFAULT ""')
-    except sqlite3.OperationalError:
-        pass
 
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS settings (
@@ -165,14 +122,6 @@ def init_db():
             FOREIGN KEY (question_id) REFERENCES questions(id)
         )
     ''')
-    try:
-        cursor.execute('ALTER TABLE replies ADD COLUMN author_key TEXT DEFAULT ""')
-    except sqlite3.OperationalError:
-        pass
-    try:
-        cursor.execute('ALTER TABLE replies ADD COLUMN like_count INTEGER DEFAULT 0')
-    except sqlite3.OperationalError:
-        pass
 
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS case_documents (
@@ -192,10 +141,10 @@ def init_db():
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     ''')
-    try:
-        cursor.execute('ALTER TABLE case_documents ADD COLUMN external_url TEXT DEFAULT ""')
-    except sqlite3.OperationalError:
-        pass
+
+    conn.commit()
+    run_migrations(conn)
+
     cursor.execute('''
         CREATE VIRTUAL TABLE IF NOT EXISTS case_documents_fts USING fts5(
             title,

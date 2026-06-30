@@ -65,14 +65,14 @@ outputs/                历史生成物/设计产物，非主应用运行核心
 1. 创建 Flask 应用并启用 CORS
 2. 校验配置 `Config.validate()`
 3. 创建 `static/uploads`
-4. 调用 `init_db()` 自动建表/补列/建索引
+4. 调用 `init_db()` 自动建表、执行轻量 migration、建索引
 5. 注册全部蓝图
 6. 暴露前台 `/`、后台 `/admin` 以及少量全局接口
 
 这意味着：
 
-- 项目没有正式 migration 体系
-- 数据库结构升级依赖 `models.init_db()` 中的 `CREATE TABLE IF NOT EXISTS` 和多段 `ALTER TABLE ... try/except`
+- 项目有轻量 SQLite migration 机制：`db_migrations.py`
+- `schema_migrations` 表记录已执行版本，历史补列不再靠裸 `ALTER TABLE ... try/except pass`
 - 新环境首次启动就会自动初始化数据库
 
 ## 5. 前台与后台页面
@@ -285,6 +285,7 @@ outputs/                历史生成物/设计产物，非主应用运行核心
 - 所有数据库操作基本都集中在 `models.py`
 - 没有 ORM
 - 读写都是手写 SQL
+- 数据库结构变更通过 `db_migrations.py` 中的有序 migration 列表执行，并记录到 `schema_migrations`
 - 已建若干索引，重点照顾聊天记录、资讯、问答查询
 
 ## 8. 核心接口地图
@@ -424,6 +425,7 @@ outputs/                历史生成物/设计产物，非主应用运行核心
 
 - `scripts/test_today_features.py`
 - `scripts/test_case_documents.py`
+- `scripts/test_migrations.py`
 
 验收清单：
 
@@ -489,7 +491,7 @@ python3 scripts/test_today_features.py
 这些不是马上要改的 bug 清单，但后续接手时最好脑子里有数：
 
 - `models.py` 过于集中，承担了全部数据访问，继续扩展会越来越重。
-- 数据库 schema 迁移靠启动时补丁式 `ALTER TABLE`，小项目能跑，大一点就容易脏。
+- 数据库 migration 目前是轻量 Python 列表机制，适合当前 SQLite 单实例；如果以后迁移复杂化，再考虑 Alembic。
 - SQLite 适合当前体量，但多副本部署、重写入、复杂分析都会撞墙。
 - 管理后台图片上传依赖 Pillow，当前 `requirements.txt` 已显式写入 `Pillow==10.2.0`。
 - 前台 `static/app.js` 是大体量单文件脚本，后续维护成本会继续上升。
@@ -547,11 +549,10 @@ python3 scripts/test_today_features.py
 如果以后要继续维护，这几个方向最值：
 
 1. 把 `models.py` 按领域拆分，至少分成 chat/news/product/community/user。
-2. 给数据库变更补一个简单 migration 机制，别继续全靠 `ALTER TABLE try/except` 硬顶。
-3. 把案例档案继续扩大前，优先把标签标准化；当前标签是逗号文本，轻量够用但不适合大规模治理。
-4. 把前台大脚本拆模块，至少把聊天、资讯、社区、后台 API 调用拆开。
-5. 把后台大模板拆分，至少把案例管理、产品管理、资讯管理拆开。
-6. 给部署环境补明确说明，尤其是 `DATABASE_DIR=/data` 这类持久化配置。
+2. 把案例档案继续扩大前，优先把标签标准化；当前标签是逗号文本，轻量够用但不适合大规模治理。
+3. 把前台大脚本拆模块，至少把聊天、资讯、社区、后台 API 调用拆开。
+4. 把后台大模板拆分，至少把案例管理、产品管理、资讯管理拆开。
+5. 给部署环境补明确说明，尤其是 `DATABASE_DIR=/data` 这类持久化配置。
 
 ## 16. 一句话接手建议
 
