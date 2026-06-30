@@ -7,7 +7,7 @@ from dataclasses import dataclass
 import requests
 
 from config import Config
-from models import get_agent_config, get_setting, save_chat_history
+from models import get_agent_config, get_setting, save_chat_history, search_case_documents_page
 
 logger = logging.getLogger(__name__)
 
@@ -104,6 +104,8 @@ def build_chat_context(data):
 
 def execute_sync_chat(ctx):
     started_at = time.monotonic()
+    related_case_result = search_case_documents_page(ctx.message, page=1, limit=3)
+    related_cases = related_case_result['items']
     try:
         response = requests.post(
             Config.COZE_API_URL,
@@ -129,6 +131,8 @@ def execute_sync_chat(ctx):
             'history_id': history_id,
             'coze_message_id': coze_message_id,
             'request_id': ctx.request_id,
+            'related_cases': related_cases,
+            'related_cases_total': related_case_result['total'],
         }
     except requests.exceptions.Timeout as exc:
         total_ms = int((time.monotonic() - started_at) * 1000)
@@ -156,6 +160,8 @@ def execute_sync_chat(ctx):
 def iter_coze_stream(ctx):
     stream_payload = dict(ctx.payload)
     stream_payload['stream'] = True
+    related_case_result = search_case_documents_page(ctx.message, page=1, limit=3)
+    related_cases = related_case_result['items']
     state = StreamState(request_started_at=time.monotonic())
     connect_started_at = time.monotonic()
 
@@ -232,6 +238,8 @@ def iter_coze_stream(ctx):
                     'history_id': history_id,
                     'coze_message_id': state.coze_message_id,
                     'request_id': ctx.request_id,
+                    'related_cases': related_cases,
+                    'related_cases_total': related_case_result['total'],
                 },
             }
     except requests.exceptions.Timeout as exc:

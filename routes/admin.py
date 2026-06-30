@@ -137,6 +137,18 @@ def blocked_keywords(current_user):
     default_hint = '退款,退货,投诉,假货,骗人,诈骗,虚假宣传,副作用,无效,没效果,上当,举报,315,维权,赔偿,曝光,致癌,违规,处罚,查封'
     return jsonify({'keywords': raw, 'defaultHint': default_hint})
 
+@admin_bp.route('/settings/case-library-url', methods=['GET', 'PUT'])
+@admin_required
+def case_library_url(current_user):
+    if request.method == 'PUT':
+        data = request.get_json(silent=True) or {}
+        url = (data.get('case_library_url') or '').strip()
+        if url and not (url.startswith('http://') or url.startswith('https://')):
+            return jsonify({'error': '请输入 http:// 或 https:// 开头的 H5 链接'}), 400
+        set_setting('case_library_url', url)
+        return jsonify({'message': '已更新', 'case_library_url': url})
+    return jsonify({'case_library_url': get_setting('case_library_url', '')})
+
 @admin_bp.route('/settings/waiting-content', methods=['GET', 'PUT'])
 @admin_required
 def waiting_content(current_user):

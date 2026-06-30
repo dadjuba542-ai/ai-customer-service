@@ -10,6 +10,7 @@ const FALLBACK_AGENTS = [
 let AGENTS = [];
 let lastUserText = '';
 let lastUserAgentId = '';
+let caseLibraryUrl = '';
 const assetLoaders = new Map();
 let state = {
   currentView: 'home',
@@ -76,6 +77,7 @@ function getViewerId() {
 document.addEventListener('DOMContentLoaded', () => {
   loadAgents();
   loadWaitingContent();
+  loadCaseLibraryConfig();
   // Chat scroll listener for "scroll to bottom" button
   const chatContainer = document.getElementById('chat-messages');
   if (chatContainer) {
@@ -126,6 +128,17 @@ async function loadDefaultTeamSetting() {
     } catch {
       state.teamOptions = [];
     }
+  }
+}
+
+async function loadCaseLibraryConfig() {
+  try {
+    const res = await fetch(`${API_BASE}/api/case-library-config`);
+    if (!res.ok) return;
+    const data = await res.json();
+    caseLibraryUrl = (data.case_library_url || '').trim();
+  } catch {
+    caseLibraryUrl = '';
   }
 }
 
@@ -460,6 +473,8 @@ function finalizeStreamingBotMessage(msgId, extras = {}) {
   if (extras.historyId) msg.historyId = extras.historyId;
   if (extras.feedback !== undefined) msg.feedback = extras.feedback;
   if (extras.content !== undefined) msg.content = extras.content;
+  if (extras.relatedCases !== undefined) msg.relatedCases = extras.relatedCases;
+  if (extras.relatedCasesTotal !== undefined) msg.relatedCasesTotal = extras.relatedCasesTotal;
   renderMessages();
 }
 
@@ -472,6 +487,8 @@ function addBotMessage(content, options = {}) {
     agentId: options.agentId || state.activeAgentId,
     historyId: options.historyId,
     feedback: options.feedback,
+    relatedCases: options.relatedCases || [],
+    relatedCasesTotal: options.relatedCasesTotal,
     replyToText: options.replyToText || lastUserText,
   });
 }
@@ -557,6 +574,8 @@ async function streamChatRequest(payload, agentId) {
         finalizeStreamingBotMessage(botMsgId, {
           historyId: parsed.data?.history_id,
           content: finalText || (state.messages.find(m => m.id === botMsgId)?.content || ''),
+          relatedCases: parsed.data?.related_cases || [],
+          relatedCasesTotal: parsed.data?.related_cases_total,
         });
         state.isStreaming = false;
         updateChatAgentInfo();
@@ -600,7 +619,12 @@ async function fallbackToSyncChat(payload, agentId) {
   if (!res.ok) {
     throw new Error(data.error || '发送失败');
   }
-  addBotMessage(data.bot_response, { agentId, historyId: data.history_id });
+  addBotMessage(data.bot_response, {
+    agentId,
+    historyId: data.history_id,
+    relatedCases: data.related_cases || [],
+    relatedCasesTotal: data.related_cases_total,
+  });
   return data;
 }
 
@@ -700,8 +724,11 @@ function renderMessages() {
           <button class="msg-feedback-btn${likeActive}${feedbackDisabled}" onclick="sendFeedback(${msg.historyId}, 1, ${idx})"><i class="ph ph-thumbs-up"></i></button>
           <button class="msg-feedback-btn${dislikeActive}${feedbackDisabled}" onclick="sendFeedback(${msg.historyId}, 0, ${idx})"><i class="ph ph-thumbs-down"></i></button>` : ''}
         </div>` : '';
+      const relatedCases = !msg.isStreaming
+        ? renderRelatedCases(msg.relatedCases || [], msg.replyToText || '', msg.relatedCasesTotal)
+        : '';
       div.innerHTML = `<div class="msg-avatar" style="background:${color}"><i class="ph ph-${icon}"></i></div>
-        <div class="msg-body"><div class="msg-bubble">${escapedContent}${msg.isStreaming ? '<span class="cursor-blink"></span>' : ''}</div><span class="msg-time">${msg.time}</span>${actions}</div>`;
+        <div class="msg-body"><div class="msg-bubble">${escapedContent}${msg.isStreaming ? '<span class="cursor-blink"></span>' : ''}</div>${relatedCases}<span class="msg-time">${msg.time}</span>${actions}</div>`;
     } else {
       div.innerHTML = `<div class="msg-avatar"><i class="ph ph-user"></i></div>
         <div class="msg-body"><div class="msg-bubble">${escapeHtml(msg.content)}</div><span class="msg-time">${msg.time}</span></div>`;
@@ -710,6 +737,301 @@ function renderMessages() {
   });
   container.scrollTop = container.scrollHeight;
   updateScrollBtn();
+}
+
+function splitTags(value) {
+  return String(value || '').split(',').map(t => t.trim()).filter(Boolean);
+}
+
+function renderCaseTagList(value, className, tagType = '') {
+  return splitTags(value).map(tag => {
+    const safeTag = escapeHtml(tag);
+    if (!tagType) return `<span class="${className}">${safeTag}</span>`;
+    return `<button class="${className} clickable" onclick="openCaseDrawerList(event, '${tagType}', '${safeTag.replace(/'/g, "\\'")}')">${safeTag}</button>`;
+  }).join('');
+}
+
+function renderRelatedCases(cases, query = '', total) {
+  if (!cases || cases.length === 0) return '';
+  const relatedTotal = Number.isFinite(Number(total)) ? Number(total) : cases.length;
+  const showMore = query && relatedTotal > cases.length;
+  const safeQuery = escapeHtml(query).replace(/'/g, "\\'");
+  return `<div class="related-cases">
+    <div class="related-cases-title">
+      <span><i class="ph ph-files"></i>相关案例</span>
+      ${showMore ? `<button class="related-cases-more" onclick="openRelatedCaseDrawerList(event, '${safeQuery}')">查看更多</button>` : ''}
+    </div>
+    <div class="related-case-list">
+      ${cases.map(item => `
+        <div class="related-case-card" role="button" tabindex="0" onclick="openCaseDrawerDetail(${Number(item.id)}, { openedFromList: false })">
+          ${item.image_url ? `<img class="related-case-img" src="${escapeHtml(item.image_url)}" alt="">` : `<div class="related-case-img placeholder"><i class="ph ph-file-text"></i></div>`}
+          <div class="related-case-body">
+            <div class="related-case-name">${escapeHtml(item.title || '')}</div>
+            <div class="related-case-profile">${escapeHtml(item.customer_profile || item.scenario || '')}</div>
+            <div class="related-case-summary">${escapeHtml(item.summary || '')}</div>
+            <div class="related-case-tags">
+              ${renderCaseTagList(item.symptom_tags, 'case-tag symptom', 'symptom')}
+              ${renderCaseTagList(item.product_tags, 'case-tag product', 'product')}
+            </div>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  </div>`;
+}
+
+async function openCaseDetail(caseId) {
+  return openCaseDrawerDetail(caseId, { openedFromList: false });
+}
+
+let caseDrawerState = {
+  mode: 'list',
+  page: 1,
+  pages: 1,
+  tagType: '',
+  tag: '',
+  query: '',
+  lastListFilter: null,
+  openedFromList: false,
+};
+
+function ensureCaseDrawer() {
+  let overlay = document.getElementById('case-drawer-overlay');
+  if (overlay) return overlay;
+  overlay = document.createElement('div');
+  overlay.id = 'case-drawer-overlay';
+  overlay.className = 'case-drawer-overlay';
+  overlay.innerHTML = `
+    <div class="case-drawer-panel" onclick="event.stopPropagation()">
+      <div class="case-drawer-header" id="case-drawer-header"></div>
+      <div id="case-drawer-body" class="case-drawer-body"></div>
+      <div id="case-drawer-more-wrap" class="case-drawer-more-wrap" style="display:none">
+        <button class="discover-more-btn" onclick="loadMoreCases()">加载更多</button>
+      </div>
+    </div>`;
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) closeCaseDrawer();
+  });
+  document.body.appendChild(overlay);
+  return overlay;
+}
+
+function renderCaseDrawerHeader({ title, kicker = '案例档案', showBack = false }) {
+  const header = document.getElementById('case-drawer-header');
+  if (!header) return;
+  header.innerHTML = `
+    <div class="case-drawer-title-wrap">
+      ${showBack ? `<button class="case-drawer-back" onclick="backToCaseList()"><i class="ph ph-caret-left"></i></button>` : ''}
+      <div>
+        <div class="case-list-kicker">${escapeHtml(kicker)}</div>
+        <h3>${escapeHtml(title || '案例档案')}</h3>
+      </div>
+    </div>
+    <button class="case-detail-close" onclick="closeCaseDrawer()"><i class="ph ph-x"></i></button>`;
+}
+
+async function openCaseDrawerDetail(caseId, options = {}) {
+  ensureCaseDrawer();
+  try {
+    const res = await fetch(`${API_BASE}/api/cases/${caseId}`);
+    const item = await res.json();
+    if (!res.ok) {
+      showToast(item.error || '案例不存在', 'error');
+      return;
+    }
+    caseDrawerState.mode = 'detail';
+    caseDrawerState.openedFromList = !!options.openedFromList;
+    renderCaseDrawerDetail(item);
+  } catch {
+    showToast('案例加载失败', 'error');
+  }
+}
+
+function renderCaseDrawerDetail(item) {
+  renderCaseDrawerHeader({
+    title: item.title || '案例详情',
+    kicker: '客户案例档案',
+    showBack: caseDrawerState.openedFromList && !!caseDrawerState.lastListFilter,
+  });
+  const body = document.getElementById('case-drawer-body');
+  const more = document.getElementById('case-drawer-more-wrap');
+  if (more) more.style.display = 'none';
+  if (!body) return;
+  body.className = 'case-drawer-body case-drawer-detail-body';
+  body.innerHTML = `
+      ${item.image_url ? `<img class="case-detail-hero" src="${escapeHtml(item.image_url)}" alt="">` : ''}
+      <div class="case-detail-content">
+        <p class="case-detail-profile">${escapeHtml(item.customer_profile || '')}</p>
+        <div class="case-detail-tags">
+          ${renderCaseTagList(item.symptom_tags, 'case-tag symptom', 'symptom')}
+          ${renderCaseTagList(item.product_tags, 'case-tag product', 'product')}
+        </div>
+        <div class="case-detail-section"><strong>使用场景</strong><p>${escapeHtml(item.scenario || '')}</p></div>
+        <div class="case-detail-section"><strong>案例摘要</strong><p>${escapeHtml(item.summary || '')}</p></div>
+        <div class="case-detail-section"><strong>详细记录</strong><p>${escapeHtml(item.content || '')}</p></div>
+        <div class="case-detail-actions">
+          <button class="case-secondary-btn" onclick="openSimilarFromCase(event, '${escapeHtml(item.symptom_tags || '')}', '${escapeHtml(item.product_tags || '')}')"><i class="ph ph-tag"></i> 查看相似案例</button>
+          ${caseLibraryUrl ? `<button class="case-primary-btn" onclick="openExternalCase(event, '${escapeHtml(caseLibraryUrl).replace(/'/g, "\\'")}')"><i class="ph ph-books"></i> 查看更多客户案例</button>` : ''}
+        </div>
+      </div>`;
+}
+
+function closeCaseDetail() {
+  closeCaseDrawer();
+}
+
+function closeCaseDrawer() {
+  document.getElementById('case-drawer-overlay')?.remove();
+}
+
+function openExternalCase(event, url) {
+  event?.stopPropagation();
+  if (!url) return;
+  window.open(url, '_blank', 'noopener,noreferrer');
+}
+
+function openSimilarFromCase(event, symptomTags, productTags) {
+  event?.stopPropagation();
+  const symptom = splitTags(symptomTags)[0];
+  if (symptom) {
+    openCaseDrawerList(event, 'symptom', symptom);
+    return;
+  }
+  const product = splitTags(productTags)[0];
+  if (product) {
+    openCaseDrawerList(event, 'product', product);
+    return;
+  }
+  showToast('暂无相似案例', 'info');
+}
+
+async function openCasesByTag(event, tagType, tag) {
+  return openCaseDrawerList(event, tagType, tag);
+}
+
+async function openRelatedCaseDrawerList(event, query) {
+  event?.stopPropagation();
+  query = (query || '').trim();
+  if (!query) return;
+  ensureCaseDrawer();
+  caseDrawerState.mode = 'related';
+  caseDrawerState.page = 1;
+  caseDrawerState.pages = 1;
+  caseDrawerState.tagType = '';
+  caseDrawerState.tag = '';
+  caseDrawerState.query = query;
+  caseDrawerState.openedFromList = false;
+  caseDrawerState.lastListFilter = {
+    mode: 'related',
+    query,
+  };
+  renderCaseDrawerHeader({
+    title: '更多相关案例',
+    kicker: '本次问题匹配',
+    showBack: false,
+  });
+  const body = document.getElementById('case-drawer-body');
+  if (body) {
+    body.className = 'case-drawer-body case-list-body';
+    body.innerHTML = '<div id="case-list-items"><div class="case-list-empty">加载中...</div></div>';
+  }
+  await loadCases(true);
+}
+
+async function openCaseDrawerList(event, tagType, tag) {
+  event?.stopPropagation();
+  ensureCaseDrawer();
+  caseDrawerState.mode = 'list';
+  caseDrawerState.page = 1;
+  caseDrawerState.pages = 1;
+  caseDrawerState.tagType = tagType || '';
+  caseDrawerState.tag = tag || '';
+  caseDrawerState.query = '';
+  caseDrawerState.openedFromList = false;
+  caseDrawerState.lastListFilter = {
+    mode: 'list',
+    tagType: caseDrawerState.tagType,
+    tag: caseDrawerState.tag,
+  };
+  renderCaseDrawerHeader({
+    title: caseDrawerState.tag ? `${caseDrawerState.tag} 相关案例` : '全部案例',
+    kicker: '案例档案',
+    showBack: false,
+  });
+  const body = document.getElementById('case-drawer-body');
+  if (body) {
+    body.className = 'case-drawer-body case-list-body';
+    body.innerHTML = '<div id="case-list-items"><div class="case-list-empty">加载中...</div></div>';
+  }
+  await loadCases(true);
+}
+
+function closeCaseList() {
+  closeCaseDrawer();
+}
+
+function backToCaseList() {
+  const filter = caseDrawerState.lastListFilter || { tagType: '', tag: '' };
+  if (filter.mode === 'related') {
+    openRelatedCaseDrawerList(null, filter.query || '');
+    return;
+  }
+  openCaseDrawerList(null, filter.tagType, filter.tag);
+}
+
+async function loadCases(reset = false) {
+  const body = document.getElementById('case-list-items');
+  if (!body) return;
+  if (reset) body.innerHTML = '<div class="case-list-empty">加载中...</div>';
+  const params = new URLSearchParams({
+    page: String(caseDrawerState.page),
+    limit: '10',
+  });
+  let url = `${API_BASE}/api/cases`;
+  if (caseDrawerState.mode === 'related') {
+    params.set('q', caseDrawerState.query || '');
+    url = `${API_BASE}/api/cases/search`;
+  } else if (caseDrawerState.tagType && caseDrawerState.tag) {
+    params.set('tag_type', caseDrawerState.tagType);
+    params.set('tag', caseDrawerState.tag);
+  }
+  try {
+    const res = await fetch(`${url}?${params.toString()}`);
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || '加载失败');
+    caseDrawerState.page = data.page || 1;
+    caseDrawerState.pages = data.pages || 1;
+    const html = renderCaseListItems(data.items || []);
+    if (reset) body.innerHTML = html || '<div class="case-list-empty">暂无相关案例</div>';
+    else body.insertAdjacentHTML('beforeend', html);
+    const more = document.getElementById('case-drawer-more-wrap');
+    if (more) more.style.display = caseDrawerState.page < caseDrawerState.pages ? 'flex' : 'none';
+  } catch {
+    body.innerHTML = '<div class="case-list-empty">案例加载失败</div>';
+  }
+}
+
+function renderCaseListItems(items) {
+  return items.map(item => `
+    <div class="case-list-item" role="button" tabindex="0" onclick="openCaseDrawerDetail(${Number(item.id)}, { openedFromList: true })">
+      ${item.image_url ? `<img class="case-list-img" src="${escapeHtml(item.image_url)}" alt="">` : `<div class="case-list-img placeholder"><i class="ph ph-file-text"></i></div>`}
+      <div class="case-list-info">
+        <div class="case-list-name">${escapeHtml(item.title || '')}</div>
+        <div class="case-list-profile">${escapeHtml(item.customer_profile || item.scenario || '')}</div>
+        <div class="case-list-summary">${escapeHtml(item.summary || '')}</div>
+        <div class="related-case-tags">
+          ${renderCaseTagList(item.symptom_tags, 'case-tag symptom', 'symptom')}
+          ${renderCaseTagList(item.product_tags, 'case-tag product', 'product')}
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+async function loadMoreCases() {
+  if (caseDrawerState.page >= caseDrawerState.pages) return;
+  caseDrawerState.page += 1;
+  await loadCases(false);
 }
 
 function showTyping() {
