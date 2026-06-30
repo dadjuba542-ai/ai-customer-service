@@ -37,6 +37,7 @@ from routes.survey import survey_bp
 from routes.admin import admin_bp
 from routes.agents import agents_bp
 from routes.dashboard import dashboard_bp
+from routes.cases import cases_bp
 
 app = Flask(__name__, static_folder='static', static_url_path='')
 Config.validate()
@@ -57,6 +58,7 @@ app.register_blueprint(survey_bp, url_prefix='/api/survey')
 app.register_blueprint(admin_bp, url_prefix='/api/admin')
 app.register_blueprint(agents_bp, url_prefix='/api/agents')
 app.register_blueprint(dashboard_bp, url_prefix='/api/admin/dashboard')
+app.register_blueprint(cases_bp, url_prefix='/api')
 
 @app.route('/')
 def index():
@@ -96,6 +98,11 @@ def default_team():
         if single:
             teams = [single]
     return jsonify({'team_names': teams})
+
+@app.route('/api/case-library-config')
+def case_library_config():
+    from models import get_setting
+    return jsonify({'case_library_url': get_setting('case_library_url', '')})
 
 @app.route('/api/user/profile')
 def user_profile():
