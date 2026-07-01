@@ -1,6 +1,6 @@
 import os
 import json
-from flask import Flask, jsonify, send_from_directory, render_template
+from flask import Flask, jsonify, request, send_from_directory, render_template
 
 DEFAULT_TIPS = [
     "试试问我：你的产品有什么功效？",
@@ -59,6 +59,21 @@ app.register_blueprint(admin_bp, url_prefix='/api/admin')
 app.register_blueprint(agents_bp, url_prefix='/api/agents')
 app.register_blueprint(dashboard_bp, url_prefix='/api/admin/dashboard')
 app.register_blueprint(cases_bp, url_prefix='/api')
+
+
+@app.after_request
+def add_cache_headers(response):
+    path = request.path.lower()
+    if path.endswith('.html') or path in ('/', '/admin'):
+        response.headers['Cache-Control'] = 'no-cache'
+    elif path.startswith('/uploads/'):
+        response.headers['Cache-Control'] = 'public, max-age=31536000, immutable'
+    elif path.endswith(('.png', '.jpg', '.jpeg', '.webp', '.gif', '.svg', '.ico')):
+        response.headers['Cache-Control'] = 'public, max-age=604800'
+    elif path.endswith(('.css', '.js')):
+        response.headers['Cache-Control'] = 'public, max-age=86400'
+    return response
+
 
 @app.route('/')
 def index():

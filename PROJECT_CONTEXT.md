@@ -53,10 +53,12 @@ routes/                 各业务路由
 services/chat_service.py Coze 对话同步/流式封装
 static/                 前台静态页面与脚本样式
 static/admin/cases.js   后台案例档案 JS（案例管理、标签库、链接识别、案例库 H5 设置）
+services/image_service.py 图片压缩、缩略图和上传图处理服务
 templates/admin.html    管理后台页面
 scripts/test_today_features.py 现有冒烟测试
 scripts/test_case_documents.py 案例档案冒烟测试
 scripts/test_migrations.py SQLite migration 冒烟测试
+scripts/optimize_uploaded_images.py 历史上传图片优化脚本
 railway.json            Railway 部署配置
 zeabur.json             Zeabur 启动配置
 outputs/                历史生成物/设计产物，非主应用运行核心
@@ -491,7 +493,8 @@ python3 scripts/test_today_features.py
 - 不要直接打开 `file:///Users/test/Downloads/ai-customer-service/templates/admin.html`，否则登录会因为 `fetch` 不能访问后端接口而显示 `Failed to fetch`
 - 当前 Flask 开发服务需要在项目根目录运行 `python3 app.py`，默认端口 `5001`
 - 2026-06-30 自动化验收已通过；当前已启动 Flask 服务，`GET /admin`、`GET /api/cases` 可响应，后台登录后的人工点验仍需继续
-- 最新已推送 GitHub：`13ec2f6 Add SQLite migration runner`
+- 最新已推送 GitHub：以 `git log -1 --oneline` 为准；当前最新功能批次包含案例标签标准化、后台案例 JS 拆分和图片加载性能优化。
+- 当前工作区在最新提交后应保持干净；如有本地改动，先确认是否为新的未提交工作。
 
 ## 12. 2026-06-30 新增内容快照
 
@@ -512,6 +515,20 @@ python3 scripts/test_today_features.py
 - 新增测试脚本 `scripts/test_migrations.py`，覆盖空库、旧库、重复初始化和失败回滚。
 - 新增案例标签轻量标准化：`case_tags` + `case_document_tags`，保留原逗号文本字段做兼容展示。
 - 后台“案例设置”增加标签库，可维护症状/产品标准标签、别名、排序和启停。
+- 后台案例 JS 拆分 v1 已完成：案例管理、标签库、链接识别、案例库 H5 设置已从 `templates/admin.html` 迁到 `static/admin/cases.js`。
+
+## 12.1 2026-07-01 图片与加载速度优化快照
+
+本次针对服务器部署后图片加载慢做了轻量优化，不引入 CDN/对象存储：
+
+- 新增 `services/image_service.py`，后台上传图片时统一压缩为优化 JPEG，并生成 `_thumb.jpg` 缩略图。
+- `/api/admin/upload` 仍返回兼容字段 `url`，额外返回 `thumb_url`、图片尺寸和压缩后体积。
+- 前台 `static/app.js` 新增统一 `renderImage()`，案例、资讯、发现页列表优先加载缩略图，详情页加载主图。
+- 前台图片增加 `loading="lazy"` 和 `decoding="async"`，首屏轮播/头像保留 eager 加载。
+- Flask 增加静态资源缓存头：上传图片强缓存，普通图片/CSS/JS 短期缓存，HTML 不强缓存。
+- 新增 `scripts/optimize_uploaded_images.py`，默认 dry-run；`--apply` 时会先备份 SQLite，再生成优化图并更新本地 `/uploads/...` 数据库引用。
+- 生成首屏压缩头像 `static/avatar-optimized.jpg`，首页从原 `avatar.png` 改为引用压缩版；`static/bot-avatar-optimized.jpg` 已生成备用。
+- 本地 dry-run 显示当前已引用历史上传图可优化 18 张，预计主图体积节省约 38MB；尚未自动执行 `--apply`。
 
 ## 13. 已知实现特点与风险点
 
@@ -523,6 +540,8 @@ python3 scripts/test_today_features.py
 - 管理后台图片上传依赖 Pillow，当前 `requirements.txt` 已显式写入 `Pillow==10.2.0`。
 - 前台 `static/app.js` 是大体量单文件脚本，后续维护成本会继续上升。
 - 后台案例 JS 已拆到 `static/admin/cases.js`；`templates/admin.html` 仍包含其它后台模块的大量内联脚本，继续扩功能时仍需逐步拆分。
+- 历史图片优化脚本默认只 dry-run；服务器执行 `--apply` 前要确认 `DATABASE_DIR` 指向真实持久化 SQLite，并保留脚本生成的 `.bak` 数据库备份。
+- 上传目录仍在本机 `static/uploads/`，当前优化能显著减小图片体积；图片量继续增长后再考虑对象存储/CDN。
 - 案例链接识别依赖目标网页可公开访问；小程序私有路径、登录后页面、强反爬页面只能保留外链并手动补正文。
 - 案例链接识别复用 Coze API 做结构化抽取；未配置 API Key 或 Coze 失败时会降级，但标签质量需要人工确认。
 - `outputs/` 目录看起来是历史设计/生成产物，不属于主业务运行链路，清理前先确认是否还有人依赖。
@@ -555,6 +574,8 @@ python3 scripts/test_today_features.py
 1. `static/index.html`
 2. `static/app.js`
 3. `static/styles.css`
+4. `services/image_service.py`
+5. `scripts/optimize_uploaded_images.py`
 
 ### 想看社区问答
 
@@ -578,7 +599,7 @@ python3 scripts/test_today_features.py
 
 1. 把 `models.py` 按领域拆分，至少分成 chat/news/product/community/user。
 2. 把前台大脚本拆模块，至少把聊天、资讯、社区、后台 API 调用拆开。
-3. 继续拆后台大模板，下一步优先拆产品管理和资讯管理。
+3. 继续拆后台大模板，案例模块已经拆出；下一步优先拆仍在 `templates/admin.html` 里的产品管理和资讯管理。
 4. 给部署环境补明确说明，尤其是 `DATABASE_DIR=/data` 这类持久化配置。
 
 ## 16. 一句话接手建议
