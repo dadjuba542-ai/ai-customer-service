@@ -487,16 +487,103 @@ def normalize_case_tags(value):
             tags.append(tag)
     return ','.join(tags)
 
-def _case_payload(data):
+def _split_case_tags(value):
+    return [t.strip() for t in str(value or '').split(',') if t.strip()]
+
+def _normalize_case_tag_type(tag_type):
+    tag_type = (tag_type or '').strip()
+    if tag_type not in ('symptom', 'product'):
+        raise ValueError('invalid tag type')
+    return tag_type
+
+def _case_tag_payload(data):
+    data = data or {}
+    tag_type = _normalize_case_tag_type(data.get('type'))
+    name = (data.get('name') or '').strip()
+    if not name:
+        raise ValueError('tag name is required')
+    return {
+        'name': name,
+        'type': tag_type,
+        'aliases': normalize_case_tags(data.get('aliases')),
+        'status': 1 if int(data.get('status', 1) or 0) else 0,
+        'sort_order': int(data.get('sort_order', 0) or 0),
+    }
+
+def _case_tag_aliases(value):
+    return _split_case_tags(normalize_case_tags(value))
+
+def _find_case_tag_match(conn, tag_type, raw_tag):
+    tag = (raw_tag or '').strip()
+    if not tag:
+        return None
+    rows = conn.execute(
+        'SELECT * FROM case_tags WHERE type = ? ORDER BY status DESC, sort_order ASC, id ASC',
+        (tag_type,),
+    ).fetchall()
+    for row in rows:
+        item = dict(row)
+        if item['name'] == tag or tag in _case_tag_aliases(item.get('aliases')):
+            return item
+    return None
+
+def _get_or_create_case_tag(conn, tag_type, raw_tag):
+    tag = (raw_tag or '').strip()
+    if not tag:
+        return None
+    matched = _find_case_tag_match(conn, tag_type, tag)
+    if matched:
+        return matched
+    cursor = conn.execute(
+        'INSERT INTO case_tags (name, type) VALUES (?, ?)',
+        (tag, tag_type),
+    )
+    return {
+        'id': cursor.lastrowid,
+        'name': tag,
+        'type': tag_type,
+        'aliases': '',
+        'status': 1,
+        'sort_order': 0,
+    }
+
+def _resolve_case_tags(conn, tag_type, value):
+    names = []
+    ids = []
+    for raw_tag in _split_case_tags(normalize_case_tags(value)):
+        item = _get_or_create_case_tag(conn, tag_type, raw_tag)
+        if item and item['id'] not in ids:
+            ids.append(item['id'])
+            names.append(item['name'])
+    return names, ids
+
+def _sync_case_document_tags(conn, case_id, payload):
+    conn.execute('DELETE FROM case_document_tags WHERE case_id = ?', (case_id,))
+    for tag_id in payload.get('_symptom_tag_ids', []) + payload.get('_product_tag_ids', []):
+        conn.execute(
+            'INSERT OR IGNORE INTO case_document_tags (case_id, tag_id) VALUES (?, ?)',
+            (case_id, tag_id),
+        )
+
+def _case_payload(data, conn=None):
     data = data or {}
     title = (data.get('title') or '').strip()
     if not title:
         raise ValueError('title is required')
+    symptom_tags = normalize_case_tags(data.get('symptom_tags'))
+    product_tags = normalize_case_tags(data.get('product_tags'))
+    symptom_ids = []
+    product_ids = []
+    if conn is not None:
+        symptom_names, symptom_ids = _resolve_case_tags(conn, 'symptom', symptom_tags)
+        product_names, product_ids = _resolve_case_tags(conn, 'product', product_tags)
+        symptom_tags = ','.join(symptom_names)
+        product_tags = ','.join(product_names)
     return {
         'title': title,
         'customer_profile': (data.get('customer_profile') or '').strip(),
-        'symptom_tags': normalize_case_tags(data.get('symptom_tags')),
-        'product_tags': normalize_case_tags(data.get('product_tags')),
+        'symptom_tags': symptom_tags,
+        'product_tags': product_tags,
         'scenario': (data.get('scenario') or '').strip(),
         'summary': (data.get('summary') or '').strip(),
         'content': (data.get('content') or '').strip(),
@@ -504,6 +591,8 @@ def _case_payload(data):
         'external_url': (data.get('external_url') or '').strip(),
         'status': 1 if int(data.get('status', 1) or 0) else 0,
         'sort_order': int(data.get('sort_order', 0) or 0),
+        '_symptom_tag_ids': symptom_ids,
+        '_product_tag_ids': product_ids,
     }
 
 def _sync_case_document_fts(conn, case_id, payload):
@@ -525,8 +614,8 @@ def _sync_case_document_fts(conn, case_id, payload):
     )
 
 def create_case_document(data):
-    payload = _case_payload(data)
     conn = get_db_connection()
+    payload = _case_payload(data, conn)
     cursor = conn.cursor()
     cursor.execute(
         '''INSERT INTO case_documents
@@ -535,18 +624,19 @@ def create_case_document(data):
         tuple(payload[field] for field in CASE_DOCUMENT_FIELDS)
     )
     case_id = cursor.lastrowid
+    _sync_case_document_tags(conn, case_id, payload)
     _sync_case_document_fts(conn, case_id, payload)
     conn.commit()
     conn.close()
     return case_id
 
 def update_case_document(case_id, data):
-    payload = _case_payload(data)
     conn = get_db_connection()
     row = conn.execute('SELECT id FROM case_documents WHERE id = ?', (case_id,)).fetchone()
     if not row:
         conn.close()
         return False
+    payload = _case_payload(data, conn)
     conn.execute(
         '''UPDATE case_documents
            SET title=?, customer_profile=?, symptom_tags=?, product_tags=?, scenario=?,
@@ -554,6 +644,7 @@ def update_case_document(case_id, data):
            WHERE id=?''',
         tuple(payload[field] for field in CASE_DOCUMENT_FIELDS) + (case_id,)
     )
+    _sync_case_document_tags(conn, case_id, payload)
     _sync_case_document_fts(conn, case_id, payload)
     conn.commit()
     conn.close()
@@ -561,6 +652,7 @@ def update_case_document(case_id, data):
 
 def delete_case_document(case_id):
     conn = get_db_connection()
+    conn.execute('DELETE FROM case_document_tags WHERE case_id = ?', (case_id,))
     conn.execute('DELETE FROM case_documents WHERE id = ?', (case_id,))
     conn.execute('DELETE FROM case_documents_fts WHERE rowid = ?', (case_id,))
     conn.commit()
@@ -598,12 +690,24 @@ def get_case_documents_page(page=1, limit=10, tag_type='', tag=''):
         tag_column = 'symptom_tags'
     elif tag_type == 'product':
         tag_column = 'product_tags'
+    conn = get_db_connection()
     if tag and tag_column:
-        conditions.append(f"(',' || {tag_column} || ',') LIKE ?")
-        params.append(f'%,{tag},%')
+        tag_ids = _find_case_tag_ids(conn, tag_type, tag)
+        if tag_ids:
+            placeholders = ','.join('?' for _ in tag_ids)
+            conditions.append(
+                f'''EXISTS (
+                    SELECT 1 FROM case_document_tags cdt
+                    WHERE cdt.case_id = case_documents.id
+                    AND cdt.tag_id IN ({placeholders})
+                )'''
+            )
+            params.extend(tag_ids)
+        else:
+            conditions.append(f"(',' || {tag_column} || ',') LIKE ?")
+            params.append(f'%,{tag},%')
     where = 'WHERE ' + ' AND '.join(conditions)
     offset = (page - 1) * limit
-    conn = get_db_connection()
     total = conn.execute(f'SELECT COUNT(*) as cnt FROM case_documents {where}', params).fetchone()['cnt']
     rows = conn.execute(
         f'''SELECT id, title, customer_profile, symptom_tags, product_tags, scenario, summary, image_url, external_url
@@ -629,9 +733,6 @@ def get_case_document_by_id(case_id, public_only=False):
     conn.close()
     return dict(row) if row else None
 
-def _split_case_tags(value):
-    return [t.strip() for t in str(value or '').split(',') if t.strip()]
-
 def _case_preview(row):
     item = dict(row)
     return {
@@ -654,12 +755,41 @@ def _fts_match_expr(query):
             tokens.append('"' + token.replace('"', '""') + '"')
     return ' OR '.join(tokens[:8])
 
+def _find_case_tag_ids(conn, tag_type, tag):
+    try:
+        tag_type = _normalize_case_tag_type(tag_type)
+    except ValueError:
+        return []
+    matched = _find_case_tag_match(conn, tag_type, tag)
+    return [matched['id']] if matched else []
+
+def _case_tag_maps(conn):
+    rows = conn.execute(
+        '''SELECT cdt.case_id, ct.type, ct.name, ct.aliases
+           FROM case_document_tags cdt
+           JOIN case_tags ct ON ct.id = cdt.tag_id
+           WHERE ct.status = 1'''
+    ).fetchall()
+    maps = {}
+    for row in rows:
+        item = dict(row)
+        maps.setdefault(item['case_id'], {'symptom': [], 'product': []})
+        terms = [item['name']] + _case_tag_aliases(item.get('aliases'))
+        maps[item['case_id']][item['type']].append(terms)
+    return maps
+
+def _tag_query_hits(query, tag_groups, fallback_value):
+    if tag_groups:
+        return sum(1 for terms in tag_groups if any(term and term in query for term in terms))
+    return sum(1 for tag in _split_case_tags(fallback_value) if tag and tag in query)
+
 def _score_case_documents(query):
     query = (query or '').strip()
     if not query:
         return []
     conn = get_db_connection()
     rows = conn.execute('SELECT * FROM case_documents WHERE status = 1').fetchall()
+    tag_maps = _case_tag_maps(conn)
     fts_ids = set()
     expr = _fts_match_expr(query)
     if expr:
@@ -676,8 +806,9 @@ def _score_case_documents(query):
     scored = []
     for row in rows:
         item = dict(row)
-        symptom_hits = sum(1 for tag in _split_case_tags(item.get('symptom_tags')) if tag and tag in query)
-        product_hits = sum(1 for tag in _split_case_tags(item.get('product_tags')) if tag and tag in query)
+        case_tags = tag_maps.get(item['id'], {})
+        symptom_hits = _tag_query_hits(query, case_tags.get('symptom'), item.get('symptom_tags'))
+        product_hits = _tag_query_hits(query, case_tags.get('product'), item.get('product_tags'))
         haystack = ' '.join(str(item.get(k, '')) for k in ('title', 'customer_profile', 'scenario', 'summary', 'content'))
         text_hit = 1 if any(part and part in haystack for part in re.split(r'[\s,，。！？、；;:：]+', query)) else 0
         fts_hit = 1 if item['id'] in fts_ids else 0
@@ -704,6 +835,104 @@ def search_case_documents_page(query, page=1, limit=10):
         'page': page,
         'pages': max(1, (total + limit - 1) // limit),
     }
+
+def get_case_tags(tag_type=''):
+    conn = get_db_connection()
+    params = []
+    where = ''
+    if tag_type:
+        tag_type = _normalize_case_tag_type(tag_type)
+        where = 'WHERE type = ?'
+        params.append(tag_type)
+    rows = conn.execute(
+        f'''SELECT * FROM case_tags {where}
+            ORDER BY type ASC, sort_order ASC, id DESC''',
+        params,
+    ).fetchall()
+    conn.close()
+    return [dict(r) for r in rows]
+
+def create_case_tag(data):
+    payload = _case_tag_payload(data)
+    conn = get_db_connection()
+    try:
+        cursor = conn.execute(
+            '''INSERT INTO case_tags (name, type, aliases, status, sort_order)
+               VALUES (?, ?, ?, ?, ?)''',
+            (payload['name'], payload['type'], payload['aliases'], payload['status'], payload['sort_order']),
+        )
+        conn.commit()
+        return cursor.lastrowid
+    except sqlite3.IntegrityError as exc:
+        raise ValueError('tag already exists') from exc
+    finally:
+        conn.close()
+
+def _case_standard_tags_for_case(conn, case_id, tag_type):
+    rows = conn.execute(
+        '''SELECT ct.name
+           FROM case_document_tags cdt
+           JOIN case_tags ct ON ct.id = cdt.tag_id
+           WHERE cdt.case_id = ? AND ct.type = ?
+           ORDER BY ct.sort_order ASC, ct.id ASC''',
+        (case_id, tag_type),
+    ).fetchall()
+    return ','.join(row['name'] for row in rows)
+
+def _refresh_case_tag_texts(conn, case_ids):
+    for case_id in case_ids:
+        symptom_tags = _case_standard_tags_for_case(conn, case_id, 'symptom')
+        product_tags = _case_standard_tags_for_case(conn, case_id, 'product')
+        conn.execute(
+            '''UPDATE case_documents
+               SET symptom_tags = ?, product_tags = ?, updated_at = CURRENT_TIMESTAMP
+               WHERE id = ?''',
+            (symptom_tags, product_tags, case_id),
+        )
+        row = conn.execute('SELECT * FROM case_documents WHERE id = ?', (case_id,)).fetchone()
+        if row:
+            _sync_case_document_fts(conn, case_id, dict(row))
+
+def update_case_tag(tag_id, data):
+    payload = _case_tag_payload(data)
+    conn = get_db_connection()
+    row = conn.execute('SELECT id FROM case_tags WHERE id = ?', (tag_id,)).fetchone()
+    if not row:
+        conn.close()
+        return False
+    case_ids = [
+        r['case_id']
+        for r in conn.execute('SELECT case_id FROM case_document_tags WHERE tag_id = ?', (tag_id,)).fetchall()
+    ]
+    try:
+        conn.execute(
+            '''UPDATE case_tags
+               SET name = ?, type = ?, aliases = ?, status = ?, sort_order = ?, updated_at = CURRENT_TIMESTAMP
+               WHERE id = ?''',
+            (payload['name'], payload['type'], payload['aliases'], payload['status'], payload['sort_order'], tag_id),
+        )
+        _refresh_case_tag_texts(conn, case_ids)
+        conn.commit()
+        return True
+    except sqlite3.IntegrityError as exc:
+        raise ValueError('tag already exists') from exc
+    finally:
+        conn.close()
+
+def set_case_tag_status(tag_id, status):
+    conn = get_db_connection()
+    row = conn.execute('SELECT id FROM case_tags WHERE id = ?', (tag_id,)).fetchone()
+    if not row:
+        conn.close()
+        return None
+    val = 1 if int(status) else 0
+    conn.execute(
+        'UPDATE case_tags SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
+        (val, tag_id),
+    )
+    conn.commit()
+    conn.close()
+    return val
 
 def seed_case_documents():
     conn = get_db_connection()

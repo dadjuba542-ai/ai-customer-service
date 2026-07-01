@@ -47,12 +47,16 @@ python3 app.py
 ```text
 app.py                  Flask 入口，注册蓝图，补充若干独立接口
 config.py               环境变量配置
+db_migrations.py        轻量 SQLite migration 执行器
 models.py               SQLite 初始化 + 全量数据访问函数
 routes/                 各业务路由
 services/chat_service.py Coze 对话同步/流式封装
 static/                 前台静态页面与脚本样式
+static/admin/cases.js   后台案例档案 JS（案例管理、标签库、链接识别、案例库 H5 设置）
 templates/admin.html    管理后台页面
 scripts/test_today_features.py 现有冒烟测试
+scripts/test_case_documents.py 案例档案冒烟测试
+scripts/test_migrations.py SQLite migration 冒烟测试
 railway.json            Railway 部署配置
 zeabur.json             Zeabur 启动配置
 outputs/                历史生成物/设计产物，非主应用运行核心
@@ -267,6 +271,10 @@ outputs/                历史生成物/设计产物，非主应用运行核心
   - 产品资料、分类、排序、高亮信息
 - `case_documents`
   - 客户案例档案、症状标签、产品标签、客户画像、场景、封面图、显示状态
+- `case_tags`
+  - 案例标准标签库，区分症状标签和产品标签，支持别名、启停和排序
+- `case_document_tags`
+  - 案例和标准标签的关联表，服务于标签筛选、别名匹配和后续治理
 - `case_documents_fts`
   - 客户案例全文检索索引，服务于聊天后的相关案例推荐
 - `agent_configs`
@@ -350,6 +358,10 @@ outputs/                历史生成物/设计产物，非主应用运行核心
 - `PUT /api/admin/cases/<id>`
 - `DELETE /api/admin/cases/<id>`
 - `PUT /api/admin/cases/<id>/status`
+- `GET /api/admin/case-tags`
+- `POST /api/admin/case-tags`
+- `PUT /api/admin/case-tags/<id>`
+- `PUT /api/admin/case-tags/<id>/status`
 - `GET/PUT /api/admin/settings/case-library-url`
 
 ### 社区
@@ -436,6 +448,8 @@ outputs/                历史生成物/设计产物，非主应用运行核心
 ```bash
 node --check static/app.js
 python3 -m py_compile services/case_recognition_service.py routes/cases.py
+python3 -m py_compile db_migrations.py models.py scripts/test_migrations.py
+python3 scripts/test_migrations.py
 python3 scripts/test_case_documents.py
 python3 scripts/test_today_features.py
 ```
@@ -462,6 +476,14 @@ python3 scripts/test_today_features.py
 - AI 结构化抽取成功路径
 - AI 失败时规则降级
 - 识别预览不直接入库，确认保存后可搜索
+- SQLite migration 空库初始化
+- 旧库缺字段自动补齐
+- 重复执行 `init_db()` 不重复记录 migration
+- migration 失败时回滚且不写入版本记录
+- 案例标准标签表和关联表初始化
+- 现有案例逗号标签会回填为标准标签和关联关系
+- 案例标签别名可归一到标准标签
+- 按别名筛选和搜索可命中标准标签案例
 
 当前本地运行状态：
 
@@ -469,6 +491,7 @@ python3 scripts/test_today_features.py
 - 不要直接打开 `file:///Users/test/Downloads/ai-customer-service/templates/admin.html`，否则登录会因为 `fetch` 不能访问后端接口而显示 `Failed to fetch`
 - 当前 Flask 开发服务需要在项目根目录运行 `python3 app.py`，默认端口 `5001`
 - 2026-06-30 自动化验收已通过；当前已启动 Flask 服务，`GET /admin`、`GET /api/cases` 可响应，后台登录后的人工点验仍需继续
+- 最新已推送 GitHub：`13ec2f6 Add SQLite migration runner`
 
 ## 12. 2026-06-30 新增内容快照
 
@@ -485,6 +508,10 @@ python3 scripts/test_today_features.py
 - 新增外部客户案例库 H5 跳转配置：后台填写链接后，只在案例详情底部显示“查看更多客户案例”按钮，不放首页和底部导航。
 - 新增测试脚本 `scripts/test_case_documents.py`，覆盖案例推荐、CRUD、链接识别和聊天接口回归。
 - 新增验收清单 `docs/CASE_ARCHIVE_V1_ACCEPTANCE.md`，记录后台案例管理、链接识别、前台抽屉、移动端 UI 和发布前检查项。
+- 新增轻量 SQLite migration 机制：`db_migrations.py` + `schema_migrations`，历史补列不再靠 `ALTER TABLE ... try/except pass`。
+- 新增测试脚本 `scripts/test_migrations.py`，覆盖空库、旧库、重复初始化和失败回滚。
+- 新增案例标签轻量标准化：`case_tags` + `case_document_tags`，保留原逗号文本字段做兼容展示。
+- 后台“案例设置”增加标签库，可维护症状/产品标准标签、别名、排序和启停。
 
 ## 13. 已知实现特点与风险点
 
@@ -495,7 +522,7 @@ python3 scripts/test_today_features.py
 - SQLite 适合当前体量，但多副本部署、重写入、复杂分析都会撞墙。
 - 管理后台图片上传依赖 Pillow，当前 `requirements.txt` 已显式写入 `Pillow==10.2.0`。
 - 前台 `static/app.js` 是大体量单文件脚本，后续维护成本会继续上升。
-- 后台 `templates/admin.html` 也是大体量单文件模板，继续扩功能时很容易互相影响。
+- 后台案例 JS 已拆到 `static/admin/cases.js`；`templates/admin.html` 仍包含其它后台模块的大量内联脚本，继续扩功能时仍需逐步拆分。
 - 案例链接识别依赖目标网页可公开访问；小程序私有路径、登录后页面、强反爬页面只能保留外链并手动补正文。
 - 案例链接识别复用 Coze API 做结构化抽取；未配置 API Key 或 Coze 失败时会降级，但标签质量需要人工确认。
 - `outputs/` 目录看起来是历史设计/生成产物，不属于主业务运行链路，清理前先确认是否还有人依赖。
@@ -541,18 +568,18 @@ python3 scripts/test_today_features.py
 2. `services/case_recognition_service.py`
 3. `models.py` 中 `case_documents` 相关函数
 4. `static/app.js` 中 `relatedCases/caseDrawer` 相关函数
-5. `templates/admin.html` 中 `Case Management` 段落
-6. `scripts/test_case_documents.py`
+5. `static/admin/cases.js` 中后台案例管理、标签库和链接识别逻辑
+6. `templates/admin.html` 中案例页 HTML 结构
+7. `scripts/test_case_documents.py`
 
 ## 15. 推荐的后续整理方向
 
 如果以后要继续维护，这几个方向最值：
 
 1. 把 `models.py` 按领域拆分，至少分成 chat/news/product/community/user。
-2. 把案例档案继续扩大前，优先把标签标准化；当前标签是逗号文本，轻量够用但不适合大规模治理。
-3. 把前台大脚本拆模块，至少把聊天、资讯、社区、后台 API 调用拆开。
-4. 把后台大模板拆分，至少把案例管理、产品管理、资讯管理拆开。
-5. 给部署环境补明确说明，尤其是 `DATABASE_DIR=/data` 这类持久化配置。
+2. 把前台大脚本拆模块，至少把聊天、资讯、社区、后台 API 调用拆开。
+3. 继续拆后台大模板，下一步优先拆产品管理和资讯管理。
+4. 给部署环境补明确说明，尤其是 `DATABASE_DIR=/data` 这类持久化配置。
 
 ## 16. 一句话接手建议
 

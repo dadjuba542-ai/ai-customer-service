@@ -2,13 +2,17 @@ from flask import Blueprint, jsonify, request
 
 from models import (
     create_case_document,
+    create_case_tag,
     delete_case_document,
     get_all_case_documents,
     get_case_documents_page,
     get_case_document_by_id,
+    get_case_tags,
     search_case_documents_page,
     set_case_document_status,
+    set_case_tag_status,
     update_case_document,
+    update_case_tag,
 )
 from routes.auth import admin_required
 from services.case_recognition_service import CaseRecognitionError, recognize_case_from_link
@@ -100,4 +104,48 @@ def admin_set_case_status(current_user, case_id):
     val = set_case_document_status(case_id, data.get('status', 1))
     if val is None:
         return jsonify({'error': 'Case not found'}), 404
+    return jsonify({'status': val})
+
+
+@cases_bp.route('/admin/case-tags', methods=['GET'])
+@admin_required
+def admin_list_case_tags(current_user):
+    try:
+        tags = get_case_tags((request.args.get('type') or '').strip())
+    except ValueError as exc:
+        return jsonify({'error': str(exc)}), 400
+    return jsonify({'tags': tags})
+
+
+@cases_bp.route('/admin/case-tags', methods=['POST'])
+@admin_required
+def admin_create_case_tag(current_user):
+    data = request.get_json(silent=True) or {}
+    try:
+        tag_id = create_case_tag(data)
+    except ValueError as exc:
+        return jsonify({'error': str(exc)}), 400
+    return jsonify({'id': tag_id, 'message': '标签已创建'}), 201
+
+
+@cases_bp.route('/admin/case-tags/<int:tag_id>', methods=['PUT'])
+@admin_required
+def admin_update_case_tag(current_user, tag_id):
+    data = request.get_json(silent=True) or {}
+    try:
+        ok = update_case_tag(tag_id, data)
+    except ValueError as exc:
+        return jsonify({'error': str(exc)}), 400
+    if not ok:
+        return jsonify({'error': 'Tag not found'}), 404
+    return jsonify({'message': '标签已更新'})
+
+
+@cases_bp.route('/admin/case-tags/<int:tag_id>/status', methods=['PUT'])
+@admin_required
+def admin_set_case_tag_status(current_user, tag_id):
+    data = request.get_json(silent=True) or {}
+    val = set_case_tag_status(tag_id, data.get('status', 1))
+    if val is None:
+        return jsonify({'error': 'Tag not found'}), 404
     return jsonify({'status': val})
