@@ -35,6 +35,8 @@ def assert_expected_columns(conn):
         'agent_configs': {'icon', 'chat_desc'},
         'replies': {'author_key', 'like_count'},
         'case_documents': {'external_url'},
+        'case_tags': {'name', 'type', 'aliases', 'status', 'sort_order'},
+        'case_document_tags': {'case_id', 'tag_id'},
     }
     for table, columns in expected.items():
         actual = table_columns(conn, table)

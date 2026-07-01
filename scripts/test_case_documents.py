@@ -107,12 +107,26 @@ def main():
         fts_table = conn.execute(
             "SELECT name FROM sqlite_master WHERE type='table' AND name='case_documents_fts'"
         ).fetchone()
+        tags_table = conn.execute(
+            "SELECT name FROM sqlite_master WHERE type='table' AND name='case_tags'"
+        ).fetchone()
+        case_tags_table = conn.execute(
+            "SELECT name FROM sqlite_master WHERE type='table' AND name='case_document_tags'"
+        ).fetchone()
         conn.close()
         assert_true(case_table is not None, "case_documents table missing")
         assert_true(fts_table is not None, "case_documents_fts table missing")
+        assert_true(tags_table is not None, "case_tags table missing")
+        assert_true(case_tags_table is not None, "case_document_tags table missing")
 
         seeded = get_all_case_documents()
         assert_true(len(seeded) == 5, f"expected 5 seed cases, got {len(seeded)}")
+        conn = get_db_connection()
+        tag_count = conn.execute("SELECT COUNT(*) AS cnt FROM case_tags").fetchone()["cnt"]
+        link_count = conn.execute("SELECT COUNT(*) AS cnt FROM case_document_tags").fetchone()["cnt"]
+        conn.close()
+        assert_true(tag_count >= 10, f"expected seed standard tags, got {tag_count}")
+        assert_true(link_count >= 10, f"expected seed case tag links, got {link_count}")
 
         constipation = search_case_documents("我妈便秘腹胀适合什么", limit=3)
         assert_true(
@@ -192,6 +206,53 @@ def main():
         r = client.get("/api/admin/cases", headers=auth)
         assert_true(r.status_code == 200, f"admin cases list failed: {r.status_code}")
         assert_true(len(r.get_json().get("cases", [])) >= 5, "admin cases list missing seeds")
+
+        r = client.get("/api/admin/case-tags", headers=auth)
+        assert_true(r.status_code == 200, f"admin case tags list failed: {r.status_code}")
+        tags = r.get_json().get("tags", [])
+        constipation_tag = next((tag for tag in tags if tag["type"] == "symptom" and tag["name"] == "便秘"), None)
+        assert_true(constipation_tag is not None, f"便秘 standard tag missing: {tags}")
+        r = client.put(f"/api/admin/case-tags/{constipation_tag['id']}", headers=auth, json={
+            "type": "symptom",
+            "name": "便秘",
+            "aliases": "排便困难,排便不畅",
+            "status": 1,
+            "sort_order": 0,
+        })
+        assert_true(r.status_code == 200, f"case tag alias update failed: {r.status_code} {r.get_data(as_text=True)}")
+
+        r = client.post("/api/admin/cases", headers=auth, json={
+            "title": "别名归一便秘案例",
+            "customer_profile": "测试客户",
+            "symptom_tags": "排便困难",
+            "product_tags": "益生菌",
+            "summary": "别名应归一到便秘",
+            "content": "客户说排便困难，系统应按便秘标准标签处理。",
+            "status": 1,
+            "sort_order": 0,
+        })
+        assert_true(r.status_code == 201, f"alias case create failed: {r.status_code} {r.get_data(as_text=True)}")
+        alias_case_id = r.get_json()["id"]
+        r = client.get(f"/api/cases/{alias_case_id}")
+        assert_true(r.status_code == 200, f"alias public case detail failed: {r.status_code}")
+        assert_true(r.get_json().get("symptom_tags") == "便秘", f"alias was not standardized: {r.get_json()}")
+        r = client.get("/api/cases?tag_type=symptom&tag=排便困难")
+        assert_true(
+            any(item["id"] == alias_case_id for item in r.get_json().get("items", [])),
+            f"alias tag filter failed: {r.get_json()}",
+        )
+        assert_true(
+            any(item["id"] == alias_case_id for item in search_case_documents("排便困难", limit=10)),
+            "alias search did not hit standardized case",
+        )
+        r = client.put(f"/api/admin/case-tags/{constipation_tag['id']}/status", headers=auth, json={"status": 0})
+        assert_true(r.status_code == 200, f"case tag disable failed: {r.status_code}")
+        r = client.get(f"/api/cases/{alias_case_id}")
+        assert_true(r.get_json().get("symptom_tags") == "便秘", "disabled tag should not change saved case display")
+        r = client.put(f"/api/admin/case-tags/{constipation_tag['id']}/status", headers=auth, json={"status": 1})
+        assert_true(r.status_code == 200, f"case tag re-enable failed: {r.status_code}")
+        r = client.delete(f"/api/admin/cases/{alias_case_id}", headers=auth)
+        assert_true(r.status_code == 200, f"alias case cleanup failed: {r.status_code}")
 
         r = client.get("/api/admin/settings/case-library-url")
         assert_true(r.status_code == 401, f"case library setting should require auth: {r.status_code}")
