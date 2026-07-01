@@ -764,7 +764,7 @@ function renderRelatedCases(cases, query = '', total) {
     <div class="related-case-list">
       ${cases.map(item => `
         <div class="related-case-card" role="button" tabindex="0" onclick="openCaseDrawerDetail(${Number(item.id)}, { openedFromList: false })">
-          ${item.image_url ? `<img class="related-case-img" src="${escapeHtml(item.image_url)}" alt="">` : `<div class="related-case-img placeholder"><i class="ph ph-file-text"></i></div>`}
+          ${item.image_url ? renderImage(item.image_url, '', 'related-case-img') : `<div class="related-case-img placeholder"><i class="ph ph-file-text"></i></div>`}
           <div class="related-case-body">
             <div class="related-case-name">${escapeHtml(item.title || '')}</div>
             <div class="related-case-profile">${escapeHtml(item.customer_profile || item.scenario || '')}</div>
@@ -859,7 +859,7 @@ function renderCaseDrawerDetail(item) {
   if (!body) return;
   body.className = 'case-drawer-body case-drawer-detail-body';
   body.innerHTML = `
-      ${item.image_url ? `<img class="case-detail-hero" src="${escapeHtml(item.image_url)}" alt="">` : ''}
+      ${item.image_url ? renderImage(item.image_url, item.title || '', 'case-detail-hero', { thumb: false }) : ''}
       <div class="case-detail-content">
         <p class="case-detail-profile">${escapeHtml(item.customer_profile || '')}</p>
         <div class="case-detail-tags">
@@ -1014,7 +1014,7 @@ async function loadCases(reset = false) {
 function renderCaseListItems(items) {
   return items.map(item => `
     <div class="case-list-item" role="button" tabindex="0" onclick="openCaseDrawerDetail(${Number(item.id)}, { openedFromList: true })">
-      ${item.image_url ? `<img class="case-list-img" src="${escapeHtml(item.image_url)}" alt="">` : `<div class="case-list-img placeholder"><i class="ph ph-file-text"></i></div>`}
+      ${item.image_url ? renderImage(item.image_url, '', 'case-list-img') : `<div class="case-list-img placeholder"><i class="ph ph-file-text"></i></div>`}
       <div class="case-list-info">
         <div class="case-list-name">${escapeHtml(item.title || '')}</div>
         <div class="case-list-profile">${escapeHtml(item.customer_profile || item.scenario || '')}</div>
@@ -1492,7 +1492,7 @@ function renderNews(news) {
   container.innerHTML = news.map(item => `
     <button class="news-card" onclick="showNewsDetail(${item.id})">
       <div class="news-card-img">${item.image_url
-        ? `<img src="${item.image_url}" alt="${escapeHtml(item.title)}">`
+        ? renderImage(item.image_url, item.title || '')
         : `<div class="img-placeholder"><i class="ph ph-image"></i></div>`}
       </div>
       <div class="news-card-body">
@@ -1554,7 +1554,7 @@ function renderCarousel(pinned) {
   container.innerHTML = pinned.map(p => `
     <button class="carousel-slide" onclick="showNewsDetail(${p.id})">
       <div class="carousel-img">${p.image_url
-        ? `<img src="${p.image_url}" alt="${escapeHtml(p.title)}">`
+        ? renderImage(p.image_url, p.title || '', '', { eager: true })
         : `<div class="img-placeholder"><i class="ph ph-image"></i></div>`}
       </div>
       <div class="carousel-caption">
@@ -1608,7 +1608,7 @@ function renderDiscoverList(news) {
   container.innerHTML = news.map(item => `
     <button class="news-card" onclick="showNewsDetail(${item.id})">
       <div class="news-card-img">${item.image_url
-        ? `<img src="${item.image_url}" alt="${escapeHtml(item.title)}">`
+        ? renderImage(item.image_url, item.title || '')
         : `<div class="img-placeholder"><i class="ph ph-image"></i></div>`}
       </div>
       <div class="news-card-body">
@@ -1639,7 +1639,7 @@ async function loadMoreNews() {
       el.onclick = () => showNewsDetail(item.id);
       el.innerHTML = `
         <div class="news-card-img">${item.image_url
-          ? `<img src="${item.image_url}" alt="${escapeHtml(item.title)}">`
+          ? renderImage(item.image_url, item.title || '')
           : `<div class="img-placeholder"><i class="ph ph-image"></i></div>`}
         </div>
         <div class="news-card-body">
@@ -1695,7 +1695,7 @@ async function showNewsDetail(id) {
     const container = document.getElementById('news-detail-content');
     container.innerHTML = `
       <div class="news-detail-image">${item.image_url
-        ? `<img src="${item.image_url}" alt="${escapeHtml(item.title)}">`
+        ? renderImage(item.image_url, item.title || '', '', { thumb: false })
         : `<div class="placeholder"><i class="ph ph-image"></i></div>`}
       </div>
       <h1 class="news-detail-title">${escapeHtml(item.title)}</h1>
@@ -1976,6 +1976,28 @@ function escapeHtml(text) {
   return d.innerHTML;
 }
 
+function imageThumbUrl(url) {
+  const value = String(url || '');
+  if (!value.startsWith('/uploads/')) return value;
+  const suffixIndex = value.search(/[?#]/);
+  const path = suffixIndex >= 0 ? value.slice(0, suffixIndex) : value;
+  const suffix = suffixIndex >= 0 ? value.slice(suffixIndex) : '';
+  if (path.includes('_thumb.')) return value;
+  const dotIndex = path.lastIndexOf('.');
+  if (dotIndex < 0) return `${path}_thumb.jpg${suffix}`;
+  return `${path.slice(0, dotIndex)}_thumb${path.slice(dotIndex)}${suffix}`;
+}
+
+function renderImage(src, alt = '', className = '', options = {}) {
+  if (!src) return '';
+  const fullSrc = String(src);
+  const displaySrc = options.thumb === false ? fullSrc : imageThumbUrl(fullSrc);
+  const fallback = displaySrc !== fullSrc ? ` data-fallback-src="${escapeHtml(fullSrc)}" onerror="this.onerror=null;this.src=this.dataset.fallbackSrc;"` : '';
+  const loading = options.eager ? 'eager' : 'lazy';
+  const priority = options.eager ? ' fetchpriority="high"' : '';
+  return `<img${className ? ` class="${escapeHtml(className)}"` : ''} src="${escapeHtml(displaySrc)}" alt="${escapeHtml(alt)}" loading="${loading}" decoding="async"${priority}${fallback}>`;
+}
+
 function showToast(msg, type = 'info') {
   const t = document.getElementById('toast');
   t.textContent = msg;
@@ -2041,7 +2063,7 @@ async function showProductDetail(id) {
     const container = document.getElementById('product-detail-content');
     container.innerHTML = `
       <div class="product-detail-image">${item.image_url
-        ? `<img src="${item.image_url}" alt="${escapeHtml(item.name)}">`
+        ? renderImage(item.image_url, item.name || '', '', { thumb: false })
         : `<div class="placeholder"><i class="ph ph-image"></i></div>`}
       </div>
       <h1 class="product-detail-name">${escapeHtml(item.name)}</h1>
