@@ -527,7 +527,7 @@ python3 scripts/test_today_features.py
 - 前台图片增加 `loading="lazy"` 和 `decoding="async"`，首屏轮播/头像保留 eager 加载。
 - Flask 增加静态资源缓存头：上传图片强缓存，普通图片/CSS/JS 短期缓存，HTML 不强缓存。
 - 新增 `scripts/optimize_uploaded_images.py`，默认 dry-run；`--apply` 时会先备份 SQLite，再生成优化图并更新本地 `/uploads/...` 数据库引用。
-- 生成首屏压缩头像 `static/avatar-optimized.jpg`，首页从原 `avatar.png` 改为引用压缩版；`static/bot-avatar-optimized.jpg` 已生成备用。
+- 生成保留透明通道的首屏压缩头像 `static/avatar-optimized.png`，首页从原 `avatar.png` 改为引用压缩版；`static/bot-avatar-optimized.png` 已生成备用。
 - 本地 dry-run 显示当前已引用历史上传图可优化 18 张，预计主图体积节省约 38MB；尚未自动执行 `--apply`。
 
 ## 13. 已知实现特点与风险点
