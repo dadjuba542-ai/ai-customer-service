@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from models import create_news, get_all_news, get_news_by_id, update_news, delete_news, increment_news_views, get_pinned_news, get_featured_news, get_news_page, toggle_pin_news, toggle_featured_news, get_news_categories
+from models import create_news, get_all_news, get_news_by_id_and_increment_views, update_news, delete_news, get_pinned_news, get_featured_news, get_news_page, toggle_pin_news, toggle_featured_news, get_news_categories
 from routes.auth import admin_required
 
 news_bp = Blueprint('news', __name__)
@@ -39,8 +39,7 @@ def add_news(current_user):
 
 @news_bp.route('/<int:news_id>', methods=['GET'])
 def get_news(news_id):
-    increment_news_views(news_id)
-    item = get_news_by_id(news_id)
+    item = get_news_by_id_and_increment_views(news_id)
     if not item:
         return jsonify({'error': 'Not found'}), 404
     return jsonify(item)

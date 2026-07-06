@@ -1511,6 +1511,7 @@ let discoverPages = 0;
 let carouselTimer = null;
 let carouselIdx = 0;
 let currentCategory = '';
+const newsDetailCache = new Map();
 
 async function loadDiscover(category) {
   if (category !== undefined) currentCategory = category || '';
@@ -1688,22 +1689,78 @@ function renderHotQuestions(questions) {
 
 /* ===== News Detail ===== */
 async function showNewsDetail(id) {
+  const cached = newsDetailCache.get(Number(id));
+  if (cached) {
+    renderNewsDetail(cached);
+    document.getElementById('news-detail-overlay').classList.add('active');
+    refreshNewsDetail(id);
+    return;
+  }
+  renderNewsDetailLoading();
+  document.getElementById('news-detail-overlay').classList.add('active');
+  try {
+    const res = await fetch(`${API_BASE}/api/news/${id}`);
+    if (!res.ok) throw new Error('新闻加载失败');
+    const item = await res.json();
+    newsDetailCache.set(Number(id), item);
+    renderNewsDetail(item);
+  } catch {
+    renderNewsDetailError(id);
+  }
+}
+
+async function refreshNewsDetail(id) {
   try {
     const res = await fetch(`${API_BASE}/api/news/${id}`);
     if (!res.ok) return;
     const item = await res.json();
-    const container = document.getElementById('news-detail-content');
-    container.innerHTML = `
-      <div class="news-detail-image">${item.image_url
-        ? renderImage(item.image_url, item.title || '', '', { thumb: false })
-        : `<div class="placeholder"><i class="ph ph-image"></i></div>`}
-      </div>
-      <h1 class="news-detail-title">${escapeHtml(item.title)}</h1>
-      <div class="news-detail-meta">${formatTime(item.created_at)}</div>
-      <div class="news-detail-body">${item.content || item.summary || '暂无内容'}</div>
-    `;
-    document.getElementById('news-detail-overlay').classList.add('active');
+    newsDetailCache.set(Number(id), item);
   } catch {}
+}
+
+function renderNewsDetailLoading() {
+  const container = document.getElementById('news-detail-content');
+  if (!container) return;
+  container.innerHTML = `
+    <div class="news-detail-image"><div class="placeholder"><i class="ph ph-newspaper"></i></div></div>
+    <h1 class="news-detail-title">正在加载资讯...</h1>
+    <div class="news-detail-meta">请稍候</div>
+    <div class="news-detail-body"><p>正在打开内容。</p></div>
+  `;
+}
+
+function renderNewsDetailError(id) {
+  const container = document.getElementById('news-detail-content');
+  if (!container) return;
+  container.innerHTML = `
+    <div class="news-detail-image"><div class="placeholder"><i class="ph ph-warning-circle"></i></div></div>
+    <h1 class="news-detail-title">加载失败</h1>
+    <div class="news-detail-body"><p>资讯加载失败，请检查网络后重试。</p><button class="discover-more-btn" onclick="showNewsDetail(${Number(id)})">重新加载</button></div>
+  `;
+}
+
+function renderNewsDetail(item) {
+  const container = document.getElementById('news-detail-content');
+  if (!container) return;
+  container.innerHTML = `
+    <div class="news-detail-image">${item.image_url
+      ? renderImage(item.image_url, item.title || '', '', { thumb: false })
+      : `<div class="placeholder"><i class="ph ph-image"></i></div>`}
+    </div>
+    <h1 class="news-detail-title">${escapeHtml(item.title)}</h1>
+    <div class="news-detail-meta">${formatTime(item.created_at)}</div>
+    <div class="news-detail-body">${prepareNewsDetailContent(item.content || item.summary || '暂无内容')}</div>
+  `;
+}
+
+function prepareNewsDetailContent(html) {
+  const div = document.createElement('div');
+  div.innerHTML = html;
+  div.querySelectorAll('img').forEach(img => {
+    img.setAttribute('loading', 'lazy');
+    img.setAttribute('decoding', 'async');
+  });
+  return div.innerHTML;
 }
 
 function closeNewsDetail() {

@@ -59,6 +59,7 @@ scripts/test_today_features.py 现有冒烟测试
 scripts/test_case_documents.py 案例档案冒烟测试
 scripts/test_migrations.py SQLite migration 冒烟测试
 scripts/optimize_uploaded_images.py 历史上传图片优化脚本
+scripts/optimize_news_content_images.py 新闻正文 base64 图片迁移脚本
 railway.json            Railway 部署配置
 zeabur.json             Zeabur 启动配置
 outputs/                历史生成物/设计产物，非主应用运行核心
@@ -530,6 +531,27 @@ python3 scripts/test_today_features.py
 - 生成保留透明通道的首屏压缩头像 `static/avatar-optimized.png`，首页从原 `avatar.png` 改为引用压缩版；`static/bot-avatar-optimized.png` 已生成备用。
 - 本地 dry-run 显示当前已引用历史上传图可优化 18 张，预计主图体积节省约 38MB；尚未自动执行 `--apply`。
 
+## 12.2 2026-07-06 新闻详情打开速度优化快照
+
+本次定位到新闻详情慢的主要原因是历史正文里保存了 `data:image/base64` 内嵌图：
+
+- 本地曾有 2 篇新闻正文包含 base64 图片，其中最大一篇正文约 5MB，点击详情时会把整张图塞进 JSON 返回。
+- 新增 `scripts/optimize_news_content_images.py`，默认 dry-run；`--apply` 时先备份 SQLite，再把新闻正文内嵌图片转为 `/uploads/...` 文件 URL。
+- 后台新闻 Quill 编辑器的图片按钮、粘贴和拖入图片都改为走 `/api/admin/upload`，不再让正文存 base64。
+- 保存新闻前会拦截 `data:image` 正文，提示管理员通过上传方式插入图片。
+- 前台新闻详情改为点击后立即打开加载态，详情加载成功后再填充内容；同一篇新闻二次打开走内存缓存。
+- 新闻详情正文里的图片会补 `loading="lazy"` 和 `decoding="async"`，减少正文多图时的加载阻塞。
+
+服务器更新这次改动时，拉取最新代码后需要在真实持久化数据库上执行：
+
+```bash
+git pull origin main
+python3 scripts/optimize_news_content_images.py
+python3 scripts/optimize_news_content_images.py --apply
+```
+
+如果生产环境使用 Railway/Zeabur 持久卷，先确认 `DATABASE_DIR` 指向真实数据目录，例如 Railway 常见为 `/data`。`--apply` 会自动生成 `ai_customer_service.db.bak.news-content.*` 备份；确认新闻详情正常后保留一段时间再清理备份。
+
 ## 13. 已知实现特点与风险点
 
 这些不是马上要改的 bug 清单，但后续接手时最好脑子里有数：
@@ -541,6 +563,7 @@ python3 scripts/test_today_features.py
 - 前台 `static/app.js` 是大体量单文件脚本，后续维护成本会继续上升。
 - 后台案例 JS 已拆到 `static/admin/cases.js`；`templates/admin.html` 仍包含其它后台模块的大量内联脚本，继续扩功能时仍需逐步拆分。
 - 历史图片优化脚本默认只 dry-run；服务器执行 `--apply` 前要确认 `DATABASE_DIR` 指向真实持久化 SQLite，并保留脚本生成的 `.bak` 数据库备份。
+- 新闻正文图片必须走上传 URL，不要让 Quill 保存 `data:image/base64`；如果详情再次变慢，先用 `scripts/optimize_news_content_images.py` 检查。
 - 上传目录仍在本机 `static/uploads/`，当前优化能显著减小图片体积；图片量继续增长后再考虑对象存储/CDN。
 - 案例链接识别依赖目标网页可公开访问；小程序私有路径、登录后页面、强反爬页面只能保留外链并手动补正文。
 - 案例链接识别复用 Coze API 做结构化抽取；未配置 API Key 或 Coze 失败时会降级，但标签质量需要人工确认。
@@ -576,6 +599,7 @@ python3 scripts/test_today_features.py
 3. `static/styles.css`
 4. `services/image_service.py`
 5. `scripts/optimize_uploaded_images.py`
+6. `scripts/optimize_news_content_images.py`
 
 ### 想看社区问答
 

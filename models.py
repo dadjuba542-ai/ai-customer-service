@@ -268,6 +268,16 @@ def get_news_by_id(id):
     conn.close()
     return dict(row) if row else None
 
+def get_news_by_id_and_increment_views(id):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute('UPDATE news SET views = views + 1 WHERE id = ?', (id,))
+    cursor.execute('SELECT * FROM news WHERE id = ?', (id,))
+    row = cursor.fetchone()
+    conn.commit()
+    conn.close()
+    return dict(row) if row else None
+
 def update_news(id, title, summary, content, image_url, category=''):
     conn = get_db_connection()
     cursor = conn.cursor()
