@@ -41,6 +41,22 @@ def _backfill_case_document_tags(conn):
 
 MIGRATIONS = [
     {
+        'version': '202606290001',
+        'name': 'create_case_documents_table',
+        'sqls': [
+            '''CREATE TABLE IF NOT EXISTS case_documents (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                title TEXT NOT NULL DEFAULT '',
+                content TEXT DEFAULT '',
+                symptom_tags TEXT DEFAULT '',
+                product_tags TEXT DEFAULT '',
+                source TEXT DEFAULT '',
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )'''
+        ],
+    },
+    {
         'version': '202606300001',
         'name': 'add_historical_compat_columns',
         'columns': [
@@ -151,3 +167,13 @@ def run_migrations(conn, migrations=None):
         except Exception:
             conn.rollback()
             raise
+
+
+if __name__ == '__main__':
+    import os
+    db_path = os.environ.get('AI_DB_PATH', 'ai_customer_service.db')
+    conn = sqlite3.connect(db_path)
+    conn.row_factory = sqlite3.Row
+    run_migrations(conn)
+    conn.close()
+    print(f"migrations applied to {db_path}")
