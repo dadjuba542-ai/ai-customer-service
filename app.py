@@ -38,6 +38,8 @@ from routes.admin import admin_bp
 from routes.agents import agents_bp
 from routes.dashboard import dashboard_bp
 from routes.cases import cases_bp
+from routes.share import share_bp
+from routes.speech import speech_bp
 
 app = Flask(__name__, static_folder='static', static_url_path='')
 Config.validate()
@@ -59,6 +61,8 @@ app.register_blueprint(admin_bp, url_prefix='/api/admin')
 app.register_blueprint(agents_bp, url_prefix='/api/agents')
 app.register_blueprint(dashboard_bp, url_prefix='/api/admin/dashboard')
 app.register_blueprint(cases_bp, url_prefix='/api')
+app.register_blueprint(share_bp, url_prefix='/api')
+app.register_blueprint(speech_bp, url_prefix='/api/speech')
 
 
 @app.after_request

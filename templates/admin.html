@@ -962,6 +962,25 @@
               <button class="btn btn-primary btn-sm" style="margin-top:6px" onclick="saveBlockedKeywords()">保存屏蔽词</button>
             </div>
           </div>
+          <div class="admin-row">
+            <div class="field">
+              <label>语音输入</label>
+              <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--slate-600);margin:6px 0 8px">
+                <input type="checkbox" id="speech-enabled-input"> 开启前台语音识别
+              </label>
+              <select id="speech-provider-input" style="width:100%;padding:8px 12px;font-size:13px;font-family:inherit;border:1.5px solid var(--slate-200);border-radius:8px;outline:none;margin-bottom:8px">
+                <option value="aliyun_asr">阿里云一句话识别（推荐）</option>
+                <option value="coze">Coze Bot 识别（实验，不推荐）</option>
+              </select>
+              <input type="text" id="aliyun-app-key-input" placeholder="阿里云 NLS AppKey" style="width:100%;padding:8px 12px;font-size:13px;font-family:inherit;border:1.5px solid var(--slate-200);border-radius:8px;outline:none;margin-bottom:8px">
+              <input type="text" id="aliyun-access-key-id-input" placeholder="阿里云 AccessKey ID" style="width:100%;padding:8px 12px;font-size:13px;font-family:inherit;border:1.5px solid var(--slate-200);border-radius:8px;outline:none;margin-bottom:8px">
+              <input type="password" id="aliyun-access-key-secret-input" placeholder="阿里云 AccessKey Secret（留空表示不修改）" style="width:100%;padding:8px 12px;font-size:13px;font-family:inherit;border:1.5px solid var(--slate-200);border-radius:8px;outline:none;margin-bottom:8px">
+              <div id="aliyun-secret-hint" style="margin:-2px 0 8px;font-size:11px;color:var(--slate-400)"></div>
+              <input type="text" id="speech-bot-id-input" placeholder="Coze Bot ID（仅实验模式使用）" style="width:100%;padding:8px 12px;font-size:13px;font-family:inherit;border:1.5px solid var(--slate-200);border-radius:8px;outline:none">
+              <div style="margin-top:4px;font-size:11px;color:var(--slate-400)">开启后，前台聊天输入框会显示麦克风；录音会转成 WAV 后交给国内 ASR，识别结果只填入输入框，不会自动发送。</div>
+              <button class="btn btn-primary btn-sm" style="margin-top:6px" onclick="saveSpeechSettings()">保存语音设置</button>
+            </div>
+          </div>
         </div>
         <div class="admin-card">
           <h3><i class="ph ph-hourglass"></i>等待小贴士</h3>
@@ -2264,17 +2283,35 @@ async function loadAdminAgents() {
 
 async function loadAdminSystemConfig() {
   try {
-    const [keyRes, blockRes] = await Promise.all([
+    const [keyRes, blockRes, speechRes] = await Promise.all([
       fetch(`${API}/api/admin/settings/coze-api-key`, { headers: { 'Authorization': `Bearer ${getToken()}` } }),
       fetch(`${API}/api/admin/settings/blocked-keywords`, { headers: { 'Authorization': `Bearer ${getToken()}` } }),
+      fetch(`${API}/api/admin/settings/speech`, { headers: { 'Authorization': `Bearer ${getToken()}` } }),
     ]);
-    let currentKey = '', blockedKW = '', defaultHint = '';
+    let currentKey = '', blockedKW = '', defaultHint = '', speechBotId = '', speechEnabled = false;
+    let speechProvider = 'aliyun_asr', aliyunAppKey = '', aliyunAccessKeyId = '', aliyunSecretMasked = '';
     if (keyRes.ok) { const kd = await keyRes.json(); currentKey = kd.api_key || ''; }
     if (blockRes.ok) { const bd = await blockRes.json(); blockedKW = bd.keywords || ''; defaultHint = bd.defaultHint || ''; }
+    if (speechRes.ok) {
+      const sd = await speechRes.json();
+      speechEnabled = !!sd.enabled;
+      speechProvider = sd.provider || 'aliyun_asr';
+      speechBotId = sd.bot_id || '';
+      aliyunAppKey = sd.aliyun_app_key || '';
+      aliyunAccessKeyId = sd.aliyun_access_key_id || '';
+      aliyunSecretMasked = sd.aliyun_access_key_secret_masked || '';
+    }
     const masked = currentKey ? currentKey.slice(0, 8) + '****' + currentKey.slice(-4) : '未设置';
     document.getElementById('coze-key-label').textContent = `Coze API Key（当前: ${masked}）`;
     document.getElementById('blocked-keywords-input').value = blockedKW;
     document.getElementById('blocked-hint').textContent = `参考: ${defaultHint}`;
+    document.getElementById('speech-enabled-input').checked = speechEnabled;
+    document.getElementById('speech-provider-input').value = speechProvider;
+    document.getElementById('aliyun-app-key-input').value = aliyunAppKey;
+    document.getElementById('aliyun-access-key-id-input').value = aliyunAccessKeyId;
+    document.getElementById('aliyun-access-key-secret-input').value = '';
+    document.getElementById('aliyun-secret-hint').textContent = aliyunSecretMasked ? `已保存 Secret：${aliyunSecretMasked}` : '尚未保存 AccessKey Secret';
+    document.getElementById('speech-bot-id-input').value = speechBotId;
   } catch { console.error('loadAdminSystemConfig error'); }
 }
 
@@ -2398,6 +2435,41 @@ async function saveBlockedKeywords() {
     if (res.ok) { showToast('屏蔽词已保存', 'success'); }
     else { showToast('保存失败', 'error'); }
   } catch { showToast('保存失败', 'error'); }
+}
+
+async function saveSpeechSettings() {
+  const enabled = document.getElementById('speech-enabled-input').checked;
+  const provider = document.getElementById('speech-provider-input').value || 'aliyun_asr';
+  const aliyunAppKey = document.getElementById('aliyun-app-key-input').value.trim();
+  const aliyunAccessKeyId = document.getElementById('aliyun-access-key-id-input').value.trim();
+  const aliyunAccessKeySecret = document.getElementById('aliyun-access-key-secret-input').value.trim();
+  const botId = document.getElementById('speech-bot-id-input').value.trim();
+  try {
+    const res = await fetch(`${API}/api/admin/settings/speech`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${getToken()}` },
+      body: JSON.stringify({
+        enabled,
+        provider,
+        aliyun_app_key: aliyunAppKey,
+        aliyun_access_key_id: aliyunAccessKeyId,
+        aliyun_access_key_secret: aliyunAccessKeySecret,
+        bot_id: botId,
+      }),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (res.ok) {
+      showToast('语音设置已保存', 'success');
+      document.getElementById('aliyun-access-key-secret-input').value = '';
+      document.getElementById('aliyun-secret-hint').textContent = data.aliyun_access_key_secret_masked
+        ? `已保存 Secret：${data.aliyun_access_key_secret_masked}`
+        : '尚未保存 AccessKey Secret';
+    } else {
+      showToast(data.error || '保存失败', 'error');
+    }
+  } catch {
+    showToast('保存失败', 'error');
+  }
 }
 
 

@@ -1,0 +1,223 @@
+{"kind":"deck","id":"pr/9mdhbx","name":"Deck"}
+{"kind":"layout","layoutId":"7bef4b9c-7d84-4c0b-b645-57ac8f2b9e8d","name":"Master","type":"master"}
+{"kind":"layout","layoutId":"9044b170-5890-4d57-91c8-074d9bcfc8dd","name":"Title Slide","type":"title"}
+{"kind":"slide","id":"sl/9f8v8u","slide":1,"title":"AI宝儿使用指南","textShapes":10}
+{"kind":"shape","id":"sh/szqtcj6t","slide":1,"bbox":[42,36,18,18]}
+{"kind":"textbox","id":"sh/3ex0nuxc","slide":1,"text":"AI宝儿使用指南","textPreview":"AI宝儿使用指南","textChars":8,"textLines":1,"bbox":[42,88,680,180]}
+{"kind":"textbox","id":"sh/at47y1kr","slide":1,"text":"先认识平台，再学会提问。照着步骤来，第一次也能顺利用起来。","textPreview":"先认识平台，再学会提问。照着步骤来，第一次也能顺利用起来。","textChars":29,"textLines":1,"bbox":[42,248,620,90]}
+{"kind":"shape","id":"sh/l87ed8ba","slide":1,"bbox":[42,368,640,2]}
+{"kind":"textbox","id":"sh/sneloj2t","slide":1,"text":"适合谁看\n第一次使用AI宝儿的用户\n带用户学习平台的老师和运营人员","textPreview":"适合谁看 | 第一次使用AI宝儿的用户 | 带用户学习平台的老师和运营人员","textChars":33,"textLines":3,"bbox":[42,404,580,180]}
+{"kind":"shape","id":"sh/32lszqtc","slide":1,"bbox":[760,92,436,156]}
+{"kind":"shape","id":"sh/ahoza1gv","slide":1,"bbox":[760,280,436,156]}
+{"kind":"shape","id":"sh/lwval87e","slide":1,"bbox":[760,468,436,156]}
+{"kind":"textbox","id":"sh/wb2hwfyx","slide":1,"text":"先认识","textPreview":"先认识","textChars":3,"textLines":1,"bbox":[792,122,360,34]}
+{"kind":"textbox","id":"sh/2lszqtcj","slide":1,"text":"AI宝儿是什么\n它能帮你做什么\n从哪里开始用","textPreview":"AI宝儿是什么 | 它能帮你做什么 | 从哪里开始用","textChars":22,"textLines":3,"bbox":[792,164,360,150]}
+{"kind":"textbox","id":"sh/v6psfil0","slide":1,"text":"再上手","textPreview":"再上手","textChars":3,"textLines":1,"bbox":[792,310,360,34]}
+{"kind":"textbox","id":"sh/knih4byh","slide":1,"text":"首页怎么用\n快捷功能怎么选\n智能问答怎么问","textPreview":"首页怎么用 | 快捷功能怎么选 | 智能问答怎么问","textChars":21,"textLines":3,"bbox":[792,352,360,150]}
+{"kind":"textbox","id":"sh/d8bat47y","slide":1,"text":"最后会问","textPreview":"最后会问","textChars":4,"textLines":1,"bbox":[792,498,360,34]}
+{"kind":"textbox","id":"sh/29gr2p8n","slide":1,"text":"不会问时照着模板问\n看不懂时继续追问\n越问越清楚","textPreview":"不会问时照着模板问 | 看不懂时继续追问 | 越问越清楚","textChars":24,"textLines":3,"bbox":[792,540,360,150]}
+{"kind":"textbox","id":"sh/vu9knih4","slide":1,"text":"1 / 10","textPreview":"1 / 10","textChars":6,"textLines":1,"bbox":[1088,662,150,20]}
+{"kind":"notes","id":"nt/9f8v8u","slide":1,"text":""}
+{"kind":"slide","id":"sl/08en51","slide":2,"title":"AI宝儿是一个随时在线的小助手","textShapes":13}
+{"kind":"shape","id":"sh/18jqh0fe","slide":2,"bbox":[42,43,16,16]}
+{"kind":"textbox","id":"sh/qh0fepkz","slide":2,"text":"AI宝儿是一个随时在线的小助手","textPreview":"AI宝儿是一个随时在线的小助手","textChars":15,"textLines":1,"bbox":[70,36,860,54]}
+{"kind":"textbox","id":"sh/j2t83itg","slide":2,"text":"可以问产品、问使用方法、看相关案例，也可以让它帮你整理表达。","textPreview":"可以问产品、问使用方法、看相关案例，也可以让它帮你整理表达。","textChars":30,"textLines":1,"bbox":[70,84,980,32]}
+{"kind":"shape","id":"sh/8bat47y1","slide":2,"bbox":[42,126,1196,1]}
+{"kind":"textbox","id":"sh/1w7mp0bi","slide":2,"text":"AI宝儿是什么\n\nAI宝儿是一个可以随时提问、查看内容的智能服务平台。你可以像发微信一样，把想问的内容直接告诉它。","textPreview":"AI宝儿是什么 |  | AI宝儿是一个可以随时提问、查看内容的智能服务平台。你可以像发微信一样，把想问的内容直接告诉它。","textChars":57,"textLines":3,"bbox":[42,150,520,230]}
+{"kind":"textbox","id":"sh/q5o7qpg3","slide":2,"text":"一句话理解\n\n不用懂AI，不用会专业词。你只要先问一句，AI宝儿会帮你把问题讲清楚。","textPreview":"一句话理解 |  | 不用懂AI，不用会专业词。你只要先问一句，AI宝儿会帮你把问题讲清楚。","textChars":42,"textLines":3,"bbox":[42,420,520,170]}
+{"kind":"shape","id":"sh/jqh0fepk","slide":2,"bbox":[658,154,260,194]}
+{"kind":"textbox","id":"sh/c3ylc7u5","slide":2,"text":"问产品","textPreview":"问产品","textChars":3,"textLines":1,"bbox":[682,178,212,34]}
+{"kind":"textbox","id":"sh/1kre1w7m","slide":2,"text":"了解产品是什么、有什么特点、适合什么人","textPreview":"了解产品是什么、有什么特点、适合什么人","textChars":19,"textLines":1,"bbox":[682,220,212,150]}
+{"kind":"shape","id":"sh/5o7qpg3e","slide":2,"bbox":[950,154,260,194]}
+{"kind":"textbox","id":"sh/g3ex0nux","slide":2,"text":"问使用","textPreview":"问使用","textChars":3,"textLines":1,"bbox":[974,178,212,34]}
+{"kind":"textbox","id":"sh/nih4byhg","slide":2,"text":"想知道怎么使用、什么时候用、要注意什么","textPreview":"想知道怎么使用、什么时候用、要注意什么","textChars":19,"textLines":1,"bbox":[974,220,212,150]}
+{"kind":"shape","id":"sh/yxobm58z","slide":2,"bbox":[658,380,260,194]}
+{"kind":"textbox","id":"sh/9cvixcze","slide":2,"text":"看案例","textPreview":"看案例","textChars":3,"textLines":1,"bbox":[682,404,212,34]}
+{"kind":"textbox","id":"sh/gr2p8nqx","slide":2,"text":"参考相似情况，帮助理解回答，不是生搬硬套","textPreview":"参考相似情况，帮助理解回答，不是生搬硬套","textChars":20,"textLines":1,"bbox":[682,446,212,150]}
+{"kind":"shape","id":"sh/r65wjudg","slide":2,"bbox":[950,380,260,194]}
+{"kind":"textbox","id":"sh/ylc7u54z","slide":2,"text":"帮表达","textPreview":"帮表达","textChars":3,"textLines":1,"bbox":[974,404,212,34]}
+{"kind":"textbox","id":"sh/90je9cvi","slide":2,"text":"把想发给朋友或群里的话整理得更自然","textPreview":"把想发给朋友或群里的话整理得更自然","textChars":17,"textLines":1,"bbox":[974,446,212,150]}
+{"kind":"textbox","id":"sh/gfmlkjm1","slide":2,"text":"2 / 10","textPreview":"2 / 10","textChars":6,"textLines":1,"bbox":[1088,662,150,20]}
+{"kind":"notes","id":"nt/08en51","slide":2,"text":""}
+{"kind":"slide","id":"sl/91d9cq","slide":3,"title":"平台主要模块一览","textShapes":15}
+{"kind":"shape","id":"sh/x0nuxc3y","slide":3,"bbox":[42,43,16,16]}
+{"kind":"textbox","id":"sh/m94fu18j","slide":3,"text":"平台主要模块一览","textPreview":"平台主要模块一览","textChars":8,"textLines":1,"bbox":[70,36,860,54]}
+{"kind":"textbox","id":"sh/fu18jqh0","slide":3,"text":"先知道每个模块负责什么，用的时候就更容易找到入口。","textPreview":"先知道每个模块负责什么，用的时候就更容易找到入口。","textChars":25,"textLines":1,"bbox":[70,84,980,32]}
+{"kind":"shape","id":"sh/83itgfml","slide":3,"bbox":[42,126,1196,1]}
+{"kind":"shape","id":"sh/xobm58z2","slide":3,"bbox":[42,150,375,202]}
+{"kind":"textbox","id":"sh/qxs72x4n","slide":3,"text":"首页","textPreview":"首页","textChars":2,"textLines":1,"bbox":[66,174,320,34]}
+{"kind":"textbox","id":"sh/fil0rqd4","slide":3,"text":"看提示、找入口、开始第一次提问。","textPreview":"看提示、找入口、开始第一次提问。","textChars":16,"textLines":1,"bbox":[66,216,320,150]}
+{"kind":"shape","id":"sh/4zidonyd","slide":3,"bbox":[453,150,375,202]}
+{"kind":"textbox","id":"sh/xkf6dcbu","slide":3,"text":"快捷功能","textPreview":"快捷功能","textChars":4,"textLines":1,"bbox":[477,174,320,34]}
+{"kind":"textbox","id":"sh/1kre1w7m","slide":3,"text":"不知道怎么问时，先点这里进入常用场景。","textPreview":"不知道怎么问时，先点这里进入常用场景。","textChars":19,"textLines":1,"bbox":[477,216,320,150]}
+{"kind":"shape","id":"sh/c3ylc7u5","slide":3,"bbox":[864,150,375,202]}
+{"kind":"textbox","id":"sh/ji5snelo","slide":3,"text":"智能问答","textPreview":"智能问答","textChars":4,"textLines":1,"bbox":[888,174,320,34]}
+{"kind":"textbox","id":"sh/uxc3ylc7","slide":3,"text":"直接输入问题，回答后还能继续追问。","textPreview":"直接输入问题，回答后还能继续追问。","textChars":17,"textLines":1,"bbox":[888,216,320,150]}
+{"kind":"shape","id":"sh/1cfa9w3m","slide":3,"bbox":[42,408,375,202]}
+{"kind":"textbox","id":"sh/crmhk3q5","slide":3,"text":"资讯模块","textPreview":"资讯模块","textChars":4,"textLines":1,"bbox":[66,432,320,34]}
+{"kind":"textbox","id":"sh/j6tovaho","slide":3,"text":"先阅读平台图文内容，再带着问题回来问。","textPreview":"先阅读平台图文内容，再带着问题回来问。","textChars":19,"textLines":1,"bbox":[66,474,320,150]}
+{"kind":"shape","id":"sh/ulwval87","slide":3,"bbox":[453,408,375,202]}
+{"kind":"textbox","id":"sh/18jqh0fe","slide":3,"text":"产品模块","textPreview":"产品模块","textChars":4,"textLines":1,"bbox":[477,432,320,34]}
+{"kind":"textbox","id":"sh/8nqxs72x","slide":3,"text":"查看产品基础资料，再问适合谁、怎么用。","textPreview":"查看产品基础资料，再问适合谁、怎么用。","textChars":19,"textLines":1,"bbox":[477,474,320,150]}
+{"kind":"shape","id":"sh/oj2t83it","slide":3,"bbox":[864,408,375,202]}
+{"kind":"textbox","id":"sh/d4vmtwra","slide":3,"text":"案例与社区","textPreview":"案例与社区","textChars":5,"textLines":1,"bbox":[888,432,320,34]}
+{"kind":"textbox","id":"sh/6dcbulwv","slide":3,"text":"看相似案例，也看别人都在问什么。","textPreview":"看相似案例，也看别人都在问什么。","textChars":16,"textLines":1,"bbox":[888,474,320,150]}
+{"kind":"textbox","id":"sh/vy90je9c","slide":3,"text":"3 / 10","textPreview":"3 / 10","textChars":6,"textLines":1,"bbox":[1088,662,150,20]}
+{"kind":"notes","id":"nt/91d9cq","slide":3,"text":""}
+{"kind":"slide","id":"sl/7xn189","slide":4,"title":"第一次使用，照着这 4 步来","textShapes":15}
+{"kind":"shape","id":"sh/h4byhgn2","slide":4,"bbox":[42,43,16,16]}
+{"kind":"textbox","id":"sh/adsji5sn","slide":4,"text":"第一次使用，照着这 4 步来","textPreview":"第一次使用，照着这 4 步来","textChars":14,"textLines":1,"bbox":[70,36,860,54]}
+{"kind":"textbox","id":"sh/3ylc7u54","slide":4,"text":"不用一下子学会所有功能，先完成一次提问就算上手。","textPreview":"不用一下子学会所有功能，先完成一次提问就算上手。","textChars":24,"textLines":1,"bbox":[70,84,980,32]}
+{"kind":"shape","id":"sh/s72x4nap","slide":4,"bbox":[42,126,1196,1]}
+{"kind":"shape","id":"sh/lszqtcj6","slide":4,"bbox":[42,156,278,182]}
+{"kind":"textbox","id":"sh/a5gbq1or","slide":4,"text":"1 看首页","textPreview":"1 看首页","textChars":5,"textLines":1,"bbox":[64,182,230,34]}
+{"kind":"textbox","id":"sh/3m94fu18","slide":4,"text":"先看看页面提示，找到常用功能入口。","textPreview":"先看看页面提示，找到常用功能入口。","textChars":17,"textLines":1,"bbox":[64,224,230,150]}
+{"kind":"shape","id":"sh/s36hcrmh","slide":4,"bbox":[348,156,278,182]}
+{"kind":"textbox","id":"sh/hoza1gvy","slide":4,"text":"2 点入口","textPreview":"2 点入口","textChars":5,"textLines":1,"bbox":[370,182,230,34]}
+{"kind":"textbox","id":"sh/58z25kb6","slide":4,"text":"想了解产品就点产品资料，想问用法就点使用答疑。","textPreview":"想了解产品就点产品资料，想问用法就点使用答疑。","textChars":23,"textLines":1,"bbox":[370,224,230,150]}
+{"kind":"shape","id":"sh/gn29gr2p","slide":4,"bbox":[654,156,278,182]}
+{"kind":"textbox","id":"sh/n29gr2p8","slide":4,"text":"3 问一句","textPreview":"3 问一句","textChars":5,"textLines":1,"bbox":[676,182,230,34]}
+{"kind":"textbox","id":"sh/yhgn29gr","slide":4,"text":"先问最简单的问题，比如“这个产品适合什么人？”","textPreview":"先问最简单的问题，比如“这个产品适合什么人？”","textChars":23,"textLines":1,"bbox":[676,224,230,150]}
+{"kind":"shape","id":"sh/5wjudg7a","slide":4,"bbox":[960,156,278,182]}
+{"kind":"textbox","id":"sh/gbq1oryt","slide":4,"text":"4 再追问","textPreview":"4 再追问","textChars":5,"textLines":1,"bbox":[982,182,230,34]}
+{"kind":"textbox","id":"sh/nuxc3ylc","slide":4,"text":"看完回答以后，不懂就继续问一句。","textPreview":"看完回答以后，不懂就继续问一句。","textChars":16,"textLines":1,"bbox":[982,224,230,150]}
+{"kind":"shape","id":"sh/y90je9cv","slide":4,"bbox":[42,396,581,210]}
+{"kind":"shape","id":"sh/5sneloj2","slide":4,"bbox":[658,396,581,210]}
+{"kind":"textbox","id":"sh/cbulwval","slide":4,"text":"第一句推荐这样问","textPreview":"第一句推荐这样问","textChars":8,"textLines":1,"bbox":[70,426,520,34]}
+{"kind":"textbox","id":"sh/8nqxs72x","slide":4,"text":"这个产品适合什么人？\n这个产品怎么使用？\n有没有相关案例可以看看？","textPreview":"这个产品适合什么人？ | 这个产品怎么使用？ | 有没有相关案例可以看看？","textChars":33,"textLines":3,"bbox":[70,468,520,150]}
+{"kind":"textbox","id":"sh/18jqh0fe","slide":4,"text":"看完回答以后做什么","textPreview":"看完回答以后做什么","textChars":9,"textLines":1,"bbox":[686,426,520,34]}
+{"kind":"textbox","id":"sh/qh0fepkz","slide":4,"text":"没看懂，就让它说简单一点。\n看到案例，就问和自己像不像。\n看到资讯或产品资料，就补一句自己的情况。","textPreview":"没看懂，就让它说简单一点。 | 看到案例，就问和自己像不像。 | 看到资讯或产品资料，就补一句自己的情况。","textChars":49,"textLines":3,"bbox":[686,468,520,150]}
+{"kind":"textbox","id":"sh/j2t83itg","slide":4,"text":"4 / 10","textPreview":"4 / 10","textChars":6,"textLines":1,"bbox":[1088,662,150,20]}
+{"kind":"notes","id":"nt/7xn189","slide":4,"text":""}
+{"kind":"slide","id":"sl/oamooz","slide":5,"title":"内容模块适合先看，问答模块适合继续问","textShapes":12}
+{"kind":"shape","id":"sh/1032lszq","slide":5,"bbox":[42,43,16,16]}
+{"kind":"textbox","id":"sh/u9knih4b","slide":5,"text":"内容模块适合先看，问答模块适合继续问","textPreview":"内容模块适合先看，问答模块适合继续问","textChars":18,"textLines":1,"bbox":[70,36,860,54]}
+{"kind":"textbox","id":"sh/judg7ads","slide":5,"text":"先看内容建立理解，再用智能问答把自己的问题问清楚。","textPreview":"先看内容建立理解，再用智能问答把自己的问题问清楚。","textChars":25,"textLines":1,"bbox":[70,84,980,32]}
+{"kind":"shape","id":"sh/c7u54zid","slide":5,"bbox":[42,126,1196,1]}
+{"kind":"shape","id":"sh/1orytsvu","slide":5,"bbox":[42,152,581,172]}
+{"kind":"shape","id":"sh/u18jqh0f","slide":5,"bbox":[658,152,581,172]}
+{"kind":"shape","id":"sh/jm1cfa9w","slide":5,"bbox":[42,362,581,172]}
+{"kind":"shape","id":"sh/cvixczed","slide":5,"bbox":[658,362,581,172]}
+{"kind":"textbox","id":"sh/5gbq1ory","slide":5,"text":"资讯模块怎么用","textPreview":"资讯模块怎么用","textChars":7,"textLines":1,"bbox":[72,182,520,34]}
+{"kind":"textbox","id":"sh/18jqh0fe","slide":5,"text":"想先了解平台内容、图文知识和动态时，先看资讯。看完以后，不懂的地方可以继续问AI宝儿。","textPreview":"想先了解平台内容、图文知识和动态时，先看资讯。看完以后，不懂的地方可以继续问AI宝儿。","textChars":43,"textLines":1,"bbox":[72,224,520,150]}
+{"kind":"textbox","id":"sh/8nqxs72x","slide":5,"text":"产品模块怎么用","textPreview":"产品模块怎么用","textChars":7,"textLines":1,"bbox":[688,182,520,34]}
+{"kind":"textbox","id":"sh/j2t83itg","slide":5,"text":"想了解某个产品时，先看名称、介绍、分类和亮点。再回到问答区问适合谁、怎么用。","textPreview":"想了解某个产品时，先看名称、介绍、分类和亮点。再回到问答区问适合谁、怎么用。","textChars":38,"textLines":1,"bbox":[688,224,520,150]}
+{"kind":"textbox","id":"sh/qh0fepkz","slide":5,"text":"案例推荐怎么用","textPreview":"案例推荐怎么用","textChars":7,"textLines":1,"bbox":[72,392,520,34]}
+{"kind":"textbox","id":"sh/1w7mp0bi","slide":5,"text":"回答下方出现相关案例时，重点看是否和自己情况相似。案例是参考，不是完全照搬。","textPreview":"回答下方出现相关案例时，重点看是否和自己情况相似。案例是参考，不是完全照搬。","textChars":38,"textLines":1,"bbox":[72,434,520,150]}
+{"kind":"textbox","id":"sh/8bat47y1","slide":5,"text":"社区问答怎么用","textPreview":"社区问答怎么用","textChars":7,"textLines":1,"bbox":[688,392,520,34]}
+{"kind":"textbox","id":"sh/jqh0fepk","slide":5,"text":"不知道自己该问什么时，可以先看看别人都在问什么，再结合自己的情况去问。","textPreview":"不知道自己该问什么时，可以先看看别人都在问什么，再结合自己的情况去问。","textChars":35,"textLines":1,"bbox":[688,434,520,150]}
+{"kind":"textbox","id":"sh/q5o7qpg3","slide":5,"text":"一句话记住：先用内容模块建立理解，再用智能问答把自己的问题问透。","textPreview":"一句话记住：先用内容模块建立理解，再用智能问答把自己的问题问透。","textChars":32,"textLines":1,"bbox":[42,584,1196,44]}
+{"kind":"textbox","id":"sh/1kre1w7m","slide":5,"text":"5 / 10","textPreview":"5 / 10","textChars":6,"textLines":1,"bbox":[1088,662,150,20]}
+{"kind":"notes","id":"nt/oamooz","slide":5,"text":""}
+{"kind":"slide","id":"sl/zq8l3l","slide":6,"title":"提问不用专业，像聊天一样问就行","textShapes":11}
+{"kind":"shape","id":"sh/8bat47y1","slide":6,"bbox":[42,43,16,16]}
+{"kind":"textbox","id":"sh/jqh0fepk","slide":6,"text":"提问不用专业，像聊天一样问就行","textPreview":"提问不用专业，像聊天一样问就行","textChars":15,"textLines":1,"bbox":[70,36,860,54]}
+{"kind":"textbox","id":"sh/q5o7qpg3","slide":6,"text":"先问简单问题，再补充自己的情况，回答会更清楚。","textPreview":"先问简单问题，再补充自己的情况，回答会更清楚。","textChars":23,"textLines":1,"bbox":[70,84,980,32]}
+{"kind":"shape","id":"sh/18jqh0fe","slide":6,"bbox":[42,126,1196,1]}
+{"kind":"shape","id":"sh/8nqxs72x","slide":6,"bbox":[42,156,581,194]}
+{"kind":"textbox","id":"sh/j2t83itg","slide":6,"text":"像聊天一样问","textPreview":"像聊天一样问","textChars":6,"textLines":1,"bbox":[72,184,510,34]}
+{"kind":"textbox","id":"sh/qh0fepkz","slide":6,"text":"不用写得正式，像平时说话一样就行。","textPreview":"不用写得正式，像平时说话一样就行。","textChars":17,"textLines":1,"bbox":[72,226,510,150]}
+{"kind":"shape","id":"sh/1cfa9w3m","slide":6,"bbox":[658,156,581,194]}
+{"kind":"textbox","id":"sh/crmhk3q5","slide":6,"text":"一次先问一件事","textPreview":"一次先问一件事","textChars":7,"textLines":1,"bbox":[688,184,510,34]}
+{"kind":"textbox","id":"sh/2t83itgf","slide":6,"text":"问题越单纯，回答越清楚，自己也更容易看懂。","textPreview":"问题越单纯，回答越清楚，自己也更容易看懂。","textChars":21,"textLines":1,"bbox":[688,226,510,150]}
+{"kind":"shape","id":"sh/re1w7mp0","slide":6,"bbox":[42,402,581,194]}
+{"kind":"textbox","id":"sh/kzupwb2h","slide":6,"text":"把自己的情况说出来","textPreview":"把自己的情况说出来","textChars":9,"textLines":1,"bbox":[72,430,510,34]}
+{"kind":"textbox","id":"sh/9knih4by","slide":6,"text":"只要说真实情况，不用专业术语，回答就会更贴近你。","textPreview":"只要说真实情况，不用专业术语，回答就会更贴近你。","textChars":24,"textLines":1,"bbox":[72,472,510,150]}
+{"kind":"shape","id":"sh/25kb6xkf","slide":6,"bbox":[658,402,581,194]}
+{"kind":"textbox","id":"sh/rqd4vmtw","slide":6,"text":"没听懂就继续问","textPreview":"没听懂就继续问","textChars":7,"textLines":1,"bbox":[688,430,510,34]}
+{"kind":"textbox","id":"sh/kb6xkf6d","slide":6,"text":"可以直接说：请你说简单一点，或者分三点告诉我。","textPreview":"可以直接说：请你说简单一点，或者分三点告诉我。","textChars":23,"textLines":1,"bbox":[688,472,510,150]}
+{"kind":"textbox","id":"sh/9w3m94fu","slide":6,"text":"6 / 10","textPreview":"6 / 10","textChars":6,"textLines":1,"bbox":[1088,662,150,20]}
+{"kind":"notes","id":"nt/zq8l3l","slide":6,"text":""}
+{"kind":"slide","id":"sl/tc2fui","slide":7,"title":"不会问时，直接照着这几句问","textShapes":11}
+{"kind":"shape","id":"sh/zed8v6ps","slide":7,"bbox":[42,43,16,16]}
+{"kind":"textbox","id":"sh/oza1gvy9","slide":7,"text":"不会问时，直接照着这几句问","textPreview":"不会问时，直接照着这几句问","textChars":13,"textLines":1,"bbox":[70,36,860,54]}
+{"kind":"textbox","id":"sh/hk3q5o7q","slide":7,"text":"把下面这些句子发给AI宝儿，就可以开始使用。","textPreview":"把下面这些句子发给AI宝儿，就可以开始使用。","textChars":22,"textLines":1,"bbox":[70,84,980,32]}
+{"kind":"shape","id":"sh/65wjudg7","slide":7,"bbox":[42,126,1196,1]}
+{"kind":"shape","id":"sh/zqtcj6to","slide":7,"bbox":[42,166,375,246]}
+{"kind":"textbox","id":"sh/obm58z25","slide":7,"text":"产品了解类","textPreview":"产品了解类","textChars":5,"textLines":1,"bbox":[66,194,322,34]}
+{"kind":"textbox","id":"sh/hwfyxobm","slide":7,"text":"这个产品主要是做什么的？\n这个产品适合什么人？\n这个产品有什么特点？","textPreview":"这个产品主要是做什么的？ | 这个产品适合什么人？ | 这个产品有什么特点？","textChars":34,"textLines":3,"bbox":[66,236,322,150]}
+{"kind":"shape","id":"sh/a9w3m94f","slide":7,"bbox":[453,166,375,246]}
+{"kind":"textbox","id":"sh/zupwb2hw","slide":7,"text":"使用答疑类","textPreview":"使用答疑类","textChars":5,"textLines":1,"bbox":[477,194,322,34]}
+{"kind":"textbox","id":"sh/7y1kre1w","slide":7,"text":"这个产品怎么使用？\n使用时需要注意什么？\n我这种情况要重点注意什么？","textPreview":"这个产品怎么使用？ | 使用时需要注意什么？ | 我这种情况要重点注意什么？","textChars":34,"textLines":3,"bbox":[477,236,322,150]}
+{"kind":"shape","id":"sh/ed8v6psf","slide":7,"bbox":[864,166,375,246]}
+{"kind":"textbox","id":"sh/p4r65wju","slide":7,"text":"继续追问类","textPreview":"继续追问类","textChars":5,"textLines":1,"bbox":[888,194,322,34]}
+{"kind":"textbox","id":"sh/wjudg7ad","slide":7,"text":"请你说简单一点。\n请你分点告诉我。\n你刚才说的重点是什么？","textPreview":"请你说简单一点。 | 请你分点告诉我。 | 你刚才说的重点是什么？","textChars":29,"textLines":3,"bbox":[888,236,322,150]}
+{"kind":"shape","id":"sh/7qpg3ex0","slide":7,"bbox":[42,458,1196,138]}
+{"kind":"textbox","id":"sh/i5sneloj","slide":7,"text":"案例参考类","textPreview":"案例参考类","textChars":5,"textLines":1,"bbox":[70,488,1120,34]}
+{"kind":"textbox","id":"sh/pwb2hwfy","slide":7,"text":"有没有和我情况差不多的案例？  哪类案例更适合我参考？  这个案例和我像不像？","textPreview":"有没有和我情况差不多的案例？  哪类案例更适合我参考？  这个案例和我像不像？","textChars":39,"textLines":1,"bbox":[70,530,1120,150]}
+{"kind":"textbox","id":"sh/0bi9s36h","slide":7,"text":"7 / 10","textPreview":"7 / 10","textChars":6,"textLines":1,"bbox":[1088,662,150,20]}
+{"kind":"notes","id":"nt/tc2fui","slide":7,"text":""}
+{"kind":"slide","id":"sl/wh2yap","slide":8,"title":"看完回答以后，要学会继续追问","textShapes":11}
+{"kind":"shape","id":"sh/zidonyd0","slide":8,"bbox":[42,43,16,16]}
+{"kind":"textbox","id":"sh/s36hcrmh","slide":8,"text":"看完回答以后，要学会继续追问","textPreview":"看完回答以后，要学会继续追问","textChars":14,"textLines":1,"bbox":[70,36,860,54]}
+{"kind":"textbox","id":"sh/hoza1gvy","slide":8,"text":"AI宝儿不是只能回答一次。越会追问，越容易得到自己真正想知道的内容。","textPreview":"AI宝儿不是只能回答一次。越会追问，越容易得到自己真正想知道的内容。","textChars":34,"textLines":1,"bbox":[70,84,980,32]}
+{"kind":"shape","id":"sh/ap4r65wj","slide":8,"bbox":[42,126,1196,1]}
+{"kind":"shape","id":"sh/za1gvy90","slide":8,"bbox":[42,152,581,172]}
+{"kind":"shape","id":"sh/svu9knih","slide":8,"bbox":[658,152,581,172]}
+{"kind":"shape","id":"sh/hgn29gr2","slide":8,"bbox":[42,362,581,172]}
+{"kind":"shape","id":"sh/adsji5sn","slide":8,"bbox":[658,362,581,172]}
+{"kind":"textbox","id":"sh/3ylc7u54","slide":8,"text":"回答太长","textPreview":"回答太长","textChars":4,"textLines":1,"bbox":[72,182,520,34]}
+{"kind":"textbox","id":"sh/bat47y1k","slide":8,"text":"可以问：请你说得简单一点。\n也可以问：请你分成三点告诉我。","textPreview":"可以问：请你说得简单一点。 | 也可以问：请你分成三点告诉我。","textChars":29,"textLines":2,"bbox":[72,224,520,150]}
+{"kind":"textbox","id":"sh/mp0bi9s3","slide":8,"text":"回答没看懂","textPreview":"回答没看懂","textChars":5,"textLines":1,"bbox":[688,182,520,34]}
+{"kind":"textbox","id":"sh/tgfmlkjm","slide":8,"text":"可以问：你刚才说的重点是什么？\n也可以问：请你用更容易懂的话说一遍。","textPreview":"可以问：你刚才说的重点是什么？ | 也可以问：请你用更容易懂的话说一遍。","textChars":34,"textLines":2,"bbox":[688,224,520,150]}
+{"kind":"textbox","id":"sh/4vmtwra5","slide":8,"text":"想结合自己情况","textPreview":"想结合自己情况","textChars":7,"textLines":1,"bbox":[72,392,520,34]}
+{"kind":"textbox","id":"sh/bm58z25k","slide":8,"text":"可以补一句：我平时肠胃比较敏感。\n也可以补一句：我想看适合我年龄的参考。","textPreview":"可以补一句：我平时肠胃比较敏感。 | 也可以补一句：我想看适合我年龄的参考。","textChars":36,"textLines":2,"bbox":[72,434,520,150]}
+{"kind":"textbox","id":"sh/m1cfa9w3","slide":8,"text":"看到相关案例","textPreview":"看到相关案例","textChars":6,"textLines":1,"bbox":[688,392,520,34]}
+{"kind":"textbox","id":"sh/tsvu9kni","slide":8,"text":"可以问：这个案例和我像不像？\n也可以问：这个案例最值得参考的是什么？","textPreview":"可以问：这个案例和我像不像？ | 也可以问：这个案例最值得参考的是什么？","textChars":34,"textLines":2,"bbox":[688,434,520,150]}
+{"kind":"textbox","id":"sh/47y1kre1","slide":8,"text":"8 / 10","textPreview":"8 / 10","textChars":6,"textLines":1,"bbox":[1088,662,150,20]}
+{"kind":"notes","id":"nt/wh2yap","slide":8,"text":""}
+{"kind":"slide","id":"sl/0emr82","slide":9,"title":"使用时记住这几条提醒","textShapes":15}
+{"kind":"shape","id":"sh/w7mp0bi9","slide":9,"bbox":[42,43,16,16]}
+{"kind":"textbox","id":"sh/7mp0bi9s","slide":9,"text":"使用时记住这几条提醒","textPreview":"使用时记住这几条提醒","textChars":10,"textLines":1,"bbox":[70,36,860,54]}
+{"kind":"textbox","id":"sh/e1w7mp0b","slide":9,"text":"这些提醒可以放在培训结尾，也可以做成用户手册里的安全说明。","textPreview":"这些提醒可以放在培训结尾，也可以做成用户手册里的安全说明。","textChars":29,"textLines":1,"bbox":[70,84,980,32]}
+{"kind":"shape","id":"sh/pg3ex0nu","slide":9,"bbox":[42,126,1196,1]}
+{"kind":"shape","id":"sh/wval87ed","slide":9,"bbox":[42,150,375,202]}
+{"kind":"textbox","id":"sh/7adsji5s","slide":9,"text":"不用担心问错","textPreview":"不用担心问错","textChars":6,"textLines":1,"bbox":[66,174,322,34]}
+{"kind":"textbox","id":"sh/epkzupwb","slide":9,"text":"问错了重新问就行。AI宝儿不会因为你问得不专业就不能回答。","textPreview":"问错了重新问就行。AI宝儿不会因为你问得不专业就不能回答。","textChars":29,"textLines":1,"bbox":[66,216,322,150]}
+{"kind":"shape","id":"sh/lc7u54zi","slide":9,"bbox":[453,150,375,202]}
+{"kind":"textbox","id":"sh/wra5gbq1","slide":9,"text":"不要一次问太多","textPreview":"不要一次问太多","textChars":7,"textLines":1,"bbox":[477,174,322,34]}
+{"kind":"textbox","id":"sh/upwb2hwf","slide":9,"text":"一次先问一件事，看懂以后再问下一件。","textPreview":"一次先问一件事，看懂以后再问下一件。","textChars":18,"textLines":1,"bbox":[477,216,322,150]}
+{"kind":"shape","id":"sh/nap4r65w","slide":9,"bbox":[864,150,375,202]}
+{"kind":"textbox","id":"sh/cvixczed","slide":9,"text":"案例只能作参考","textPreview":"案例只能作参考","textChars":7,"textLines":1,"bbox":[888,174,322,34]}
+{"kind":"textbox","id":"sh/5gbq1ory","slide":9,"text":"别人情况和自己不一定完全一样，重点看相似点。","textPreview":"别人情况和自己不一定完全一样，重点看相似点。","textChars":22,"textLines":1,"bbox":[888,216,322,150]}
+{"kind":"shape","id":"sh/udg7adsj","slide":9,"bbox":[42,408,375,202]}
+{"kind":"textbox","id":"sh/nyd0z610","slide":9,"text":"隐私信息不要发","textPreview":"隐私信息不要发","textChars":7,"textLines":1,"bbox":[66,432,322,34]}
+{"kind":"textbox","id":"sh/cj6tovah","slide":9,"text":"身份证、银行卡、验证码等敏感信息不要输入。","textPreview":"身份证、银行卡、验证码等敏感信息不要输入。","textChars":21,"textLines":1,"bbox":[66,474,322,150]}
+{"kind":"shape","id":"sh/54zidony","slide":9,"bbox":[453,408,375,202]}
+{"kind":"textbox","id":"sh/u9knih4b","slide":9,"text":"身体不适要就医","textPreview":"身体不适要就医","textChars":7,"textLines":1,"bbox":[477,432,322,34]}
+{"kind":"textbox","id":"sh/judg7ads","slide":9,"text":"AI宝儿可以帮助理解内容，但不能替代医生诊断。","textPreview":"AI宝儿可以帮助理解内容，但不能替代医生诊断。","textChars":23,"textLines":1,"bbox":[477,474,322,150]}
+{"kind":"shape","id":"sh/fil0rqd4","slide":9,"bbox":[864,408,375,202]}
+{"kind":"textbox","id":"sh/qxs72x4n","slide":9,"text":"越用越会问","textPreview":"越用越会问","textChars":5,"textLines":1,"bbox":[888,432,322,34]}
+{"kind":"textbox","id":"sh/xobm58z2","slide":9,"text":"先学会第一句，后面慢慢就会越问越清楚。","textPreview":"先学会第一句，后面慢慢就会越问越清楚。","textChars":19,"textLines":1,"bbox":[888,474,322,150]}
+{"kind":"textbox","id":"sh/83itgfml","slide":9,"text":"9 / 10","textPreview":"9 / 10","textChars":6,"textLines":1,"bbox":[1088,662,150,20]}
+{"kind":"notes","id":"nt/0emr82","slide":9,"text":""}
+{"kind":"slide","id":"sl/orwny6","slide":10,"title":"学会第一句，就会越用越顺","textShapes":13}
+{"kind":"shape","id":"sh/fyxobm58","slide":10,"bbox":[42,43,16,16]}
+{"kind":"textbox","id":"sh/8jqh0fep","slide":10,"text":"学会第一句，就会越用越顺","textPreview":"学会第一句，就会越用越顺","textChars":12,"textLines":1,"bbox":[70,36,860,54]}
+{"kind":"textbox","id":"sh/x4nap4r6","slide":10,"text":"最重要的是先完成第一次成功提问。","textPreview":"最重要的是先完成第一次成功提问。","textChars":16,"textLines":1,"bbox":[70,84,980,32]}
+{"kind":"shape","id":"sh/qpg3ex0n","slide":10,"bbox":[42,126,1196,1]}
+{"kind":"shape","id":"sh/fa9w3m94","slide":10,"bbox":[42,150,816,392]}
+{"kind":"shape","id":"sh/8v6psfil","slide":10,"bbox":[72,248,26,26]}
+{"kind":"textbox","id":"sh/xczed8v6","slide":10,"text":"先看首页","textPreview":"先看首页","textChars":4,"textLines":1,"bbox":[66,294,108,62]}
+{"kind":"shape","id":"sh/qtcj6tov","slide":10,"bbox":[102,260,92,2]}
+{"kind":"shape","id":"sh/je9cvixc","slide":10,"bbox":[202,248,26,26]}
+{"kind":"textbox","id":"sh/nih4byhg","slide":10,"text":"点快捷功能","textPreview":"点快捷功能","textChars":5,"textLines":1,"bbox":[196,294,108,62]}
+{"kind":"shape","id":"sh/yxobm58z","slide":10,"bbox":[232,260,92,2]}
+{"kind":"shape","id":"sh/5o7qpg3e","slide":10,"bbox":[332,248,26,26]}
+{"kind":"textbox","id":"sh/g3ex0nux","slide":10,"text":"问第一句","textPreview":"问第一句","textChars":4,"textLines":1,"bbox":[326,294,108,62]}
+{"kind":"shape","id":"sh/r65wjudg","slide":10,"bbox":[362,260,92,2]}
+{"kind":"shape","id":"sh/ylc7u54z","slide":10,"bbox":[462,248,26,26]}
+{"kind":"textbox","id":"sh/9cvixcze","slide":10,"text":"看回答","textPreview":"看回答","textChars":3,"textLines":1,"bbox":[456,294,108,62]}
+{"kind":"shape","id":"sh/gr2p8nqx","slide":10,"bbox":[492,260,92,2]}
+{"kind":"shape","id":"sh/rytsvu9k","slide":10,"bbox":[592,248,26,26]}
+{"kind":"textbox","id":"sh/yd0z6103","slide":10,"text":"看案例或产品资料","textPreview":"看案例或产品资料","textChars":8,"textLines":1,"bbox":[586,294,108,62]}
+{"kind":"shape","id":"sh/a9w3m94f","slide":10,"bbox":[622,260,92,2]}
+{"kind":"shape","id":"sh/zupwb2hw","slide":10,"bbox":[722,248,26,26]}
+{"kind":"textbox","id":"sh/sfil0rqd","slide":10,"text":"继续问一句","textPreview":"继续问一句","textChars":5,"textLines":1,"bbox":[716,294,108,62]}
+{"kind":"textbox","id":"sh/h0fepkzu","slide":10,"text":"最重要的不是一口气学会所有功能，而是先完成第一次成功提问。只要问出第一句，后面就会越来越顺。","textPreview":"最重要的不是一口气学会所有功能，而是先完成第一次成功提问。只要问出第一句，后面就会越来越顺。","textChars":46,"textLines":1,"bbox":[72,392,720,96]}
+{"kind":"shape","id":"sh/al87ed8b","slide":10,"bbox":[894,150,344,392]}
+{"kind":"textbox","id":"sh/z61032ls","slide":10,"text":"最后记住","textPreview":"最后记住","textChars":4,"textLines":1,"bbox":[922,182,286,34]}
+{"kind":"textbox","id":"sh/orytsvu9","slide":10,"text":"不会没关系。\n先问一句就行。\n看不懂就让它说简单一点。\n用得越多，越知道怎么问。","textPreview":"不会没关系。 | 先问一句就行。 | 看不懂就让它说简单一点。 | 用得越多，越知道怎么问。","textChars":40,"textLines":4,"bbox":[922,224,286,150]}
+{"kind":"textbox","id":"sh/hcrmhk3q","slide":10,"text":"先点进去，先问一句，再继续追问。","textPreview":"先点进去，先问一句，再继续追问。","textChars":16,"textLines":1,"bbox":[42,590,1196,44]}
+{"kind":"textbox","id":"sh/6xkf6dcb","slide":10,"text":"10 / 10","textPreview":"10 / 10","textChars":7,"textLines":1,"bbox":[1088,662,150,20]}
+{"kind":"notes","id":"nt/orwny6","slide":10,"text":""}

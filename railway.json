@@ -3,7 +3,8 @@
   "build": {
     "builder": "NIXPACKS",
     "nixpacks": {
-      "pythonVersion": "3.11"
+      "pythonVersion": "3.11",
+      "aptPkgs": ["ffmpeg"]
     }
   },
   "deploy": {

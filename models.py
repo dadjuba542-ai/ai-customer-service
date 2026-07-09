@@ -96,6 +96,19 @@ def init_db():
     ''')
 
     cursor.execute('''
+        CREATE TABLE IF NOT EXISTS share_events (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id TEXT DEFAULT '',
+            team_name TEXT DEFAULT '',
+            member_name TEXT DEFAULT '',
+            query_type TEXT DEFAULT '',
+            history_id INTEGER DEFAULT NULL,
+            share_type TEXT DEFAULT '',
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    ''')
+
+    cursor.execute('''
         CREATE TABLE IF NOT EXISTS questions (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             nickname TEXT DEFAULT '',
@@ -170,6 +183,8 @@ def init_db():
     cursor.execute('CREATE INDEX IF NOT EXISTS idx_questions_status_category_created ON questions(status, category, created_at DESC)')
     cursor.execute('CREATE INDEX IF NOT EXISTS idx_replies_question_status_created ON replies(question_id, status, created_at DESC)')
     cursor.execute('CREATE INDEX IF NOT EXISTS idx_case_documents_status_sort ON case_documents(status, sort_order ASC, id DESC)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS idx_share_events_created ON share_events(created_at DESC)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS idx_share_events_history ON share_events(history_id)')
 
     conn.commit()
 
@@ -1150,6 +1165,28 @@ def create_survey(score):
     conn.execute('INSERT INTO satisfaction_surveys (score) VALUES (?)', (score,))
     conn.commit()
     conn.close()
+
+
+def create_share_event(data):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute(
+        '''INSERT INTO share_events
+           (user_id, team_name, member_name, query_type, history_id, share_type)
+           VALUES (?, ?, ?, ?, ?, ?)''',
+        (
+            str(data.get('user_id') or '')[:120],
+            str(data.get('team_name') or '')[:120],
+            str(data.get('member_name') or '')[:120],
+            str(data.get('query_type') or '')[:80],
+            data.get('history_id') or None,
+            str(data.get('share_type') or '')[:80],
+        ),
+    )
+    conn.commit()
+    event_id = cursor.lastrowid
+    conn.close()
+    return event_id
 
 # ===== Chat Sessions =====
 def get_chat_sessions(user_id='anonymous', query_type=None):

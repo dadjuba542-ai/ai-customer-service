@@ -104,6 +104,24 @@ MIGRATIONS = [
         ],
         'fn': _backfill_case_document_tags,
     },
+    {
+        'version': '202607060001',
+        'name': 'create_share_events_table',
+        'sqls': [
+            '''CREATE TABLE IF NOT EXISTS share_events (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id TEXT DEFAULT '',
+                team_name TEXT DEFAULT '',
+                member_name TEXT DEFAULT '',
+                query_type TEXT DEFAULT '',
+                history_id INTEGER DEFAULT NULL,
+                share_type TEXT DEFAULT '',
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )''',
+            'CREATE INDEX IF NOT EXISTS idx_share_events_created ON share_events(created_at DESC)',
+            'CREATE INDEX IF NOT EXISTS idx_share_events_history ON share_events(history_id)',
+        ],
+    },
 ]
 
 

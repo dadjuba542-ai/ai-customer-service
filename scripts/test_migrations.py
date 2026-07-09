@@ -37,6 +37,7 @@ def assert_expected_columns(conn):
         'case_documents': {'external_url'},
         'case_tags': {'name', 'type', 'aliases', 'status', 'sort_order'},
         'case_document_tags': {'case_id', 'tag_id'},
+        'share_events': {'user_id', 'team_name', 'member_name', 'query_type', 'history_id', 'share_type'},
     }
     for table, columns in expected.items():
         actual = table_columns(conn, table)

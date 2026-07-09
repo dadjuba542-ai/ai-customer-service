@@ -130,6 +130,65 @@ def blocked_keywords(current_user):
     default_hint = '退款,退货,投诉,假货,骗人,诈骗,虚假宣传,副作用,无效,没效果,上当,举报,315,维权,赔偿,曝光,致癌,违规,处罚,查封'
     return jsonify({'keywords': raw, 'defaultHint': default_hint})
 
+
+@admin_bp.route('/settings/speech', methods=['GET', 'PUT'])
+@admin_required
+def speech_settings(current_user):
+    if request.method == 'PUT':
+        data = request.get_json(silent=True) or {}
+        enabled = bool(data.get('enabled'))
+        provider = (data.get('provider') or 'aliyun_asr').strip() or 'aliyun_asr'
+        if provider not in ('aliyun_asr', 'coze'):
+            provider = 'aliyun_asr'
+
+        app_key = (data.get('aliyun_app_key') or '').strip()
+        access_key_id = (data.get('aliyun_access_key_id') or '').strip()
+        access_key_secret = (data.get('aliyun_access_key_secret') or '').strip()
+        bot_id = (data.get('bot_id') or '').strip()
+
+        existing_secret = get_setting('aliyun_access_key_secret', '').strip()
+        if provider == 'aliyun_asr' and enabled:
+            if not app_key or not access_key_id or not (access_key_secret or existing_secret):
+                return jsonify({'error': '开启语音识别前请填写阿里云 AppKey、AccessKey ID 和 Secret'}), 400
+        if provider == 'coze' and enabled and not bot_id:
+            return jsonify({'error': '开启 Coze 实验识别前请先填写 Coze Bot ID'}), 400
+
+        set_setting('speech_enabled', '1' if enabled else '0')
+        set_setting('speech_provider', provider)
+        set_setting('aliyun_nls_app_key', app_key)
+        set_setting('aliyun_access_key_id', access_key_id)
+        if access_key_secret:
+            set_setting('aliyun_access_key_secret', access_key_secret)
+        set_setting('speech_coze_bot_id', bot_id)
+        return jsonify({
+            'message': '已更新',
+            'enabled': enabled,
+            'provider': provider,
+            'aliyun_app_key': app_key,
+            'aliyun_access_key_id': access_key_id,
+            'aliyun_access_key_secret_masked': _mask_secret(get_setting('aliyun_access_key_secret', '')),
+            'bot_id': bot_id,
+        })
+    return jsonify({
+        'enabled': get_setting('speech_enabled', '0') == '1',
+        'provider': get_setting('speech_provider', 'aliyun_asr') or 'aliyun_asr',
+        'aliyun_app_key': get_setting('aliyun_nls_app_key', ''),
+        'aliyun_access_key_id': get_setting('aliyun_access_key_id', ''),
+        'aliyun_access_key_secret_masked': _mask_secret(get_setting('aliyun_access_key_secret', '')),
+        'has_aliyun_access_key_secret': bool(get_setting('aliyun_access_key_secret', '').strip()),
+        'bot_id': get_setting('speech_coze_bot_id', ''),
+    })
+
+
+def _mask_secret(value):
+    value = (value or '').strip()
+    if not value:
+        return ''
+    if len(value) <= 8:
+        return '****'
+    return value[:4] + '****' + value[-4:]
+
+
 @admin_bp.route('/settings/case-library-url', methods=['GET', 'PUT'])
 @admin_required
 def case_library_url(current_user):

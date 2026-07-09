@@ -22,6 +22,15 @@ let state = {
   user: JSON.parse(localStorage.getItem('user') || 'null'),
   profile: JSON.parse(localStorage.getItem('chat_profile') || 'null'),
   teamOptions: [],
+  speech: {
+    enabled: false,
+    isRecording: false,
+    isTranscribing: false,
+    mediaRecorder: null,
+    stream: null,
+    chunks: [],
+    stopTimer: null,
+  },
 };
 
 function loadScriptOnce(src) {
@@ -78,6 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
   loadAgents();
   loadWaitingContent();
   loadCaseLibraryConfig();
+  loadSpeechConfig();
   // Chat scroll listener for "scroll to bottom" button
   const chatContainer = document.getElementById('chat-messages');
   if (chatContainer) {
@@ -140,6 +150,18 @@ async function loadCaseLibraryConfig() {
   } catch {
     caseLibraryUrl = '';
   }
+}
+
+async function loadSpeechConfig() {
+  try {
+    const res = await fetch(`${API_BASE}/api/speech/config`);
+    if (!res.ok) return;
+    const data = await res.json();
+    state.speech.enabled = !!data.enabled;
+  } catch {
+    state.speech.enabled = false;
+  }
+  updateVoiceButton();
 }
 
 
@@ -227,6 +249,7 @@ function switchView(view) {
   if (view === 'chat') {
     if (state.messages.length > 0) renderMessages();
     if (state.isTyping) showWaitingPanel();
+    updateVoiceButton();
     scrollToBottom();
     focusInput();
   }
@@ -414,6 +437,7 @@ function startChatRequest() {
   state.isStreaming = false;
   showWaitingPanel();
   updateChatAgentInfo();
+  updateVoiceButton();
   return sendBtn;
 }
 
@@ -424,6 +448,171 @@ function finishChatRequest(sendBtn) {
   state.isStreaming = false;
   if (sendBtn) sendBtn.disabled = false;
   updateChatAgentInfo();
+  updateVoiceButton();
+}
+
+function updateVoiceButton(message = '') {
+  const btn = document.getElementById('voice-btn');
+  const status = document.getElementById('voice-status');
+  if (!btn || !status) return;
+
+  btn.style.display = state.speech.enabled ? 'flex' : 'none';
+  btn.classList.toggle('recording', state.speech.isRecording);
+  btn.classList.toggle('transcribing', state.speech.isTranscribing);
+  btn.disabled = state.speech.isTranscribing || state.isStreaming || state.isTyping;
+  btn.innerHTML = state.speech.isTranscribing
+    ? '<i class="ph ph-spinner-gap"></i>'
+    : state.speech.isRecording
+      ? '<i class="ph ph-stop"></i>'
+      : '<i class="ph ph-microphone"></i>';
+
+  const text = message || (state.speech.isRecording ? '正在录音，点一下结束' : state.speech.isTranscribing ? '正在识别语音...' : '');
+  status.textContent = text;
+  status.style.display = text ? 'block' : 'none';
+}
+
+function speechSupported() {
+  return !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia && window.MediaRecorder);
+}
+
+function pickSpeechMimeType() {
+  const candidates = ['audio/ogg;codecs=opus', 'audio/webm;codecs=opus', 'audio/webm'];
+  if (!window.MediaRecorder || !MediaRecorder.isTypeSupported) return '';
+  return candidates.find(type => MediaRecorder.isTypeSupported(type)) || '';
+}
+
+async function toggleVoiceInput() {
+  if (!state.speech.enabled) {
+    showToast('语音识别未开启', 'info');
+    return;
+  }
+  if (state.speech.isTranscribing) return;
+  if (state.isStreaming || state.isTyping) {
+    showToast('正在回答中，稍后再录音', 'info');
+    return;
+  }
+  if (state.speech.isRecording) {
+    stopVoiceRecording();
+    return;
+  }
+  await startVoiceRecording();
+}
+
+async function startVoiceRecording() {
+  if (!speechSupported()) {
+    showToast('当前浏览器不支持语音输入，请使用文字或常见问题卡片', 'error');
+    updateVoiceButton('');
+    return;
+  }
+
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    const mimeType = pickSpeechMimeType();
+    const options = mimeType ? { mimeType } : {};
+    const recorder = new MediaRecorder(stream, options);
+    state.speech.stream = stream;
+    state.speech.mediaRecorder = recorder;
+    state.speech.chunks = [];
+
+    recorder.ondataavailable = (event) => {
+      if (event.data && event.data.size > 0) state.speech.chunks.push(event.data);
+    };
+    recorder.onstop = () => {
+      const chunks = state.speech.chunks.slice();
+      const finalType = recorder.mimeType || mimeType || 'audio/webm';
+      cleanupVoiceRecording();
+      if (chunks.length) {
+        const blob = new Blob(chunks, { type: finalType });
+        transcribeVoiceBlob(blob);
+      } else {
+        showToast('没有录到声音，请重试', 'error');
+        updateVoiceButton('');
+      }
+    };
+
+    recorder.start();
+    state.speech.isRecording = true;
+    updateVoiceButton('正在录音，点一下结束');
+    state.speech.stopTimer = setTimeout(() => {
+      if (state.speech.isRecording) {
+        showToast('录音已到 30 秒，正在识别', 'info');
+        stopVoiceRecording();
+      }
+    }, 30000);
+  } catch (error) {
+    cleanupVoiceRecording();
+    const denied = error && (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError');
+    showToast(denied ? '录音权限被拒绝' : '无法开始录音，请重试', 'error');
+    updateVoiceButton('');
+  }
+}
+
+function stopVoiceRecording() {
+  const recorder = state.speech.mediaRecorder;
+  if (recorder && recorder.state !== 'inactive') {
+    recorder.stop();
+  } else {
+    cleanupVoiceRecording();
+    updateVoiceButton('');
+  }
+}
+
+function cleanupVoiceRecording() {
+  if (state.speech.stopTimer) clearTimeout(state.speech.stopTimer);
+  state.speech.stopTimer = null;
+  if (state.speech.stream) {
+    state.speech.stream.getTracks().forEach(track => track.stop());
+  }
+  state.speech.stream = null;
+  state.speech.mediaRecorder = null;
+  state.speech.isRecording = false;
+}
+
+async function transcribeVoiceBlob(blob) {
+  if (!blob || blob.size <= 0) {
+    showToast('没有录到声音，请重试', 'error');
+    updateVoiceButton('');
+    return;
+  }
+  if (blob.size > 10 * 1024 * 1024) {
+    showToast('录音太大，请缩短录音时间', 'error');
+    updateVoiceButton('');
+    return;
+  }
+
+  state.speech.isTranscribing = true;
+  const sendBtn = document.getElementById('send-btn');
+  if (sendBtn) sendBtn.disabled = true;
+  updateVoiceButton('正在识别语音...');
+
+  try {
+    const form = new FormData();
+    const ext = blob.type.includes('wav') ? 'wav' : blob.type.includes('ogg') ? 'ogg' : 'webm';
+    form.append('audio', blob, `voice.${ext}`);
+    form.append('user_id', getUserId());
+    const res = await fetch(`${API_BASE}/api/speech/transcribe`, { method: 'POST', body: form });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error || '识别失败，请重试');
+    const text = String(data.text || '').trim();
+    if (!text) throw new Error('未识别到文字，请重试');
+    fillVoiceText(text);
+    showToast('语音已转成文字，请确认后发送', 'success');
+  } catch (error) {
+    showToast(error.message || '识别失败，请重试', 'error');
+  } finally {
+    state.speech.isTranscribing = false;
+    if (sendBtn) sendBtn.disabled = false;
+    updateVoiceButton('');
+  }
+}
+
+function fillVoiceText(text) {
+  const input = document.getElementById('message-input');
+  if (!input) return;
+  const current = input.value.trim();
+  input.value = current ? `${current}\n${text}` : text;
+  input.dispatchEvent(new Event('input', { bubbles: true }));
+  input.focus();
 }
 
 function createStreamingBotMessage(agentId) {
@@ -719,6 +908,7 @@ function renderMessages() {
       const actions = !msg.isStreaming ? `
         <div class="msg-actions">
           <button class="msg-action-btn" onclick="copyText('${escapedContent.replace(/'/g, "\\'")}')"><i class="ph ph-copy-simple"></i> 复制</button>
+          <button class="msg-action-btn share-action" onclick="shareAnswerCard(${idx})"><i class="ph ph-share-network"></i> 生成分享图</button>
           <button class="msg-action-btn" onclick="regenerateMsg(${idx})"><i class="ph ph-arrows-clockwise"></i> 重新回答</button>
           ${msg.historyId ? `
           <button class="msg-feedback-btn${likeActive}${feedbackDisabled}" onclick="sendFeedback(${msg.historyId}, 1, ${idx})"><i class="ph ph-thumbs-up"></i></button>
@@ -1789,6 +1979,128 @@ function copyText(text) {
 }
 
 /* ===== Share as Image ===== */
+function truncateShareText(text, max = 280) {
+  const value = String(text || '').replace(/\s+/g, ' ').trim();
+  return value.length > max ? `${value.slice(0, max)}...` : value;
+}
+
+function latestUserQuestionBefore(index) {
+  for (let i = index - 1; i >= 0; i--) {
+    const msg = state.messages[i];
+    if (msg && msg.role === 'user' && msg.content) return msg.content;
+  }
+  return '';
+}
+
+function renderShareCaseSnippet(caseItem) {
+  if (!caseItem) return '';
+  const tags = [
+    ...splitTags(caseItem.symptom_tags).slice(0, 2),
+    ...splitTags(caseItem.product_tags).slice(0, 2),
+  ].slice(0, 4);
+  return `
+    <div style="margin-top:18px;padding:16px;border-radius:20px;background:#F8FAFC;border:1px solid #E2E8F0">
+      <div style="font-size:22px;font-weight:900;color:#475569;margin-bottom:8px">相关客户案例</div>
+      <div style="font-size:26px;font-weight:900;color:#0F172A;line-height:1.25;margin-bottom:8px">${escapeHtml(caseItem.title || '')}</div>
+      ${caseItem.summary ? `<div style="font-size:22px;color:#64748B;line-height:1.5">${escapeHtml(truncateShareText(caseItem.summary, 80))}</div>` : ''}
+      ${tags.length ? `<div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px">${tags.map(t => `<span style="font-size:18px;font-weight:800;color:#0F766E;background:#CCFBF1;border-radius:999px;padding:5px 10px">${escapeHtml(t)}</span>`).join('')}</div>` : ''}
+    </div>`;
+}
+
+function currentShareUrl() {
+  return window.location.origin + window.location.pathname;
+}
+
+async function renderShareImage(card, alt, width = 750, scale = 2) {
+  const wrap = document.getElementById('share-image-wrap');
+  wrap.innerHTML = '<div class="share-loading"><i class="ph ph-spinner-gap"></i> 生成中...</div>';
+  document.getElementById('share-overlay').classList.add('active');
+  card.style.width = `${width}px`;
+  try {
+    await ensureHtml2Canvas();
+  } catch {
+    document.getElementById('share-overlay').classList.remove('active');
+    showToast('分享组件加载失败，请稍后重试', 'error');
+    return;
+  }
+
+  try {
+    const canvas = await html2canvas(card, {
+      scale,
+      useCORS: true,
+      backgroundColor: '#ffffff',
+      width,
+    });
+    const dataUrl = canvas.toDataURL('image/png');
+    wrap.innerHTML = `<img src="${dataUrl}" alt="${escapeHtml(alt || '分享图')}" style="width:100%;display:block;border-radius:8px">`;
+  } catch {
+    showToast('生成失败，请重试', 'error');
+  }
+}
+
+async function recordShareEvent(msg, shareType = 'answer_card') {
+  const agent = AGENTS.find(a => a.id === msg.agentId) || AGENTS.find(a => a.id === state.activeAgentId) || {};
+  try {
+    await fetch(`${API_BASE}/api/share-events`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        user_id: getUserId(),
+        team_name: state.profile?.team || '',
+        member_name: state.profile?.name || '',
+        query_type: agent.type || '',
+        history_id: msg.historyId || null,
+        share_type: shareType,
+      }),
+    });
+  } catch {}
+}
+
+async function shareAnswerCard(index) {
+  const msg = state.messages[index];
+  if (!msg || msg.role !== 'bot' || !msg.content) {
+    showToast('没有可分享的回答', 'info');
+    return;
+  }
+  const agent = AGENTS.find(a => a.id === msg.agentId) || AGENTS[0] || {};
+  const card = document.getElementById('share-card');
+  const content = document.getElementById('share-card-content');
+  const now = new Date().toLocaleString('zh-CN', { month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+  const question = msg.replyToText || latestUserQuestionBefore(index) || '我的健康咨询';
+  const caseItem = (msg.relatedCases || [])[0];
+
+  content.innerHTML = `
+    <div style="width:750px;box-sizing:border-box;padding:40px;background:linear-gradient(160deg,#F8F7FF 0%,#FFFFFF 42%,#ECFEFF 100%);font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif;color:#0F172A">
+      <div style="display:flex;align-items:center;gap:18px;margin-bottom:28px">
+        <div style="width:72px;height:72px;border-radius:24px;background:${agent.color || '#7C3AED'};display:flex;align-items:center;justify-content:center;color:#fff;font-size:30px;font-weight:900;box-shadow:0 12px 30px rgba(124,58,237,.25)">AI</div>
+        <div>
+          <div style="font-size:30px;font-weight:900;letter-spacing:-.5px">AI宝儿智能体</div>
+          <div style="font-size:22px;color:#64748B;margin-top:4px">${escapeHtml(agent.name || '智能问答')}</div>
+        </div>
+      </div>
+
+      <div style="font-size:22px;font-weight:900;color:#7C3AED;margin-bottom:10px">用户提问</div>
+      <div style="padding:22px 24px;border-radius:24px;background:#FFFFFF;border:1px solid #EDE9FE;box-shadow:0 16px 42px rgba(15,23,42,.08);font-size:30px;font-weight:900;line-height:1.35;margin-bottom:24px">${escapeHtml(truncateShareText(question, 90))}</div>
+
+      <div style="font-size:22px;font-weight:900;color:#2563EB;margin-bottom:10px">AI回答摘要</div>
+      <div style="padding:24px;border-radius:28px;background:#EEF6FF;border:1px solid #DBEAFE;font-size:25px;line-height:1.62;color:#1E293B;white-space:pre-wrap">${escapeHtml(truncateShareText(msg.content, 360))}</div>
+
+      ${msg.content.length > 360 ? `<div style="margin-top:12px;font-size:20px;color:#64748B">内容已简化展示，打开网页可继续查看完整回答。</div>` : ''}
+      ${renderShareCaseSnippet(caseItem)}
+
+      <div style="margin-top:28px;padding:22px 24px;border-radius:24px;background:#111827;color:#fff">
+        <div style="font-size:25px;font-weight:900;margin-bottom:8px">长按保存，转发给朋友一起看看</div>
+        <div style="font-size:19px;color:#CBD5E1;line-height:1.5">微信内打开：${escapeHtml(currentShareUrl())}</div>
+      </div>
+
+      <div style="margin-top:18px;text-align:center;font-size:18px;color:#94A3B8">${now} · 仅供交流参考</div>
+    </div>`;
+
+  showToast('正在生成分享图片...', 'info');
+  await renderShareImage(card, '回答分享图', 750, 2);
+  recordShareEvent(msg, 'answer_card');
+}
+
 async function shareChat() {
   closeChatMenu();
   const msgs = state.messages.filter(m => m.content);
@@ -1838,26 +2150,7 @@ async function shareChat() {
 
   showToast('正在生成分享图片...', 'info');
 
-  try {
-    await ensureHtml2Canvas();
-  } catch {
-    showToast('分享组件加载失败，请稍后重试', 'error');
-    return;
-  }
-
-  html2canvas(card, {
-    scale: 3,
-    useCORS: true,
-    backgroundColor: '#ffffff',
-    width: 390,
-  }).then(canvas => {
-    const dataUrl = canvas.toDataURL('image/png');
-    const wrap = document.getElementById('share-image-wrap');
-    wrap.innerHTML = `<img src="${dataUrl}" alt="分享对话" style="width:100%;display:block;border-radius:8px">`;
-    document.getElementById('share-overlay').classList.add('active');
-  }).catch(() => {
-    showToast('生成失败，请重试', 'error');
-  });
+  await renderShareImage(card, '分享对话', 390, 3);
 }
 
 function closeSharePreview(e) {

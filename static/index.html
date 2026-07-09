@@ -4,7 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>AI宝儿智能体</title>
-  <link rel="stylesheet" href="styles.css">
+  <script>
+    if (window.location.protocol === 'file:') {
+      window.location.replace('http://127.0.0.1:5001/');
+    }
+  </script>
+  <link rel="stylesheet" href="styles.css?v=20260707-speech3">
   <script defer src="https://unpkg.com/@phosphor-icons/web@2.0.3"></script>
 </head>
 <body>
@@ -88,11 +93,13 @@
           </div>
         </div>
         <div class="chat-input-area">
+          <button class="voice-btn" id="voice-btn" onclick="toggleVoiceInput()" style="display:none" title="语音输入"><i class="ph ph-microphone"></i></button>
           <div class="input-wrapper">
             <button class="input-plus"><i class="ph ph-plus"></i></button>
             <textarea id="message-input" rows="1" placeholder="说点什么..." onkeydown="handleInputKeydown(event)"></textarea>
             <button class="send-btn" id="send-btn" onclick="sendMessage()"><i class="ph ph-paper-plane-right"></i></button>
           </div>
+          <div class="voice-status" id="voice-status" style="display:none"></div>
           <button class="scroll-bottom-btn" id="scroll-bottom-btn" onclick="scrollToBottom()">
             <i class="ph ph-arrow-down"></i>
           </button>
@@ -208,7 +215,7 @@
       <div id="share-overlay" class="admin-overlay" onclick="closeSharePreview(event)">
         <div class="share-panel" onclick="event.stopPropagation()">
           <div class="share-panel-header">
-            <span class="share-panel-title">分享截图</span>
+            <span class="share-panel-title">微信分享图</span>
             <button class="icon-btn" onclick="closeSharePreview()"><i class="ph ph-x"></i></button>
           </div>
           <div class="share-panel-body">
@@ -217,7 +224,7 @@
             </div>
           </div>
           <div class="share-panel-footer">
-            <p class="share-tip"><i class="ph ph-hand-fist"></i> 长按图片即可保存分享</p>
+            <p class="share-tip"><i class="ph ph-hand-fist"></i> 微信内长按图片保存或转发</p>
           </div>
         </div>
       </div>
@@ -274,6 +281,6 @@
   </div>
 
   <div id="toast"></div>
-  <script src="app.js"></script>
+  <script src="app.js?v=20260707-speech3"></script>
 </body>
 </html>

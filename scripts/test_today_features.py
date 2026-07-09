@@ -2,7 +2,9 @@
 import os
 import tempfile
 import sys
+from io import BytesIO
 from pathlib import Path
+from unittest.mock import Mock, patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
@@ -125,6 +127,74 @@ def main():
         r = client.get(f"/api/community/questions/{qid}")
         approved = r.get_json().get("replies", [])
         assert_true(approved[0].get("like_count") == 1, f"reply like count missing in detail: {approved}")
+
+        # 8) Share event endpoint records answer-card generation without auth.
+        r = client.post(
+            "/api/share-events",
+            json={
+                "user_id": "u-share",
+                "team_name": "一团队",
+                "member_name": "张三",
+                "query_type": "产品咨询",
+                "history_id": 1,
+                "share_type": "answer_card",
+            },
+        )
+        assert_true(r.status_code == 201, f"share event failed: {r.status_code} {r.get_data(as_text=True)}")
+        assert_true(r.get_json().get("id"), f"share event id missing: {r.get_json()}")
+
+        # 9) Speech settings gate frontend voice input and transcribe endpoint.
+        r = client.get("/api/speech/config")
+        assert_true(r.status_code == 200 and r.get_json().get("enabled") is False, f"speech should default off: {r.get_json()}")
+        r = client.put("/api/admin/settings/speech", headers=auth, json={"enabled": True})
+        assert_true(r.status_code == 400, f"speech enabled without aliyun config should fail: {r.status_code}")
+        r = client.put(
+            "/api/admin/settings/speech",
+            headers=auth,
+            json={
+                "enabled": True,
+                "provider": "aliyun_asr",
+                "aliyun_app_key": "app-key",
+                "aliyun_access_key_id": "ak-id",
+                "aliyun_access_key_secret": "ak-secret",
+            },
+        )
+        assert_true(r.status_code == 200, f"speech settings save failed: {r.status_code} {r.get_data(as_text=True)}")
+        settings = r.get_json()
+        assert_true(settings.get("provider") == "aliyun_asr", f"speech provider mismatch: {settings}")
+        assert_true(settings.get("aliyun_access_key_secret_masked"), f"speech secret should be masked: {settings}")
+        r = client.get("/api/speech/config")
+        assert_true(r.get_json().get("enabled") is True, f"speech public config not enabled: {r.get_json()}")
+
+        r = client.post("/api/speech/transcribe", data={"user_id": "u-speech"})
+        assert_true(r.status_code == 400, f"speech missing audio should 400: {r.status_code} {r.get_data(as_text=True)}")
+        oversized = BytesIO(b"x" * (10 * 1024 * 1024 + 1))
+        r = client.post(
+            "/api/speech/transcribe",
+            data={"audio": (oversized, "voice.webm", "audio/webm"), "user_id": "u-speech"},
+        )
+        assert_true(r.status_code == 400, f"speech oversized audio should 400: {r.status_code} {r.get_data(as_text=True)}")
+        token_response = Mock()
+        token_response.json.return_value = {"Token": {"Id": "aliyun-token"}}
+        token_response.raise_for_status.return_value = None
+        asr_response = Mock()
+        asr_response.json.return_value = {"status": 20000000, "result": "这是语音识别结果"}
+        asr_response.raise_for_status.return_value = None
+        with patch("services.speech_service._convert_audio_to_wav", return_value=b"wav-bytes") as convert_mock, \
+             patch("services.speech_service.requests.post", side_effect=[token_response, asr_response]) as post_mock:
+            r = client.post(
+                "/api/speech/transcribe",
+                data={"audio": (BytesIO(b"voice-bytes"), "voice.mp4", "audio/mp4"), "user_id": "u-speech"},
+            )
+        assert_true(r.status_code == 200, f"speech transcribe failed: {r.status_code} {r.get_data(as_text=True)}")
+        assert_true(r.get_json().get("text") == "这是语音识别结果", f"speech text mismatch: {r.get_json()}")
+        assert_true(r.get_json().get("provider") == "aliyun_asr", f"speech provider mismatch: {r.get_json()}")
+        assert_true(convert_mock.called, "speech audio should be converted to wav")
+        token_payload = post_mock.call_args_list[0].kwargs.get("json", {})
+        assert_true(token_payload.get("AccessKeyId") == "ak-id", f"aliyun token payload mismatch: {token_payload}")
+        asr_headers = post_mock.call_args_list[1].kwargs.get("headers", {})
+        assert_true(asr_headers.get("X-NLS-Token") == "aliyun-token", f"aliyun token header missing: {asr_headers}")
+        assert_true(post_mock.call_args_list[1].kwargs.get("data") == b"wav-bytes", "aliyun asr should receive wav bytes")
 
         print("PASS: today features smoke test")
 

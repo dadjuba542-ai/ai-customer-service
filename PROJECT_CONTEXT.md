@@ -251,8 +251,8 @@ outputs/                历史生成物/设计产物，非主应用运行核心
 
 - 管理后台支持图片上传
 - 上传后统一转 JPEG
-- 最大体积 2MB
-- 最长边压缩到 1200
+- 最大上传体积 8MB
+- 主图最长边压缩到 1200，并生成 `_thumb` 缩略图
 - 保存目录：`static/uploads/`
 
 ## 7. 数据库结构速记
@@ -286,6 +286,8 @@ outputs/                历史生成物/设计产物，非主应用运行核心
   - 各类后台可编辑配置
 - `satisfaction_surveys`
   - 满意度问卷打分
+- `share_events`
+  - 微信端分享图生成记录，记录团队、成员、咨询类型、历史记录和分享类型
 - `questions`
   - 社区问题
 - `replies`
@@ -320,6 +322,7 @@ outputs/                历史生成物/设计产物，非主应用运行核心
 - `POST /api/chat/send`
 - `POST /api/chat/stream`
 - `POST /api/chat/feedback`
+- `POST /api/share-events`
 
 ### 历史记录
 
@@ -551,6 +554,30 @@ python3 scripts/optimize_news_content_images.py --apply
 ```
 
 如果生产环境使用 Railway/Zeabur 持久卷，先确认 `DATABASE_DIR` 指向真实数据目录，例如 Railway 常见为 `/data`。`--apply` 会自动生成 `ai_customer_service.db.bak.news-content.*` 备份；确认新闻详情正常后保留一段时间再清理备份。
+
+## 12.3 2026-07-06 微信端回答结果分享卡 v1
+
+本次新增面向微信 H5 的单条回答分享图，不接微信 JS-SDK：
+
+- 每条机器人回答的操作区增加 `生成分享图`，用于把单次问答生成适合微信长按保存/转发的竖版 PNG。
+- 分享图包含 AI 宝儿标识、当前智能体、用户问题、AI 回答摘要、最相关案例摘要和当前 H5 链接提示。
+- 回答过长会自动截断，避免图片无限拉长；有相关案例时展示第一条案例，没有案例则不留空白。
+- 复用现有 `html2canvas` 和分享弹层，保留右上角“分享对话”原功能。
+- 新增 `share_events` 表和 `POST /api/share-events`，只记录“生成分享图”行为，不追踪微信真实转发完成。
+
+## 12.4 2026-07-06 微信端 H5 语音输入 v1
+
+本次新增独立语音转文字能力，不接微信 JS-SDK：
+
+- 后台“智能体配置/系统配置”新增语音输入开关和 ASR 服务配置；默认 provider 为 `aliyun_asr`。
+- 阿里云一句话识别使用 `speech_provider`、`aliyun_nls_app_key`、`aliyun_access_key_id`、`aliyun_access_key_secret`；Secret 后台只脱敏回显，留空保存时不覆盖旧值。
+- 旧 Coze Bot 识别链路仅保留为实验兼容 provider，不再作为主路径；此前 Coze 音频消息对 `stream`、`audio_file_type` 和返回解析限制较多，不适合作为稳定语音转文字方案。
+- 前台启动时读取 `/api/speech/config`；只有后台开启后，聊天输入框才显示麦克风按钮。
+- 前端使用 H5 `MediaRecorder` 录音，最长 30 秒；识别成功后只填入输入框，不自动发送。
+- 后端新增 `POST /api/speech/transcribe`，接收 `multipart/form-data` 的 `audio` 文件，限制 10MB。
+- `services/speech_service.py` 会先用 ffmpeg 把浏览器录音统一转为 `16kHz / mono / WAV`，再提交给阿里云 ASR。
+- 服务器必须安装 `ffmpeg`；Railway/Nixpacks 配置已补系统包。可用 `ALIYUN_NLS_TOKEN_URL`、`ALIYUN_NLS_ASR_URL` 覆盖阿里云接口地址。
+- 微信 iOS 兼容性需要真机验证；如果 `MediaRecorder` 不可用，前台会提示使用文字或常见问题卡片。
 
 ## 13. 已知实现特点与风险点
 
