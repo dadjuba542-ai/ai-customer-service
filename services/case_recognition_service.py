@@ -10,6 +10,7 @@ import requests
 
 from config import Config
 from models import get_setting
+from services.secret_service import get_secret_setting
 
 logger = logging.getLogger(__name__)
 
@@ -186,7 +187,7 @@ def _extract_html_content(html, base_url):
 def _extract_fields_with_ai(raw_excerpt):
     if not raw_excerpt:
         return None, '页面正文为空，无法进行 AI 识别'
-    api_key = get_setting('coze_api_key', Config.COZE_API_KEY)
+    api_key = get_secret_setting('coze_api_key', Config.COZE_API_KEY)
     if not api_key:
         return None, '未配置 Coze API Key，跳过 AI 识别'
     prompt = (

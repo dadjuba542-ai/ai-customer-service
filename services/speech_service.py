@@ -11,6 +11,7 @@ import requests
 
 from config import Config
 from models import get_setting
+from services.secret_service import get_secret_setting
 
 
 MAX_AUDIO_BYTES = 10 * 1024 * 1024
@@ -61,7 +62,7 @@ def transcribe_audio_file(file_storage, user_id='anonymous'):
 def _transcribe_with_aliyun(wav_bytes):
     app_key = get_setting('aliyun_nls_app_key', '').strip()
     access_key_id = get_setting('aliyun_access_key_id', '').strip()
-    access_key_secret = get_setting('aliyun_access_key_secret', '').strip()
+    access_key_secret = get_secret_setting('aliyun_access_key_secret', '').strip()
     if not app_key or not access_key_id or not access_key_secret:
         raise SpeechServiceError('未配置语音识别服务', status_code=400)
 
@@ -129,7 +130,7 @@ def _transcribe_with_coze(wav_bytes, user_id):
     if not bot_id:
         raise SpeechServiceError('未配置语音识别 Bot ID', status_code=400)
 
-    api_key = get_setting('coze_api_key', Config.COZE_API_KEY)
+    api_key = get_secret_setting('coze_api_key', Config.COZE_API_KEY)
     if not api_key:
         raise SpeechServiceError('未配置 Coze API Key', status_code=400)
 

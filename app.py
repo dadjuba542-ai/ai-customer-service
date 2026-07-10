@@ -1,6 +1,7 @@
 import os
 import json
 from flask import Flask, jsonify, request, send_from_directory, render_template
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 DEFAULT_TIPS = [
     "试试问我：你的产品有什么功效？",
@@ -27,7 +28,7 @@ DEFAULT_STEPS = [
 from flask_cors import CORS
 from config import Config
 from models import init_db
-from routes.auth import auth_bp
+from routes.auth import auth_bp, token_required
 from routes.chat import chat_bp
 from routes.history import history_bp
 from routes.news import news_bp
@@ -43,12 +44,17 @@ from routes.speech import speech_bp
 
 app = Flask(__name__, static_folder='static', static_url_path='')
 Config.validate()
-CORS(app, resources={r"/api/*": {"origins": Config.CORS_ORIGINS}})
 app.config.from_object(Config)
+if Config.TRUST_PROXY:
+    app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1)
+if Config.CORS_ORIGINS:
+    CORS(app, resources={r"/api/*": {"origins": Config.CORS_ORIGINS}})
 
-os.makedirs(os.path.join(app.root_path, 'static', 'uploads'), exist_ok=True)
+os.makedirs(Config.UPLOAD_DIR, exist_ok=True)
 
 init_db()
+from services.secret_service import migrate_plaintext_secrets
+migrate_plaintext_secrets()
 
 app.register_blueprint(auth_bp, url_prefix='/api/auth')
 app.register_blueprint(chat_bp, url_prefix='/api/chat')
@@ -76,6 +82,18 @@ def add_cache_headers(response):
         response.headers['Cache-Control'] = 'public, max-age=604800'
     elif path.endswith(('.css', '.js')):
         response.headers['Cache-Control'] = 'public, max-age=86400'
+    response.headers['X-Content-Type-Options'] = 'nosniff'
+    response.headers['X-Frame-Options'] = 'DENY'
+    response.headers['Referrer-Policy'] = 'strict-origin-when-cross-origin'
+    response.headers['Permissions-Policy'] = 'camera=(), geolocation=(), microphone=(self)'
+    response.headers['Content-Security-Policy'] = (
+        "default-src 'self'; base-uri 'self'; frame-ancestors 'none'; object-src 'none'; "
+        "script-src 'self' 'unsafe-inline' https://unpkg.com https://cdn.jsdelivr.net https://html2canvas.hertzen.com; "
+        "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; "
+        "img-src 'self' data: https:; connect-src 'self'; media-src 'self' blob:; worker-src 'self' blob:"
+    )
+    if request.is_secure:
+        response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'
     return response
 
 
@@ -86,6 +104,11 @@ def index():
 @app.route('/admin')
 def admin_page():
     return render_template('admin.html')
+
+
+@app.route('/uploads/<path:filename>')
+def uploaded_file(filename):
+    return send_from_directory(Config.UPLOAD_DIR, filename)
 
 @app.route('/api/waiting-content')
 def waiting_content():
@@ -124,33 +147,14 @@ def case_library_config():
     return jsonify({'case_library_url': get_setting('case_library_url', '')})
 
 @app.route('/api/user/profile')
-def user_profile():
-    from routes.auth import token_required
-    from flask import request
-
-    token = request.headers.get('Authorization')
-    if not token:
-        return jsonify({'error': 'Token is missing'}), 401
-
-    try:
-        import jwt
-        if token.startswith('Bearer '):
-            token = token[7:]
-        data = jwt.decode(token, Config.SECRET_KEY, algorithms=['HS256'])
-        from models import get_user_by_id
-        user = get_user_by_id(data['user_id'])
-        if not user:
-            return jsonify({'error': 'User not found'}), 401
-        return jsonify({
-            'user_id': user['user_id'],
-            'username': user['username'],
-            'is_admin': user.get('is_admin', 0),
-            'created_at': user['created_at']
-        })
-    except jwt.ExpiredSignatureError:
-        return jsonify({'error': 'Token has expired'}), 401
-    except jwt.InvalidTokenError:
-        return jsonify({'error': 'Invalid token'}), 401
+@token_required
+def user_profile(current_user):
+    return jsonify({
+        'user_id': current_user['user_id'],
+        'username': current_user['username'],
+        'is_admin': current_user.get('is_admin', 0),
+        'created_at': current_user['created_at']
+    })
 
 if __name__ == '__main__':
     app.run(debug=False, host='0.0.0.0', port=5001)

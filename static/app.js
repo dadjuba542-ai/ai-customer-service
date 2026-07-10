@@ -19,6 +19,7 @@ let state = {
   isTyping: false,
   isStreaming: false,
   token: localStorage.getItem('token'),
+  sessionToken: localStorage.getItem('session_token'),
   user: JSON.parse(localStorage.getItem('user') || 'null'),
   profile: JSON.parse(localStorage.getItem('chat_profile') || 'null'),
   teamOptions: [],
@@ -67,7 +68,7 @@ async function ensureHtml2Canvas() {
 
 function getUserId() {
   let id = localStorage.getItem('user_uuid');
-  if (!id) {
+  if (!/^[A-Za-z0-9_-]{8,64}$/.test(id || '')) {
     id = 'u' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
     localStorage.setItem('user_uuid', id);
   }
@@ -122,7 +123,7 @@ async function loadAgents() {
   await loadDefaultTeamSetting();
   renderAgentTabs();
   renderQuickFunctions();
-  ensureIdentity();
+  await ensureIdentity();
 }
 
 async function loadDefaultTeamSetting() {
@@ -187,7 +188,24 @@ function bindIdentityEvents() {
   }
 }
 
-function ensureIdentity() {
+async function ensureGuestSession() {
+  if (!state.profile?.team || !state.profile?.name) return false;
+  const res = await fetch(`${API_BASE}/api/auth/session`, {
+    method: 'POST',
+    headers: authHeaders({ 'Content-Type': 'application/json' }),
+    body: JSON.stringify({
+      team_name: state.profile.team,
+      member_name: state.profile.name,
+    }),
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok || !data.token) throw new Error(data.error || '身份会话创建失败');
+  state.sessionToken = data.token;
+  localStorage.setItem('session_token', data.token);
+  return true;
+}
+
+async function ensureIdentity() {
   const gate = document.getElementById('identity-gate');
   const teamSelect = document.getElementById('team-select');
   if (teamSelect) {
@@ -202,6 +220,13 @@ function ensureIdentity() {
       state.profile = null;
       localStorage.removeItem('chat_profile');
     } else {
+      try {
+        await ensureGuestSession();
+      } catch (error) {
+        if (gate) gate.classList.add('active');
+        showToast(error.message || '身份会话创建失败，请重试', 'error');
+        return;
+      }
       if (gate) gate.classList.remove('active');
       if (!state.teamOptions.length) showToast('团队配置加载失败，已使用上次身份进入', 'info');
       enterApp();
@@ -226,16 +251,28 @@ function ensureIdentity() {
   if (gate) gate.classList.add('active');
 }
 
-function submitIdentity() {
+async function submitIdentity() {
   const team = (document.getElementById('team-select')?.value || '').trim();
   const name = (document.getElementById('member-name-input')?.value || '').trim();
   if (!team) { showToast('请选择团队', 'error'); return; }
   if (!state.teamOptions.includes(team)) { showToast('请选择管理员配置的团队', 'error'); return; }
   if (!name) { showToast('请输入姓名', 'error'); return; }
-  state.profile = { team, name };
-  localStorage.setItem('chat_profile', JSON.stringify(state.profile));
-  document.getElementById('identity-gate')?.classList.remove('active');
-  enterApp();
+  const button = document.querySelector('#identity-gate .btn-primary');
+  if (button) button.disabled = true;
+  try {
+    state.profile = { team, name };
+    state.sessionToken = null;
+    localStorage.removeItem('session_token');
+    await ensureGuestSession();
+    localStorage.setItem('chat_profile', JSON.stringify(state.profile));
+    document.getElementById('identity-gate')?.classList.remove('active');
+    enterApp();
+  } catch (error) {
+    state.profile = null;
+    showToast(error.message || '身份会话创建失败，请重试', 'error');
+  } finally {
+    if (button) button.disabled = false;
+  }
 }
 
 /* ===== View Switching ===== */
@@ -430,6 +467,13 @@ function buildChatPayload(text, agent) {
   };
 }
 
+function authHeaders(extra = {}) {
+  const headers = { ...extra };
+  const token = state.sessionToken || state.token;
+  if (token) headers.Authorization = `Bearer ${token}`;
+  return headers;
+}
+
 function startChatRequest() {
   const sendBtn = document.getElementById('send-btn');
   sendBtn.disabled = true;
@@ -590,7 +634,7 @@ async function transcribeVoiceBlob(blob) {
     const ext = blob.type.includes('wav') ? 'wav' : blob.type.includes('ogg') ? 'ogg' : 'webm';
     form.append('audio', blob, `voice.${ext}`);
     form.append('user_id', getUserId());
-    const res = await fetch(`${API_BASE}/api/speech/transcribe`, { method: 'POST', body: form });
+    const res = await fetch(`${API_BASE}/api/speech/transcribe`, { method: 'POST', headers: authHeaders(), body: form });
     const data = await res.json().catch(() => ({}));
     if (!res.ok) throw new Error(data.error || '识别失败，请重试');
     const text = String(data.text || '').trim();
@@ -708,7 +752,7 @@ function parseSSEChunk(chunk) {
 async function streamChatRequest(payload, agentId) {
   const res = await fetch(`${API_BASE}/api/chat/stream`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: authHeaders({ 'Content-Type': 'application/json' }),
     body: JSON.stringify(payload),
   });
 
@@ -801,7 +845,7 @@ async function streamChatRequest(payload, agentId) {
 async function fallbackToSyncChat(payload, agentId) {
   const res = await fetchWithTimeout(`${API_BASE}/api/chat/send`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: authHeaders({ 'Content-Type': 'application/json' }),
     body: JSON.stringify(payload),
   }, 120000);
   const data = await res.json();
@@ -1368,9 +1412,9 @@ async function streamResponse(text, historyId) {
 /* ===== History ===== */
 async function loadHistory(queryType = '') {
   try {
-    const base = `${API_BASE}/api/history/sessions?user_id=${getUserId()}`;
+    const base = `${API_BASE}/api/history/sessions`;
     const url = queryType ? `${base}&query_type=${encodeURIComponent(queryType)}` : base;
-    const res = await fetch(url);
+    const res = await fetch(url, { headers: authHeaders() });
     if (res.ok) {
       const data = await res.json();
       renderMemorySessions(data.sessions);
@@ -1409,7 +1453,7 @@ async function deleteSession(e, itemIds) {
   try {
     const res = await fetch(`${API_BASE}/api/history/batch-delete`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: authHeaders({ 'Content-Type': 'application/json' }),
       body: JSON.stringify({ ids: itemIds }),
     });
     if (res.ok) {
@@ -1540,7 +1584,7 @@ async function loadMoreQA() {
 async function showQDetail(id) {
   currentQId = id;
   try {
-    const res = await fetch(`${API_BASE}/api/community/questions/${id}?viewer_id=${encodeURIComponent(getViewerId())}`);
+    const res = await fetch(`${API_BASE}/api/community/questions/${id}`, { headers: authHeaders() });
     if (!res.ok) return;
     const q = await res.json();
     let html = `
@@ -1578,7 +1622,7 @@ async function likeReply(replyId, btn) {
   if (!replyId || !btn || btn.disabled) return;
   btn.disabled = true;
   try {
-    const res = await fetch(`${API_BASE}/api/community/replies/${replyId}/like`, { method: 'POST' });
+    const res = await fetch(`${API_BASE}/api/community/replies/${replyId}/like`, { method: 'POST', headers: authHeaders() });
     if (!res.ok) throw new Error('like failed');
     const data = await res.json();
     markReplyLiked(replyId);
@@ -1612,7 +1656,7 @@ function submitSurvey(score) {
   document.getElementById('survey-overlay').classList.remove('active');
   fetch(`${API_BASE}/api/survey`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: authHeaders({ 'Content-Type': 'application/json' }),
     body: JSON.stringify({ score }),
   }).catch(() => {});
 }
@@ -1624,7 +1668,7 @@ async function submitReply() {
   try {
     const res = await fetch(`${API_BASE}/api/community/questions/${currentQId}/replies`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: authHeaders({ 'Content-Type': 'application/json' }),
       body: JSON.stringify({ nickname: '匿名用户', content, viewer_id: getViewerId() }),
     });
     if (res.ok) {
@@ -1641,7 +1685,7 @@ async function loadSession(itemIds) {
   if (!itemIds || itemIds.length === 0) return;
   const firstItemId = itemIds[0];
   try {
-    const res = await fetch(`${API_BASE}/api/history/${firstItemId}?user_id=${getUserId()}`);
+    const res = await fetch(`${API_BASE}/api/history/${firstItemId}`, { headers: authHeaders() });
     if (!res.ok) return;
     const first = await res.json();
     const agent = AGENTS.find(a => a.type === first.query_type) || AGENTS[0];
@@ -1650,7 +1694,7 @@ async function loadSession(itemIds) {
     state.messages = [];
     for (const id of itemIds.reverse()) {
       try {
-        const r = await fetch(`${API_BASE}/api/history/${id}?user_id=${getUserId()}`);
+        const r = await fetch(`${API_BASE}/api/history/${id}`, { headers: authHeaders() });
         if (r.ok) {
           const item = await r.json();
           addMessage({ id: Date.now(), role: 'user', content: item.user_message, time: formatTime(item.created_at, true) });
@@ -2043,7 +2087,7 @@ async function recordShareEvent(msg, shareType = 'answer_card') {
   try {
     await fetch(`${API_BASE}/api/share-events`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: authHeaders({ 'Content-Type': 'application/json' }),
       body: JSON.stringify({
         user_id: getUserId(),
         team_name: state.profile?.team || '',
@@ -2198,7 +2242,7 @@ async function submitFeedback(historyId, feedback, reason, msgIdx) {
     if (reason) body.reason = reason;
     const res = await fetch(`${API_BASE}/api/chat/feedback`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: authHeaders({ 'Content-Type': 'application/json' }),
       body: JSON.stringify(body),
     });
     if (res.ok) {
@@ -2249,7 +2293,7 @@ function submitSurvey(score) {
   document.getElementById('survey-overlay').classList.remove('active');
   fetch(`${API_BASE}/api/survey`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+        headers: authHeaders({ 'Content-Type': 'application/json' }),
     body: JSON.stringify({ score }),
   }).catch(() => {});
 }

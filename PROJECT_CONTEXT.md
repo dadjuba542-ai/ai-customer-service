@@ -58,6 +58,8 @@ templates/admin.html    管理后台页面
 scripts/test_today_features.py 现有冒烟测试
 scripts/test_case_documents.py 案例档案冒烟测试
 scripts/test_migrations.py SQLite migration 冒烟测试
+scripts/test_security.py 安全边界冒烟测试
+scripts/create_admin.py 首次管理员初始化脚本
 scripts/optimize_uploaded_images.py 历史上传图片优化脚本
 scripts/optimize_news_content_images.py 新闻正文 base64 图片迁移脚本
 railway.json            Railway 部署配置
@@ -157,11 +159,12 @@ outputs/                历史生成物/设计产物，非主应用运行核心
 
 核心文件：`routes/auth.py`
 
-- 注册：`/api/auth/register`
+- 注册：`/api/auth/register`（默认关闭，需显式开启）
 - 登录：`/api/auth/login`
+- 前台身份会话：`/api/auth/session`（服务端生成不可自选的 guest user id）
 - 鉴权方式：JWT Bearer Token
 - token 默认有效期：7 天
-- 用户名等于 `Config.ADMIN_USERNAME` 的注册用户自动成为管理员
+- 管理员不通过公开注册创建；首次管理员使用 `scripts/create_admin.py`
 
 兼容性细节：
 
@@ -408,9 +411,9 @@ outputs/                历史生成物/设计产物，非主应用运行核心
 - `COZE_API_KEY`
 - `DATABASE_DIR`
 - `CORS_ORIGINS`
-- `STRICT_SECURITY`
-- `HIDE_ADMIN_API_KEY`
-- `ADMIN_USERNAME`
+- `PUBLIC_REGISTRATION_ENABLED`
+- `UPLOAD_DIR`
+- `TRUST_PROXY`
 - `BOT_PRODUCT`
 - `BOT_FAQ`
 - `BOT_MOMENT`
@@ -418,9 +421,10 @@ outputs/                历史生成物/设计产物，非主应用运行核心
 
 注意：
 
-- 当 `STRICT_SECURITY=true` 时，`SECRET_KEY` 不能为空
-- 生产环境最好显式设置 `DATABASE_DIR`，避免 SQLite 落到临时或不可持久目录
-- Coze API Key 可以走环境变量，也可以被后台写入 `settings` 覆盖
+- `SECRET_KEY` 必须至少 32 个字符，否则应用拒绝启动
+- 生产环境应显式设置 `DATABASE_DIR=/data` 和 `UPLOAD_DIR=/data/uploads`
+- `CORS_ORIGINS` 默认为空；需要跨域时必须填写明确来源，不能使用 `*`
+- Coze API Key 可以走环境变量，也可以被后台加密写入 `settings`
 
 ## 10. 部署现状
 
@@ -428,9 +432,7 @@ outputs/                历史生成物/设计产物，非主应用运行核心
 
 - 配置文件：`railway.json`
 - 使用持久卷挂载到 `/data`
-- 但当前代码只有在设置 `DATABASE_DIR=/data` 时，数据库才会真的写进持久卷
-
-这意味着如果 Railway 环境没配 `DATABASE_DIR=/data`，那卷白挂了，数据持久化会打折扣。
+- 当前 `railway.json` 已将 `DATABASE_DIR` 和 `UPLOAD_DIR` 指向 `/data` 持久卷
 
 ### Zeabur
 
@@ -444,6 +446,7 @@ outputs/                历史生成物/设计产物，非主应用运行核心
 - `scripts/test_today_features.py`
 - `scripts/test_case_documents.py`
 - `scripts/test_migrations.py`
+- `scripts/test_security.py`
 
 验收清单：
 
@@ -458,6 +461,7 @@ python3 -m py_compile db_migrations.py models.py scripts/test_migrations.py
 python3 scripts/test_migrations.py
 python3 scripts/test_case_documents.py
 python3 scripts/test_today_features.py
+python3 scripts/test_security.py
 ```
 
 结果通过，覆盖了这些近期开关点：
@@ -591,7 +595,7 @@ python3 scripts/optimize_news_content_images.py --apply
 - 后台案例 JS 已拆到 `static/admin/cases.js`；`templates/admin.html` 仍包含其它后台模块的大量内联脚本，继续扩功能时仍需逐步拆分。
 - 历史图片优化脚本默认只 dry-run；服务器执行 `--apply` 前要确认 `DATABASE_DIR` 指向真实持久化 SQLite，并保留脚本生成的 `.bak` 数据库备份。
 - 新闻正文图片必须走上传 URL，不要让 Quill 保存 `data:image/base64`；如果详情再次变慢，先用 `scripts/optimize_news_content_images.py` 检查。
-- 上传目录仍在本机 `static/uploads/`，当前优化能显著减小图片体积；图片量继续增长后再考虑对象存储/CDN。
+- 上传目录由 `UPLOAD_DIR` 控制；Railway 默认使用 `/data/uploads`，图片量继续增长后再考虑对象存储/CDN。
 - 案例链接识别依赖目标网页可公开访问；小程序私有路径、登录后页面、强反爬页面只能保留外链并手动补正文。
 - 案例链接识别复用 Coze API 做结构化抽取；未配置 API Key 或 Coze 失败时会降级，但标签质量需要人工确认。
 - `outputs/` 目录看起来是历史设计/生成产物，不属于主业务运行链路，清理前先确认是否还有人依赖。

@@ -5,6 +5,7 @@ from models import get_all_agent_configs, get_agent_config, update_agent_config,
 from config import Config
 from routes.auth import admin_required
 from services.image_service import is_allowed_image_filename, process_uploaded_image
+from services.secret_service import get_secret_setting, set_secret_setting
 
 admin_bp = Blueprint('admin', __name__)
 
@@ -88,7 +89,7 @@ def upload_file(current_user):
     if size > MAX_UPLOAD_SIZE:
         return jsonify({'error': '文件超过 8MB，请先压缩后再上传'}), 400
 
-    upload_dir = os.path.join(current_app.root_path, 'static', 'uploads')
+    upload_dir = Config.UPLOAD_DIR
     try:
         result = process_uploaded_image(file, upload_dir)
     except ValueError as exc:
@@ -106,17 +107,15 @@ def upload_file(current_user):
 @admin_required
 def coze_api_key(current_user):
     if request.method == 'PUT':
-        data = request.get_json()
+        data = request.get_json(silent=True) or {}
         key = data.get('api_key', '').strip()
         if not key:
             return jsonify({'error': 'API Key is required'}), 400
-        set_setting('coze_api_key', key)
+        set_secret_setting('coze_api_key', key)
         return jsonify({'message': 'API Key updated'})
-    current_key = get_setting('coze_api_key', '')
+    current_key = get_secret_setting('coze_api_key', Config.COZE_API_KEY)
     masked = current_key[:8] + '****' + current_key[-4:] if len(current_key) > 12 else ''
-    if Config.HIDE_ADMIN_API_KEY:
-        return jsonify({'masked': masked or '未设置'})
-    return jsonify({'api_key': current_key, 'masked': masked or '未设置'})
+    return jsonify({'masked': masked or '未设置', 'configured': bool(current_key)})
 
 @admin_bp.route('/settings/blocked-keywords', methods=['GET', 'PUT'])
 @admin_required
@@ -146,7 +145,7 @@ def speech_settings(current_user):
         access_key_secret = (data.get('aliyun_access_key_secret') or '').strip()
         bot_id = (data.get('bot_id') or '').strip()
 
-        existing_secret = get_setting('aliyun_access_key_secret', '').strip()
+        existing_secret = get_secret_setting('aliyun_access_key_secret', '').strip()
         if provider == 'aliyun_asr' and enabled:
             if not app_key or not access_key_id or not (access_key_secret or existing_secret):
                 return jsonify({'error': '开启语音识别前请填写阿里云 AppKey、AccessKey ID 和 Secret'}), 400
@@ -158,7 +157,7 @@ def speech_settings(current_user):
         set_setting('aliyun_nls_app_key', app_key)
         set_setting('aliyun_access_key_id', access_key_id)
         if access_key_secret:
-            set_setting('aliyun_access_key_secret', access_key_secret)
+            set_secret_setting('aliyun_access_key_secret', access_key_secret)
         set_setting('speech_coze_bot_id', bot_id)
         return jsonify({
             'message': '已更新',
@@ -166,7 +165,7 @@ def speech_settings(current_user):
             'provider': provider,
             'aliyun_app_key': app_key,
             'aliyun_access_key_id': access_key_id,
-            'aliyun_access_key_secret_masked': _mask_secret(get_setting('aliyun_access_key_secret', '')),
+            'aliyun_access_key_secret_masked': _mask_secret(get_secret_setting('aliyun_access_key_secret', '')),
             'bot_id': bot_id,
         })
     return jsonify({
@@ -174,8 +173,8 @@ def speech_settings(current_user):
         'provider': get_setting('speech_provider', 'aliyun_asr') or 'aliyun_asr',
         'aliyun_app_key': get_setting('aliyun_nls_app_key', ''),
         'aliyun_access_key_id': get_setting('aliyun_access_key_id', ''),
-        'aliyun_access_key_secret_masked': _mask_secret(get_setting('aliyun_access_key_secret', '')),
-        'has_aliyun_access_key_secret': bool(get_setting('aliyun_access_key_secret', '').strip()),
+        'aliyun_access_key_secret_masked': _mask_secret(get_secret_setting('aliyun_access_key_secret', '')),
+        'has_aliyun_access_key_secret': bool(get_secret_setting('aliyun_access_key_secret', '').strip()),
         'bot_id': get_setting('speech_coze_bot_id', ''),
     })
 

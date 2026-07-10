@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify
 from models import create_question, update_question, get_questions, get_question_detail, get_question_replies, create_reply, delete_question, delete_reply, set_reply_status, like_reply, toggle_question_status, get_question_categories, check_content
-from routes.auth import admin_required
+from routes.auth import admin_required, get_optional_identity, identity_required
+from services.security_service import rate_limit
 
 community_bp = Blueprint('community', __name__)
 
@@ -13,18 +14,21 @@ def list_questions():
 
 @community_bp.route('/questions/<int:qid>', methods=['GET'])
 def get_question(qid):
-    viewer_id = (request.args.get('viewer_id') or '').strip()
+    identity = get_optional_identity()
+    viewer_id = identity['user_id'] if identity else ''
     item = get_question_detail(qid, viewer_id=viewer_id)
     if not item:
         return jsonify({'error': 'Not found'}), 404
     return jsonify(item)
 
 @community_bp.route('/questions/<int:qid>/replies', methods=['POST'])
-def add_reply(qid):
-    data = request.get_json()
+@identity_required
+@rate_limit('community-reply', limit=10, window_seconds=600)
+def add_reply(identity, qid):
+    data = request.get_json(silent=True) or {}
     nickname = '匿名用户'
     content = (data.get('content') or '').strip()
-    viewer_id = (data.get('viewer_id') or '').strip()
+    viewer_id = identity['user_id']
     if not content:
         return jsonify({'error': '回复不能为空'}), 400
     status = 0 if not check_content(content) else 1
@@ -39,7 +43,9 @@ def list_categories():
     return jsonify({'categories': cats})
 
 @community_bp.route('/replies/<int:rid>/like', methods=['POST'])
-def like_reply_route(rid):
+@identity_required
+@rate_limit('community-like', limit=60, window_seconds=3600)
+def like_reply_route(identity, rid):
     count = like_reply(rid)
     if count is None:
         return jsonify({'error': 'Not found'}), 404

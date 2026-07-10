@@ -1,16 +1,25 @@
 import os
 
 class Config:
+    BASE_DIR = os.path.dirname(__file__)
     SECRET_KEY = os.environ.get('SECRET_KEY', '')
     COZE_API_URL = os.environ.get('COZE_API_URL', 'https://api.coze.cn/open_api/v2/chat')
     COZE_V3_CHAT_URL = os.environ.get('COZE_V3_CHAT_URL', 'https://api.coze.cn/v3/chat')
     COZE_FILE_UPLOAD_URL = os.environ.get('COZE_FILE_UPLOAD_URL', 'https://api.coze.cn/v1/files/upload')
     COZE_API_KEY = os.environ.get('COZE_API_KEY', '')
-    DATABASE_DIR = os.environ.get('DATABASE_DIR', os.path.dirname(__file__))
+    DATABASE_DIR = os.environ.get('DATABASE_DIR', BASE_DIR)
     DATABASE_PATH = os.path.join(DATABASE_DIR, 'ai_customer_service.db')
-    CORS_ORIGINS = os.environ.get('CORS_ORIGINS', '*')
-    STRICT_SECURITY = os.environ.get('STRICT_SECURITY', 'false').lower() == 'true'
-    HIDE_ADMIN_API_KEY = os.environ.get('HIDE_ADMIN_API_KEY', 'false').lower() == 'true'
+    UPLOAD_DIR = os.environ.get('UPLOAD_DIR', os.path.join(BASE_DIR, 'static', 'uploads'))
+    CORS_ORIGINS = [
+        origin.strip()
+        for origin in os.environ.get('CORS_ORIGINS', '').split(',')
+        if origin.strip()
+    ]
+    TRUST_PROXY = os.environ.get('TRUST_PROXY', 'false').lower() == 'true'
+    PUBLIC_REGISTRATION_ENABLED = os.environ.get('PUBLIC_REGISTRATION_ENABLED', 'false').lower() == 'true'
+    MAX_CONTENT_LENGTH = int(os.environ.get('MAX_CONTENT_LENGTH', 12 * 1024 * 1024))
+    CHAT_RATE_LIMIT = int(os.environ.get('CHAT_RATE_LIMIT', '12'))
+    SPEECH_RATE_LIMIT = int(os.environ.get('SPEECH_RATE_LIMIT', '6'))
 
     # 四大模块对应的机器人ID
     BOT_MAPPING = {
@@ -22,10 +31,12 @@ class Config:
 
     DEFAULT_BOT_ID = os.environ.get('BOT_PRODUCT', '7595022659508125738')
 
-    # 管理员账号：用该用户名注册的用户自动成为管理员
+    # 仅保留旧环境兼容配置；不会再通过用户名自动提权。
     ADMIN_USERNAME = os.environ.get('ADMIN_USERNAME', 'admin8')
 
     @classmethod
     def validate(cls):
-        if cls.STRICT_SECURITY and not cls.SECRET_KEY:
-            raise RuntimeError('SECRET_KEY is required and cannot be empty')
+        if len(cls.SECRET_KEY) < 32:
+            raise RuntimeError('SECRET_KEY is required and must contain at least 32 characters')
+        if '*' in cls.CORS_ORIGINS:
+            raise RuntimeError('CORS_ORIGINS cannot contain *; configure explicit trusted origins')

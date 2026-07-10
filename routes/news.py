@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify
 from models import create_news, get_all_news, get_news_by_id_and_increment_views, update_news, delete_news, get_pinned_news, get_featured_news, get_news_page, toggle_pin_news, toggle_featured_news, get_news_categories
 from routes.auth import admin_required
+from services.content_security import sanitize_media_url, sanitize_rich_html
 
 news_bp = Blueprint('news', __name__)
 
@@ -30,11 +31,17 @@ def list_news():
 @news_bp.route('', methods=['POST'])
 @admin_required
 def add_news(current_user):
-    data = request.get_json()
-    title = data.get('title', '').strip()
+    data = request.get_json(silent=True) or {}
+    title = data.get('title', '').strip()[:200]
     if not title:
         return jsonify({'error': 'Title is required'}), 400
-    id = create_news(title, data.get('summary', ''), data.get('content', ''), data.get('image_url', ''), data.get('category', ''))
+    id = create_news(
+        title,
+        str(data.get('summary') or '')[:1000],
+        sanitize_rich_html(data.get('content', '')),
+        sanitize_media_url(data.get('image_url', '')),
+        str(data.get('category') or '')[:80],
+    )
     return jsonify({'id': id, 'message': 'News created'}), 201
 
 @news_bp.route('/<int:news_id>', methods=['GET'])
@@ -42,16 +49,25 @@ def get_news(news_id):
     item = get_news_by_id_and_increment_views(news_id)
     if not item:
         return jsonify({'error': 'Not found'}), 404
+    item['content'] = sanitize_rich_html(item.get('content', ''))
+    item['image_url'] = sanitize_media_url(item.get('image_url', ''))
     return jsonify(item)
 
 @news_bp.route('/<int:news_id>', methods=['PUT'])
 @admin_required
 def edit_news(current_user, news_id):
-    data = request.get_json()
-    title = data.get('title', '').strip()
+    data = request.get_json(silent=True) or {}
+    title = data.get('title', '').strip()[:200]
     if not title:
         return jsonify({'error': 'Title is required'}), 400
-    update_news(news_id, title, data.get('summary', ''), data.get('content', ''), data.get('image_url', ''), data.get('category', ''))
+    update_news(
+        news_id,
+        title,
+        str(data.get('summary') or '')[:1000],
+        sanitize_rich_html(data.get('content', '')),
+        sanitize_media_url(data.get('image_url', '')),
+        str(data.get('category') or '')[:80],
+    )
     return jsonify({'message': 'News updated'})
 
 @news_bp.route('/<int:news_id>', methods=['DELETE'])

@@ -1,18 +1,33 @@
 import sqlite3
 import uuid
 import re
+import os
+import fcntl
 from datetime import datetime
 from config import Config
 from db_migrations import run_migrations
 
 def get_db_connection():
-    conn = sqlite3.connect(Config.DATABASE_PATH)
+    os.makedirs(Config.DATABASE_DIR, exist_ok=True)
+    conn = sqlite3.connect(Config.DATABASE_PATH, timeout=10)
     conn.row_factory = sqlite3.Row
+    conn.execute('PRAGMA busy_timeout=10000')
     conn.execute('PRAGMA journal_mode=WAL')
     conn.execute('PRAGMA synchronous=NORMAL')
     return conn
 
 def init_db():
+    os.makedirs(Config.DATABASE_DIR, exist_ok=True)
+    lock_path = Config.DATABASE_PATH + '.init.lock'
+    with open(lock_path, 'a+b') as lock_file:
+        fcntl.flock(lock_file.fileno(), fcntl.LOCK_EX)
+        try:
+            _init_db_locked()
+        finally:
+            fcntl.flock(lock_file.fileno(), fcntl.LOCK_UN)
+
+
+def _init_db_locked():
     conn = get_db_connection()
     cursor = conn.cursor()
 
@@ -1021,11 +1036,11 @@ def delete_agent_config(agent_id):
     conn.close()
 
 # ===== Users =====
-def create_user(username, password_hash):
+def create_user(username, password_hash, is_admin=0):
     conn = get_db_connection()
     cursor = conn.cursor()
     user_id = str(uuid.uuid4())
-    is_admin = 1 if username == Config.ADMIN_USERNAME else 0
+    is_admin = 1 if is_admin else 0
     try:
         cursor.execute(
             'INSERT INTO users (user_id, username, password_hash, is_admin) VALUES (?, ?, ?, ?)',
@@ -1107,11 +1122,16 @@ def get_chat_history_by_id(history_id, user_id):
     return dict(history) if history else None
 
 # ===== Feedback =====
-def set_chat_feedback(history_id, feedback):
+def set_chat_feedback(history_id, user_id, feedback):
     conn = get_db_connection()
-    conn.execute('UPDATE chat_history SET feedback = ? WHERE id = ?', (feedback, history_id))
+    cursor = conn.execute(
+        'UPDATE chat_history SET feedback = ? WHERE id = ? AND user_id = ?',
+        (feedback, history_id, user_id),
+    )
     conn.commit()
+    updated = cursor.rowcount > 0
     conn.close()
+    return updated
 
 def get_feedback_stats(start_date=None, end_date=None):
     conn = get_db_connection()
@@ -1134,11 +1154,16 @@ def get_feedback_stats(start_date=None, end_date=None):
     ratio = round(likes / total * 100, 1) if total > 0 else 0
     return {'likes': likes, 'dislikes': dislikes, 'total': total, 'ratio': ratio}
 
-def set_feedback_reason(history_id, reason):
+def set_feedback_reason(history_id, user_id, reason):
     conn = get_db_connection()
-    conn.execute('UPDATE chat_history SET feedback_reason = ? WHERE id = ?', (reason, history_id))
+    cursor = conn.execute(
+        'UPDATE chat_history SET feedback_reason = ? WHERE id = ? AND user_id = ?',
+        (reason, history_id, user_id),
+    )
     conn.commit()
+    updated = cursor.rowcount > 0
     conn.close()
+    return updated
 
 def get_feedback_reasons(start_date=None, end_date=None):
     conn = get_db_connection()

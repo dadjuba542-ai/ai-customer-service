@@ -7,7 +7,8 @@ from dataclasses import dataclass
 import requests
 
 from config import Config
-from models import get_agent_config, get_setting, save_chat_history, search_case_documents_page
+from models import get_agent_config, save_chat_history, search_case_documents_page
+from services.secret_service import get_secret_setting
 
 logger = logging.getLogger(__name__)
 
@@ -57,18 +58,22 @@ class StreamState:
             self.emitted_statuses = set()
 
 
-def build_chat_context(data):
+def build_chat_context(data, identity):
     data = data or {}
     message = (data.get('message') or '').strip()
     if not message:
         raise ChatServiceError('Message is required', status_code=400, retryable=False)
+    if len(message) > 4000:
+        raise ChatServiceError('Message is too long', status_code=400, retryable=False)
 
-    query_type = data.get('query_type', '其他')
-    agent_id = data.get('agent_id', '')
-    user_id = (data.get('user_id') or '').strip() or 'anonymous'
-    team_name = (data.get('team_name') or '').strip()
-    member_name = (data.get('member_name') or '').strip()
-    api_key = get_setting('coze_api_key', Config.COZE_API_KEY)
+    query_type = str(data.get('query_type') or '其他')[:40]
+    agent_id = str(data.get('agent_id') or '')[:64]
+    user_id = identity['user_id']
+    team_name = identity.get('team_name', '')
+    member_name = identity.get('member_name', '')
+    api_key = get_secret_setting('coze_api_key', Config.COZE_API_KEY)
+    if not api_key:
+        raise ChatServiceError('AI 服务尚未配置', status_code=503, retryable=False)
     headers = {
         'Authorization': f'Bearer {api_key}',
         'Content-Type': 'application/json',
@@ -79,6 +84,7 @@ def build_chat_context(data):
         agent = get_agent_config(agent_id)
         if agent and agent.get('bot_id'):
             bot_id = agent['bot_id']
+            query_type = agent.get('type') or query_type
     if not bot_id:
         bot_id = Config.BOT_MAPPING.get(query_type, Config.DEFAULT_BOT_ID)
 

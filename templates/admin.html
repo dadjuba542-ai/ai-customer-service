@@ -2288,9 +2288,9 @@ async function loadAdminSystemConfig() {
       fetch(`${API}/api/admin/settings/blocked-keywords`, { headers: { 'Authorization': `Bearer ${getToken()}` } }),
       fetch(`${API}/api/admin/settings/speech`, { headers: { 'Authorization': `Bearer ${getToken()}` } }),
     ]);
-    let currentKey = '', blockedKW = '', defaultHint = '', speechBotId = '', speechEnabled = false;
+    let keyMasked = '未设置', blockedKW = '', defaultHint = '', speechBotId = '', speechEnabled = false;
     let speechProvider = 'aliyun_asr', aliyunAppKey = '', aliyunAccessKeyId = '', aliyunSecretMasked = '';
-    if (keyRes.ok) { const kd = await keyRes.json(); currentKey = kd.api_key || ''; }
+    if (keyRes.ok) { const kd = await keyRes.json(); keyMasked = kd.masked || '未设置'; }
     if (blockRes.ok) { const bd = await blockRes.json(); blockedKW = bd.keywords || ''; defaultHint = bd.defaultHint || ''; }
     if (speechRes.ok) {
       const sd = await speechRes.json();
@@ -2301,8 +2301,7 @@ async function loadAdminSystemConfig() {
       aliyunAccessKeyId = sd.aliyun_access_key_id || '';
       aliyunSecretMasked = sd.aliyun_access_key_secret_masked || '';
     }
-    const masked = currentKey ? currentKey.slice(0, 8) + '****' + currentKey.slice(-4) : '未设置';
-    document.getElementById('coze-key-label').textContent = `Coze API Key（当前: ${masked}）`;
+    document.getElementById('coze-key-label').textContent = `Coze API Key（当前: ${keyMasked}）`;
     document.getElementById('blocked-keywords-input').value = blockedKW;
     document.getElementById('blocked-hint').textContent = `参考: ${defaultHint}`;
     document.getElementById('speech-enabled-input').checked = speechEnabled;

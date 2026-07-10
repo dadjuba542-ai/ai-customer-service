@@ -1,5 +1,8 @@
 from flask import Blueprint, jsonify, request
 
+from config import Config
+from routes.auth import identity_required
+from services.security_service import rate_limit
 from services.speech_service import SpeechServiceError, transcribe_audio_file
 
 speech_bp = Blueprint('speech', __name__)
@@ -12,11 +15,12 @@ def speech_config():
 
 
 @speech_bp.route('/transcribe', methods=['POST'])
-def transcribe_speech():
+@identity_required
+@rate_limit('speech', limit=Config.SPEECH_RATE_LIMIT, window_seconds=600)
+def transcribe_speech(identity):
     try:
         audio = request.files.get('audio')
-        user_id = (request.form.get('user_id') or 'anonymous').strip() or 'anonymous'
-        result = transcribe_audio_file(audio, user_id=user_id)
+        result = transcribe_audio_file(audio, user_id=identity['user_id'])
         return jsonify(result)
     except SpeechServiceError as exc:
         return jsonify({'error': exc.message, 'retryable': exc.retryable}), exc.status_code

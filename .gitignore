@@ -4,7 +4,11 @@
 
 # Database
 *.db
+*.db.bak*
 *.sqlite
+*.db-shm
+*.db-wal
+*.init.lock
 
 # Python
 __pycache__/

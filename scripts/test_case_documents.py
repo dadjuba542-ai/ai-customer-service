@@ -92,8 +92,10 @@ def main():
         os.environ["COZE_API_KEY"] = "fake-key"
 
         from app import app
+        from routes.auth import generate_token, hash_password
         from models import (
             create_case_document,
+            create_user,
             get_all_case_documents,
             get_db_connection,
             search_case_documents,
@@ -157,12 +159,13 @@ def main():
         assert_true(all(item["id"] != hidden_id for item in hidden_results), f"hidden case leaked: {hidden_results}")
 
         client = app.test_client()
+        admin_id = create_user('test-admin', hash_password('pass123456'), is_admin=1)
+        auth = {"Authorization": f"Bearer {generate_token(admin_id)}"}
         with patch("services.chat_service.requests.post", side_effect=fake_post):
             r = client.post("/api/chat/send", json={
                 "message": "我妈便秘腹胀适合什么",
                 "query_type": "产品咨询",
-                "user_id": "case-test-user",
-            })
+            }, headers=auth)
         assert_true(r.status_code == 200, f"chat send failed: {r.status_code} {r.get_data(as_text=True)}")
         payload = r.get_json()
         related = payload.get("related_cases", [])
@@ -196,12 +199,6 @@ def main():
         search_items = search_payload.get("items", [])
         assert_true(search_items and search_items[0]["title"] == "长期便秘客户调理记录", f"case search mismatch: {search_payload}")
         assert_true(search_payload.get("total", 0) >= len(search_items), f"case search total mismatch: {search_payload}")
-
-        r = client.post("/api/auth/register", json={"username": "admin8", "password": "pass123"})
-        assert_true(r.status_code in (201, 409), f"admin register failed: {r.status_code}")
-        r = client.post("/api/auth/login", json={"username": "admin8", "password": "pass123"})
-        assert_true(r.status_code == 200, f"admin login failed: {r.status_code}")
-        auth = {"Authorization": f"Bearer {r.get_json()['token']}"}
 
         r = client.get("/api/admin/cases", headers=auth)
         assert_true(r.status_code == 200, f"admin cases list failed: {r.status_code}")

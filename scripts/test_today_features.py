@@ -21,17 +21,14 @@ def main():
         os.environ["ADMIN_USERNAME"] = "admin8"
 
         from app import app
-        from models import create_question, save_chat_history
+        from routes.auth import generate_token, hash_password
+        from models import create_question, create_user, save_chat_history
 
         client = app.test_client()
 
-        # Create and login admin user.
-        r = client.post("/api/auth/register", json={"username": "admin8", "password": "pass123"})
-        assert_true(r.status_code in (201, 409), f"register failed: {r.status_code} {r.get_data(as_text=True)}")
-        r = client.post("/api/auth/login", json={"username": "admin8", "password": "pass123"})
-        assert_true(r.status_code == 200, f"login failed: {r.status_code} {r.get_data(as_text=True)}")
-        token = r.get_json()["token"]
-        auth = {"Authorization": f"Bearer {token}"}
+        # Create an admin directly; public registration is intentionally disabled by default.
+        admin_id = create_user("test-admin", hash_password("pass123456"), is_admin=1)
+        auth = {"Authorization": f"Bearer {generate_token(admin_id)}"}
 
         # 1) PUT default-team with empty/non-json body should not 500.
         r = client.put("/api/admin/settings/default-team", headers=auth)
@@ -82,6 +79,7 @@ def main():
         qid = create_question("", "评论精选测试", "评论精选测试答案", "产品知识", 1)
         r = client.post(
             f"/api/community/questions/{qid}/replies",
+            headers=auth,
             json={"nickname": "张三", "content": "这是一条待精选评论", "viewer_id": "viewer-a"},
         )
         assert_true(r.status_code == 201, f"reply create failed: {r.status_code} {r.get_data(as_text=True)}")
@@ -94,7 +92,7 @@ def main():
         assert_true(not q.get("replies"), f"pending reply leaked publicly: {q.get('replies')}")
         assert_true(q.get("reply_count") == 0, f"public count should ignore pending replies: {q.get('reply_count')}")
 
-        r = client.get(f"/api/community/questions/{qid}?viewer_id=viewer-a")
+        r = client.get(f"/api/community/questions/{qid}", headers=auth)
         own_replies = r.get_json().get("replies", [])
         assert_true(
             len(own_replies) == 1 and own_replies[0]["id"] == reply_id and own_replies[0].get("is_own_pending"),
@@ -120,7 +118,7 @@ def main():
         assert_true(admin_item["replies"][0].get("nickname") == "匿名用户", f"admin reply nickname should be masked: {admin_item}")
 
         # 7) Replies can be liked and expose their like count.
-        r = client.post(f"/api/community/replies/{reply_id}/like")
+        r = client.post(f"/api/community/replies/{reply_id}/like", headers=auth)
         assert_true(r.status_code == 200, f"reply like failed: {r.status_code} {r.get_data(as_text=True)}")
         liked = r.get_json()
         assert_true(liked.get("like_count") == 1, f"reply like count mismatch: {liked}")
@@ -131,12 +129,13 @@ def main():
         # 8) Share event endpoint records answer-card generation without auth.
         r = client.post(
             "/api/share-events",
+            headers=auth,
             json={
                 "user_id": "u-share",
                 "team_name": "一团队",
                 "member_name": "张三",
                 "query_type": "产品咨询",
-                "history_id": 1,
+                "history_id": None,
                 "share_type": "answer_card",
             },
         )
@@ -166,11 +165,12 @@ def main():
         r = client.get("/api/speech/config")
         assert_true(r.get_json().get("enabled") is True, f"speech public config not enabled: {r.get_json()}")
 
-        r = client.post("/api/speech/transcribe", data={"user_id": "u-speech"})
+        r = client.post("/api/speech/transcribe", headers=auth, data={"user_id": "u-speech"})
         assert_true(r.status_code == 400, f"speech missing audio should 400: {r.status_code} {r.get_data(as_text=True)}")
         oversized = BytesIO(b"x" * (10 * 1024 * 1024 + 1))
         r = client.post(
             "/api/speech/transcribe",
+            headers=auth,
             data={"audio": (oversized, "voice.webm", "audio/webm"), "user_id": "u-speech"},
         )
         assert_true(r.status_code == 400, f"speech oversized audio should 400: {r.status_code} {r.get_data(as_text=True)}")
@@ -184,6 +184,7 @@ def main():
              patch("services.speech_service.requests.post", side_effect=[token_response, asr_response]) as post_mock:
             r = client.post(
                 "/api/speech/transcribe",
+                headers=auth,
                 data={"audio": (BytesIO(b"voice-bytes"), "voice.mp4", "audio/mp4"), "user_id": "u-speech"},
             )
         assert_true(r.status_code == 200, f"speech transcribe failed: {r.status_code} {r.get_data(as_text=True)}")
