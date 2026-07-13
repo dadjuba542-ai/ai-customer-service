@@ -60,6 +60,7 @@ scripts/test_case_documents.py 案例档案冒烟测试
 scripts/test_migrations.py SQLite migration 冒烟测试
 scripts/test_security.py 安全边界冒烟测试
 scripts/create_admin.py 首次管理员初始化脚本
+scripts/reset_admin_password.py 管理员密码重置脚本
 scripts/optimize_uploaded_images.py 历史上传图片优化脚本
 scripts/optimize_news_content_images.py 新闻正文 base64 图片迁移脚本
 railway.json            Railway 部署配置

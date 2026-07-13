@@ -25,5 +25,7 @@ AI 智能对话系统，基于 Coze Bot API。
   python3 scripts/create_admin.py admin
   ```
 
+- 重置现有管理员密码请执行 `python3 scripts/reset_admin_password.py admin8`，密码只在终端交互输入，不会进入 Git。
+
 - 生产环境应将 `DATABASE_DIR` 和 `UPLOAD_DIR` 指向持久化磁盘（Railway 默认是 `/data` 和 `/data/uploads`）。
 - 若此前使用过旧版本，请立即轮换 Coze/阿里云凭据；旧数据库备份不得提交到 Git。
