@@ -6,6 +6,9 @@
 *.db
 *.db.bak*
 *.sqlite
+*.sqlite3
+*.bak
+*.bak.*
 *.db-shm
 *.db-wal
 *.init.lock
