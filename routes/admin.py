@@ -1,15 +1,39 @@
 import os
 import json
 from flask import Blueprint, request, jsonify, current_app
-from models import get_all_agent_configs, get_agent_config, update_agent_config, create_agent_config, delete_agent_config, get_setting, set_setting
+from models import get_all_agent_configs, get_agent_config, update_agent_config, create_agent_config, delete_agent_config, get_setting, set_setting, list_lead_requests, update_lead_request
 from config import Config
 from routes.auth import admin_required
 from services.image_service import is_allowed_image_filename, process_uploaded_image
 from services.secret_service import get_secret_setting, set_secret_setting
 
 admin_bp = Blueprint('admin', __name__)
+LEAD_STATUSES = {'pending', 'contacted', 'completed'}
 
 MAX_UPLOAD_SIZE = 8 * 1024 * 1024
+
+
+@admin_bp.route('/leads', methods=['GET'])
+@admin_required
+def admin_leads(current_user):
+    status = request.args.get('status', '').strip()
+    customer_type = request.args.get('customer_type', '').strip()
+    if status and status not in LEAD_STATUSES:
+        return jsonify({'error': '无效的状态'}), 400
+    return jsonify(list_lead_requests(status, customer_type, request.args.get('page', 1, type=int), request.args.get('limit', 30, type=int)))
+
+
+@admin_bp.route('/leads/<int:lead_id>', methods=['PUT'])
+@admin_required
+def edit_lead(lead_id, current_user):
+    data = request.get_json(silent=True) or {}
+    status = str(data.get('status') or '').strip()
+    note = str(data.get('admin_note') or '').strip()
+    if len(note) > 1000:
+        return jsonify({'error': '备注不能超过1000字'}), 400
+    if not update_lead_request(lead_id, status, note):
+        return jsonify({'error': '需求不存在或状态无效'}), 400
+    return jsonify({'message': '需求已更新'})
 
 @admin_bp.route('/agents', methods=['GET'])
 @admin_required

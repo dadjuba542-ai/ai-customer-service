@@ -1960,3 +1960,18 @@ body {
   transition: all 0.2s;
 }
 .view-all-link:hover { background: var(--primary-light); }
+
+.lead-modal { width: min(92vw, 420px); max-height: 90vh; overflow-y: auto; }
+.lead-label { display: block; margin: 10px 0 5px; color: var(--slate-600); font-size: 13px; font-weight: 600; }
+.lead-input { width: 100%; padding: 11px 13px; border: 1px solid var(--slate-200); border-radius: 10px; background: var(--slate-50); font: inherit; outline: none; }
+.lead-input:focus { border-color: var(--primary); background: #fff; }
+.lead-actions { display: flex; gap: 10px; margin-top: 16px; }
+.lead-actions button { flex: 1; padding: 11px; border-radius: 10px; border: 0; font: inherit; cursor: pointer; }
+.lead-actions .btn-secondary { background: var(--slate-100); color: var(--slate-600); }
+.lead-actions .btn-primary { background: var(--primary); color: #fff; }
+.lead-error { min-height: 18px; margin-top: 8px; color: #dc2626; font-size: 12px; }
+.example-question-wrap { margin-top: 14px; }
+.example-question-title { color: var(--slate-500); font-size: 12px; margin-bottom: 8px; }
+.example-question-list { display: flex; flex-wrap: wrap; gap: 8px; }
+.example-question-list button { border: 1px solid var(--slate-200); background: #fff; color: var(--slate-600); padding: 8px 11px; border-radius: 999px; font: inherit; font-size: 12px; cursor: pointer; }
+.example-question-list button:active { border-color: var(--primary); color: var(--primary); }

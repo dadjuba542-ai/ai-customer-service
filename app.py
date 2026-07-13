@@ -41,6 +41,7 @@ from routes.dashboard import dashboard_bp
 from routes.cases import cases_bp
 from routes.share import share_bp
 from routes.speech import speech_bp
+from routes.leads import leads_bp
 
 app = Flask(__name__, static_folder='static', static_url_path='')
 Config.validate()
@@ -69,6 +70,7 @@ app.register_blueprint(dashboard_bp, url_prefix='/api/admin/dashboard')
 app.register_blueprint(cases_bp, url_prefix='/api')
 app.register_blueprint(share_bp, url_prefix='/api')
 app.register_blueprint(speech_bp, url_prefix='/api/speech')
+app.register_blueprint(leads_bp, url_prefix='/api/leads')
 
 
 @app.after_request

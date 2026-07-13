@@ -952,7 +952,11 @@ function renderMessages() {
       const actions = !msg.isStreaming ? `
         <div class="msg-actions">
           <button class="msg-action-btn" onclick="copyText('${escapedContent.replace(/'/g, "\\'")}')"><i class="ph ph-copy-simple"></i> 复制</button>
+          <button class="msg-action-btn" onclick="continueFromMessage(${idx})"><i class="ph ph-paper-plane-right"></i> 继续咨询</button>
+          <button class="msg-action-btn" onclick="switchView('products')"><i class="ph ph-shopping-bag"></i> 查看产品</button>
+          ${msg.relatedCases && msg.relatedCases.length ? `<button class="msg-action-btn" onclick="openRelatedCaseDrawerList(event, '${escapeHtml(msg.replyToText || latestUserQuestionBefore(idx) || '').replace(/'/g, "\\'")}')"><i class="ph ph-files"></i> 查看案例</button>` : ''}
           <button class="msg-action-btn share-action" onclick="shareAnswerCard(${idx})"><i class="ph ph-share-network"></i> 生成分享图</button>
+          <button class="msg-action-btn lead-action" onclick="openLeadModal(${idx})"><i class="ph ph-chat-circle-text"></i> 获取方案</button>
           <button class="msg-action-btn" onclick="regenerateMsg(${idx})"><i class="ph ph-arrows-clockwise"></i> 重新回答</button>
           ${msg.historyId ? `
           <button class="msg-feedback-btn${likeActive}${feedbackDisabled}" onclick="sendFeedback(${msg.historyId}, 1, ${idx})"><i class="ph ph-thumbs-up"></i></button>
@@ -971,6 +975,66 @@ function renderMessages() {
   });
   container.scrollTop = container.scrollHeight;
   updateScrollBtn();
+}
+
+function openLeadModal(messageIndex = -1) {
+  const msg = messageIndex >= 0 ? state.messages[messageIndex] : null;
+  const lastUser = messageIndex >= 0 ? latestUserQuestionBefore(messageIndex) : (lastUserText || '');
+  document.getElementById('lead-description').value = lastUser ? `我想进一步了解：${lastUser}` : '';
+  document.getElementById('lead-product').value = '';
+  document.getElementById('lead-phone').value = '';
+  document.getElementById('lead-wechat').value = '';
+  document.getElementById('lead-error').textContent = '';
+  const overlay = document.getElementById('lead-overlay');
+  overlay.dataset.historyId = msg && msg.historyId ? msg.historyId : '';
+  overlay.dataset.messageIndex = messageIndex;
+  overlay.classList.add('active');
+}
+
+function continueFromMessage(messageIndex) {
+  const question = latestUserQuestionBefore(messageIndex);
+  switchView('chat');
+  const input = document.getElementById('message-input');
+  input.value = question ? `继续说说：${question}` : '';
+  input.focus();
+}
+
+function closeLeadModal(event) {
+  if (event && event.target !== event.currentTarget) return;
+  document.getElementById('lead-overlay').classList.remove('active');
+}
+
+async function submitLeadRequest() {
+  const overlay = document.getElementById('lead-overlay');
+  const button = document.getElementById('lead-submit-btn');
+  const error = document.getElementById('lead-error');
+  const payload = {
+    customer_type: document.getElementById('lead-customer-type').value,
+    product_name: document.getElementById('lead-product').value.trim(),
+    description: document.getElementById('lead-description').value.trim(),
+    phone: document.getElementById('lead-phone').value.trim(),
+    wechat: document.getElementById('lead-wechat').value.trim(),
+    query_type: AGENTS.find(a => a.id === state.activeAgentId)?.type || '',
+    agent_id: state.activeAgentId,
+    history_id: overlay.dataset.historyId ? Number(overlay.dataset.historyId) : null,
+  };
+  error.textContent = '';
+  if (!payload.description) { error.textContent = '请先填写您的需求'; return; }
+  if (!payload.phone && !payload.wechat) { error.textContent = '手机号或微信号至少填写一项'; return; }
+  button.disabled = true;
+  button.textContent = '提交中...';
+  try {
+    const res = await fetch(`${API_BASE}/api/leads`, { method: 'POST', headers: { 'Content-Type': 'application/json', ...authHeaders() }, body: JSON.stringify(payload) });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error || '提交失败，请稍后重试');
+    closeLeadModal();
+    showToast(data.message || '需求已提交', 'success');
+  } catch (err) {
+    error.textContent = err.message || '提交失败，请稍后重试';
+  } finally {
+    button.disabled = false;
+    button.textContent = '提交需求';
+  }
 }
 
 function splitTags(value) {

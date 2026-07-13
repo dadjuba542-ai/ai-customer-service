@@ -259,6 +259,68 @@ def get_setting(key, default=''):
     conn.close()
     return row['value'] if row else default
 
+# ===== Customer lead requests =====
+def create_lead_request(user_id, customer_type, product_name, description, phone='', wechat='', query_type='', agent_id='', history_id=None):
+    conn = get_db_connection()
+    recent = conn.execute(
+        '''SELECT id FROM lead_requests
+           WHERE user_id = ? AND description = ? AND created_at >= datetime('now', '-10 minutes')
+           ORDER BY id DESC LIMIT 1''',
+        (user_id, description),
+    ).fetchone()
+    if recent:
+        conn.close()
+        return {'id': recent['id'], 'duplicate': True}
+    cursor = conn.execute(
+        '''INSERT INTO lead_requests
+           (user_id, customer_type, product_name, description, phone, wechat, query_type, agent_id, history_id)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)''',
+        (user_id, customer_type, product_name, description, phone, wechat, query_type, agent_id, history_id),
+    )
+    conn.commit()
+    lead_id = cursor.lastrowid
+    conn.close()
+    return {'id': lead_id, 'duplicate': False}
+
+
+def list_lead_requests(status='', customer_type='', page=1, limit=30):
+    page = max(1, int(page or 1))
+    limit = min(100, max(1, int(limit or 30)))
+    offset = (page - 1) * limit
+    conn = get_db_connection()
+    where, params = [], []
+    if status:
+        where.append('status = ?')
+        params.append(status)
+    if customer_type:
+        where.append('customer_type = ?')
+        params.append(customer_type)
+    clause = (' WHERE ' + ' AND '.join(where)) if where else ''
+    total = conn.execute(f'SELECT COUNT(*) AS cnt FROM lead_requests{clause}', params).fetchone()['cnt']
+    rows = conn.execute(
+        f'''SELECT id, customer_type, product_name, description, phone, wechat, query_type,
+                   agent_id, history_id, status, admin_note, created_at, updated_at
+            FROM lead_requests{clause} ORDER BY created_at DESC LIMIT ? OFFSET ?''',
+        params + [limit, offset],
+    ).fetchall()
+    conn.close()
+    return {'items': [dict(row) for row in rows], 'total': total, 'page': page, 'limit': limit}
+
+
+def update_lead_request(lead_id, status, admin_note):
+    allowed = {'pending', 'contacted', 'completed'}
+    if status not in allowed:
+        return False
+    conn = get_db_connection()
+    cursor = conn.execute(
+        '''UPDATE lead_requests SET status = ?, admin_note = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?''',
+        (status, admin_note, lead_id),
+    )
+    conn.commit()
+    updated = cursor.rowcount > 0
+    conn.close()
+    return updated
+
 def set_setting(key, value):
     conn = get_db_connection()
     cursor = conn.cursor()

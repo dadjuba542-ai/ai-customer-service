@@ -53,6 +53,15 @@
               <h3 class="section-title">快捷功能</h3>
             </div>
             <div class="quick-grid" id="quick-grid"></div>
+            <div class="example-question-wrap">
+              <div class="example-question-title">不知道怎么问？试试这些</div>
+              <div class="example-question-list">
+                <button onclick="quickSend('aura','这个产品适合什么人？')">这个产品适合什么人？</button>
+                <button onclick="quickSend('coder','产品应该怎么使用？')">产品应该怎么使用？</button>
+                <button onclick="quickSend('aura','帮我推荐一个产品方案')">帮我推荐一个产品方案</button>
+                <button onclick="quickSend('translator','帮我写一段客户沟通话术')">帮我写一段客户沟通话术</button>
+              </div>
+            </div>
           </div>
           <div class="section">
             <div class="section-header">
@@ -235,6 +244,22 @@
       </div>
 
       <!-- Nickname Modal -->
+      <div id="lead-overlay" class="admin-overlay" onclick="closeLeadModal(event)">
+        <div class="login-card lead-modal" onclick="event.stopPropagation()">
+          <div class="login-header"><div class="login-title">获取专属方案</div><div class="login-subtitle">留下需求，我们会尽快与您联系</div></div>
+          <label class="lead-label">您的身份</label>
+          <select id="lead-customer-type" class="lead-input"><option value="consumer">消费者</option><option value="partner">经销商/合作伙伴</option></select>
+          <label class="lead-label">关注产品（选填）</label>
+          <input id="lead-product" class="lead-input" maxlength="100" placeholder="请输入产品名称">
+          <label class="lead-label">您的需求</label>
+          <textarea id="lead-description" class="lead-input" maxlength="1000" rows="4" placeholder="例如：想了解适合门店推荐的产品方案"></textarea>
+          <label class="lead-label">手机号或微信号（至少填写一项）</label>
+          <input id="lead-phone" class="lead-input" maxlength="11" inputmode="tel" placeholder="手机号">
+          <input id="lead-wechat" class="lead-input" maxlength="80" placeholder="微信号（手机号未填时填写）">
+          <div class="lead-actions"><button class="btn-secondary" onclick="closeLeadModal()">稍后再说</button><button class="btn-primary" id="lead-submit-btn" onclick="submitLeadRequest()">提交需求</button></div>
+          <div id="lead-error" class="lead-error"></div>
+        </div>
+      </div>
       <div id="nickname-overlay" class="admin-overlay" onclick="closeNicknameModal(event)">
         <div class="nickname-modal" onclick="event.stopPropagation()">
           <div class="nickname-header">输入你的昵称</div>

@@ -649,12 +649,16 @@
         <div class="nav-item" data-page="team-stats" onclick="switchPage('team-stats')">
           <i class="ph ph-buildings"></i><span>团队提问统计</span>
         </div>
+        <div class="nav-item" data-page="leads" onclick="switchPage('leads')">
+          <i class="ph ph-chat-circle-text"></i><span>客户需求</span>
+        </div>
       </nav>
       <div class="sidebar-footer">
         <div class="nav-item" onclick="logout()">
           <i class="ph ph-sign-out"></i><span>退出登录</span>
         </div>
       </div>
+
     </aside>
 
     <main class="main">
@@ -1173,6 +1177,19 @@
           </div>
         </div>
       </div>
+      <!-- ===== Page: Customer Leads ===== -->
+      <div id="page-leads" class="page-content">
+        <div class="admin-card">
+          <div class="date-filter" style="margin:0">
+            <label>状态：</label>
+            <select id="lead-status-filter"><option value="">全部</option><option value="pending">待跟进</option><option value="contacted">已联系</option><option value="completed">已完成</option></select>
+            <label>客户类型：</label>
+            <select id="lead-type-filter"><option value="">全部</option><option value="consumer">消费者</option><option value="partner">经销商/合作伙伴</option></select>
+            <button class="btn btn-primary btn-sm" onclick="loadAdminLeads()">查询</button>
+          </div>
+        </div>
+        <div class="admin-card"><div class="table-title"><span><i class="ph ph-chat-circle-text"></i>客户需求列表</span><span class="count-badge" id="lead-count">0</span></div><div id="lead-list"></div></div>
+      </div>
     </main>
   </div>
 </div>
@@ -1325,7 +1342,8 @@ async function switchPage(page) {
     agents: '智能体配置',
     feedback: '评价看板',
     community: '问答管理',
-    'team-stats': '团队提问统计'
+    'team-stats': '团队提问统计',
+    leads: '客户需求'
   };
   document.getElementById('page-title-text').textContent = titles[page] || '数据看板';
 
@@ -1349,6 +1367,7 @@ async function switchPage(page) {
   if (page === 'feedback') loadFeedbackDashboard();
   if (page === 'community') loadAdminQA();
   if (page === 'team-stats') loadTeamStatsPage();
+  if (page === 'leads') loadAdminLeads();
 }
 
 // ===== Dashboard Data =====
@@ -2589,6 +2608,40 @@ function esc(s) {
   const d = document.createElement('div');
   d.textContent = s || '';
   return d.innerHTML;
+}
+
+async function loadAdminLeads() {
+  const list = document.getElementById('lead-list');
+  const status = document.getElementById('lead-status-filter').value;
+  const customerType = document.getElementById('lead-type-filter').value;
+  const params = new URLSearchParams({ limit: '100' });
+  if (status) params.set('status', status);
+  if (customerType) params.set('customer_type', customerType);
+  list.innerHTML = '<div class="loading"><i class="ph ph-spinner"></i> 加载中...</div>';
+  try {
+    const res = await fetch(apiUrl(`/api/admin/leads?${params}`), { headers: { Authorization: `Bearer ${getToken()}` } });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || '加载失败');
+    document.getElementById('lead-count').textContent = data.total || 0;
+    if (!data.items.length) { list.innerHTML = '<div class="empty-state">暂无客户需求</div>'; return; }
+    const labels = { pending: '待跟进', contacted: '已联系', completed: '已完成' };
+    list.innerHTML = data.items.map(item => `<div class="admin-card" style="margin:10px 0;border:1px solid var(--slate-200)">
+      <div style="display:flex;justify-content:space-between;gap:10px;align-items:center"><strong>${esc(item.customer_type === 'partner' ? '经销商/合作伙伴' : '消费者')} · ${esc(item.product_name || '未指定产品')}</strong><span class="count-badge">${esc(labels[item.status] || item.status)}</span></div>
+      <p style="margin:8px 0;color:var(--slate-600);white-space:pre-wrap">${esc(item.description)}</p>
+      <div style="font-size:12px;color:var(--slate-500)">联系方式：${esc(item.phone || item.wechat)} · ${esc(item.created_at)} · 来源：${esc(item.query_type || item.agent_id || '-')}</div>
+      <div style="display:flex;gap:8px;margin-top:10px"><select id="lead-status-${item.id}"><option value="pending" ${item.status === 'pending' ? 'selected' : ''}>待跟进</option><option value="contacted" ${item.status === 'contacted' ? 'selected' : ''}>已联系</option><option value="completed" ${item.status === 'completed' ? 'selected' : ''}>已完成</option></select><input id="lead-note-${item.id}" value="${esc(item.admin_note || '')}" placeholder="跟进备注" style="flex:1"><button class="btn btn-primary btn-sm" onclick="updateAdminLead(${item.id})">保存</button></div>
+    </div>`).join('');
+  } catch (err) { list.innerHTML = `<div class="empty-state">${esc(err.message || '加载失败')}</div>`; }
+}
+
+async function updateAdminLead(id) {
+  const status = document.getElementById(`lead-status-${id}`).value;
+  const adminNote = document.getElementById(`lead-note-${id}`).value.trim();
+  const res = await fetch(apiUrl(`/api/admin/leads/${id}`), { method: 'PUT', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${getToken()}` }, body: JSON.stringify({ status, admin_note: adminNote }) });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) { showToast(data.error || '保存失败', 'error'); return; }
+  showToast('需求已更新', 'success');
+  loadAdminLeads();
 }
 
 function showToast(msg, type) {

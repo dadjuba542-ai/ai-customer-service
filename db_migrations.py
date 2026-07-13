@@ -122,6 +122,31 @@ MIGRATIONS = [
             'CREATE INDEX IF NOT EXISTS idx_share_events_history ON share_events(history_id)',
         ],
     },
+    {
+        'version': '202607130001',
+        'name': 'create_lead_requests_table',
+        'sqls': [
+            '''CREATE TABLE IF NOT EXISTS lead_requests (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id TEXT NOT NULL,
+                customer_type TEXT NOT NULL DEFAULT '',
+                product_name TEXT DEFAULT '',
+                description TEXT NOT NULL,
+                phone TEXT DEFAULT '',
+                wechat TEXT DEFAULT '',
+                query_type TEXT DEFAULT '',
+                agent_id TEXT DEFAULT '',
+                history_id INTEGER DEFAULT NULL,
+                status TEXT NOT NULL DEFAULT 'pending',
+                admin_note TEXT DEFAULT '',
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )''',
+            'CREATE INDEX IF NOT EXISTS idx_lead_requests_created ON lead_requests(created_at DESC)',
+            'CREATE INDEX IF NOT EXISTS idx_lead_requests_status_created ON lead_requests(status, created_at DESC)',
+            'CREATE INDEX IF NOT EXISTS idx_lead_requests_user_created ON lead_requests(user_id, created_at DESC)',
+        ],
+    },
 ]
 
 
