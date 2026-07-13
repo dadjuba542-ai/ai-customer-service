@@ -1,0 +1,71 @@
+/* Offline icon fallback.  The app uses Phosphor class names, but must also
+   render when a server or embedded WebView cannot reach the icon CDN. */
+.ph {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1em;
+  height: 1em;
+  font-family: Arial, "Noto Sans Symbols 2", sans-serif;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 1;
+  speak: none;
+}
+
+.ph::before { display: block; content: "•"; }
+.ph-arrow-right::before, .ph-arrow-down::before { content: "→"; }
+.ph-caret-left::before { content: "‹"; }
+.ph-arrow-bend-down-right::before { content: "↳"; }
+.ph-arrows-clockwise::before, .ph-spinner::before, .ph-spinner-gap::before { content: "↻"; }
+.ph-check::before, .ph-check-circle::before { content: "✓"; }
+.ph-x::before { content: "×"; }
+.ph-plus::before { content: "+"; }
+.ph-question::before { content: "?"; }
+.ph-warning::before, .ph-warning-circle::before { content: "!"; }
+.ph-trash::before { content: "⌫"; }
+.ph-download::before { content: "⇩"; }
+.ph-upload::before { content: "⇧"; }
+.ph-share-fat::before, .ph-share-network::before { content: "↗"; }
+.ph-paper-plane-right::before { content: "➤"; }
+.ph-microphone::before { content: "♩"; }
+.ph-stop::before { content: "■"; }
+.ph-user::before { content: "●"; }
+.ph-users::before, .ph-users-three::before { content: "♣"; }
+.ph-robot::before { content: "◆"; }
+.ph-database::before { content: "▦"; }
+.ph-lightning::before { content: "ϟ"; }
+.ph-lifebuoy::before { content: "◎"; }
+.ph-house::before { content: "⌂"; }
+.ph-shopping-bag::before, .ph-package::before { content: "□"; }
+.ph-books::before, .ph-book-open::before, .ph-files::before, .ph-file-text::before { content: "▤"; }
+.ph-chat-circle-text::before, .ph-chats::before { content: "☏"; }
+.ph-lightbulb::before, .ph-sparkle::before, .ph-magic-wand::before { content: "✦"; }
+.ph-compass::before { content: "⊕"; }
+.ph-smiley::before { content: "☺"; }
+.ph-meh::before { content: "－"; }
+.ph-frown::before { content: "☹"; }
+.ph-thumbs-up::before, .ph-hand-thumbs-up::before { content: "👍"; }
+.ph-thumbs-down::before { content: "👎"; }
+.ph-hand-fist::before { content: "✊"; }
+.ph-image::before { content: "▧"; }
+.ph-newspaper::before { content: "▥"; }
+.ph-magnifying-glass::before { content: "⌕"; }
+.ph-dots-three-vertical::before { content: "⋮"; }
+.ph-clock-counter-clockwise::before, .ph-hourglass::before { content: "◷"; }
+.ph-gauge::before, .ph-chart-bar::before, .ph-trend-up::before, .ph-pie-chart::before { content: "▥"; }
+.ph-buildings::before { content: "▥"; }
+.ph-barricade::before { content: "⚠"; }
+.ph-key::before { content: "⚿"; }
+.ph-gear::before, .ph-gear-six::before { content: "⚙"; }
+.ph-grip-vertical::before { content: "⁝"; }
+.ph-inbox::before { content: "▱"; }
+.ph-list::before { content: "☰"; }
+.ph-pencil::before, .ph-pencil-line::before { content: "✎"; }
+.ph-shield-check::before { content: "♢"; }
+.ph-sign-out::before { content: "⇥"; }
+.ph-sort-ascending::before { content: "↕"; }
+.ph-tag::before { content: "◇"; }
+.ph-copy-simple::before { content: "▣"; }
+.ph-spinner::before, .ph-spinner-gap::before { animation: ph-fallback-spin 1s linear infinite; }
+@keyframes ph-fallback-spin { to { transform: rotate(360deg); } }

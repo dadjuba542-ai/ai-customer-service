@@ -88,7 +88,7 @@ def add_cache_headers(response):
     response.headers['Permissions-Policy'] = 'camera=(), geolocation=(), microphone=(self)'
     response.headers['Content-Security-Policy'] = (
         "default-src 'self'; base-uri 'self'; frame-ancestors 'none'; object-src 'none'; "
-        "script-src 'self' 'unsafe-inline' https://unpkg.com https://cdn.jsdelivr.net https://html2canvas.hertzen.com; "
+        "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://html2canvas.hertzen.com; "
         "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; "
         "img-src 'self' data: https:; connect-src 'self'; media-src 'self' blob:; worker-src 'self' blob:"
     )
