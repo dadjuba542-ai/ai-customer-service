@@ -1,4 +1,6 @@
-import io
+import base64
+import hashlib
+import hmac
 import json
 import os
 import shutil
@@ -9,7 +11,6 @@ from urllib.parse import urlencode
 
 import requests
 
-from config import Config
 from models import get_setting
 from services.secret_service import get_secret_setting
 
@@ -24,10 +25,11 @@ ALLOWED_MIMES = {
     'audio/x-wav',
     'audio/ogg',
 }
-TRANSCRIBE_PROMPT = '请把这段音频转写成简体中文文字，只返回转写结果，不要解释。'
 ALIYUN_TOKEN_URL = os.environ.get('ALIYUN_NLS_TOKEN_URL', 'https://nls-meta.cn-shanghai.aliyuncs.com/pop/2018-05-18/tokens')
 ALIYUN_ASR_URL = os.environ.get('ALIYUN_NLS_ASR_URL', 'https://nls-gateway-cn-shanghai.aliyuncs.com/stream/v1/asr')
-SUPPORTED_PROVIDERS = {'aliyun_asr', 'coze'}
+TENCENT_ASR_URL = os.environ.get('TENCENT_ASR_URL', 'https://asr.tencentcloudapi.com')
+TENCENT_REGION = os.environ.get('TENCENT_ASR_REGION', 'ap-guangzhou')
+SUPPORTED_PROVIDERS = {'aliyun_asr', 'tencent_asr'}
 
 
 class SpeechServiceError(Exception):
@@ -49,8 +51,8 @@ def transcribe_audio_file(file_storage, user_id='anonymous'):
     audio_bytes, filename, mimetype = _read_and_validate_audio(file_storage)
     wav_bytes = _convert_audio_to_wav(audio_bytes, filename)
 
-    if provider == 'coze':
-        text = _transcribe_with_coze(wav_bytes, user_id)
+    if provider == 'tencent_asr':
+        text = _transcribe_with_tencent(wav_bytes)
     else:
         text = _transcribe_with_aliyun(wav_bytes)
 
@@ -125,17 +127,83 @@ def _get_aliyun_nls_token(access_key_id, access_key_secret):
     return str(token)
 
 
-def _transcribe_with_coze(wav_bytes, user_id):
-    bot_id = get_setting('speech_coze_bot_id', '').strip()
-    if not bot_id:
-        raise SpeechServiceError('未配置语音识别 Bot ID', status_code=400)
+def _transcribe_with_tencent(wav_bytes):
+    secret_id = get_setting('tencent_secret_id', '').strip()
+    secret_key = get_secret_setting('tencent_secret_key', '').strip()
+    if not secret_id or not secret_key:
+        raise SpeechServiceError('未配置腾讯云语音识别 SecretId 和 SecretKey', status_code=400)
 
-    api_key = get_secret_setting('coze_api_key', Config.COZE_API_KEY)
-    if not api_key:
-        raise SpeechServiceError('未配置 Coze API Key', status_code=400)
+    payload = {
+        'ProjectId': 0,
+        'SubServiceType': 2,
+        'EngSerViceType': '16k_zh',
+        'SourceType': 1,
+        'VoiceFormat': 'wav',
+        'Data': base64.b64encode(wav_bytes).decode('ascii'),
+        'DataLen': len(wav_bytes),
+        'FilterDirty': 0,
+        'FilterPunc': 0,
+        'ConvertNumMode': 1,
+    }
+    response = _tencent_api_request('SentenceRecognition', payload, secret_id, secret_key)
+    result = response.get('Result', '') if isinstance(response, dict) else ''
+    if not result:
+        raise SpeechServiceError('没有识别到文字，请靠近麦克风再试', status_code=502, retryable=True)
+    return str(result).strip()
 
-    file_id = _upload_audio_to_coze(wav_bytes, 'voice.wav', 'audio/wav', api_key)
-    return _ask_coze_to_transcribe(file_id, 'wav', bot_id, api_key, user_id)
+
+def _tencent_api_request(action, payload, secret_id, secret_key):
+    host = 'asr.tencentcloudapi.com'
+    service = 'asr'
+    version = '2019-06-14'
+    timestamp = int(__import__('time').time())
+    date = __import__('datetime').datetime.utcfromtimestamp(timestamp).strftime('%Y-%m-%d')
+    body = json.dumps(payload, separators=(',', ':'), ensure_ascii=False)
+    content_type = 'application/json; charset=utf-8'
+    signed_headers = 'content-type;host'
+    canonical_headers = f'content-type:{content_type}\nhost:{host}\n'
+    hashed_payload = hashlib.sha256(body.encode('utf-8')).hexdigest()
+    canonical_request = f'POST\n/\n\n{canonical_headers}\n{signed_headers}\n{hashed_payload}'
+    credential_scope = f'{date}/{service}/tc3_request'
+    string_to_sign = '\n'.join([
+        'TC3-HMAC-SHA256', str(timestamp), credential_scope,
+        hashlib.sha256(canonical_request.encode('utf-8')).hexdigest(),
+    ])
+    secret_date = hmac.new(('TC3' + secret_key).encode(), date.encode(), hashlib.sha256).digest()
+    secret_service = hmac.new(secret_date, service.encode(), hashlib.sha256).digest()
+    secret_signing = hmac.new(secret_service, b'tc3_request', hashlib.sha256).digest()
+    signature = hmac.new(secret_signing, string_to_sign.encode(), hashlib.sha256).hexdigest()
+    authorization = (
+        f'TC3-HMAC-SHA256 Credential={secret_id}/{credential_scope}, '
+        f'SignedHeaders={signed_headers}, Signature={signature}'
+    )
+    try:
+        response = requests.post(
+            TENCENT_ASR_URL,
+            headers={
+                'Authorization': authorization,
+                'Content-Type': content_type,
+                'Host': host,
+                'X-TC-Action': action,
+                'X-TC-Version': version,
+                'X-TC-Region': TENCENT_REGION,
+                'X-TC-Timestamp': str(timestamp),
+            },
+            data=body.encode('utf-8'),
+            timeout=(5, 45),
+        )
+        response.raise_for_status()
+        result = response.json()
+    except requests.exceptions.Timeout as exc:
+        raise SpeechServiceError('腾讯云语音识别超时，请稍后重试', status_code=504, retryable=True) from exc
+    except requests.exceptions.RequestException as exc:
+        raise SpeechServiceError('腾讯云语音识别失败，请重试', status_code=502, retryable=True) from exc
+    except ValueError as exc:
+        raise SpeechServiceError('腾讯云语音识别返回异常，请重试', status_code=502, retryable=True) from exc
+    error = ((result.get('Response') or {}).get('Error') or {}) if isinstance(result, dict) else {}
+    if error:
+        raise SpeechServiceError('腾讯云语音识别失败，请检查 SecretId、SecretKey 和权限', status_code=502, retryable=True)
+    return result.get('Response') or {}
 
 
 def _read_and_validate_audio(file_storage):
@@ -212,185 +280,6 @@ def _convert_audio_to_wav(audio_bytes, filename):
                     pass
 
 
-def _upload_audio_to_coze(audio_bytes, filename, mimetype, api_key):
-    try:
-        response = requests.post(
-            Config.COZE_FILE_UPLOAD_URL,
-            headers={'Authorization': f'Bearer {api_key}'},
-            files={'file': (filename, io.BytesIO(audio_bytes), mimetype)},
-            timeout=(5, 60),
-        )
-        response.raise_for_status()
-        payload = response.json()
-    except requests.exceptions.Timeout as exc:
-        raise SpeechServiceError('音频上传超时，请稍后重试', status_code=504, retryable=True) from exc
-    except requests.exceptions.RequestException as exc:
-        raise SpeechServiceError(f'音频上传失败: {exc}', status_code=502, retryable=True) from exc
-    except ValueError as exc:
-        raise SpeechServiceError('音频上传返回异常', status_code=502, retryable=True) from exc
-
-    if payload.get('code') not in (None, 0):
-        raise SpeechServiceError(payload.get('msg') or 'Coze 文件上传失败', status_code=502, retryable=True)
-
-    file_id = _find_first_key(payload, ('file_id', 'id'))
-    if not file_id:
-        raise SpeechServiceError('Coze 文件上传未返回 file_id', status_code=502, retryable=True)
-    return str(file_id)
-
-
-def _ask_coze_to_transcribe(file_id, audio_file_type, bot_id, api_key, user_id):
-    headers = {'Authorization': f'Bearer {api_key}', 'Content-Type': 'application/json'}
-    content = json.dumps([
-        {'type': 'text', 'text': TRANSCRIBE_PROMPT},
-        {'type': 'audio', 'file_id': file_id, 'audio_file_type': audio_file_type},
-    ], ensure_ascii=False)
-    payload = {
-        'bot_id': bot_id,
-        'user_id': user_id or 'anonymous',
-        'stream': True,
-        'additional_messages': [{
-            'role': 'user',
-            'content': content,
-            'content_type': 'object_string',
-        }],
-    }
-    try:
-        with requests.post(
-            Config.COZE_V3_CHAT_URL,
-            headers=headers,
-            json=payload,
-            stream=True,
-            timeout=(5, 45),
-        ) as response:
-            response.raise_for_status()
-            return _extract_text_from_coze_stream(response)
-    except requests.exceptions.Timeout as exc:
-        raise SpeechServiceError('语音识别请求超时，请稍后重试', status_code=504, retryable=True) from exc
-    except requests.exceptions.RequestException as exc:
-        raise SpeechServiceError(f'语音识别请求失败: {exc}', status_code=502, retryable=True) from exc
-
-
-def _extract_text_from_coze_stream(response):
-    full_text = ''
-    last_error = ''
-    for event_name, raw_data in _iter_sse_events(response):
-        if raw_data == '[DONE]':
-            break
-        payload = _safe_json_loads(raw_data)
-        if not payload:
-            continue
-        if payload.get('code') not in (None, 0):
-            raise SpeechServiceError(_friendly_coze_error(payload.get('msg')), status_code=502, retryable=True)
-        normalized_event = _normalize_event_name(event_name, payload)
-        if 'error' in normalized_event:
-            last_error = _friendly_coze_error(payload.get('msg') or payload.get('message') or payload.get('error'))
-            continue
-        delta = _extract_stream_text(normalized_event, payload, full_text)
-        if delta:
-            full_text += delta
-    if full_text.strip():
-        return full_text.strip()
-    if last_error:
-        raise SpeechServiceError(last_error, status_code=502, retryable=True)
-    raise SpeechServiceError('未识别到文字，请重试', status_code=502, retryable=True)
-
-
-def _iter_sse_events(response):
-    event_name = ''
-    data_lines = []
-    response.encoding = 'utf-8'
-    for raw_line in response.iter_lines(decode_unicode=False):
-        if raw_line is None:
-            continue
-        if isinstance(raw_line, bytes):
-            line = raw_line.decode('utf-8', errors='replace').rstrip('\r')
-        else:
-            line = str(raw_line).rstrip('\r')
-        if not line:
-            if event_name or data_lines:
-                yield event_name, '\n'.join(data_lines)
-            event_name = ''
-            data_lines = []
-            continue
-        if line.startswith(':'):
-            continue
-        if line.startswith('event:'):
-            event_name = line[6:].strip()
-            continue
-        if line.startswith('data:'):
-            data_lines.append(line[5:].strip())
-    if event_name or data_lines:
-        yield event_name, '\n'.join(data_lines)
-
-
-def _safe_json_loads(raw_data):
-    try:
-        return json.loads(raw_data)
-    except (TypeError, ValueError):
-        return None
-
-
-def _normalize_event_name(upstream_event, payload):
-    for candidate in (
-        upstream_event,
-        payload.get('event'),
-        payload.get('type'),
-        payload.get('name'),
-    ):
-        if isinstance(candidate, str) and candidate.strip():
-            return candidate.strip().lower()
-    return ''
-
-
-def _extract_stream_text(normalized_event, payload, current_text):
-    message = payload.get('message')
-    if isinstance(message, dict):
-        msg_type = message.get('type')
-        if msg_type and msg_type not in ('answer', 'assistant_answer'):
-            return ''
-        return _normalize_delta_text(_extract_text_content(message.get('content'), message.get('content_type')), current_text)
-
-    if normalized_event and 'delta' in normalized_event:
-        for key in ('content', 'text', 'delta'):
-            normalized = _normalize_delta_text(_extract_text_content(payload.get(key)), current_text)
-            if normalized:
-                return normalized
-
-    data = payload.get('data')
-    if isinstance(data, dict):
-        msg_type = data.get('type')
-        if msg_type and msg_type not in ('answer', 'assistant_answer'):
-            return ''
-        for key in ('content', 'text', 'delta'):
-            normalized = _normalize_delta_text(_extract_text_content(data.get(key), data.get('content_type')), current_text)
-            if normalized:
-                return normalized
-
-    return ''
-
-
-def _normalize_delta_text(text, current_text):
-    if not isinstance(text, str) or not text:
-        return ''
-    if current_text and text.startswith(current_text):
-        return text[len(current_text):]
-    if current_text.endswith(text):
-        return ''
-    return text
-
-
-def _friendly_coze_error(message):
-    text = str(message or '').strip()
-    lowered = text.lower()
-    if 'auto_save_history' in lowered and 'stream' in lowered:
-        return '语音识别参数不兼容，请刷新页面后重试'
-    if 'audio_file_type' in lowered:
-        return '语音转换失败，请稍后重试'
-    if text:
-        return text
-    return 'Coze 语音识别失败'
-
-
 def _friendly_aliyun_error(message):
     text = str(message or '').strip()
     lowered = text.lower()
@@ -401,25 +290,6 @@ def _friendly_aliyun_error(message):
     if text:
         return text
     return '语音识别失败，请重试'
-
-
-def _extract_text_content(content, content_type=None):
-    if not content:
-        return ''
-    if isinstance(content, str) and content_type == 'object_string':
-        try:
-            items = json.loads(content)
-            if isinstance(items, list):
-                return ''.join(str(x.get('text') or '') for x in items if isinstance(x, dict)).strip()
-        except ValueError:
-            return content.strip()
-    if isinstance(content, str):
-        return content.strip()
-    if isinstance(content, list):
-        return ''.join(str(x.get('text') or '') for x in content if isinstance(x, dict)).strip()
-    if isinstance(content, dict):
-        return str(content.get('text') or '').strip()
-    return ''
 
 
 def _find_first_key(value, keys):

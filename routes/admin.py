@@ -137,20 +137,23 @@ def speech_settings(current_user):
         data = request.get_json(silent=True) or {}
         enabled = bool(data.get('enabled'))
         provider = (data.get('provider') or 'aliyun_asr').strip() or 'aliyun_asr'
-        if provider not in ('aliyun_asr', 'coze'):
+        if provider not in ('aliyun_asr', 'tencent_asr'):
             provider = 'aliyun_asr'
 
         app_key = (data.get('aliyun_app_key') or '').strip()
         access_key_id = (data.get('aliyun_access_key_id') or '').strip()
         access_key_secret = (data.get('aliyun_access_key_secret') or '').strip()
-        bot_id = (data.get('bot_id') or '').strip()
+        tencent_secret_id = (data.get('tencent_secret_id') or '').strip()
+        tencent_secret_key = (data.get('tencent_secret_key') or '').strip()
 
         existing_secret = get_secret_setting('aliyun_access_key_secret', '').strip()
         if provider == 'aliyun_asr' and enabled:
             if not app_key or not access_key_id or not (access_key_secret or existing_secret):
                 return jsonify({'error': '开启语音识别前请填写阿里云 AppKey、AccessKey ID 和 Secret'}), 400
-        if provider == 'coze' and enabled and not bot_id:
-            return jsonify({'error': '开启 Coze 实验识别前请先填写 Coze Bot ID'}), 400
+        existing_tencent_secret = get_secret_setting('tencent_secret_key', '').strip()
+        if provider == 'tencent_asr' and enabled:
+            if not tencent_secret_id or not (tencent_secret_key or existing_tencent_secret):
+                return jsonify({'error': '开启腾讯云语音识别前请填写 SecretId 和 SecretKey'}), 400
 
         set_setting('speech_enabled', '1' if enabled else '0')
         set_setting('speech_provider', provider)
@@ -158,7 +161,9 @@ def speech_settings(current_user):
         set_setting('aliyun_access_key_id', access_key_id)
         if access_key_secret:
             set_secret_setting('aliyun_access_key_secret', access_key_secret)
-        set_setting('speech_coze_bot_id', bot_id)
+        set_setting('tencent_secret_id', tencent_secret_id)
+        if tencent_secret_key:
+            set_secret_setting('tencent_secret_key', tencent_secret_key)
         return jsonify({
             'message': '已更新',
             'enabled': enabled,
@@ -166,7 +171,8 @@ def speech_settings(current_user):
             'aliyun_app_key': app_key,
             'aliyun_access_key_id': access_key_id,
             'aliyun_access_key_secret_masked': _mask_secret(get_secret_setting('aliyun_access_key_secret', '')),
-            'bot_id': bot_id,
+            'tencent_secret_id': tencent_secret_id,
+            'tencent_secret_key_masked': _mask_secret(get_secret_setting('tencent_secret_key', '')),
         })
     return jsonify({
         'enabled': get_setting('speech_enabled', '0') == '1',
@@ -175,7 +181,8 @@ def speech_settings(current_user):
         'aliyun_access_key_id': get_setting('aliyun_access_key_id', ''),
         'aliyun_access_key_secret_masked': _mask_secret(get_secret_setting('aliyun_access_key_secret', '')),
         'has_aliyun_access_key_secret': bool(get_secret_setting('aliyun_access_key_secret', '').strip()),
-        'bot_id': get_setting('speech_coze_bot_id', ''),
+        'tencent_secret_id': get_setting('tencent_secret_id', ''),
+        'tencent_secret_key_masked': _mask_secret(get_secret_setting('tencent_secret_key', '')),
     })
 
 

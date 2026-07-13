@@ -10,7 +10,7 @@ from models import get_setting, set_setting
 
 logger = logging.getLogger(__name__)
 ENCRYPTED_PREFIX = 'enc:v1:'
-SECRET_SETTING_KEYS = ('coze_api_key', 'aliyun_access_key_secret')
+SECRET_SETTING_KEYS = ('coze_api_key', 'aliyun_access_key_secret', 'tencent_secret_key')
 
 
 def _fernet():

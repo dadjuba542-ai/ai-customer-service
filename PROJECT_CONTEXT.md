@@ -574,13 +574,14 @@ python3 scripts/optimize_news_content_images.py --apply
 
 本次新增独立语音转文字能力，不接微信 JS-SDK：
 
-- 后台“智能体配置/系统配置”新增语音输入开关和 ASR 服务配置；默认 provider 为 `aliyun_asr`。
+- 后台“智能体配置/系统配置”新增语音输入开关和 ASR 服务配置；支持 `aliyun_asr` 和 `tencent_asr`，默认 provider 为 `aliyun_asr`。
 - 阿里云一句话识别使用 `speech_provider`、`aliyun_nls_app_key`、`aliyun_access_key_id`、`aliyun_access_key_secret`；Secret 后台只脱敏回显，留空保存时不覆盖旧值。
-- 旧 Coze Bot 识别链路仅保留为实验兼容 provider，不再作为主路径；此前 Coze 音频消息对 `stream`、`audio_file_type` 和返回解析限制较多，不适合作为稳定语音转文字方案。
+- 语音识别不再提供 Coze 兼容入口；Coze 仅继续用于系统原有的对话和案例识别功能。
 - 前台启动时读取 `/api/speech/config`；只有后台开启后，聊天输入框才显示麦克风按钮。
 - 前端使用 H5 `MediaRecorder` 录音，最长 30 秒；识别成功后只填入输入框，不自动发送。
 - 后端新增 `POST /api/speech/transcribe`，接收 `multipart/form-data` 的 `audio` 文件，限制 10MB。
 - `services/speech_service.py` 会先用 ffmpeg 把浏览器录音统一转为 `16kHz / mono / WAV`，再提交给阿里云 ASR。
+- 腾讯云识别使用 TC3-HMAC-SHA256 签名调用 `SentenceRecognition`，SecretKey 只加密保存并脱敏回显。
 - 服务器必须安装 `ffmpeg`；Railway/Nixpacks 配置已补系统包。可用 `ALIYUN_NLS_TOKEN_URL`、`ALIYUN_NLS_ASR_URL` 覆盖阿里云接口地址。
 - 微信 iOS 兼容性需要真机验证；如果 `MediaRecorder` 不可用，前台会提示使用文字或常见问题卡片。
 
