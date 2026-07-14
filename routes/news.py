@@ -11,19 +11,27 @@ def list_news():
     page = request.args.get('page', 1, type=int)
     mode = request.args.get('mode', 'all')
 
+    if mode == 'bulletin':
+        items = get_news_page(1, limit or 3, category='首页滚动')
+        return jsonify({'news': items['items']})
+
     if mode == 'home':
-        items = get_featured_news(limit or 3)
+        items = [item for item in get_featured_news(limit or 3) if item.get('category') != '首页滚动']
         if len(items) < (limit or 3):
             taken = {i['id'] for i in items}
-            recent = [n for n in get_all_news() if n['id'] not in taken]
+            recent = [n for n in get_all_news() if n['id'] not in taken and n.get('category') != '首页滚动']
             items += recent[:(limit or 3) - len(items)]
         return jsonify({'news': items})
 
     if mode == 'discover':
         category = request.args.get('category')
-        pinned = get_pinned_news(3)
-        pages = get_news_page(page, limit or 10, exclude_pinned=True, category=category)
-        return jsonify({'pinned': pinned, 'page': pages, 'news': pages['items'], 'categories': get_news_categories()})
+        pinned = [item for item in get_pinned_news(3) if item.get('category') != '首页滚动']
+        pages = get_news_page(page, limit or 10, exclude_pinned=True, category=category, exclude_category='首页滚动')
+        return jsonify({'pinned': pinned, 'page': pages, 'news': pages['items'], 'categories': get_news_categories('首页滚动')})
+
+    if mode == 'content':
+        pages = get_news_page(1, limit or 1000, exclude_category='首页滚动')
+        return jsonify({'news': pages['items']})
 
     news = get_all_news()
     return jsonify({'news': news})

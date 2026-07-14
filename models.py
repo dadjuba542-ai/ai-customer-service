@@ -409,7 +409,7 @@ def get_featured_news(limit=3):
     conn.close()
     return [dict(r) for r in rows]
 
-def get_news_page(page=1, limit=10, exclude_pinned=False, category=None):
+def get_news_page(page=1, limit=10, exclude_pinned=False, category=None, exclude_category=None):
     conn = get_db_connection()
     conditions = []
     params = []
@@ -418,6 +418,9 @@ def get_news_page(page=1, limit=10, exclude_pinned=False, category=None):
     if category:
         conditions.append('category = ?')
         params.append(category)
+    if exclude_category:
+        conditions.append('(category IS NULL OR category != ?)')
+        params.append(exclude_category)
     where = ('WHERE ' + ' AND '.join(conditions)) if conditions else ''
     total = conn.execute(f'SELECT COUNT(*) as cnt FROM news {where}', params).fetchone()['cnt']
     offset = (page - 1) * limit
@@ -452,11 +455,14 @@ def toggle_featured_news(id):
     conn.close()
     return 0
 
-def get_news_categories():
+def get_news_categories(exclude_category=None):
     conn = get_db_connection()
-    rows = conn.execute(
-        'SELECT DISTINCT category FROM news WHERE category IS NOT NULL AND category != "" ORDER BY category'
-    ).fetchall()
+    params = []
+    where = 'WHERE category IS NOT NULL AND category != ""'
+    if exclude_category:
+        where += ' AND category != ?'
+        params.append(exclude_category)
+    rows = conn.execute(f'SELECT DISTINCT category FROM news {where} ORDER BY category', params).fetchall()
     conn.close()
     return [r['category'] for r in rows]
 

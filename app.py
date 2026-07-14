@@ -25,6 +25,12 @@ DEFAULT_STEPS = [
     "正在生成完整回复...",
     "即将完成...",
 ]
+DEFAULT_EXAMPLE_QUESTIONS = [
+    '这个产品适合什么人？',
+    '产品应该怎么使用？',
+    '帮我推荐一个产品方案',
+    '帮我写一段客户沟通话术',
+]
 from flask_cors import CORS
 from config import Config
 from models import init_db
@@ -125,6 +131,17 @@ def waiting_content():
     if not tips: tips = DEFAULT_TIPS
     if not steps: steps = DEFAULT_STEPS
     return jsonify({'tips': tips, 'steps': steps})
+
+@app.route('/api/example-questions')
+def example_questions():
+    from models import get_setting
+    raw = get_setting('example_questions', '[]')
+    try:
+        questions = json.loads(raw)
+    except (TypeError, ValueError):
+        questions = []
+    questions = [str(item).strip() for item in questions if str(item).strip()][:6] if isinstance(questions, list) else []
+    return jsonify({'questions': questions or DEFAULT_EXAMPLE_QUESTIONS})
 
 @app.route('/api/default-team')
 def default_team():

@@ -9,8 +9,8 @@
       window.location.replace('http://127.0.0.1:5001/');
     }
   </script>
-  <link rel="stylesheet" href="styles.css?v=20260707-speech3">
-  <link rel="stylesheet" href="icon-fallback.css?v=20260713-icons">
+  <link rel="stylesheet" href="styles.css?v=20260714-ux11">
+  <link rel="stylesheet" href="icon-fallback.css?v=20260713-icons2">
 </head>
 <body>
   <div id="identity-gate" class="admin-overlay active" onclick="event.stopPropagation();">
@@ -48,6 +48,11 @@
               <img src="/avatar-optimized.png" class="avatar-img" alt="avatar" loading="eager" decoding="async" fetchpriority="high">
             </div>
           </div>
+          <div class="home-bulletin" id="home-bulletin" hidden aria-label="精选资讯">
+            <div class="bulletin-mark"><i class="ph ph-sparkle"></i><span>精选</span></div>
+            <div class="bulletin-window"><div class="bulletin-track" id="home-bulletin-track"></div></div>
+            <i class="ph ph-arrow-right bulletin-arrow"></i>
+          </div>
           <div class="section">
             <div class="section-header">
               <h3 class="section-title">快捷功能</h3>
@@ -55,12 +60,7 @@
             <div class="quick-grid" id="quick-grid"></div>
             <div class="example-question-wrap">
               <div class="example-question-title">不知道怎么问？试试这些</div>
-              <div class="example-question-list">
-                <button onclick="quickSend('aura','这个产品适合什么人？')">这个产品适合什么人？</button>
-                <button onclick="quickSend('coder','产品应该怎么使用？')">产品应该怎么使用？</button>
-                <button onclick="quickSend('aura','帮我推荐一个产品方案')">帮我推荐一个产品方案</button>
-                <button onclick="quickSend('translator','帮我写一段客户沟通话术')">帮我写一段客户沟通话术</button>
-              </div>
+              <div class="example-question-list" id="example-question-list"></div>
             </div>
           </div>
           <div class="section">
@@ -306,6 +306,6 @@
   </div>
 
   <div id="toast"></div>
-  <script src="app.js?v=20260707-speech3"></script>
+  <script src="app.js?v=20260714-bulletin5"></script>
 </body>
 </html>

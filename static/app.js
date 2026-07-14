@@ -11,6 +11,7 @@ let AGENTS = [];
 let lastUserText = '';
 let lastUserAgentId = '';
 let caseLibraryUrl = '';
+let bulletinTimer = null;
 const assetLoaders = new Map();
 let state = {
   currentView: 'home',
@@ -87,6 +88,8 @@ function getViewerId() {
 document.addEventListener('DOMContentLoaded', () => {
   loadAgents();
   loadWaitingContent();
+  loadExampleQuestions();
+  loadNews();
   loadCaseLibraryConfig();
   loadSpeechConfig();
   // Chat scroll listener for "scroll to bottom" button
@@ -169,7 +172,6 @@ async function loadSpeechConfig() {
 
 function enterApp() {
   document.getElementById('app').classList.add('active');
-  loadNews();
   loadHotQuestions();
 }
 
@@ -952,9 +954,7 @@ function renderMessages() {
       const actions = !msg.isStreaming ? `
         <div class="msg-actions">
           <button class="msg-action-btn" onclick="copyText('${escapedContent.replace(/'/g, "\\'")}')"><i class="ph ph-copy-simple"></i> 复制</button>
-          <button class="msg-action-btn" onclick="continueFromMessage(${idx})"><i class="ph ph-paper-plane-right"></i> 继续咨询</button>
-          <button class="msg-action-btn" onclick="switchView('products')"><i class="ph ph-shopping-bag"></i> 查看产品</button>
-          ${msg.relatedCases && msg.relatedCases.length ? `<button class="msg-action-btn" onclick="openRelatedCaseDrawerList(event, '${escapeHtml(msg.replyToText || latestUserQuestionBefore(idx) || '').replace(/'/g, "\\'")}')"><i class="ph ph-files"></i> 查看案例</button>` : ''}
+          ${agent && agent.type === '产品咨询' ? '<button class="msg-action-btn" onclick="switchView(\'products\')"><i class="ph ph-shopping-bag"></i> 查看产品</button>' : ''}
           <button class="msg-action-btn share-action" onclick="shareAnswerCard(${idx})"><i class="ph ph-share-network"></i> 生成分享图</button>
           <button class="msg-action-btn lead-action" onclick="openLeadModal(${idx})"><i class="ph ph-chat-circle-text"></i> 获取方案</button>
           <button class="msg-action-btn" onclick="regenerateMsg(${idx})"><i class="ph ph-arrows-clockwise"></i> 重新回答</button>
@@ -989,14 +989,6 @@ function openLeadModal(messageIndex = -1) {
   overlay.dataset.historyId = msg && msg.historyId ? msg.historyId : '';
   overlay.dataset.messageIndex = messageIndex;
   overlay.classList.add('active');
-}
-
-function continueFromMessage(messageIndex) {
-  const question = latestUserQuestionBefore(messageIndex);
-  switchView('chat');
-  const input = document.getElementById('message-input');
-  input.value = question ? `继续说说：${question}` : '';
-  input.focus();
 }
 
 function closeLeadModal(event) {
@@ -1773,16 +1765,21 @@ async function loadSession(itemIds) {
 /* ===== News ===== */
 async function loadNews() {
   try {
-    const res = await fetch(`${API_BASE}/api/news?mode=home&limit=3`);
-    if (res.ok) {
-      const data = await res.json();
-      renderNews(data.news);
+    const [homeRes, bulletinRes] = await Promise.all([
+      fetch(`${API_BASE}/api/news?mode=home&limit=3`),
+      fetch(`${API_BASE}/api/news?mode=bulletin&limit=3`),
+    ]);
+    if (homeRes.ok) {
+      const home = await homeRes.json();
+      const bulletin = bulletinRes.ok ? await bulletinRes.json() : { news: [] };
+      renderNews(home.news, bulletin.news);
     }
   } catch {}
 }
 
-function renderNews(news) {
+function renderNews(news, bulletinNews = []) {
   const container = document.getElementById('home-news');
+  renderHomeBulletin(bulletinNews);
   if (!news || news.length === 0) {
     container.innerHTML = '<div class="news-empty">暂无资讯</div>';
     return;
@@ -1800,6 +1797,40 @@ function renderNews(news) {
       </div>
     </button>
   `).join('');
+}
+
+function renderHomeBulletin(news) {
+  const bulletin = document.getElementById('home-bulletin');
+  const track = document.getElementById('home-bulletin-track');
+  if (!bulletin || !track) return;
+  const items = (news || []).slice(0, 3);
+  if (bulletinTimer) {
+    clearInterval(bulletinTimer);
+    bulletinTimer = null;
+  }
+  if (!items.length) {
+    track.innerHTML = '';
+    bulletin.hidden = true;
+    return;
+  }
+  const renderItem = (item) => {
+    const title = String(item.title || '查看最新内容').trim();
+    const chars = Array.from(title);
+    const shortTitle = chars.length > 18 ? `${chars.slice(0, 17).join('')}…` : title;
+    track.innerHTML = `<button class="bulletin-item" title="${escapeHtml(title)}" onclick="showNewsDetail(${Number(item.id)})"><span>${escapeHtml(shortTitle)}</span></button>`;
+    track.classList.remove('bulletin-enter');
+    void track.offsetWidth;
+    track.classList.add('bulletin-enter');
+  };
+  renderItem(items[0]);
+  bulletin.hidden = false;
+  if (items.length > 1) {
+    let index = 0;
+    bulletinTimer = setInterval(() => {
+      index = (index + 1) % items.length;
+      renderItem(items[index]);
+    }, 4000);
+  }
 }
 
 /* ===== Discover ===== */
@@ -1968,6 +1999,22 @@ async function loadHotQuestions() {
       renderHotQuestions(data.questions);
     }
   } catch {}
+}
+
+async function loadExampleQuestions() {
+  const container = document.getElementById('example-question-list');
+  if (!container) return;
+  try {
+    const res = await fetch(`${API_BASE}/api/example-questions`);
+    const data = await res.json();
+    const questions = Array.isArray(data.questions) ? data.questions : [];
+    container.innerHTML = questions.map((question, index) => {
+      const agentId = index === 1 ? 'coder' : index === 3 ? 'translator' : 'aura';
+      return `<button onclick="quickSend('${agentId}', '${escapeHtml(question).replace(/'/g, "\\'")}')">${escapeHtml(question)}</button>`;
+    }).join('');
+  } catch {
+    container.innerHTML = '';
+  }
 }
 
 function renderHotQuestions(questions) {

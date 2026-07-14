@@ -69,3 +69,43 @@
 .ph-copy-simple::before { content: "▣"; }
 .ph-spinner::before, .ph-spinner-gap::before { animation: ph-fallback-spin 1s linear infinite; }
 @keyframes ph-fallback-spin { to { transform: rotate(360deg); } }
+
+/* Admin navigation icons: use stable geometric outlines when the icon font is unavailable. */
+.sidebar .ph { position: relative; display: inline-flex; align-items: center; justify-content: center; width: 1.2em; height: 1.2em; font-size: 18px; line-height: 1; }
+.sidebar .ph::before, .sidebar .ph::after { box-sizing: border-box; }
+.sidebar-nav .ph-chart-bar::before { content: ""; width: .82em; height: .78em; border: .11em solid currentColor; border-top: 0; border-right: 0; background: linear-gradient(to top, currentColor 0 .18em, transparent .18em .32em, currentColor .32em .5em, transparent .5em .64em, currentColor .64em 100%); background-size: .16em 100%; background-position: .12em 0, .34em 0, .56em 0; background-repeat: no-repeat; }
+.sidebar-nav .ph-newspaper::before { content: ""; width: .9em; height: .72em; border: .11em solid currentColor; border-radius: .1em; background: linear-gradient(currentColor,currentColor) .16em .16em/.34em .08em no-repeat, linear-gradient(currentColor,currentColor) .16em .34em/.58em .07em no-repeat, linear-gradient(currentColor,currentColor) .16em .5em/.48em .07em no-repeat; }
+.sidebar-nav .ph-shopping-bag::before { content: ""; width: .72em; height: .7em; border: .11em solid currentColor; border-radius: .12em .12em .16em .16em; }
+.sidebar-nav .ph-shopping-bag::after { content: ""; position: absolute; width: .34em; height: .2em; top: .2em; border: .1em solid currentColor; border-bottom: 0; border-radius: .4em .4em 0 0; }
+.sidebar-nav .ph-files::before { content: ""; width: .7em; height: .78em; border: .11em solid currentColor; border-radius: .08em; box-shadow: .18em -.12em 0 -.02em var(--white, #fff), .18em -.12em 0 .08em currentColor; }
+.sidebar-nav .ph-robot::before { content: ""; width: .78em; height: .62em; border: .11em solid currentColor; border-radius: .18em; background: radial-gradient(circle at 32% 50%, currentColor 0 .07em, transparent .08em), radial-gradient(circle at 68% 50%, currentColor 0 .07em, transparent .08em); }
+.sidebar-nav .ph-star::before { content: "✦"; font: 700 .95em/1 Arial, sans-serif; }
+.sidebar-nav .ph-users-three::before { content: ""; width: .34em; height: .34em; border: .1em solid currentColor; border-radius: 50%; box-shadow: -.32em .14em 0 -.04em var(--white, #fff), .32em .14em 0 -.04em var(--white, #fff); }
+.sidebar-nav .ph-users-three::after { content: ""; position: absolute; width: .9em; height: .38em; bottom: .03em; border: .1em solid currentColor; border-bottom: 0; border-radius: .5em .5em 0 0; }
+.sidebar-nav .ph-buildings::before { content: ""; width: .82em; height: .78em; border: .11em solid currentColor; border-top: .16em solid currentColor; background: repeating-linear-gradient(90deg, transparent 0 .16em, currentColor .16em .22em, transparent .22em .38em); }
+.sidebar-nav .ph-chat-circle-text::before { content: ""; width: .82em; height: .68em; border: .11em solid currentColor; border-radius: 50%; }
+.sidebar-nav .ph-chat-circle-text::after { content: ""; position: absolute; width: .25em; height: .25em; bottom: .14em; left: .2em; border-left: .11em solid currentColor; border-bottom: .11em solid currentColor; transform: skewY(-28deg); }
+.sidebar-footer .ph-sign-out::before { content: ""; width: .72em; height: .72em; border: .11em solid currentColor; border-right: 0; border-radius: .1em 0 0 .1em; }
+.sidebar-footer .ph-sign-out::after { content: "→"; position: absolute; font: 700 .8em/1 Arial, sans-serif; right: -.02em; top: .2em; }
+
+/* Purpose-built line icons for the primary navigation and agent cards. */
+.ph-database, .ph-question, .ph-lightning, .ph-lifebuoy, .ph-robot,
+.ph-house, .ph-shopping-bag, .ph-compass, .ph-users-three, .ph-sparkle {
+  position: relative;
+  color: currentColor;
+  font-size: 1em;
+}
+.ph-database::before { content: ""; width: .82em; height: .58em; border: .12em solid currentColor; border-radius: 50% / 28%; box-shadow: 0 .16em 0 -.02em var(--icon-bg, transparent), 0 .16em 0 .08em currentColor; }
+.ph-database::after { content: ""; position: absolute; width: .82em; height: .28em; border: .12em solid currentColor; border-top: 0; border-radius: 0 0 50% 50%; top: .43em; }
+.ph-question::before { content: "?"; width: .9em; height: .9em; border: .1em solid currentColor; border-radius: 50%; font: 700 .72em/1 Arial, sans-serif; }
+.ph-lightning::before { content: ""; width: .55em; height: .9em; background: currentColor; clip-path: polygon(58% 0, 100% 0, 66% 39%, 94% 39%, 25% 100%, 41% 53%, 9% 53%); }
+.ph-lifebuoy::before { content: ""; width: .84em; height: .84em; border: .12em solid currentColor; border-radius: 50%; background: radial-gradient(circle, transparent 0 22%, currentColor 23% 34%, transparent 35%); }
+.ph-robot::before { content: ""; width: .78em; height: .62em; border: .11em solid currentColor; border-radius: .18em; background: radial-gradient(circle at 32% 50%, currentColor 0 .07em, transparent .08em), radial-gradient(circle at 68% 50%, currentColor 0 .07em, transparent .08em); }
+.ph-robot::after { content: ""; position: absolute; width: .14em; height: .2em; border-left: .1em solid currentColor; border-top: .1em solid currentColor; top: -.1em; left: .43em; transform: rotate(45deg); }
+.ph-house::before { content: ""; width: .82em; height: .62em; border: .11em solid currentColor; border-top: 0; border-radius: .08em; clip-path: polygon(0 30%, 50% 0, 100% 30%, 100% 100%, 0 100%); }
+.ph-shopping-bag::before { content: ""; width: .72em; height: .7em; border: .11em solid currentColor; border-radius: .12em; }
+.ph-shopping-bag::after { content: ""; position: absolute; width: .35em; height: .22em; border: .1em solid currentColor; border-bottom: 0; border-radius: .4em .4em 0 0; top: .02em; }
+.ph-compass::before { content: "⊙"; font: 700 .98em/1 Arial, sans-serif; }
+.ph-users-three::before { content: ""; width: .35em; height: .35em; border: .1em solid currentColor; border-radius: 50%; box-shadow: -.33em .14em 0 -.04em var(--icon-bg, transparent), .33em .14em 0 -.04em var(--icon-bg, transparent); }
+.ph-users-three::after { content: ""; position: absolute; width: .9em; height: .38em; border: .1em solid currentColor; border-bottom: 0; border-radius: .5em .5em 0 0; bottom: .02em; }
+.ph-sparkle::before { content: "✦"; font: 700 .95em/1 Arial, sans-serif; }

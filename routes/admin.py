@@ -1,7 +1,7 @@
 import os
 import json
 from flask import Blueprint, request, jsonify, current_app
-from models import get_all_agent_configs, get_agent_config, update_agent_config, create_agent_config, delete_agent_config, get_setting, set_setting, list_lead_requests, update_lead_request
+from models import get_all_agent_configs, get_agent_config, update_agent_config, create_agent_config, delete_agent_config, get_setting, set_setting, list_lead_requests, update_lead_request, get_news_page
 from config import Config
 from routes.auth import admin_required
 from services.image_service import is_allowed_image_filename, process_uploaded_image
@@ -34,6 +34,12 @@ def edit_lead(lead_id, current_user):
     if not update_lead_request(lead_id, status, note):
         return jsonify({'error': '需求不存在或状态无效'}), 400
     return jsonify({'message': '需求已更新'})
+
+@admin_bp.route('/home-bulletins', methods=['GET'])
+@admin_required
+def admin_home_bulletins(current_user):
+    page = get_news_page(1, request.args.get('limit', 50, type=int), category='首页滚动')
+    return jsonify({'news': page['items']})
 
 @admin_bp.route('/agents', methods=['GET'])
 @admin_required
@@ -152,6 +158,30 @@ def blocked_keywords(current_user):
     raw = get_setting('blocked_keywords', '')
     default_hint = '退款,退货,投诉,假货,骗人,诈骗,虚假宣传,副作用,无效,没效果,上当,举报,315,维权,赔偿,曝光,致癌,违规,处罚,查封'
     return jsonify({'keywords': raw, 'defaultHint': default_hint})
+
+
+@admin_bp.route('/settings/example-questions', methods=['GET', 'PUT'])
+@admin_required
+def example_questions(current_user):
+    default_questions = ['这个产品适合什么人？', '产品应该怎么使用？', '帮我推荐一个产品方案', '帮我写一段客户沟通话术']
+    if request.method == 'PUT':
+        data = request.get_json(silent=True) or {}
+        questions = data.get('questions') or []
+        if not isinstance(questions, list):
+            return jsonify({'error': '问题格式不正确'}), 400
+        questions = [str(item).strip() for item in questions if str(item).strip()][:6]
+        if not questions:
+            return jsonify({'error': '至少保留一条示例问题'}), 400
+        if any(len(item) > 80 for item in questions):
+            return jsonify({'error': '单条问题不能超过80字'}), 400
+        set_setting('example_questions', json.dumps(questions, ensure_ascii=False))
+        return jsonify({'message': '示例问题已更新', 'questions': questions})
+    raw = get_setting('example_questions', '[]')
+    try:
+        questions = json.loads(raw)
+    except (TypeError, ValueError):
+        questions = []
+    return jsonify({'questions': questions if isinstance(questions, list) and questions else default_questions})
 
 
 @admin_bp.route('/settings/speech', methods=['GET', 'PUT'])

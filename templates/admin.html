@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AI宝儿 · 管理后台</title>
-  <link rel="stylesheet" href="/icon-fallback.css?v=20260713-icons">
+  <link rel="stylesheet" href="/icon-fallback.css?v=20260714-admin-icons">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     :root {
@@ -748,6 +748,12 @@
               </div>
             </div>
           </div>
+          <div class="table-card">
+            <div class="table-title"><span><i class="ph ph-chat-circle-text"></i>首页「不知道怎么问」</span></div>
+            <p style="font-size:12px;color:var(--slate-500);margin:0 0 10px">每行一条，最多6条；保存后刷新首页即可生效。</p>
+            <textarea id="example-questions-input" rows="6" placeholder="每行输入一个问题" style="width:100%;padding:10px 12px;font-size:13px;font-family:inherit;border:1.5px solid var(--slate-200);border-radius:8px;outline:none;resize:vertical"></textarea>
+            <button class="btn btn-primary btn-sm" onclick="saveExampleQuestions()" style="margin-top:8px"><i class="ph ph-check"></i> 保存示例问题</button>
+          </div>
         </div>
       </div>
 
@@ -785,6 +791,11 @@
         <div class="admin-card">
           <h3><i class="ph ph-list"></i>所有资讯</h3>
           <div id="admin-news-list"></div>
+        </div>
+        <div class="admin-card">
+          <h3><i class="ph ph-megaphone"></i>首页滚动管理</h3>
+          <p style="margin:0 0 12px;color:var(--slate-500);font-size:13px">首页滚动内容独立于资讯列表，仅用于首页精选条。点击编辑可修改对应文章。</p>
+          <div id="admin-home-bulletin-list"></div>
         </div>
       </div>
 
@@ -1179,16 +1190,7 @@
       </div>
       <!-- ===== Page: Customer Leads ===== -->
       <div id="page-leads" class="page-content">
-        <div class="admin-card">
-          <div class="date-filter" style="margin:0">
-            <label>状态：</label>
-            <select id="lead-status-filter"><option value="">全部</option><option value="pending">待跟进</option><option value="contacted">已联系</option><option value="completed">已完成</option></select>
-            <label>客户类型：</label>
-            <select id="lead-type-filter"><option value="">全部</option><option value="consumer">消费者</option><option value="partner">经销商/合作伙伴</option></select>
-            <button class="btn btn-primary btn-sm" onclick="loadAdminLeads()">查询</button>
-          </div>
-        </div>
-        <div class="admin-card"><div class="table-title"><span><i class="ph ph-chat-circle-text"></i>客户需求列表</span><span class="count-badge" id="lead-count">0</span></div><div id="lead-list"></div></div>
+        <div class="admin-card"><div class="table-title"><span><i class="ph ph-chat-circle-text"></i>客户需求记录</span><span class="count-badge" id="lead-count">0</span></div><p style="font-size:12px;color:var(--slate-500);margin-bottom:12px">这里只记录客户联系方式和诉求，便于后续需要时查阅，不做复杂跟进流程。</p><div id="lead-list"></div></div>
       </div>
     </main>
   </div>
@@ -1831,7 +1833,7 @@ async function loadAll() {
   document.getElementById('last-update').textContent = '加载中...';
   await ensureChartJs();
   await Promise.all([
-    loadStats(), loadTrends(), loadAgentUsage(), loadRecent(), loadHotQuestions(),
+    loadStats(), loadTrends(), loadAgentUsage(), loadRecent(), loadHotQuestions(), loadExampleQuestions(),
   ]);
   document.getElementById('last-update').textContent = `更新于 ${new Date().toLocaleTimeString()}`;
 }
@@ -1900,6 +1902,32 @@ async function loadHotQuestions() {
     });
     renderWordCloud((await res.json()).questions);
   } catch (e) { console.error('hot error:', e); }
+}
+
+async function loadExampleQuestions() {
+  const input = document.getElementById('example-questions-input');
+  if (!input) return;
+  try {
+    const res = await fetch(`${API}/api/admin/settings/example-questions`, { headers: { 'Authorization': `Bearer ${getToken()}` } });
+    const data = await res.json();
+    input.value = (data.questions || []).join('\n');
+  } catch (e) { console.error('example questions error:', e); }
+}
+
+async function saveExampleQuestions() {
+  const input = document.getElementById('example-questions-input');
+  const questions = input.value.split('\n').map(item => item.trim()).filter(Boolean);
+  try {
+    const res = await fetch(`${API}/api/admin/settings/example-questions`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${getToken()}` },
+      body: JSON.stringify({ questions }),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error || '保存失败');
+    input.value = data.questions.join('\n');
+    showToast('示例问题已更新', 'success');
+  } catch (e) { showToast(e.message || '保存失败', 'error'); }
 }
 
 function renderTrendChart(trends) {
@@ -2123,9 +2151,10 @@ function handleNewsEditorPaste(event) {
 
 async function loadAdminNews() {
   try {
-    const res = await fetch(`${API}/api/news`);
+    const res = await fetch(`${API}/api/news?mode=content`);
     if (!res.ok) return;
     const data = await res.json();
+    loadAdminHomeBulletins();
     const container = document.getElementById('admin-news-list');
     if (!data.news || data.news.length === 0) {
       container.innerHTML = '<div class="empty-state"><i class="ph ph-newspaper"></i>暂无资讯，在上方添加</div>';
@@ -2149,6 +2178,25 @@ async function loadAdminNews() {
       </div>
     `).join('');
   } catch {}
+}
+
+async function loadAdminHomeBulletins() {
+  const container = document.getElementById('admin-home-bulletin-list');
+  if (!container) return;
+  try {
+    const res = await fetch(`${API}/api/admin/home-bulletins`, { headers: { 'Authorization': `Bearer ${getToken()}` } });
+    const data = await res.json();
+    if (!data.news || data.news.length === 0) {
+      container.innerHTML = '<div class="empty-state"><i class="ph ph-megaphone"></i>暂无首页滚动内容</div>';
+      return;
+    }
+    container.innerHTML = data.news.map(item => `
+      <div class="admin-list-item">
+        <div><div class="item-title">${esc(item.title)}</div><div class="item-meta">${fmt(item.created_at)} · 首页滚动</div></div>
+        <div class="item-actions"><button class="btn btn-secondary btn-sm" onclick="editNews(${item.id})">编辑</button><button class="btn btn-danger btn-sm" onclick="deleteNews(${item.id})">移除</button></div>
+      </div>
+    `).join('');
+  } catch { container.innerHTML = '<div class="empty-state">首页滚动加载失败</div>'; }
 }
 
 async function toggleNewsPin(id) {
@@ -2612,11 +2660,7 @@ function esc(s) {
 
 async function loadAdminLeads() {
   const list = document.getElementById('lead-list');
-  const status = document.getElementById('lead-status-filter').value;
-  const customerType = document.getElementById('lead-type-filter').value;
   const params = new URLSearchParams({ limit: '100' });
-  if (status) params.set('status', status);
-  if (customerType) params.set('customer_type', customerType);
   list.innerHTML = '<div class="loading"><i class="ph ph-spinner"></i> 加载中...</div>';
   try {
     const res = await fetch(apiUrl(`/api/admin/leads?${params}`), { headers: { Authorization: `Bearer ${getToken()}` } });
@@ -2624,24 +2668,12 @@ async function loadAdminLeads() {
     if (!res.ok) throw new Error(data.error || '加载失败');
     document.getElementById('lead-count').textContent = data.total || 0;
     if (!data.items.length) { list.innerHTML = '<div class="empty-state">暂无客户需求</div>'; return; }
-    const labels = { pending: '待跟进', contacted: '已联系', completed: '已完成' };
     list.innerHTML = data.items.map(item => `<div class="admin-card" style="margin:10px 0;border:1px solid var(--slate-200)">
-      <div style="display:flex;justify-content:space-between;gap:10px;align-items:center"><strong>${esc(item.customer_type === 'partner' ? '经销商/合作伙伴' : '消费者')} · ${esc(item.product_name || '未指定产品')}</strong><span class="count-badge">${esc(labels[item.status] || item.status)}</span></div>
+      <div style="display:flex;justify-content:space-between;gap:10px;align-items:center"><strong>${esc(item.customer_type === 'partner' ? '经销商/合作伙伴' : '消费者')} · ${esc(item.product_name || '未指定产品')}</strong><span style="font-size:12px;color:var(--slate-400)">${esc(item.created_at)}</span></div>
       <p style="margin:8px 0;color:var(--slate-600);white-space:pre-wrap">${esc(item.description)}</p>
-      <div style="font-size:12px;color:var(--slate-500)">联系方式：${esc(item.phone || item.wechat)} · ${esc(item.created_at)} · 来源：${esc(item.query_type || item.agent_id || '-')}</div>
-      <div style="display:flex;gap:8px;margin-top:10px"><select id="lead-status-${item.id}"><option value="pending" ${item.status === 'pending' ? 'selected' : ''}>待跟进</option><option value="contacted" ${item.status === 'contacted' ? 'selected' : ''}>已联系</option><option value="completed" ${item.status === 'completed' ? 'selected' : ''}>已完成</option></select><input id="lead-note-${item.id}" value="${esc(item.admin_note || '')}" placeholder="跟进备注" style="flex:1"><button class="btn btn-primary btn-sm" onclick="updateAdminLead(${item.id})">保存</button></div>
+      <div style="font-size:12px;color:var(--slate-500)">联系方式：${esc([item.phone, item.wechat].filter(Boolean).join(' / '))} · 来源：${esc(item.query_type || item.agent_id || '-')}</div>
     </div>`).join('');
   } catch (err) { list.innerHTML = `<div class="empty-state">${esc(err.message || '加载失败')}</div>`; }
-}
-
-async function updateAdminLead(id) {
-  const status = document.getElementById(`lead-status-${id}`).value;
-  const adminNote = document.getElementById(`lead-note-${id}`).value.trim();
-  const res = await fetch(apiUrl(`/api/admin/leads/${id}`), { method: 'PUT', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${getToken()}` }, body: JSON.stringify({ status, admin_note: adminNote }) });
-  const data = await res.json().catch(() => ({}));
-  if (!res.ok) { showToast(data.error || '保存失败', 'error'); return; }
-  showToast('需求已更新', 'success');
-  loadAdminLeads();
 }
 
 function showToast(msg, type) {
