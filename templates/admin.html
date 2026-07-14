@@ -316,6 +316,8 @@
     .admin-list-item .item-title { font-weight: 600; font-size: 14px; color: var(--slate-800); }
     .admin-list-item .item-meta { font-size: 12px; color: var(--slate-400); margin-top: 2px; }
     .admin-list-item .item-actions { display: flex; gap: 8px; flex-shrink: 0; }
+    .home-bulletin-header { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+    .home-bulletin-header .btn { width: 104px; justify-content: center; flex: 0 0 104px; }
     .qa-replies { margin-top: 12px; padding-top: 10px; border-top: 1px dashed var(--slate-200); }
     .qa-reply-item { display: flex; justify-content: space-between; gap: 12px; padding: 8px 0; }
     .qa-reply-item + .qa-reply-item { border-top: 1px solid var(--slate-100); }
@@ -793,7 +795,7 @@
           <div id="admin-news-list"></div>
         </div>
         <div class="admin-card">
-          <h3><i class="ph ph-megaphone"></i>首页滚动管理</h3>
+          <div class="home-bulletin-header"><span><i class="ph ph-megaphone"></i>首页滚动管理</span><button class="btn btn-primary btn-sm" onclick="newHomeBulletin()"><i class="ph ph-plus"></i> 新增</button></div>
           <p style="margin:0 0 12px;color:var(--slate-500);font-size:13px">首页滚动内容独立于资讯列表，仅用于首页精选条。点击编辑可修改对应文章。</p>
           <div id="admin-home-bulletin-list"></div>
         </div>
@@ -2199,6 +2201,15 @@ async function loadAdminHomeBulletins() {
   } catch { container.innerHTML = '<div class="empty-state">首页滚动加载失败</div>'; }
 }
 
+async function newHomeBulletin() {
+  await switchPage('news');
+  resetNewsForm();
+  document.getElementById('news-category').value = '首页滚动';
+  document.getElementById('news-category').readOnly = true;
+  document.getElementById('news-title').placeholder = '首页滚动标题';
+  document.getElementById('news-form-title').textContent = '新增首页滚动内容';
+}
+
 async function toggleNewsPin(id) {
   try {
     const res = await fetch(`${API}/api/news/${id}/pin`, {
@@ -2219,7 +2230,9 @@ async function toggleNewsFeature(id) {
 
 function resetNewsForm() {
   document.getElementById('news-title').value = '';
+  document.getElementById('news-title').placeholder = '资讯标题';
   document.getElementById('news-category').value = '';
+  document.getElementById('news-category').readOnly = false;
   document.getElementById('news-summary').value = '';
   if (quill) quill.root.innerHTML = '';
   document.getElementById('news-image-preview').classList.add('hidden');
@@ -2260,6 +2273,8 @@ async function editNews(id) {
       const item = await res.json();
       document.getElementById('news-title').value = item.title;
       document.getElementById('news-category').value = item.category || '';
+      document.getElementById('news-category').readOnly = item.category === '首页滚动';
+      document.getElementById('news-title').placeholder = item.category === '首页滚动' ? '首页滚动标题' : '资讯标题';
       document.getElementById('news-summary').value = item.summary || '';
       if (quill) quill.root.innerHTML = item.content || '';
       document.getElementById('news-form-title').textContent = '编辑资讯';
