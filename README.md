@@ -7,6 +7,7 @@ AI 智能对话系统，基于 Coze Bot API。
 为了方便后续快速接手项目，已补充项目概览文档：
 
 - [PROJECT_CONTEXT.md](./PROJECT_CONTEXT.md)
+- [HANDOFF.md](./HANDOFF.md)：启动、部署、管理员、发布和故障排查说明
 
 ## 功能
 
