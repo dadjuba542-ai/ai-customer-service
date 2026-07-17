@@ -7,7 +7,6 @@ import shutil
 import subprocess
 import tempfile
 import uuid
-from urllib.parse import urlencode
 
 import requests
 
@@ -25,11 +24,8 @@ ALLOWED_MIMES = {
     'audio/x-wav',
     'audio/ogg',
 }
-ALIYUN_TOKEN_URL = os.environ.get('ALIYUN_NLS_TOKEN_URL', 'https://nls-meta.cn-shanghai.aliyuncs.com/pop/2018-05-18/tokens')
-ALIYUN_ASR_URL = os.environ.get('ALIYUN_NLS_ASR_URL', 'https://nls-gateway-cn-shanghai.aliyuncs.com/stream/v1/asr')
 TENCENT_ASR_URL = os.environ.get('TENCENT_ASR_URL', 'https://asr.tencentcloudapi.com')
 TENCENT_REGION = os.environ.get('TENCENT_ASR_REGION', 'ap-guangzhou')
-SUPPORTED_PROVIDERS = {'aliyun_asr', 'tencent_asr'}
 
 
 class SpeechServiceError(Exception):
@@ -44,87 +40,13 @@ def transcribe_audio_file(file_storage, user_id='anonymous'):
     if get_setting('speech_enabled', '0') != '1':
         raise SpeechServiceError('语音识别未开启', status_code=403)
 
-    provider = get_setting('speech_provider', 'aliyun_asr').strip() or 'aliyun_asr'
-    if provider not in SUPPORTED_PROVIDERS:
-        provider = 'aliyun_asr'
-
     audio_bytes, filename, mimetype = _read_and_validate_audio(file_storage)
     wav_bytes = _convert_audio_to_wav(audio_bytes, filename)
-
-    if provider == 'tencent_asr':
-        text = _transcribe_with_tencent(wav_bytes)
-    else:
-        text = _transcribe_with_aliyun(wav_bytes)
+    text = _transcribe_with_tencent(wav_bytes)
 
     if not text:
         raise SpeechServiceError('没有识别到文字，请靠近麦克风再试', status_code=502, retryable=True)
-    return {'text': text.strip(), 'provider': provider}
-
-
-def _transcribe_with_aliyun(wav_bytes):
-    app_key = get_setting('aliyun_nls_app_key', '').strip()
-    access_key_id = get_setting('aliyun_access_key_id', '').strip()
-    access_key_secret = get_secret_setting('aliyun_access_key_secret', '').strip()
-    if not app_key or not access_key_id or not access_key_secret:
-        raise SpeechServiceError('未配置语音识别服务', status_code=400)
-
-    token = _get_aliyun_nls_token(access_key_id, access_key_secret)
-    params = {
-        'appkey': app_key,
-        'format': 'wav',
-        'sample_rate': 16000,
-        'enable_punctuation_prediction': 'true',
-        'enable_inverse_text_normalization': 'true',
-    }
-    try:
-        response = requests.post(
-            f'{ALIYUN_ASR_URL}?{urlencode(params)}',
-            headers={
-                'X-NLS-Token': token,
-                'Content-Type': 'application/octet-stream',
-            },
-            data=wav_bytes,
-            timeout=(5, 30),
-        )
-        response.raise_for_status()
-        payload = response.json()
-    except requests.exceptions.Timeout as exc:
-        raise SpeechServiceError('语音识别超时，请稍后重试', status_code=504, retryable=True) from exc
-    except requests.exceptions.RequestException as exc:
-        raise SpeechServiceError('语音识别失败，请重试', status_code=502, retryable=True) from exc
-    except ValueError as exc:
-        raise SpeechServiceError('语音识别返回异常，请重试', status_code=502, retryable=True) from exc
-
-    if payload.get('status') not in (20000000, '20000000', None):
-        message = payload.get('message') or payload.get('status_text') or '语音识别失败，请重试'
-        raise SpeechServiceError(_friendly_aliyun_error(message), status_code=502, retryable=True)
-
-    text = (payload.get('result') or payload.get('text') or '').strip()
-    if not text:
-        raise SpeechServiceError('没有识别到文字，请靠近麦克风再试', status_code=502, retryable=True)
-    return text
-
-
-def _get_aliyun_nls_token(access_key_id, access_key_secret):
-    try:
-        response = requests.post(
-            ALIYUN_TOKEN_URL,
-            json={'AccessKeyId': access_key_id, 'AccessKeySecret': access_key_secret},
-            timeout=(5, 20),
-        )
-        response.raise_for_status()
-        payload = response.json()
-    except requests.exceptions.Timeout as exc:
-        raise SpeechServiceError('语音识别鉴权超时，请稍后重试', status_code=504, retryable=True) from exc
-    except requests.exceptions.RequestException as exc:
-        raise SpeechServiceError('语音识别鉴权失败，请检查阿里云配置', status_code=502, retryable=True) from exc
-    except ValueError as exc:
-        raise SpeechServiceError('语音识别鉴权返回异常', status_code=502, retryable=True) from exc
-
-    token = _find_first_key(payload, ('Id', 'token', 'id'))
-    if not token:
-        raise SpeechServiceError('语音识别鉴权失败，请检查阿里云配置', status_code=502, retryable=True)
-    return str(token)
+    return {'text': text.strip(), 'provider': 'tencent_asr'}
 
 
 def _transcribe_with_tencent(wav_bytes):
@@ -278,32 +200,3 @@ def _convert_audio_to_wav(audio_bytes, filename):
                     os.unlink(path)
                 except OSError:
                     pass
-
-
-def _friendly_aliyun_error(message):
-    text = str(message or '').strip()
-    lowered = text.lower()
-    if 'token' in lowered or 'forbidden' in lowered or 'unauthorized' in lowered:
-        return '语音识别鉴权失败，请检查阿里云配置'
-    if 'timeout' in lowered:
-        return '语音识别超时，请稍后重试'
-    if text:
-        return text
-    return '语音识别失败，请重试'
-
-
-def _find_first_key(value, keys):
-    if isinstance(value, dict):
-        for key in keys:
-            if value.get(key):
-                return value.get(key)
-        for child in value.values():
-            found = _find_first_key(child, keys)
-            if found:
-                return found
-    if isinstance(value, list):
-        for child in value:
-            found = _find_first_key(child, keys)
-            if found:
-                return found
-    return None

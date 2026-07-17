@@ -102,13 +102,21 @@
           </div>
         </div>
         <div class="chat-input-area">
-          <button class="voice-btn" id="voice-btn" onclick="toggleVoiceInput()" style="display:none" title="语音输入"><i class="ph ph-microphone"></i></button>
+          <button type="button" class="voice-btn" id="voice-btn" onclick="toggleVoiceInput()" style="display:none" title="语音输入" aria-label="开始语音输入" aria-pressed="false"><i class="ph ph-microphone"></i></button>
           <div class="input-wrapper">
             <button class="input-plus"><i class="ph ph-plus"></i></button>
             <textarea id="message-input" rows="1" placeholder="说点什么..." onkeydown="handleInputKeydown(event)"></textarea>
             <button class="send-btn" id="send-btn" onclick="sendMessage()"><i class="ph ph-paper-plane-right"></i></button>
           </div>
-          <div class="voice-status" id="voice-status" style="display:none"></div>
+          <div class="voice-status" id="voice-status" role="status" aria-live="polite" style="display:none">
+            <span class="voice-live-dot" aria-hidden="true"></span>
+            <span id="voice-status-text">正在录音</span>
+            <span class="voice-timer" id="voice-timer">00:00</span>
+            <span class="voice-meter" id="voice-meter" aria-hidden="true">
+              <i></i><i></i><i></i><i></i><i></i>
+            </span>
+            <button type="button" class="voice-cancel-btn" id="voice-cancel-btn" onclick="cancelVoiceInput()">取消</button>
+          </div>
           <button class="scroll-bottom-btn" id="scroll-bottom-btn" onclick="scrollToBottom()">
             <i class="ph ph-arrow-down"></i>
           </button>
@@ -306,6 +314,7 @@
   </div>
 
   <div id="toast"></div>
-  <script src="app.js?v=20260714-bulletin5"></script>
+  <script src="speech-controller.js?v=20260717-speech113"></script>
+  <script src="app.js?v=20260717-speech113"></script>
 </body>
 </html>

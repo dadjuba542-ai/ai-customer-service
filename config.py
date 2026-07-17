@@ -19,7 +19,8 @@ class Config:
     PUBLIC_REGISTRATION_ENABLED = os.environ.get('PUBLIC_REGISTRATION_ENABLED', 'false').lower() == 'true'
     MAX_CONTENT_LENGTH = int(os.environ.get('MAX_CONTENT_LENGTH', 12 * 1024 * 1024))
     CHAT_RATE_LIMIT = int(os.environ.get('CHAT_RATE_LIMIT', '12'))
-    SPEECH_RATE_LIMIT = int(os.environ.get('SPEECH_RATE_LIMIT', '6'))
+    SPEECH_RATE_LIMIT = int(os.environ.get('SPEECH_RATE_LIMIT', '20'))
+    SPEECH_REALTIME_SESSION_LIMIT = int(os.environ.get('SPEECH_REALTIME_SESSION_LIMIT', '20'))
 
     # 四大模块对应的机器人ID
     BOT_MAPPING = {

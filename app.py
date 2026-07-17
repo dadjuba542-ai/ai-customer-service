@@ -98,7 +98,8 @@ def add_cache_headers(response):
         "default-src 'self'; base-uri 'self'; frame-ancestors 'none'; object-src 'none'; "
         "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://html2canvas.hertzen.com; "
         "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; "
-        "img-src 'self' data: https:; connect-src 'self'; media-src 'self' blob:; worker-src 'self' blob:"
+        "img-src 'self' data: https:; connect-src 'self' wss://asr.cloud.tencent.com; "
+        "media-src 'self' blob:; worker-src 'self' blob:"
     )
     if request.is_secure:
         response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'

@@ -1,6 +1,6 @@
 # AI 宝儿智能体｜交接与运维说明
 
-> 面向后续开发者、运维人员和项目接手人。敏感值（`SECRET_KEY`、Coze/阿里云/腾讯云密钥、管理员密码）只放在服务器环境或数据库哈希中，不写入 Git。
+> 面向后续开发者、运维人员和项目接手人。敏感值（`SECRET_KEY`、Coze/腾讯云密钥、管理员密码）只放在服务器环境或数据库哈希中，不写入 Git。
 
 ## 1. 当前状态
 
@@ -67,7 +67,7 @@ PUBLIC_REGISTRATION_ENABLED='false'
 
 - `COZE_API_KEY`
 - `BOT_PRODUCT`、`BOT_FAQ`、`BOT_MOMENT`、`BOT_SCRIPT`
-- 阿里云/腾讯云 ASR 配置
+- 腾讯云 ASR 配置（AppID、SecretId、SecretKey）
 - `TRUST_PROXY=true`（反向代理后使用）
 - `CORS_ORIGINS`（只填写明确域名，禁止 `*`）
 
@@ -115,7 +115,7 @@ python3 scripts/reset_admin_password.py admin8
 ### 其他保留能力
 
 - 产品、资讯、案例、社区、聊天、语音和分享功能保持原有入口。
-- 语音服务只保留阿里云和腾讯云 ASR，不再提供 Coze 语音入口。
+- 语音服务统一使用腾讯云 ASR：实时识别为主，同一段录音批量转写为兜底，不再提供阿里云或 Coze 语音入口。
 - 图标字体不可用时使用 CSS 几何 fallback，避免出现方块字符。
 
 ## 7. 数据与迁移
@@ -214,4 +214,3 @@ git pull --ff-only origin 1.1
 3. 将 `templates/admin.html` 内联脚本继续迁移到独立 JS 文件。
 4. 为首页滚动内容增加排序字段，而不是长期依赖创建时间排序。
 5. 服务器部署逐步统一到持久化目录和明确的进程管理配置。
-

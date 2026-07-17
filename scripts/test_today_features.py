@@ -2,9 +2,13 @@
 import os
 import tempfile
 import sys
+import base64
+import hashlib
+import hmac
+from urllib.parse import unquote
 from io import BytesIO
 from pathlib import Path
-from unittest.mock import Mock, patch
+from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
@@ -146,24 +150,41 @@ def main():
         r = client.get("/api/speech/config")
         assert_true(r.status_code == 200 and r.get_json().get("enabled") is False, f"speech should default off: {r.get_json()}")
         r = client.put("/api/admin/settings/speech", headers=auth, json={"enabled": True})
-        assert_true(r.status_code == 400, f"speech enabled without aliyun config should fail: {r.status_code}")
+        assert_true(r.status_code == 400, f"speech enabled without tencent config should fail: {r.status_code}")
         r = client.put(
             "/api/admin/settings/speech",
             headers=auth,
             json={
                 "enabled": True,
-                "provider": "aliyun_asr",
-                "aliyun_app_key": "app-key",
-                "aliyun_access_key_id": "ak-id",
-                "aliyun_access_key_secret": "ak-secret",
+                "mode": "auto",
+                "tencent_app_id": "1234567890",
+                "tencent_secret_id": "tencent-secret-id",
+                "tencent_secret_key": "tencent-secret-key",
             },
         )
         assert_true(r.status_code == 200, f"speech settings save failed: {r.status_code} {r.get_data(as_text=True)}")
         settings = r.get_json()
-        assert_true(settings.get("provider") == "aliyun_asr", f"speech provider mismatch: {settings}")
-        assert_true(settings.get("aliyun_access_key_secret_masked"), f"speech secret should be masked: {settings}")
+        assert_true(settings.get("provider") == "tencent_asr", f"speech provider mismatch: {settings}")
+        assert_true(settings.get("tencent_secret_key_masked"), f"speech secret should be masked: {settings}")
         r = client.get("/api/speech/config")
-        assert_true(r.get_json().get("enabled") is True, f"speech public config not enabled: {r.get_json()}")
+        public_speech = r.get_json()
+        assert_true(public_speech.get("enabled") is True, f"speech public config not enabled: {public_speech}")
+        assert_true(public_speech.get("realtime_enabled") is True, f"speech realtime config not ready: {public_speech}")
+
+        r = client.post("/api/speech/realtime/session", headers=auth, json={"user_id": "u-speech"})
+        assert_true(r.status_code == 200, f"realtime speech session failed: {r.status_code} {r.get_data(as_text=True)}")
+        realtime = r.get_json()
+        signed_url = realtime.get("url", "")
+        assert_true(signed_url.startswith("wss://asr.cloud.tencent.com/asr/v2/1234567890?"), f"realtime url mismatch: {signed_url}")
+        assert_true("tencent-secret-key" not in signed_url and "signature=" in signed_url, "secret leaked or signature missing")
+        sign_source, signature = signed_url.removeprefix("wss://").rsplit("&signature=", 1)
+        expected_signature = base64.b64encode(
+            hmac.new(b"tencent-secret-key", sign_source.encode("utf-8"), hashlib.sha1).digest()
+        ).decode("ascii")
+        assert_true(unquote(signature) == expected_signature, "realtime websocket signature mismatch")
+        page = client.get("/")
+        csp = page.headers.get("Content-Security-Policy", "")
+        assert_true("wss://asr.cloud.tencent.com" in csp, f"tencent realtime websocket blocked by CSP: {csp}")
 
         r = client.post("/api/speech/transcribe", headers=auth, data={"user_id": "u-speech"})
         assert_true(r.status_code == 400, f"speech missing audio should 400: {r.status_code} {r.get_data(as_text=True)}")
@@ -174,14 +195,8 @@ def main():
             data={"audio": (oversized, "voice.webm", "audio/webm"), "user_id": "u-speech"},
         )
         assert_true(r.status_code == 400, f"speech oversized audio should 400: {r.status_code} {r.get_data(as_text=True)}")
-        token_response = Mock()
-        token_response.json.return_value = {"Token": {"Id": "aliyun-token"}}
-        token_response.raise_for_status.return_value = None
-        asr_response = Mock()
-        asr_response.json.return_value = {"status": 20000000, "result": "这是语音识别结果"}
-        asr_response.raise_for_status.return_value = None
         with patch("services.speech_service._convert_audio_to_wav", return_value=b"wav-bytes") as convert_mock, \
-             patch("services.speech_service.requests.post", side_effect=[token_response, asr_response]) as post_mock:
+             patch("services.speech_service._tencent_api_request", return_value={"Result": "这是语音识别结果"}) as asr_mock:
             r = client.post(
                 "/api/speech/transcribe",
                 headers=auth,
@@ -189,13 +204,13 @@ def main():
             )
         assert_true(r.status_code == 200, f"speech transcribe failed: {r.status_code} {r.get_data(as_text=True)}")
         assert_true(r.get_json().get("text") == "这是语音识别结果", f"speech text mismatch: {r.get_json()}")
-        assert_true(r.get_json().get("provider") == "aliyun_asr", f"speech provider mismatch: {r.get_json()}")
+        assert_true(r.get_json().get("provider") == "tencent_asr", f"speech provider mismatch: {r.get_json()}")
         assert_true(convert_mock.called, "speech audio should be converted to wav")
-        token_payload = post_mock.call_args_list[0].kwargs.get("json", {})
-        assert_true(token_payload.get("AccessKeyId") == "ak-id", f"aliyun token payload mismatch: {token_payload}")
-        asr_headers = post_mock.call_args_list[1].kwargs.get("headers", {})
-        assert_true(asr_headers.get("X-NLS-Token") == "aliyun-token", f"aliyun token header missing: {asr_headers}")
-        assert_true(post_mock.call_args_list[1].kwargs.get("data") == b"wav-bytes", "aliyun asr should receive wav bytes")
+        asr_mock.assert_called_once()
+        action, payload, secret_id, secret_key = asr_mock.call_args.args
+        assert_true(action == "SentenceRecognition", f"tencent action mismatch: {action}")
+        assert_true(secret_id == "tencent-secret-id" and secret_key == "tencent-secret-key", "tencent credentials mismatch")
+        assert_true(base64.b64decode(payload.get("Data", "")) == b"wav-bytes", "tencent asr should receive wav bytes")
 
         print("PASS: today features smoke test")
 

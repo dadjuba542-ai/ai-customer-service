@@ -985,18 +985,16 @@
               <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--slate-600);margin:6px 0 8px">
                 <input type="checkbox" id="speech-enabled-input"> 开启前台语音识别
               </label>
-              <select id="speech-provider-input" style="width:100%;padding:8px 12px;font-size:13px;font-family:inherit;border:1.5px solid var(--slate-200);border-radius:8px;outline:none;margin-bottom:8px">
-                <option value="aliyun_asr">阿里云一句话识别（推荐）</option>
-                <option value="tencent_asr">腾讯云一句话识别</option>
+              <select id="speech-mode-input" style="width:100%;padding:8px 12px;font-size:13px;font-family:inherit;border:1.5px solid var(--slate-200);border-radius:8px;outline:none;margin-bottom:8px">
+                <option value="auto">实时优先，失败自动转写（推荐）</option>
+                <option value="realtime">仅腾讯云实时识别</option>
+                <option value="batch">仅录音完成后转写</option>
               </select>
-              <input type="text" id="aliyun-app-key-input" placeholder="阿里云 NLS AppKey" style="width:100%;padding:8px 12px;font-size:13px;font-family:inherit;border:1.5px solid var(--slate-200);border-radius:8px;outline:none;margin-bottom:8px">
-              <input type="text" id="aliyun-access-key-id-input" placeholder="阿里云 AccessKey ID" style="width:100%;padding:8px 12px;font-size:13px;font-family:inherit;border:1.5px solid var(--slate-200);border-radius:8px;outline:none;margin-bottom:8px">
-              <input type="password" id="aliyun-access-key-secret-input" placeholder="阿里云 AccessKey Secret（留空表示不修改）" style="width:100%;padding:8px 12px;font-size:13px;font-family:inherit;border:1.5px solid var(--slate-200);border-radius:8px;outline:none;margin-bottom:8px">
-              <div id="aliyun-secret-hint" style="margin:-2px 0 8px;font-size:11px;color:var(--slate-400)"></div>
+              <input type="text" id="tencent-app-id-input" inputmode="numeric" placeholder="腾讯云 AppID（实时识别必填）" style="width:100%;padding:8px 12px;font-size:13px;font-family:inherit;border:1.5px solid var(--slate-200);border-radius:8px;outline:none;margin-bottom:8px">
               <input type="text" id="tencent-secret-id-input" placeholder="腾讯云 SecretId" style="width:100%;padding:8px 12px;font-size:13px;font-family:inherit;border:1.5px solid var(--slate-200);border-radius:8px;outline:none;margin-bottom:8px">
               <input type="password" id="tencent-secret-key-input" placeholder="腾讯云 SecretKey（留空表示不修改）" style="width:100%;padding:8px 12px;font-size:13px;font-family:inherit;border:1.5px solid var(--slate-200);border-radius:8px;outline:none">
               <div id="tencent-secret-hint" style="margin:4px 0 0;font-size:11px;color:var(--slate-400)"></div>
-              <div style="margin-top:4px;font-size:11px;color:var(--slate-400)">开启后，前台聊天输入框会显示麦克风；录音会转成 WAV 后交给国内 ASR，识别结果只填入输入框，不会自动发送。</div>
+              <div style="margin-top:4px;font-size:11px;color:var(--slate-400)">实时音频直连腾讯云 ASR；长期密钥只保存在服务端。识别文字只填入输入框，不会自动发送。</div>
               <button class="btn btn-primary btn-sm" style="margin-top:6px" onclick="saveSpeechSettings()">保存语音设置</button>
             </div>
           </div>
@@ -2373,16 +2371,14 @@ async function loadAdminSystemConfig() {
       fetch(`${API}/api/admin/settings/speech`, { headers: { 'Authorization': `Bearer ${getToken()}` } }),
     ]);
     let keyMasked = '未设置', blockedKW = '', defaultHint = '', speechEnabled = false;
-    let speechProvider = 'aliyun_asr', aliyunAppKey = '', aliyunAccessKeyId = '', aliyunSecretMasked = '', tencentSecretId = '', tencentSecretMasked = '';
+    let speechMode = 'auto', tencentAppId = '', tencentSecretId = '', tencentSecretMasked = '';
     if (keyRes.ok) { const kd = await keyRes.json(); keyMasked = kd.masked || '未设置'; }
     if (blockRes.ok) { const bd = await blockRes.json(); blockedKW = bd.keywords || ''; defaultHint = bd.defaultHint || ''; }
     if (speechRes.ok) {
       const sd = await speechRes.json();
       speechEnabled = !!sd.enabled;
-      speechProvider = sd.provider || 'aliyun_asr';
-      aliyunAppKey = sd.aliyun_app_key || '';
-      aliyunAccessKeyId = sd.aliyun_access_key_id || '';
-      aliyunSecretMasked = sd.aliyun_access_key_secret_masked || '';
+      speechMode = sd.mode || 'auto';
+      tencentAppId = sd.tencent_app_id || '';
       tencentSecretId = sd.tencent_secret_id || '';
       tencentSecretMasked = sd.tencent_secret_key_masked || '';
     }
@@ -2390,11 +2386,8 @@ async function loadAdminSystemConfig() {
     document.getElementById('blocked-keywords-input').value = blockedKW;
     document.getElementById('blocked-hint').textContent = `参考: ${defaultHint}`;
     document.getElementById('speech-enabled-input').checked = speechEnabled;
-    document.getElementById('speech-provider-input').value = speechProvider;
-    document.getElementById('aliyun-app-key-input').value = aliyunAppKey;
-    document.getElementById('aliyun-access-key-id-input').value = aliyunAccessKeyId;
-    document.getElementById('aliyun-access-key-secret-input').value = '';
-    document.getElementById('aliyun-secret-hint').textContent = aliyunSecretMasked ? `已保存 Secret：${aliyunSecretMasked}` : '尚未保存 AccessKey Secret';
+    document.getElementById('speech-mode-input').value = speechMode;
+    document.getElementById('tencent-app-id-input').value = tencentAppId;
     document.getElementById('tencent-secret-id-input').value = tencentSecretId;
     document.getElementById('tencent-secret-key-input').value = '';
     document.getElementById('tencent-secret-hint').textContent = tencentSecretMasked ? `已保存 SecretKey：${tencentSecretMasked}` : '尚未保存 SecretKey';
@@ -2525,10 +2518,8 @@ async function saveBlockedKeywords() {
 
 async function saveSpeechSettings() {
   const enabled = document.getElementById('speech-enabled-input').checked;
-  const provider = document.getElementById('speech-provider-input').value || 'aliyun_asr';
-  const aliyunAppKey = document.getElementById('aliyun-app-key-input').value.trim();
-  const aliyunAccessKeyId = document.getElementById('aliyun-access-key-id-input').value.trim();
-  const aliyunAccessKeySecret = document.getElementById('aliyun-access-key-secret-input').value.trim();
+  const mode = document.getElementById('speech-mode-input').value || 'auto';
+  const tencentAppId = document.getElementById('tencent-app-id-input').value.trim();
   const tencentSecretId = document.getElementById('tencent-secret-id-input').value.trim();
   const tencentSecretKey = document.getElementById('tencent-secret-key-input').value.trim();
   try {
@@ -2537,10 +2528,8 @@ async function saveSpeechSettings() {
       headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${getToken()}` },
       body: JSON.stringify({
         enabled,
-        provider,
-        aliyun_app_key: aliyunAppKey,
-        aliyun_access_key_id: aliyunAccessKeyId,
-        aliyun_access_key_secret: aliyunAccessKeySecret,
+        mode,
+        tencent_app_id: tencentAppId,
         tencent_secret_id: tencentSecretId,
         tencent_secret_key: tencentSecretKey,
       }),
@@ -2548,10 +2537,6 @@ async function saveSpeechSettings() {
     const data = await res.json().catch(() => ({}));
     if (res.ok) {
       showToast('语音设置已保存', 'success');
-      document.getElementById('aliyun-access-key-secret-input').value = '';
-      document.getElementById('aliyun-secret-hint').textContent = data.aliyun_access_key_secret_masked
-        ? `已保存 Secret：${data.aliyun_access_key_secret_masked}`
-        : '尚未保存 AccessKey Secret';
       document.getElementById('tencent-secret-key-input').value = '';
       document.getElementById('tencent-secret-hint').textContent = data.tencent_secret_key_masked
         ? `已保存 SecretKey：${data.tencent_secret_key_masked}`
