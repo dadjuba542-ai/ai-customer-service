@@ -100,8 +100,21 @@
   flex-shrink: 0;
   color: var(--white);
   font-size: 14px;
+  position: relative;
+  transition: all 0.2s ease;
 }
-.msg.user .msg-avatar { background: var(--slate-100); color: var(--slate-500); }
+.msg.bot .msg-avatar {
+  background: var(--primary);
+  box-shadow:
+    0 0 0 2px var(--white),
+    0 2px 8px rgba(139, 92, 246, 0.3),
+    0 0 0 4px rgba(139, 92, 246, 0.1);
+}
+.msg.user .msg-avatar {
+  background: var(--slate-100);
+  color: var(--slate-500);
+  box-shadow: 0 0 0 2px var(--white), 0 1px 4px rgba(0, 0, 0, 0.06);
+}
 
 .msg-body {
   display: flex; flex-direction: column; gap: 4px;
@@ -116,18 +129,94 @@
   white-space: pre-wrap;
   word-break: break-word;
   overflow-wrap: anywhere;
+  transition: box-shadow 0.15s ease;
 }
 .msg.user .msg-bubble {
   background: var(--primary);
   color: var(--white);
-  border-bottom-right-radius: 4px;
+  border-bottom-right-radius: 6px;
+  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.2);
 }
 .msg.bot .msg-bubble {
   background: var(--white);
   color: var(--slate-800);
   border: 1px solid var(--slate-100);
-  border-bottom-left-radius: 4px;
-  box-shadow: var(--shadow-sm);
+  border-bottom-left-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 0 0 1px rgba(139, 92, 246, 0.05);
+}
+
+/* 代码块 */
+.code-block {
+  margin: 8px 0;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: #1e293b;
+  border: 1px solid #334155;
+}
+.code-block-header {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 6px 12px;
+  background: #0f172a;
+  font-size: 12px; color: #94a3b8;
+  border-bottom: 1px solid #334155;
+}
+.code-lang {
+  font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+  text-transform: lowercase;
+  letter-spacing: 0.5px;
+}
+.code-content {
+  margin: 0;
+  padding: 12px;
+  font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #e2e8f0;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+.code-line {
+  min-height: 1.2em;
+}
+
+/* 表格 */
+.table-wrapper {
+  margin: 8px 0;
+  overflow-x: auto;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--slate-200);
+}
+.md-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.md-table th, .md-table td {
+  padding: 8px 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--slate-100);
+}
+.md-table th {
+  background: var(--slate-50);
+  font-weight: 600;
+  color: var(--slate-700);
+}
+.md-table tr:last-child td { border-bottom: none; }
+.md-table tr:hover td { background: var(--slate-50); }
+
+/* 列表项 */
+.md-list-item {
+  padding-left: 16px;
+  position: relative;
+  margin: 4px 0;
+}
+.md-list-item::before {
+  content: '•';
+  position: absolute;
+  left: 0;
+  color: var(--primary);
+  font-weight: bold;
 }
 .msg-time { font-size: 10px; color: var(--slate-300); }
 .msg.user .msg-time { text-align: right; }
@@ -136,11 +225,23 @@
   display: inline-block;
   width: 6px; height: 16px;
   background: var(--primary);
-  animation: blink 0.8s infinite;
+  animation: blink 0.7s infinite;
   vertical-align: middle;
   margin-left: 2px;
+  border-radius: 1px;
 }
-@keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0; } }
+@keyframes blink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0.2; }
+}
+
+/* 流式气泡渐入——msgIn 动画已由 .msg 提供，但流式更新时给气泡加呼吸感 */
+.msg.bot .msg-bubble {
+  transition: background-color 0.15s ease;
+}
+.msg.bot .msg-bubble:has(.cursor-blink) {
+  background: linear-gradient(180deg, var(--white) 0%, rgba(245, 243, 255, 0.3) 100%);
+}
 
 .stream-placeholder-text {
   opacity: 0.88;
@@ -168,25 +269,32 @@
 
 @keyframes streamThinkingPulse {
   0%,80%,100% { transform: translateY(0); opacity: 0.25; }
-  40% { transform: translateY(-1px); opacity: 0.9; }
+  40% { transform: translateY(-2px); opacity: 0.9; }
 }
 
+/* 打字指示器——精致化 */
 .typing-indicator {
   display: flex; align-items: center; gap: 10px;
-  opacity: 0.6;
+  opacity: 0;
+  animation: typingFadeIn 0.3s ease forwards;
 }
-.typing-dots { display: flex; gap: 4px; }
+@keyframes typingFadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 0.75; transform: translateY(0); }
+}
+.typing-dots { display: flex; gap: 5px; align-items: center; }
 .typing-dot {
-  width: 8px; height: 8px;
+  width: 7px; height: 7px;
   border-radius: 50%;
   background: var(--primary);
-  animation: typingBounce 1.2s infinite;
+  animation: typingBounce 1.4s infinite ease-in-out;
 }
-.typing-dot:nth-child(2) { animation-delay: 0.15s; }
-.typing-dot:nth-child(3) { animation-delay: 0.3s; }
+.typing-dot:nth-child(2) { animation-delay: 0.18s; }
+.typing-dot:nth-child(3) { animation-delay: 0.36s; }
 @keyframes typingBounce {
-  0%,80%,100% { transform: scale(0.6); opacity: 0.4; }
-  40% { transform: scale(1); opacity: 1; }
+  0%,80%,100% { transform: scale(0.6) translateY(0); opacity: 0.4; }
+  40% { transform: scale(1) translateY(-4px); opacity: 1; }
+  60% { transform: scale(0.85) translateY(1px); opacity: 0.8; }
 }
 
 /* Waiting Bubble */

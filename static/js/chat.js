@@ -47,6 +47,41 @@ function handleInputKeydown(e) {
   if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
 }
 
+// 轻量 Markdown 渲染（不引第三方库，仅覆盖常用场景）
+function renderBotContent(text) {
+  if (!text) return '';
+  const escaped = escapeHtml(text);
+
+  // 代码块 ```lang ... ``` → <pre><code>
+  const codeBlockPattern = /```(\w*)\n([\s\S]*?)```/g;
+  let html = escaped.replace(codeBlockPattern, (match, lang, code) => {
+    const codeHtml = code.trim().split('\n').map(line => `<div class="code-line">${escapeHtml(line)}</div>`).join('');
+    return `<div class="code-block" data-lang="${lang || 'text'}"><div class="code-block-header"><span class="code-lang">${lang || 'text'}</span></div><pre class="code-content">${codeHtml}</pre></div>`;
+  });
+
+  // 表格 | a | b | → <table>
+  const tablePattern = /\|(.+)\|\n\|[-\s|:]+\|\n((?:\|.+\|\n?)+)/g;
+  html = html.replace(tablePattern, (match, header, body) => {
+    const ths = header.split('|').map(h => `<th>${escapeHtml(h.trim())}</th>`).join('');
+    const rows = body.trim().split('\n').map(row => {
+      const tds = row.split('|').filter((_, i, arr) => i > 0 && i < arr.length - 1).map(td => `<td>${escapeHtml(td.trim())}</td>`).join('');
+      return `<tr>${tds}</tr>`;
+    }).join('');
+    return `<div class="table-wrapper"><table class="md-table"><thead><tr>${ths}</tr></thead><tbody>${rows}</tbody></table></div>`;
+  });
+
+  // 加粗 **text** → <strong>
+  html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+
+  // 无序列表 - / * → <ul><li>
+  html = html.replace(/^(\s*)[*-]\s+(.+)$/gm, (match, indent, text) => `<div class="md-list-item">${text}</div>`);
+
+  // 换行保留（已有 white-space: pre-wrap，但代码块内的换行需要特殊处理）
+  // 对代码块内容不做换行替换，已在上面处理
+
+  return html;
+}
+
 function addMessage(msg) {
   state.messages.push(msg);
   renderMessages();
@@ -58,51 +93,66 @@ function replaceSystemMessage(text) {
   renderMessages();
 }
 
+function renderMessageItem(msg, idx) {
+  const agent = msg.agentId ? AGENTS.find(a => a.id === msg.agentId) : AGENTS[0];
+  const div = document.createElement('div');
+  div.className = `msg ${msg.role}`;
+  div.dataset.msgId = msg.id;
+  if (msg.role === 'system' || msg.role === 'handoff-system') {
+    if (msg.role === 'handoff-system') div.classList.add('handoff-system');
+    div.innerHTML = `<div class="system-bubble"><i class="ph ph-check-circle"></i><div class="sb-text">${msg.content}</div></div>`;
+  } else if (msg.role === 'handoff-agent') {
+    div.classList.add('handoff-agent');
+    div.innerHTML = `<div class="msg-avatar"><i class="ph ph-headset"></i></div><div class="msg-body"><div class="msg-bubble">${escapeHtml(msg.content)}</div><span class="msg-time">${msg.time || ''}</span></div>`;
+  } else if (msg.role === 'bot') {
+    const icon = agent ? agent.icon : 'sparkle';
+    const color = agent ? agent.color : '#4F46E5';
+    const renderedContent = renderBotContent(msg.content);
+    const likeActive = msg.feedback === 1 ? ' active' : '';
+    const dislikeActive = msg.feedback === 0 ? ' active' : '';
+    const feedbackDisabled = msg.feedback !== undefined ? ' disabled' : '';
+    const actions = !msg.isStreaming ? `
+      <div class="msg-actions">
+        <button class="msg-action-btn" onclick="copyText('${escapeHtml(msg.content).replace(/'/g, "\\'")}')"><i class="ph ph-copy-simple"></i> 复制</button>
+        ${agent && agent.type === '产品咨询' ? '<button class="msg-action-btn" onclick="switchView(\'products\')"><i class="ph ph-shopping-bag"></i> 查看产品</button>' : ''}
+        <button class="msg-action-btn share-action" onclick="shareAnswerCard(${idx})"><i class="ph ph-share-network"></i> 生成分享图</button>
+        <button class="msg-action-btn lead-action" onclick="openLeadModal(${idx})"><i class="ph ph-chat-circle-text"></i> 获取方案</button>
+        <button class="msg-action-btn" onclick="regenerateMsg(${idx})"><i class="ph ph-arrows-clockwise"></i> 重新回答</button>
+        ${msg.historyId ? `
+        <button class="msg-feedback-btn${likeActive}${feedbackDisabled}" onclick="sendFeedback(${msg.historyId}, 1, ${idx})"><i class="ph ph-thumbs-up"></i></button>
+        <button class="msg-feedback-btn${dislikeActive}${feedbackDisabled}" onclick="sendFeedback(${msg.historyId}, 0, ${idx})"><i class="ph ph-thumbs-down"></i></button>` : ''}
+      </div>` : '';
+    const relatedCases = !msg.isStreaming
+      ? renderRelatedCases(msg.relatedCases || [], msg.replyToText || '', msg.relatedCasesTotal)
+      : '';
+    div.innerHTML = `<div class="msg-avatar" style="background:${color}"><i class="ph ph-${icon}"></i></div>
+      <div class="msg-body"><div class="msg-bubble">${renderedContent}${msg.isStreaming ? '<span class="cursor-blink"></span>' : ''}</div>${relatedCases}<span class="msg-time">${msg.time}</span>${actions}</div>`;
+  } else {
+    div.innerHTML = `<div class="msg-avatar"><i class="ph ph-user"></i></div>
+      <div class="msg-body"><div class="msg-bubble">${escapeHtml(msg.content)}</div><span class="msg-time">${msg.time}</span></div>`;
+  }
+  return div;
+}
+
 function renderMessages() {
   const container = document.getElementById('chat-messages');
-  document.getElementById('empty-chat').style.display = state.messages.length > 0 ? 'none' : 'flex';
-  document.querySelectorAll('.msg, .typing-indicator').forEach(el => el.remove());
+  const emptyChat = document.getElementById('empty-chat');
+  emptyChat.style.display = state.messages.length > 0 ? 'none' : 'flex';
+
+  const existingIds = new Set();
+  container.querySelectorAll('.msg').forEach(el => {
+    const id = el.dataset.msgId;
+    if (id) existingIds.add(id);
+  });
 
   state.messages.forEach((msg, idx) => {
-    const agent = msg.agentId ? AGENTS.find(a => a.id === msg.agentId) : AGENTS[0];
-    const div = document.createElement('div');
-    div.className = `msg ${msg.role}`;
-    div.dataset.msgId = msg.id;
-    if (msg.role === 'system' || msg.role === 'handoff-system') {
-      if (msg.role === 'handoff-system') div.classList.add('handoff-system');
-      div.innerHTML = `<div class="system-bubble"><i class="ph ph-check-circle"></i><div class="sb-text">${msg.content}</div></div>`;
-    } else if (msg.role === 'handoff-agent') {
-      div.classList.add('handoff-agent');
-      div.innerHTML = `<div class="msg-avatar"><i class="ph ph-headset"></i></div><div class="msg-body"><div class="msg-bubble">${escapeHtml(msg.content)}</div><span class="msg-time">${msg.time || ''}</span></div>`;
-    } else if (msg.role === 'bot') {
-      const icon = agent ? agent.icon : 'sparkle';
-      const color = agent ? agent.color : '#4F46E5';
-      const escapedContent = escapeHtml(msg.content);
-      const likeActive = msg.feedback === 1 ? ' active' : '';
-      const dislikeActive = msg.feedback === 0 ? ' active' : '';
-      const feedbackDisabled = msg.feedback !== undefined ? ' disabled' : '';
-      const actions = !msg.isStreaming ? `
-        <div class="msg-actions">
-          <button class="msg-action-btn" onclick="copyText('${escapedContent.replace(/'/g, "\\'")}')"><i class="ph ph-copy-simple"></i> 复制</button>
-          ${agent && agent.type === '产品咨询' ? '<button class="msg-action-btn" onclick="switchView(\'products\')"><i class="ph ph-shopping-bag"></i> 查看产品</button>' : ''}
-          <button class="msg-action-btn share-action" onclick="shareAnswerCard(${idx})"><i class="ph ph-share-network"></i> 生成分享图</button>
-          <button class="msg-action-btn lead-action" onclick="openLeadModal(${idx})"><i class="ph ph-chat-circle-text"></i> 获取方案</button>
-          <button class="msg-action-btn" onclick="regenerateMsg(${idx})"><i class="ph ph-arrows-clockwise"></i> 重新回答</button>
-          ${msg.historyId ? `
-          <button class="msg-feedback-btn${likeActive}${feedbackDisabled}" onclick="sendFeedback(${msg.historyId}, 1, ${idx})"><i class="ph ph-thumbs-up"></i></button>
-          <button class="msg-feedback-btn${dislikeActive}${feedbackDisabled}" onclick="sendFeedback(${msg.historyId}, 0, ${idx})"><i class="ph ph-thumbs-down"></i></button>` : ''}
-        </div>` : '';
-      const relatedCases = !msg.isStreaming
-        ? renderRelatedCases(msg.relatedCases || [], msg.replyToText || '', msg.relatedCasesTotal)
-        : '';
-      div.innerHTML = `<div class="msg-avatar" style="background:${color}"><i class="ph ph-${icon}"></i></div>
-        <div class="msg-body"><div class="msg-bubble">${escapedContent}${msg.isStreaming ? '<span class="cursor-blink"></span>' : ''}</div>${relatedCases}<span class="msg-time">${msg.time}</span>${actions}</div>`;
-    } else {
-      div.innerHTML = `<div class="msg-avatar"><i class="ph ph-user"></i></div>
-        <div class="msg-body"><div class="msg-bubble">${escapeHtml(msg.content)}</div><span class="msg-time">${msg.time}</span></div>`;
-    }
+    const msgId = String(msg.id);
+    if (existingIds.has(msgId)) return;
+
+    const div = renderMessageItem(msg, idx);
     container.appendChild(div);
   });
+
   container.scrollTop = container.scrollHeight;
   updateScrollBtn();
 }
