@@ -48,6 +48,8 @@ from routes.cases import cases_bp
 from routes.share import share_bp
 from routes.speech import speech_bp
 from routes.leads import leads_bp
+from routes.handoff import handoff_bp
+from routes.admin_handoff import admin_handoff_bp
 
 app = Flask(__name__, static_folder='static', static_url_path='')
 Config.validate()
@@ -77,6 +79,8 @@ app.register_blueprint(cases_bp, url_prefix='/api')
 app.register_blueprint(share_bp, url_prefix='/api')
 app.register_blueprint(speech_bp, url_prefix='/api/speech')
 app.register_blueprint(leads_bp, url_prefix='/api/leads')
+app.register_blueprint(handoff_bp, url_prefix='/api/handoff')
+app.register_blueprint(admin_handoff_bp, url_prefix='/api/admin/handoff')
 
 
 @app.after_request
@@ -113,6 +117,11 @@ def index():
 @app.route('/admin')
 def admin_page():
     return render_template('admin.html')
+
+
+@app.route('/consultant')
+def consultant_page():
+    return render_template('consultant.html')
 
 
 @app.route('/uploads/<path:filename>')

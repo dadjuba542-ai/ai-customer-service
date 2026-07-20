@@ -4,10 +4,10 @@
 
 ## 1. 当前状态
 
-- 当前发布分支：`1.1.2`
+- 当前发布分支：`1.1.4`
 - `1.1`：历史稳定分支，保留不改
 - 远程仓库：`origin`
-- 当前 `1.1.2` 最新提交：以 `git log -1 --oneline` 为准
+- 当前 `1.1.4` 最新提交：以 `git log -1 --oneline` 为准
 - 应用形态：单体 Flask + SQLite + 静态前端
 - 正确后台地址：`http://服务器地址/admin`
 - 不要直接打开：`file:///.../templates/admin.html`
@@ -89,7 +89,18 @@ python3 scripts/reset_admin_password.py admin8
 
 不要把密码写入脚本、`.env`、README 或 Git。服务器和本地使用的是各自数据库，账号不会自动同步。
 
-## 6. 1.1.2 功能交接重点
+## 6. 1.1.4 功能交接重点
+
+### AI 转人工与营养师工作台
+
+- 前台只在“深度调理答疑”中识别明确的转人工表达；人工咨询作为 AI 的兜底，不在首页常驻展示入口。
+- 营养咨询 AI 由 `handoff_ai_agent_id` 独立配置；进入在线人工状态后消息只发真人通道。
+- 在线等待默认 120 秒，可通过 `handoff_live_wait_sec` 调整；超时或用户主动挂起后转为异步留言并恢复 AI。
+- 营养师工作台地址：`http://服务器地址/consultant`，使用管理员账号登录。
+- 工作台支持排队、多会话接待、桌面通知、历史档案、同用户历史回复和 CSV 导出。
+- 导出不包含转人工前 AI 对话，最多 5,000 条，并记录到 `handoff_export_logs`。
+- 关键表：`handoff_sessions`、`handoff_messages`、`cs_agents`、`handoff_export_logs`。
+- 关键测试：`python3 scripts/test_handoff.py`、`node scripts/test_handoff_intent.js`。
 
 ### 客户需求记录
 
@@ -139,28 +150,30 @@ cp "$DATABASE_DIR/ai_customer_service.db" \
 
 ## 8. 发布与回滚
 
-### 发布 `1.1.2`
+### 发布 `1.1.4`
 
 ```bash
 git fetch origin
-git checkout 1.1.2
-git pull --ff-only origin 1.1.2
+git checkout 1.1.4
+git pull --ff-only origin 1.1.4
 python3 -m py_compile app.py models.py db_migrations.py routes/*.py services/*.py
 python3 scripts/test_migrations.py
 python3 scripts/test_security.py
+python3 scripts/test_handoff.py
+node scripts/test_handoff_intent.js
 ```
 
 然后按服务器的进程管理方式重启 Gunicorn/Flask 服务。
 
-### 回滚到 `1.1`
+### 回滚到 `1.1.3`
 
 ```bash
 git fetch origin
-git checkout 1.1
-git pull --ff-only origin 1.1
+git checkout 1.1.3
+git pull --ff-only origin 1.1.3
 ```
 
-不要删除或强推 `1.1`。数据库备份和上传目录不要跟着代码回滚覆盖。
+不要删除或强推历史版本分支。数据库备份和上传目录不要跟着代码回滚覆盖。
 
 ## 9. 发布后验收
 
@@ -174,6 +187,7 @@ git pull --ff-only origin 1.1
 6. 产品、文章、案例、聊天、语音入口可用。
 7. 图片能加载，上传目录仍指向持久化磁盘。
 8. 服务器日志没有 migration、SECRET_KEY、数据库锁或静态资源 404 错误。
+9. `/consultant` 能登录，人工排队、接入、留言、档案查询和 CSV 导出正常。
 
 ## 10. 常见故障排查
 

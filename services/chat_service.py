@@ -71,6 +71,17 @@ def build_chat_context(data, identity):
     user_id = identity['user_id']
     team_name = identity.get('team_name', '')
     member_name = identity.get('member_name', '')
+    if str(data.get('channel') or '') == 'nutrition_consultation':
+        from services.handoff_service import get_handoff_settings, has_open_handoff_session
+        if has_open_handoff_session(user_id):
+            raise ChatServiceError('人工咨询进行中，消息应发送给营养师', status_code=409, retryable=False)
+        handoff = get_handoff_settings()
+        if not handoff['enabled']:
+            raise ChatServiceError('在线营养咨询暂未开启', status_code=403, retryable=False)
+        agent_id = handoff['ai_agent_id']
+        if not agent_id:
+            raise ChatServiceError('营养咨询 AI 暂未配置', status_code=503, retryable=False)
+
     api_key = get_secret_setting('coze_api_key', Config.COZE_API_KEY)
     if not api_key:
         raise ChatServiceError('AI 服务尚未配置', status_code=503, retryable=False)
@@ -280,6 +291,7 @@ def persist_chat_history(ctx, bot_response, coze_message_id):
         coze_message_id=coze_message_id,
         team_name=ctx.team_name,
         member_name=ctx.member_name,
+        agent_id=ctx.agent_id,
     )
 
 

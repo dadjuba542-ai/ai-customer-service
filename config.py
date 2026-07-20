@@ -21,6 +21,13 @@ class Config:
     CHAT_RATE_LIMIT = int(os.environ.get('CHAT_RATE_LIMIT', '12'))
     SPEECH_RATE_LIMIT = int(os.environ.get('SPEECH_RATE_LIMIT', '20'))
     SPEECH_REALTIME_SESSION_LIMIT = int(os.environ.get('SPEECH_REALTIME_SESSION_LIMIT', '20'))
+    HANDOFF_ENABLED = os.environ.get('HANDOFF_ENABLED', 'false').lower() == 'true'
+    HANDOFF_AI_AGENT_ID = os.environ.get('HANDOFF_AI_AGENT_ID', '')
+    HANDOFF_AVG_HANDLE_SEC = max(30, int(os.environ.get('HANDOFF_AVG_HANDLE_SEC', '180')))
+    HANDOFF_QUEUE_POLL_SEC = max(2, int(os.environ.get('HANDOFF_QUEUE_POLL_SEC', '4')))
+    HANDOFF_AGENT_STALE_SEC = max(30, int(os.environ.get('HANDOFF_AGENT_STALE_SEC', '90')))
+    HANDOFF_CLAIM_TIMEOUT_SEC = max(30, int(os.environ.get('HANDOFF_CLAIM_TIMEOUT_SEC', '60')))
+    HANDOFF_LIVE_WAIT_SEC = max(30, int(os.environ.get('HANDOFF_LIVE_WAIT_SEC', '120')))
 
     # 四大模块对应的机器人ID
     BOT_MAPPING = {

@@ -6,11 +6,25 @@ from config import Config
 from routes.auth import admin_required
 from services.image_service import is_allowed_image_filename, process_uploaded_image
 from services.secret_service import get_secret_setting, set_secret_setting
+from services.handoff_service import HandoffError, get_handoff_settings, update_handoff_settings
 
 admin_bp = Blueprint('admin', __name__)
 LEAD_STATUSES = {'pending', 'contacted', 'completed'}
 
 MAX_UPLOAD_SIZE = 8 * 1024 * 1024
+
+
+@admin_bp.route('/settings/handoff', methods=['GET', 'PUT'])
+@admin_required
+def handoff_settings(current_user):
+    if request.method == 'GET':
+        return jsonify(get_handoff_settings())
+    try:
+        return jsonify({'settings': update_handoff_settings(request.get_json(silent=True) or {})})
+    except HandoffError as exc:
+        return jsonify({'error': exc.message}), exc.status_code
+    except (TypeError, ValueError):
+        return jsonify({'error': '配置格式不正确'}), 400
 
 
 @admin_bp.route('/leads', methods=['GET'])
@@ -98,6 +112,8 @@ def add_agent(current_user):
 @admin_bp.route('/agents/<agent_id>', methods=['DELETE'])
 @admin_required
 def remove_agent(current_user, agent_id):
+    if get_setting('handoff_ai_agent_id', '').strip() == agent_id:
+        return jsonify({'error': '该智能体正在用于营养咨询，请先切换转人工设置'}), 409
     delete_agent_config(agent_id)
     return jsonify({'message': 'Agent deleted'})
 

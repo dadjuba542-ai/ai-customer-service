@@ -147,6 +147,93 @@ MIGRATIONS = [
             'CREATE INDEX IF NOT EXISTS idx_lead_requests_user_created ON lead_requests(user_id, created_at DESC)',
         ],
     },
+    {
+        'version': '202607200001',
+        'name': 'create_handoff_support_tables',
+        'columns': [
+            ('chat_history', 'agent_id', 'TEXT DEFAULT ""'),
+        ],
+        'sqls': [
+            '''CREATE TABLE IF NOT EXISTS handoff_sessions (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                session_id TEXT UNIQUE NOT NULL,
+                user_id TEXT NOT NULL,
+                team_name TEXT DEFAULT '',
+                member_name TEXT DEFAULT '',
+                query_type TEXT DEFAULT '',
+                ai_agent_id TEXT DEFAULT '',
+                agent_id TEXT DEFAULT '',
+                status TEXT NOT NULL DEFAULT 'queued'
+                    CHECK(status IN ('queued', 'assigned', 'active', 'closed', 'abandoned')),
+                ai_context_json TEXT DEFAULT '[]',
+                priority INTEGER DEFAULT 0,
+                enqueued_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                assigned_at TIMESTAMP,
+                active_at TIMESTAMP,
+                agent_claim_deadline TIMESTAMP,
+                last_message_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                user_last_read_message_id INTEGER DEFAULT 0,
+                agent_last_read_message_id INTEGER DEFAULT 0,
+                closed_at TIMESTAMP,
+                close_reason TEXT DEFAULT '',
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )''',
+            '''CREATE TABLE IF NOT EXISTS handoff_messages (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                session_id TEXT NOT NULL,
+                sender_role TEXT NOT NULL CHECK(sender_role IN ('user', 'agent', 'system')),
+                sender_id TEXT DEFAULT '',
+                content TEXT NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (session_id) REFERENCES handoff_sessions(session_id) ON DELETE CASCADE
+            )''',
+            '''CREATE TABLE IF NOT EXISTS cs_agents (
+                user_id TEXT PRIMARY KEY,
+                display_name TEXT DEFAULT '',
+                avatar_url TEXT DEFAULT '',
+                online INTEGER DEFAULT 0,
+                max_concurrent INTEGER DEFAULT 3,
+                current_load INTEGER DEFAULT 0,
+                last_seen_at TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (user_id) REFERENCES users(user_id)
+            )''',
+            'CREATE UNIQUE INDEX IF NOT EXISTS idx_handoff_one_open_per_user ON handoff_sessions(user_id) WHERE status IN ("queued", "assigned", "active")',
+            'CREATE INDEX IF NOT EXISTS idx_handoff_queue ON handoff_sessions(status, priority DESC, enqueued_at ASC, id ASC)',
+            'CREATE INDEX IF NOT EXISTS idx_handoff_agent_status ON handoff_sessions(agent_id, status, last_message_at DESC)',
+            'CREATE INDEX IF NOT EXISTS idx_handoff_user_recent ON handoff_sessions(user_id, id DESC)',
+            'CREATE INDEX IF NOT EXISTS idx_handoff_message_session_id ON handoff_messages(session_id, id ASC)',
+            'CREATE INDEX IF NOT EXISTS idx_handoff_message_role_id ON handoff_messages(sender_role, id ASC)',
+            'CREATE INDEX IF NOT EXISTS idx_cs_agents_availability ON cs_agents(online, current_load, last_seen_at)',
+        ],
+    },
+    {
+        'version': '202607200002',
+        'name': 'add_handoff_message_mode',
+        'columns': [
+            ('handoff_sessions', 'service_mode', 'TEXT NOT NULL DEFAULT "live"'),
+            ('handoff_sessions', 'live_deadline_at', 'TIMESTAMP'),
+            ('handoff_sessions', 'message_converted_at', 'TIMESTAMP'),
+        ],
+        'sqls': [
+            'CREATE INDEX IF NOT EXISTS idx_handoff_mode_status ON handoff_sessions(service_mode, status, live_deadline_at)',
+        ],
+    },
+    {
+        'version': '202607200003',
+        'name': 'create_handoff_export_audit_log',
+        'sqls': [
+            '''CREATE TABLE IF NOT EXISTS handoff_export_logs (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                exported_by TEXT NOT NULL,
+                export_scope TEXT NOT NULL,
+                request_json TEXT DEFAULT '{}',
+                row_count INTEGER NOT NULL DEFAULT 0,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )''',
+            'CREATE INDEX IF NOT EXISTS idx_handoff_export_logs_user_time ON handoff_export_logs(exported_by, created_at DESC)',
+        ],
+    },
 ]
 
 

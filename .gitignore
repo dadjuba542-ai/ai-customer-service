@@ -21,6 +21,7 @@ __pycache__/
 # IDE
 .vscode/
 .idea/
+.workbuddy/
 
 # OS
 .DS_Store

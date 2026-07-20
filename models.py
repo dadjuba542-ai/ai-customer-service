@@ -1147,14 +1147,14 @@ def update_user_password_hash(user_id, password_hash):
     conn.close()
 
 # ===== Chat History =====
-def save_chat_history(user_id, query_type, user_message, bot_response=None, coze_message_id=None, team_name='', member_name=''):
+def save_chat_history(user_id, query_type, user_message, bot_response=None, coze_message_id=None, team_name='', member_name='', agent_id=''):
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute(
         '''INSERT INTO chat_history
-           (user_id, query_type, user_message, bot_response, coze_message_id, team_name, member_name)
-           VALUES (?, ?, ?, ?, ?, ?, ?)''',
-        (user_id, query_type, user_message, bot_response, coze_message_id, team_name, member_name)
+           (user_id, query_type, user_message, bot_response, coze_message_id, team_name, member_name, agent_id)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?)''',
+        (user_id, query_type, user_message, bot_response, coze_message_id, team_name, member_name, agent_id)
     )
     conn.commit()
     history_id = cursor.lastrowid
@@ -1188,6 +1188,30 @@ def get_chat_history_by_id(history_id, user_id):
     history = cursor.fetchone()
     conn.close()
     return dict(history) if history else None
+
+
+def get_chat_history_by_ids(history_ids, user_id, limit=20):
+    ids = []
+    for value in history_ids or []:
+        try:
+            item = int(value)
+        except (TypeError, ValueError):
+            continue
+        if item > 0 and item not in ids:
+            ids.append(item)
+    ids = ids[-max(1, min(int(limit or 20), 50)):]
+    if not ids:
+        return []
+    conn = get_db_connection()
+    placeholders = ','.join('?' for _ in ids)
+    rows = conn.execute(
+        f'''SELECT * FROM chat_history
+            WHERE user_id = ? AND id IN ({placeholders})
+            ORDER BY id ASC''',
+        [user_id] + ids,
+    ).fetchall()
+    conn.close()
+    return [dict(row) for row in rows]
 
 # ===== Feedback =====
 def set_chat_feedback(history_id, user_id, feedback):

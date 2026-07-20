@@ -30,7 +30,7 @@ def migration_count(conn):
 def assert_expected_columns(conn):
     expected = {
         'users': {'is_admin'},
-        'chat_history': {'feedback', 'feedback_reason', 'team_name', 'member_name'},
+        'chat_history': {'feedback', 'feedback_reason', 'team_name', 'member_name', 'agent_id'},
         'news': {'views', 'pinned', 'featured', 'category'},
         'agent_configs': {'icon', 'chat_desc'},
         'replies': {'author_key', 'like_count'},
@@ -38,6 +38,13 @@ def assert_expected_columns(conn):
         'case_tags': {'name', 'type', 'aliases', 'status', 'sort_order'},
         'case_document_tags': {'case_id', 'tag_id'},
         'share_events': {'user_id', 'team_name', 'member_name', 'query_type', 'history_id', 'share_type'},
+        'handoff_sessions': {
+            'session_id', 'user_id', 'agent_id', 'status', 'ai_context_json', 'agent_claim_deadline',
+            'service_mode', 'live_deadline_at', 'message_converted_at',
+        },
+        'handoff_messages': {'session_id', 'sender_role', 'sender_id', 'content'},
+        'cs_agents': {'user_id', 'online', 'max_concurrent', 'current_load', 'last_seen_at'},
+        'handoff_export_logs': {'exported_by', 'export_scope', 'request_json', 'row_count', 'created_at'},
     }
     for table, columns in expected.items():
         actual = table_columns(conn, table)

@@ -9,7 +9,7 @@
       window.location.replace('http://127.0.0.1:5001/');
     }
   </script>
-  <link rel="stylesheet" href="styles.css?v=20260714-ux11">
+  <link rel="stylesheet" href="styles.css?v=20260720-handoff3">
   <link rel="stylesheet" href="icon-fallback.css?v=20260713-icons2">
 </head>
 <body>
@@ -95,6 +95,13 @@
           </div>
           <div class="agent-tabs" id="agent-tabs"></div>
         </header>
+        <div id="handoff-status" class="handoff-status" hidden>
+          <div><span id="handoff-status-dot" class="handoff-status-dot"></span><strong id="handoff-status-title">正在排队</strong><small id="handoff-status-detail"></small></div>
+          <div class="handoff-status-actions">
+            <button id="handoff-defer-action" type="button" onclick="deferHandoffSession()">转为留言</button>
+            <button id="handoff-status-action" type="button" onclick="handleHandoffStatusAction()">取消排队</button>
+          </div>
+        </div>
         <div class="chat-messages" id="chat-messages">
           <div class="empty-chat" id="empty-chat">
             <i class="ph ph-sparkle"></i>
@@ -281,6 +288,22 @@
       <!-- Reason Popup -->
       <div id="reason-popup" class="reason-popup"></div>
 
+      <!-- AI-first human handoff choice -->
+      <div id="handoff-choice-overlay" class="admin-overlay handoff-choice-overlay" aria-hidden="true" onclick="closeHandoffChoice(event)">
+        <section class="handoff-choice-sheet" role="dialog" aria-modal="true" aria-labelledby="handoff-choice-title" onclick="event.stopPropagation()">
+          <div class="handoff-choice-handle" aria-hidden="true"></div>
+          <button type="button" class="handoff-choice-close" aria-label="关闭" onclick="closeHandoffChoice()"><i class="ph ph-x"></i></button>
+          <div class="handoff-choice-icon"><i class="ph ph-sparkle"></i></div>
+          <h2 id="handoff-choice-title">要联系在线营养师吗？</h2>
+          <p>AI 通常响应更快，建议先让营养咨询 AI 继续帮你；如仍需真人，也可以立即转接。</p>
+          <div class="handoff-choice-ai-note"><i class="ph ph-robot"></i><span id="handoff-choice-ai-name">将由营养咨询 AI 继续解答</span></div>
+          <div id="handoff-choice-status" class="handoff-choice-status"></div>
+          <button type="button" id="handoff-choice-ai" class="handoff-choice-primary" onclick="chooseHandoffAi()">继续用 AI</button>
+          <button type="button" id="handoff-choice-human" class="handoff-choice-secondary" onclick="chooseHumanHandoff()">仍要联系营养师</button>
+          <button type="button" class="handoff-choice-later" onclick="closeHandoffChoice()">暂不处理</button>
+        </section>
+      </div>
+
       <!-- Survey Overlay -->
       <div id="survey-overlay" class="admin-overlay" onclick="event.stopPropagation();">
         <div class="survey-modal">
@@ -315,6 +338,7 @@
 
   <div id="toast"></div>
   <script src="speech-controller.js?v=20260717-speech113"></script>
-  <script src="app.js?v=20260717-speech113"></script>
+  <script src="handoff-intent.js?v=20260720-1"></script>
+  <script src="app.js?v=20260720-handoff11"></script>
 </body>
 </html>

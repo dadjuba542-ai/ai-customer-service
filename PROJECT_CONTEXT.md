@@ -53,6 +53,11 @@ routes/                 各业务路由
 services/chat_service.py Coze 对话同步/流式封装
 static/                 前台静态页面与脚本样式
 static/admin/cases.js   后台案例档案 JS（案例管理、标签库、链接识别、案例库 H5 设置）
+templates/consultant.html 独立 PC 营养师客服工作台
+static/consultant/      客服台多会话、通知和独立样式
+routes/handoff.py       前台转人工与会话恢复接口
+routes/admin_handoff.py 客服台队列、接入、回复和通知接口
+services/handoff_service.py 排队分配、状态机和 AI 上下文快照
 services/image_service.py 图片压缩、缩略图和上传图处理服务
 templates/admin.html    管理后台页面
 scripts/test_today_features.py 现有冒烟测试
@@ -129,6 +134,12 @@ outputs/                历史生成物/设计产物，非主应用运行核心
 - 屏蔽词配置
 - 对话数据统计和反馈分析
 - 社区问答审核
+
+独立营养师工作台：
+
+- 路径：`/consultant`
+- 支持坐席上线/下线、多人会话、排队、未读数、声音提示和浏览器桌面通知
+- 营养咨询 AI 通过 `handoff_ai_agent_id` 独立配置，不跟随首页普通智能体
 
 ## 6. 主要后端模块
 
@@ -311,6 +322,7 @@ outputs/                历史生成物/设计产物，非主应用运行核心
 
 - `GET /`
 - `GET /admin`
+- `GET /consultant`
 - `GET /api/waiting-content`
 - `GET /api/default-team`
 - `GET /api/case-library-config`
@@ -327,6 +339,31 @@ outputs/                历史生成物/设计产物，非主应用运行核心
 - `POST /api/chat/stream`
 - `POST /api/chat/feedback`
 - `POST /api/share-events`
+
+### AI 转人工营养咨询
+
+- `GET /api/handoff/config`
+- `POST /api/handoff/start`
+- `GET /api/handoff/current`
+- `GET /api/handoff/session/<session_id>`
+- `POST /api/handoff/message`
+- `GET /api/handoff/messages/<session_id>`
+- `GET /api/handoff/recent`
+- `POST /api/handoff/defer`
+- `POST /api/handoff/close`
+- `GET /api/admin/handoff/queue`
+- `POST /api/admin/handoff/<session_id>/claim`
+- `GET /api/admin/handoff/<session_id>/detail`
+- `POST /api/admin/handoff/<session_id>/reply`
+- `POST /api/admin/handoff/<session_id>/close`
+- `POST /api/admin/handoff/<session_id>/read`
+- `GET/POST /api/admin/handoff/agent/...`
+- `GET /api/admin/handoff/notifications`
+- `GET /api/admin/handoff/archive`
+- `GET /api/admin/handoff/archive/<session_id>`
+- `GET /api/admin/handoff/users/<user_id>/history`
+- `POST /api/admin/handoff/export`
+- `GET/PUT /api/admin/settings/handoff`
 
 ### 历史记录
 
@@ -419,6 +456,12 @@ outputs/                历史生成物/设计产物，非主应用运行核心
 - `BOT_FAQ`
 - `BOT_MOMENT`
 - `BOT_SCRIPT`
+- `HANDOFF_ENABLED`
+- `HANDOFF_AI_AGENT_ID`
+- `HANDOFF_AVG_HANDLE_SEC`
+- `HANDOFF_QUEUE_POLL_SEC`
+- `HANDOFF_AGENT_STALE_SEC`
+- `HANDOFF_CLAIM_TIMEOUT_SEC`
 
 注意：
 
@@ -592,6 +635,8 @@ python3 scripts/optimize_news_content_images.py --apply
 - `models.py` 过于集中，承担了全部数据访问，继续扩展会越来越重。
 - 数据库 migration 目前是轻量 Python 列表机制，适合当前 SQLite 单实例；如果以后迁移复杂化，再考虑 Alembic。
 - SQLite 适合当前体量，但多副本部署、重写入、复杂分析都会撞墙。
+- 人工咨询状态依赖同一份 SQLite 数据库；当前适合单实例、少量坐席和几十个活跃会话，多副本或更高并发应迁移到 PostgreSQL/Redis 与专用推送通道。
+- 客服桌面通知基于页面轮询与浏览器 Notification API；关闭浏览器后不能继续通知，如需离线提醒应接入 Web Push 或企业消息平台。
 - 管理后台图片上传依赖 Pillow，当前 `requirements.txt` 已显式写入 `Pillow==10.2.0`。
 - 前台 `static/app.js` 是大体量单文件脚本，后续维护成本会继续上升。
 - 后台案例 JS 已拆到 `static/admin/cases.js`；`templates/admin.html` 仍包含其它后台模块的大量内联脚本，继续扩功能时仍需逐步拆分。
@@ -624,6 +669,14 @@ python3 scripts/optimize_news_content_images.py --apply
 1. `templates/admin.html`
 2. `routes/admin.py`
 3. `routes/dashboard.py`
+
+### 想看 AI 转人工与营养师工作台
+
+1. `docs/HANDOFF_DESIGN.md`
+2. `services/handoff_service.py`
+3. `routes/handoff.py`、`routes/admin_handoff.py`
+4. `templates/consultant.html`、`static/consultant/`
+5. `scripts/test_handoff.py`
 
 ### 想看前台体验
 
@@ -672,3 +725,13 @@ python3 scripts/optimize_news_content_images.py --apply
 - 后台支持 `auto / realtime / batch` 三种模式，实时模式需配置 AppID、SecretId、SecretKey；SecretKey 继续加密保存且仅脱敏回显。
 - 前台新增连接、录音、音量、时长、收尾和转写状态；支持主动取消并恢复原草稿。识别结果只进入输入框，不自动发送。
 - 每位用户的实时会话独立生成 `voice_id` 和 WebSocket，音频不经过 Flask 代理，多人同时使用不会串音或共享录音状态。
+
+## 18. 2026-07-20 v1.1.4 AI 转人工营养咨询
+
+- 人工入口改为 AI 优先的明确意图触发，仅“深度调理答疑”支持转人工；普通提及不会误触发。
+- 新增独立 PC 营养师工作台 `/consultant`，支持坐席上下线、多会话排队接待、未读提醒、声音与桌面通知。
+- 营养咨询 AI 使用 `handoff_ai_agent_id` 独立配置；人工接管时停止 Coze 路由，结束后自动恢复 AI。
+- 在线等待默认 120 秒；无人回复时自动转为异步留言，也支持用户主动挂起。留言不阻塞 AI，营养师回复后自动归档。
+- 新增咨询档案、筛选分页、只读详情和同一用户历史回复。
+- 新增单次、多选和筛选 CSV 导出，限制 5,000 条，支持 UTF-8 BOM、公式注入防护和 `handoff_export_logs` 审计；不导出转人工前 AI 对话。
+- 数据库迁移新增人工咨询相关表、留言模式字段和导出审计表；完整回归入口为 `scripts/test_handoff.py` 与 `scripts/test_handoff_intent.js`。

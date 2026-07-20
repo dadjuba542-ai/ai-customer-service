@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>营养师工作台</title>
+  <link rel="stylesheet" href="/consultant/styles.css?v=20260720-export1">
+</head>
+<body>
+  <section id="login-page" class="login-page">
+    <form id="login-form" class="login-card">
+      <div class="brand-mark">营</div>
+      <h1>营养师工作台</h1>
+      <p>登录后接收并处理在线咨询</p>
+      <label>管理员账号<input id="login-username" autocomplete="username" required></label>
+      <label>密码<input id="login-password" type="password" autocomplete="current-password" required></label>
+      <button id="login-button" type="submit">登录工作台</button>
+      <div id="login-error" class="form-error"></div>
+    </form>
+  </section>
+
+  <section id="workspace" class="workspace" hidden>
+    <header class="topbar">
+      <div class="brand"><span class="brand-mark small">营</span><div><strong>营养师工作台</strong><small id="agent-name">未登录</small></div></div>
+      <div class="top-actions">
+        <label class="capacity">接待上限 <select id="max-concurrent"><option>1</option><option>2</option><option selected>3</option><option>4</option><option>5</option></select></label>
+        <button id="notification-button" class="secondary">开启桌面通知</button>
+        <button id="settings-button" class="secondary">AI 与转接设置</button>
+        <button id="online-button" class="online-button"><span></span>上线接单</button>
+        <button id="logout-button" class="ghost">退出</button>
+      </div>
+    </header>
+
+    <main class="desk">
+      <aside class="session-panel">
+        <div class="panel-heading"><div><h2>咨询会话</h2><p id="load-label">当前 0 / 3</p></div><span id="total-unread" class="count" hidden>0</span></div>
+        <nav class="workspace-tabs" aria-label="会话视图"><button id="live-tab" type="button" class="active">进行中</button><button id="archive-tab" type="button">咨询档案</button></nav>
+        <div id="live-session-pane" class="session-pane">
+          <div class="session-section"><h3>分配给我 <span id="mine-count">0</span></h3><div id="mine-list" class="session-list"></div></div>
+          <div class="session-section grow"><h3>等待队列 <span id="queue-count">0</span></h3><div id="queue-list" class="session-list"></div></div>
+        </div>
+        <div id="archive-session-pane" class="archive-pane" hidden>
+          <form id="archive-filter-form" class="archive-filters">
+            <input id="archive-keyword" placeholder="搜索用户、团队、问题或回复">
+            <div class="filter-row"><label>开始日期<input id="archive-from" type="date"></label><label>结束日期<input id="archive-to" type="date"></label></div>
+            <div class="filter-row"><label>服务方式<select id="archive-service-mode"><option value="">全部</option><option value="live">在线咨询</option><option value="message">留言</option></select></label><label>团队<input id="archive-team" placeholder="全部团队"></label></div>
+            <div class="filter-actions"><button id="archive-reset" type="button">重置</button><button type="submit" class="primary">查询</button></div>
+          </form>
+          <div class="archive-export-bar"><label><input id="archive-select-page" type="checkbox">本页全选</label><button id="export-selected" type="button" disabled>导出所选</button><button id="export-filtered" type="button">导出筛选结果</button></div>
+          <div id="archive-list" class="archive-list"></div>
+          <div class="archive-pagination"><button id="archive-prev" type="button">上一页</button><span id="archive-page-label">第 1 页</span><button id="archive-next" type="button">下一页</button></div>
+        </div>
+      </aside>
+
+      <section class="chat-panel">
+        <div id="empty-chat" class="empty-state"><div class="empty-icon">💬</div><h2>选择一个咨询会话</h2><p>上线后，新咨询会自动分配到这里</p></div>
+        <div id="active-chat" class="active-chat" hidden>
+          <header class="chat-head">
+            <div><div class="chat-title-row"><h2 id="chat-user">咨询用户</h2><span id="archive-badge" class="archive-badge" hidden>只读档案</span></div><p id="chat-meta">等待接入</p></div>
+            <div class="chat-actions"><button id="export-current-button" hidden>导出本次咨询</button><button id="back-current-button" hidden>返回当前咨询</button><button id="claim-button" class="primary" hidden>确认接入</button><button id="close-button" class="danger" hidden>结束咨询</button></div>
+          </header>
+          <div id="message-list" class="message-list"></div>
+          <form id="reply-form" class="reply-box">
+            <textarea id="reply-input" rows="2" maxlength="4000" placeholder="回复用户，Enter 发送，Shift+Enter 换行"></textarea>
+            <button id="reply-button" type="submit">发送</button>
+          </form>
+        </div>
+      </section>
+
+      <aside class="context-panel">
+        <div class="context-empty" id="context-empty"><h3>用户与 AI 上下文</h3><p>打开会话后可查看用户资料及转人工前的完整问答。</p></div>
+        <div id="context-content" hidden>
+          <nav class="context-tabs" aria-label="用户上下文"><button id="profile-tab" type="button" class="active">用户资料</button><button id="history-tab" type="button">历史咨询 <span id="history-count"></span></button></nav>
+          <div id="profile-pane">
+            <dl class="profile-grid"><div><dt>姓名</dt><dd id="profile-name">-</dd></div><div><dt>团队</dt><dd id="profile-team">-</dd></div><div><dt>当前状态</dt><dd id="profile-status">-</dd></div><div><dt>接待营养师</dt><dd id="profile-agent">-</dd></div></dl>
+            <details open class="ai-context"><summary>转人工前的 AI 对话</summary><div id="ai-context-list"></div></details>
+          </div>
+          <div id="history-pane" hidden><div id="history-list" class="history-list"></div></div>
+        </div>
+      </aside>
+    </main>
+  </section>
+
+  <div id="settings-modal" class="modal" hidden>
+    <form id="settings-form" class="settings-card">
+      <header><div><h2>AI 与转接设置</h2><p>营养咨询使用独立智能体，不受首页选择影响</p></div><button id="settings-close" type="button" class="ghost">关闭</button></header>
+      <label class="toggle-row"><span><strong>启用在线营养咨询</strong><small>关闭后前台不显示入口</small></span><input id="setting-enabled" type="checkbox"></label>
+      <label>营养咨询 AI 智能体<select id="setting-agent"><option value="">请选择已配置 Bot ID 的智能体</option></select></label>
+      <label>前台按钮文案<input id="setting-button-label" maxlength="40"></label>
+      <label>预计单次接待时长（秒）<input id="setting-avg-seconds" type="number" min="30" max="86400"></label>
+      <label>在线等待超时（秒）<input id="setting-live-wait-seconds" type="number" min="30" max="3600"><small>默认 120 秒；未收到真人回复时自动转为异步留言</small></label>
+      <label>排队提示<textarea id="setting-queue-msg" maxlength="200"></textarea></label>
+      <label>离线提示<textarea id="setting-offline-msg" maxlength="200"></textarea></label>
+      <label>接入欢迎语<textarea id="setting-welcome-msg" maxlength="200"></textarea></label>
+      <button type="submit" class="primary full">保存设置</button>
+    </form>
+  </div>
+
+  <div id="toast-region" class="toast-region" aria-live="polite"></div>
+  <script src="/consultant/app.js?v=20260720-export1"></script>
+</body>
+</html>

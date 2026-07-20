@@ -2033,6 +2033,41 @@ body {
 .example-question-title { color: var(--slate-500); font-size: 12px; margin-bottom: 8px; }
 .example-question-list { display: flex; flex-wrap: wrap; gap: 8px; }
 .example-question-list button { border: 1px solid var(--slate-200); background: #fff; color: var(--slate-600); padding: 8px 11px; border-radius: 999px; font: inherit; font-size: 12px; cursor: pointer; }
+
+/* ===== Nutrition consultation handoff ===== */
+.handoff-status { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 8px 14px 0; padding: 10px 12px; border: 1px solid #99f6e4; border-radius: 12px; background: #f0fdfa; color: #115e59; }
+.handoff-status[hidden] { display: none; }
+.handoff-status > div { min-width: 0; display: grid; grid-template-columns: auto 1fr; align-items: center; column-gap: 8px; }
+.handoff-status strong { font-size: 13px; }
+.handoff-status small { grid-column: 2; margin-top: 2px; color: #4b7d77; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.handoff-status-dot { width: 8px; height: 8px; grid-row: 1 / 3; border-radius: 50%; background: #14b8a6; box-shadow: 0 0 0 4px rgba(20, 184, 166, .14); }
+.handoff-status button { flex-shrink: 0; border: 0; background: transparent; color: #0f766e; font: inherit; font-size: 12px; font-weight: 700; cursor: pointer; }
+.handoff-status-actions { display: flex !important; grid-template-columns: none !important; gap: 6px; align-items: center; }
+.handoff-status-actions button:first-child { padding: 6px 9px; border-radius: 999px; background: #ccfbf1; }
+.chat-view-nutrition .agent-tabs { display: none; }
+.msg.handoff-agent { flex-direction: row; }
+.msg.handoff-agent .msg-avatar { background: #0f766e; color: #fff; }
+.msg.handoff-agent .msg-bubble { background: #f0fdfa; border: 1px solid #99f6e4; color: #134e4a; }
+.msg.handoff-system { justify-content: center; }
+.msg.handoff-system .system-bubble { background: #e6fffa; color: #0f766e; }
+.handoff-inline-action { display: inline-flex; margin: 7px 0 0; padding: 6px 10px; border: 1px solid #5eead4; border-radius: 999px; color: #0f766e; background: #fff; font: inherit; font-size: 12px; font-weight: 700; cursor: pointer; }
+.handoff-choice-overlay { align-items: flex-end; padding: 0; }
+.handoff-choice-overlay.active { display: flex; }
+.handoff-choice-sheet { position: relative; width: 100%; padding: 12px 22px calc(22px + env(safe-area-inset-bottom)); border-radius: 24px 24px 0 0; background: #fff; box-shadow: 0 -18px 55px rgba(15, 23, 42, .18); animation: handoff-sheet-up .22s ease-out; }
+.handoff-choice-handle { width: 42px; height: 4px; margin: 0 auto 17px; border-radius: 999px; background: var(--slate-200); }
+.handoff-choice-close { position: absolute; top: 18px; right: 18px; width: 32px; height: 32px; border: 0; border-radius: 50%; color: var(--slate-500); background: var(--slate-100); font-size: 17px; cursor: pointer; }
+.handoff-choice-icon { width: 46px; height: 46px; display: grid; place-items: center; margin-bottom: 12px; border-radius: 15px; color: #fff; background: linear-gradient(145deg, var(--primary), #6d28d9); font-size: 22px; box-shadow: 0 10px 24px rgba(124, 58, 237, .24); }
+.handoff-choice-sheet h2 { margin: 0 42px 7px 0; font-size: 20px; color: var(--slate-800); }
+.handoff-choice-sheet > p { margin: 0 0 14px; color: var(--slate-600); font-size: 14px; line-height: 1.65; }
+.handoff-choice-ai-note { display: flex; align-items: center; gap: 8px; padding: 10px 12px; border-radius: 12px; color: #5b21b6; background: var(--primary-light); font-size: 13px; font-weight: 700; }
+.handoff-choice-ai-note i { font-size: 17px; }
+.handoff-choice-status { min-height: 34px; padding: 9px 2px 7px; color: var(--slate-500); font-size: 12px; line-height: 1.45; }
+.handoff-choice-primary, .handoff-choice-secondary, .handoff-choice-later { width: 100%; border-radius: 12px; font: inherit; font-weight: 700; cursor: pointer; }
+.handoff-choice-primary { padding: 13px 16px; border: 0; color: #fff; background: var(--primary); box-shadow: 0 8px 20px rgba(139, 92, 246, .2); }
+.handoff-choice-secondary { margin-top: 9px; padding: 12px 16px; border: 1px solid #99f6e4; color: #0f766e; background: #f0fdfa; }
+.handoff-choice-secondary:disabled { border-color: var(--slate-200); color: var(--slate-400); background: var(--slate-100); cursor: not-allowed; }
+.handoff-choice-later { margin-top: 7px; padding: 9px 16px; border: 0; color: var(--slate-500); background: transparent; }
+@keyframes handoff-sheet-up { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
 .example-question-list button:active { border-color: var(--primary); color: var(--primary); }
 
 /* Home bulletin: a compact game-style ticker for curated articles. */
