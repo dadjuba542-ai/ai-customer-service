@@ -599,15 +599,17 @@ def claim_session(user_id, session_id):
             conn.execute('UPDATE cs_agents SET current_load = current_load + 1 WHERE user_id = ?', (user_id,))
         else:
             raise HandoffError('会话已被其他客服接入或当前接待已满', 409)
+        handoff_settings = get_handoff_settings()
         conn.execute(
             '''UPDATE handoff_sessions SET status = 'active', active_at = CURRENT_TIMESTAMP,
-               agent_claim_deadline = NULL, updated_at = CURRENT_TIMESTAMP WHERE id = ?''',
-            (row['id'],),
+               agent_claim_deadline = NULL, live_deadline_at = datetime('now', ?),
+               updated_at = CURRENT_TIMESTAMP WHERE id = ?''',
+            (f"+{handoff_settings['live_wait_sec']} seconds", row['id']),
         )
         welcome = (
             '营养师正在处理你的留言，回复后会自动归档'
             if (row['service_mode'] or 'live') == 'message'
-            else get_handoff_settings()['welcome_msg']
+            else handoff_settings['welcome_msg']
         )
         conn.execute(
             '''INSERT INTO handoff_messages (session_id, sender_role, sender_id, content)
