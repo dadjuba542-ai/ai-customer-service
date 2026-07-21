@@ -2,7 +2,10 @@
 async function loadHandoffConfig() {
   try {
     const res = await fetch(`${API_BASE}/api/handoff/config`);
-    if (!res.ok) return;
+    if (!res.ok) {
+      state.handoff.config = null;
+      return false;
+    }
     state.handoff.config = await res.json();
     const ai = state.handoff.config.ai_agent;
     if (ai && !AGENTS.some(a => a.id === ai.agent_id)) {
@@ -14,7 +17,11 @@ async function loadHandoffConfig() {
     }
     renderQuickFunctions();
     updateHandoffUi();
-  } catch {}
+    return true;
+  } catch {
+    state.handoff.config = null;
+    return false;
+  }
 }
 
 function updateHandoffUi() {
@@ -251,7 +258,8 @@ async function handleHandoffIntent(text, time, classification = {}) {
     });
     return;
   }
-  if (!state.handoff.config) await loadHandoffConfig();
+  // 后台设置可能刚刚变更，不能只依赖页面首次加载时的旧配置。
+  await loadHandoffConfig();
   openHandoffChoice();
 }
 

@@ -131,7 +131,7 @@ async function bootWorkspace() {
     if (!state.user.is_admin) throw new Error('该账号没有后台权限');
     $('login-page').hidden = true;
     $('workspace').hidden = false;
-    $('agent-name').textContent = state.user.username || '客服';
+    $('agent-name').textContent = '在线营养师';
     const me = await api('/api/admin/handoff/agent/me');
     state.agent = me.agent;
     if (state.agent) {

@@ -129,7 +129,10 @@ function switchAgent(id) {
 
 function updateChatAgentInfo() {
   const agent = AGENTS.find(a => a.id === state.activeAgentId);
-  document.getElementById('chat-agent-name').innerHTML = `${agent.name} <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:${state.isStreaming ? '#10B981' : '#CBD5E1'};animation:pulse-dot 2s infinite"></span>`;
+  const humanActive = state.handoff.session?.service_mode !== 'message'
+    && state.handoff.session?.status === 'active';
+  const name = humanActive ? '在线营养师' : (agent?.name || '在线营养师');
+  document.getElementById('chat-agent-name').innerHTML = `${name} <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:${state.isStreaming ? '#10B981' : '#CBD5E1'};animation:pulse-dot 2s infinite"></span>`;
 }
 
 /* ===== Quick Functions ===== */
@@ -180,4 +183,3 @@ function quickSend(agentId, text) {
     replaceSystemMessage(msg);
   }
 }
-

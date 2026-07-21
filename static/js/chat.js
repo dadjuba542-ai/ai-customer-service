@@ -105,7 +105,7 @@ function renderMessageItem(msg, idx, existing = null) {
     div.innerHTML = `<div class="system-bubble"><i class="ph ph-check-circle"></i><div class="sb-text">${msg.content}</div></div>`;
   } else if (msg.role === 'handoff-agent') {
     div.classList.add('handoff-agent');
-    div.innerHTML = `<div class="msg-avatar"><i class="ph ph-headset"></i></div><div class="msg-body"><div class="msg-bubble">${escapeHtml(msg.content)}</div><span class="msg-time">${msg.time || ''}</span></div>`;
+    div.innerHTML = `<div class="msg-avatar"><i class="ph ph-headset"></i></div><div class="msg-body"><span class="msg-sender-name">在线营养师</span><div class="msg-bubble">${escapeHtml(msg.content)}</div><span class="msg-time">${msg.time || ''}</span></div>`;
   } else if (msg.role === 'bot') {
     const icon = agent ? agent.icon : 'sparkle';
     const color = agent ? agent.color : '#4F46E5';

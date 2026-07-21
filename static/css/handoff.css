@@ -12,6 +12,7 @@
 .msg.handoff-agent { flex-direction: row; }
 .msg.handoff-agent .msg-avatar { background: #0f766e; color: #fff; }
 .msg.handoff-agent .msg-bubble { background: #f0fdfa; border: 1px solid #99f6e4; color: #134e4a; }
+.msg.handoff-agent .msg-sender-name { color: #0f766e; font-size: 12px; font-weight: 700; }
 .msg.handoff-system { justify-content: center; }
 .msg.handoff-system .system-bubble { background: #e6fffa; color: #0f766e; }
 .handoff-inline-action { display: inline-flex; margin: 7px 0 0; padding: 6px 10px; border: 1px solid #5eead4; border-radius: 999px; color: #0f766e; background: #fff; font: inherit; font-size: 12px; font-weight: 700; cursor: pointer; }
