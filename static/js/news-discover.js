@@ -118,6 +118,7 @@ function renderHomeBulletin(news) {
     const title = String(item.title || '查看最新内容').trim();
     const chars = Array.from(title);
     const shortTitle = chars.length > 18 ? `${chars.slice(0, 17).join('')}…` : title;
+    bulletin.dataset.newsId = String(Number(item.id) || '');
     track.innerHTML = `<button class="bulletin-item" title="${escapeHtml(title)}" onclick="showNewsDetail(${Number(item.id)})"><span>${escapeHtml(shortTitle)}</span></button>`;
     track.classList.remove('bulletin-enter');
     void track.offsetWidth;
@@ -132,6 +133,11 @@ function renderHomeBulletin(news) {
       renderItem(items[index]);
     }, 4000);
   }
+}
+
+function openHomeBulletin() {
+  const id = Number(document.getElementById('home-bulletin')?.dataset.newsId || 0);
+  if (id) showNewsDetail(id);
 }
 
 /* ===== Discover ===== */
@@ -421,4 +427,3 @@ function prepareNewsDetailContent(html) {
 function closeNewsDetail() {
   document.getElementById('news-detail-overlay').classList.remove('active');
 }
-

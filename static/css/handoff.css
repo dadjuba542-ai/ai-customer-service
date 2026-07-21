@@ -59,7 +59,9 @@
 @keyframes bulletin-enter { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
 .bulletin-item small { display: none; }
 .bulletin-item:hover span { color: var(--primary); }
-.bulletin-arrow { position: absolute; right: 13px; top: 50%; transform: translateY(-50%); color: var(--primary); font-size: 14px; z-index: 2; }
+.bulletin-arrow { position: absolute; right: 0; top: 0; width: 48px; height: 100%; display: flex; align-items: center; justify-content: center; padding: 0; border: 0; color: var(--primary); background: transparent; font: inherit; cursor: pointer; z-index: 2; }
+.bulletin-arrow i { font-size: 14px; }
+.bulletin-arrow:hover { background: rgba(139, 92, 246, .06); }
 
 @media (max-width: 520px) {
   .msg-actions { opacity: 1; }
