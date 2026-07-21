@@ -211,6 +211,19 @@ def main():
         })
         assert_true(reply3.status_code == 201 and reply3.get_json()['message']['auto_closed'], reply3.get_data(as_text=True))
         assert_true(client.get('/api/handoff/current', headers=guest3_headers).get_json()['session'] is None, '留言回复后应自动归档')
+        recent3 = client.get('/api/handoff/recent?limit=20', headers=guest3_headers)
+        assert_true(recent3.status_code == 200, recent3.get_data(as_text=True))
+        recent3_session = next(item for item in recent3.get_json()['sessions'] if item['session_id'] == session3['session_id'])
+        assert_true(recent3_session['unread_count'] == 1, recent3_session)
+        restored3 = client.get(f"/api/handoff/session/{session3['session_id']}", headers=guest3_headers)
+        assert_true(restored3.status_code == 200, restored3.get_data(as_text=True))
+        restored3_messages = restored3.get_json()['session']
+        assert_true(restored3_messages['unread_count'] == 1, restored3_messages)
+        visible3 = client.get(f"/api/handoff/messages/{session3['session_id']}", headers=guest3_headers)
+        assert_true(any(item['sender_role'] == 'agent' and item['content'] == '这是营养师稍后的留言回复' for item in visible3.get_json()['messages']), visible3.get_json())
+        recent3_read = client.get('/api/handoff/recent?limit=20', headers=guest3_headers).get_json()
+        recent3_read_session = next(item for item in recent3_read['sessions'] if item['session_id'] == session3['session_id'])
+        assert_true(recent3_read_session['unread_count'] == 0, recent3_read_session)
 
         start4 = client.post('/api/handoff/start', headers=guest4_headers, json={
             'query_type': '营养咨询', 'note': '测试等待超时自动留言',

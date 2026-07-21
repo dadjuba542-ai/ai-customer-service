@@ -257,6 +257,11 @@ def _session_payload(conn, row, include_context=False):
     data['queue_position'] = position
     data['live_wait_sec'] = get_handoff_settings()['live_wait_sec']
     data['est_wait_sec'] = None if position and not online else (position * get_handoff_settings()['avg_handle_sec'] // max(1, online) if position else 0)
+    data['unread_count'] = conn.execute(
+        '''SELECT COUNT(*) AS cnt FROM handoff_messages
+           WHERE session_id = ? AND sender_role = 'agent' AND id > ?''',
+        (row['session_id'], row['user_last_read_message_id'] or 0),
+    ).fetchone()['cnt']
     if data.get('agent_id'):
         agent = conn.execute('SELECT display_name, avatar_url FROM cs_agents WHERE user_id = ?', (data['agent_id'],)).fetchone()
         data['agent'] = dict(agent) if agent else None

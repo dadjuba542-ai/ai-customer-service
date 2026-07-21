@@ -319,6 +319,24 @@ async function restoreHandoffSession() {
     let data = await res.json();
     let session = data.session;
     if (!session) {
+      // A message-mode session is automatically closed after the nutritionist
+      // replies, so it is no longer returned by /current. Recover the latest
+      // unread closed handoff without relying only on localStorage.
+      res = await fetch(`${API_BASE}/api/handoff/recent?limit=20`, { headers: authHeaders() });
+      if (res.ok) {
+        const recent = await res.json();
+        const unread = (recent.sessions || []).find(item => (
+          item.service_mode === 'message'
+          && item.status === 'closed'
+          && Number(item.unread_count || 0) > 0
+        ));
+        if (unread) {
+          const detailRes = await fetch(`${API_BASE}/api/handoff/session/${encodeURIComponent(unread.session_id)}`, { headers: authHeaders() });
+          if (detailRes.ok) session = (await detailRes.json()).session;
+        }
+      }
+    }
+    if (!session) {
       const stored = localStorage.getItem('handoff_session_id');
       if (stored) {
         res = await fetch(`${API_BASE}/api/handoff/session/${encodeURIComponent(stored)}`, { headers: authHeaders() });
@@ -334,7 +352,10 @@ async function restoreHandoffSession() {
     }
     renderAgentTabs();
     localStorage.setItem('handoff_session_id', session.session_id);
-    restoreAiContext(session.ai_context || []);
+    // A closed message is a one-way nutritionist note. Do not expose the
+    // original handoff question or the AI context in the user's chat.
+    const messageOnly = session.service_mode === 'message';
+    if (!messageOnly) restoreAiContext(session.ai_context || []);
     await loadHandoffMessages();
     if (session.status === 'closed') {
       resumeAiAfterHandoff();
@@ -395,9 +416,11 @@ async function loadHandoffMessages() {
   if (!res.ok) return false;
   const data = await res.json();
   let added = false;
+  const messageOnly = state.handoff.session?.service_mode === 'message';
   (data.messages || []).forEach((item) => {
     state.handoff.lastMessageId = Math.max(state.handoff.lastMessageId, item.id);
     if (state.messages.some(m => m.handoffMessageId === item.id)) return;
+    if (messageOnly && item.sender_role !== 'agent') return;
     if (item.sender_role === 'system' && item.content === '营养师已回复留言，本次留言已完成') return;
     if (item.sender_role === 'user' && state.handoff.pendingInitialQuestion === item.content) {
       const existing = [...state.messages].reverse().find(message => (
@@ -412,8 +435,8 @@ async function loadHandoffMessages() {
         return;
       }
     }
-    const asyncAgentReply = item.sender_role === 'agent' && state.handoff.session?.service_mode === 'message';
-    const content = asyncAgentReply ? `营养师留言回复：${item.content}` : item.content;
+    const asyncAgentReply = item.sender_role === 'agent' && messageOnly;
+    const content = asyncAgentReply ? `营养师留言：${item.content}` : item.content;
     state.messages.push({
       id: `hm-${item.id}`, handoffMessageId: item.id,
       role: item.sender_role === 'agent' ? 'handoff-agent' : item.sender_role === 'system' ? 'handoff-system' : 'user',
