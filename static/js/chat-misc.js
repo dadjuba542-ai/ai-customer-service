@@ -4,9 +4,16 @@ function clearChat() {
     showToast('人工咨询进行中不能清空对话', 'info');
     return;
   }
-  if (state.messages.length === 0) return;
+  if (state.isStreaming || state.isTyping) {
+    showToast('回答生成中，请稍候完成后再清空', 'info');
+    return;
+  }
   if (!confirm('确定清空当前对话？历史记录不会被删除。')) return;
+
   state.messages = [];
+  hideWaitingPanel();
+  hideTyping();
+  document.querySelectorAll('#chat-messages .msg, #chat-messages .typing-indicator').forEach(node => node.remove());
   renderMessages();
   showToast('对话已清空', 'success');
 }
