@@ -60,7 +60,7 @@ function updateHandoffUi() {
     deferAction.textContent = '立即转留言';
     action.textContent = '取消转接'; action.dataset.action = 'cancel'; input.placeholder = '给营养师补充问题...';
   } else if (session.status === 'active') {
-    title.textContent = `在线营养师${session.agent?.display_name ? ` · ${session.agent.display_name}` : ''}`;
+    title.textContent = '在线营养师';
     detail.textContent = '当前消息将由真人营养师回复'; deferAction.textContent = '暂时挂起';
     action.textContent = '结束咨询'; action.dataset.action = 'close'; input.placeholder = '给营养师留言...';
   } else {
