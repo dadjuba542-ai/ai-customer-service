@@ -1,4 +1,53 @@
 /* ===== History ===== */
+async function restoreLatestChat() {
+  // Keep the current in-memory conversation intact when this is called after
+  // a view transition or a session handoff.
+  if (state.messages.length > 0) return;
+
+  try {
+    const res = await fetch(`${API_BASE}/api/history/sessions`, { headers: authHeaders() });
+    if (!res.ok) return;
+    const data = await res.json();
+    const latestSession = data.sessions?.[0];
+    const items = latestSession?.items || [];
+    if (!items.length) return;
+
+    const firstItem = items[0];
+    const agent = AGENTS.find(a => a.id === firstItem.agent_id)
+      || AGENTS.find(a => a.type === firstItem.query_type)
+      || AGENTS[0];
+    if (agent) state.activeAgentId = agent.id;
+
+    state.messages = [];
+    items.forEach(item => {
+      const time = typeof formatTime === 'function'
+        ? formatTime(item.created_at, true)
+        : item.created_at || '';
+      state.messages.push({
+        id: `history-user-${item.id}`,
+        role: 'user',
+        content: item.user_message || '',
+        time,
+        agentId: agent?.id || state.activeAgentId,
+      });
+      if (item.bot_response) {
+        state.messages.push({
+          id: `history-bot-${item.id}`,
+          role: 'bot',
+          content: item.bot_response,
+          time,
+          agentId: item.agent_id || agent?.id || state.activeAgentId,
+          historyId: item.id,
+          feedback: item.feedback,
+          replyToText: item.user_message || '',
+        });
+      }
+    });
+    renderAgentTabs();
+    renderMessages();
+  } catch {}
+}
+
 async function loadHistory(queryType = '') {
   try {
     const base = `${API_BASE}/api/history/sessions`;
@@ -229,4 +278,3 @@ function closeQDetail(e) {
   document.getElementById('qdetail-overlay').classList.remove('active');
   currentQId = null;
 }
-

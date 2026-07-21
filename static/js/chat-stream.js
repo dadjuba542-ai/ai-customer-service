@@ -49,6 +49,10 @@ async function streamChatRequest(payload, agentId) {
 
       if (parsed.event === 'done') {
         hideWaitingPanel();
+        // The answer is complete at this point. Clear the transient waiting
+        // state before rendering/follow-up work so a chat re-render (or a
+        // quick view switch) cannot recreate the waiting panel.
+        state.isTyping = false;
         const finalText = parsed.data?.full_text || '';
         if (!botMsgId) {
           botMsgId = createStreamingBotMessage(agentId);
@@ -150,4 +154,3 @@ async function executeChatRequest({ text, agentId }) {
     finishChatRequest(sendBtn);
   }
 }
-

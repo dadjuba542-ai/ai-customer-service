@@ -205,8 +205,9 @@ async function loadSpeechConfig() {
 
 
 
-function enterApp() {
+async function enterApp() {
   document.getElementById('app').classList.add('active');
+  await restoreLatestChat();
   loadHotQuestions();
 }
 
@@ -266,7 +267,7 @@ async function ensureIdentity() {
       }
       if (gate) gate.classList.remove('active');
       if (!state.teamOptions.length) showToast('团队配置加载失败，已使用上次身份进入', 'info');
-      enterApp();
+      await enterApp();
       return;
     }
   }
@@ -303,7 +304,7 @@ async function submitIdentity() {
     await ensureGuestSession();
     localStorage.setItem('chat_profile', JSON.stringify(state.profile));
     document.getElementById('identity-gate')?.classList.remove('active');
-    enterApp();
+    await enterApp();
   } catch (error) {
     state.profile = null;
     showToast(error.message || '身份会话创建失败，请重试', 'error');
