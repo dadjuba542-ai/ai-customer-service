@@ -143,7 +143,6 @@ async function shareAnswerCard(index) {
 }
 
 async function shareChat() {
-  closeChatMenu();
   if (state.handoff.session && ['queued', 'assigned', 'active'].includes(state.handoff.session.status)) {
     showToast('人工咨询进行中暂不支持分享，请结束后再操作', 'info');
     return;
@@ -202,4 +201,3 @@ function closeSharePreview(e) {
   if (e && e.target !== e.currentTarget) return;
   document.getElementById('share-overlay').classList.remove('active');
 }
-

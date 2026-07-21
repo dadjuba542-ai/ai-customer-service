@@ -1,6 +1,8 @@
 import os
 import json
-from flask import Flask, jsonify, request, send_from_directory, render_template
+import html
+from urllib.parse import urljoin
+from flask import Flask, jsonify, request, make_response, render_template, send_from_directory
 from werkzeug.middleware.proxy_fix import ProxyFix
 
 DEFAULT_TIPS = [
@@ -33,7 +35,8 @@ DEFAULT_EXAMPLE_QUESTIONS = [
 ]
 from flask_cors import CORS
 from config import Config
-from models import init_db
+from models import init_db, get_setting
+from services.content_security import sanitize_media_url
 from routes.auth import auth_bp, token_required
 from routes.chat import chat_bp
 from routes.history import history_bp
@@ -111,8 +114,34 @@ def add_cache_headers(response):
 
 
 @app.route('/')
+@app.route('/index.html')
 def index():
-    return send_from_directory('static', 'index.html')
+    with open(os.path.join(Config.BASE_DIR, 'static', 'index.html'), encoding='utf-8') as file_obj:
+        document = file_obj.read()
+
+    title = (get_setting('share_title', 'AI宝儿智能体') or 'AI宝儿智能体').strip()[:80]
+    description = (get_setting('share_description', '产品咨询、使用答疑与健康问题解答') or '').strip()[:200]
+    image_url = sanitize_media_url(get_setting('share_image_url', '/avatar-optimized.png')) or '/avatar-optimized.png'
+    absolute_image_url = urljoin(request.url_root, image_url.lstrip('/'))
+    absolute_page_url = request.base_url
+
+    replacements = {
+        '<title>AI宝儿智能体</title>': f'<title>{html.escape(title)}</title>',
+        '<meta name="description" content="产品咨询、使用答疑与健康问题解答">': f'<meta name="description" content="{html.escape(description, quote=True)}">',
+        '<meta property="og:site_name" content="AI宝儿智能体">': f'<meta property="og:site_name" content="{html.escape(title, quote=True)}">',
+        '<meta property="og:title" content="AI宝儿智能体">': f'<meta property="og:title" content="{html.escape(title, quote=True)}">',
+        '<meta property="og:description" content="产品咨询、使用答疑与健康问题解答">': f'<meta property="og:description" content="{html.escape(description, quote=True)}">',
+        '<meta property="og:image" content="/avatar-optimized.png">': f'<meta property="og:image" content="{html.escape(absolute_image_url, quote=True)}">',
+        '<meta property="og:url" content="/">': f'<meta property="og:url" content="{html.escape(absolute_page_url, quote=True)}">',
+        '<meta name="twitter:title" content="AI宝儿智能体">': f'<meta name="twitter:title" content="{html.escape(title, quote=True)}">',
+        '<meta name="twitter:description" content="产品咨询、使用答疑与健康问题解答">': f'<meta name="twitter:description" content="{html.escape(description, quote=True)}">',
+        '<meta name="twitter:image" content="/avatar-optimized.png">': f'<meta name="twitter:image" content="{html.escape(absolute_image_url, quote=True)}">',
+    }
+    for old, new in replacements.items():
+        document = document.replace(old, new)
+    response = make_response(document)
+    response.headers['Content-Type'] = 'text/html; charset=utf-8'
+    return response
 
 @app.route('/admin')
 def admin_page():

@@ -4,6 +4,17 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>AI宝儿智能体</title>
+  <meta name="description" content="产品咨询、使用答疑与健康问题解答">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="AI宝儿智能体">
+  <meta property="og:title" content="AI宝儿智能体">
+  <meta property="og:description" content="产品咨询、使用答疑与健康问题解答">
+  <meta property="og:image" content="/avatar-optimized.png">
+  <meta property="og:url" content="/">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="AI宝儿智能体">
+  <meta name="twitter:description" content="产品咨询、使用答疑与健康问题解答">
+  <meta name="twitter:image" content="/avatar-optimized.png">
   <script>
     if (window.location.protocol === 'file:') {
       window.location.replace('http://127.0.0.1:5001/');
@@ -15,7 +26,7 @@
   <link rel="stylesheet" href="/css/community.css?v=20260720-split1">
   <link rel="stylesheet" href="/css/overlays.css?v=20260720-split1">
   <link rel="stylesheet" href="/css/news-nav.css?v=20260720-split1">
-  <link rel="stylesheet" href="/css/chat-ui.css?v=20260720-split1">
+  <link rel="stylesheet" href="/css/chat-ui.css?v=20260721-clear1">
   <link rel="stylesheet" href="/css/related-cases.css?v=20260720-split1">
   <link rel="stylesheet" href="/css/share-misc.css?v=20260720-split1">
   <link rel="stylesheet" href="/css/products.css?v=20260720-split1">
@@ -98,11 +109,9 @@
             <div class="chat-agent-info">
               <span class="chat-agent-name" id="chat-agent-name">产品资料查询</span>
             </div>
-            <button class="icon-btn" onclick="toggleChatMenu(event)"><i class="ph ph-dots-three-vertical"></i></button>
-              <div class="chat-menu" id="chat-menu">
-                <div class="chat-menu-item" onclick="shareChat()"><i class="ph ph-share-fat"></i> 分享对话</div>
-                <div class="chat-menu-item danger" onclick="clearChat()"><i class="ph ph-trash"></i> 清空对话</div>
-              </div>
+            <button class="icon-btn chat-clear-btn" onclick="clearChat()" aria-label="清空聊天记录" title="清空聊天记录">
+              <span aria-hidden="true">清</span>
+            </button>
           </div>
           <div class="agent-tabs" id="agent-tabs"></div>
         </header>

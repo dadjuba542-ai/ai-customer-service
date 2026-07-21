@@ -53,6 +53,9 @@
         <div class="nav-item" data-page="agents" onclick="switchPage('agents')">
           <i class="ph ph-robot"></i><span>智能体配置</span>
         </div>
+        <div class="nav-item" data-page="share" onclick="switchPage('share')">
+          <i class="ph ph-share-network"></i><span>分享设置</span>
+        </div>
         <div class="nav-item" data-page="feedback" onclick="switchPage('feedback')">
           <i class="ph ph-star"></i><span>评价看板</span>
         </div>
@@ -447,6 +450,45 @@
           </div>
         </div>
         <div id="admin-agents-list"></div>
+      </div>
+
+      <!-- ===== Page: Share Settings ===== -->
+      <div id="page-share" class="page-content">
+        <div class="admin-card">
+          <h3><i class="ph ph-share-network"></i>微信链接分享设置</h3>
+          <p style="font-size:12px;color:var(--slate-500);margin:0 0 14px">控制微信转发网页链接时显示的标题、简介和右侧缩略图。保存后，微信可能需要一段时间刷新缓存。</p>
+          <div class="admin-row">
+            <div class="field">
+              <label>分享标题</label>
+              <input type="text" id="share-title-input" maxlength="80" placeholder="如：AI宝儿｜智能健康咨询">
+              <div class="hint">建议不超过 30 个字，过长时微信可能截断。</div>
+            </div>
+          </div>
+          <div class="admin-row">
+            <div class="field">
+              <label>分享简介</label>
+              <textarea id="share-description-input" rows="3" maxlength="200" placeholder="如：产品咨询、使用答疑与健康问题解答"></textarea>
+              <div class="hint">用于链接预览卡片的辅助说明。</div>
+            </div>
+          </div>
+          <div class="admin-row">
+            <div class="field">
+              <label>分享缩略图</label>
+              <div style="display:flex;gap:8px;align-items:flex-start">
+                <input type="text" id="share-image-url-input" placeholder="图片 URL 或点击右侧上传" style="flex:1">
+                <label class="btn btn-secondary btn-sm" style="cursor:pointer;white-space:nowrap">
+                  <i class="ph ph-upload"></i> 上传
+                  <input type="file" accept="image/*" onchange="uploadShareImage(this)" style="display:none">
+                </label>
+              </div>
+              <div style="font-size:11px;color:var(--slate-400);margin-top:4px">建议 600×600 正方形，jpg/png/webp，不超过 2MB；默认使用 AI 宝儿头像。</div>
+              <div id="share-image-preview-wrap" style="margin-top:8px;display:none">
+                <img id="share-image-preview" alt="分享缩略图预览" style="width:96px;height:96px;object-fit:cover;border-radius:10px;border:1px solid var(--slate-200)">
+              </div>
+            </div>
+          </div>
+          <button class="btn btn-primary" onclick="saveShareSettings()"><i class="ph ph-check"></i> 保存分享设置</button>
+        </div>
       </div>
 
       <!-- ===== Feedback Page ===== -->

@@ -141,6 +141,7 @@ async function switchPage(page) {
     products: '产品管理',
     cases: '案例档案',
     agents: '智能体配置',
+    share: '分享设置',
     feedback: '评价看板',
     community: '问答管理',
     'team-stats': '团队提问统计',
@@ -165,6 +166,7 @@ async function switchPage(page) {
     loadAdminCases();
   }
   if (page === 'agents') loadAdminAgents();
+  if (page === 'share') loadShareSettings();
   if (page === 'feedback') loadFeedbackDashboard();
   if (page === 'community') loadAdminQA();
   if (page === 'team-stats') loadTeamStatsPage();
@@ -1191,6 +1193,79 @@ async function loadAdminSystemConfig() {
     document.getElementById('tencent-secret-key-input').value = '';
     document.getElementById('tencent-secret-hint').textContent = tencentSecretMasked ? `已保存 SecretKey：${tencentSecretMasked}` : '尚未保存 SecretKey';
   } catch { console.error('loadAdminSystemConfig error'); }
+}
+
+async function loadShareSettings() {
+  try {
+    const res = await fetch(`${API}/api/admin/settings/share`, {
+      headers: { 'Authorization': `Bearer ${getToken()}` },
+    });
+    if (!res.ok) throw new Error('load share settings failed');
+    const data = await res.json();
+    document.getElementById('share-title-input').value = data.title || '';
+    document.getElementById('share-description-input').value = data.description || '';
+    document.getElementById('share-image-url-input').value = data.image_url || '';
+    updateShareImagePreview(data.image_url || '');
+  } catch (e) {
+    console.error('loadShareSettings error:', e);
+  }
+}
+
+function updateShareImagePreview(url) {
+  const wrap = document.getElementById('share-image-preview-wrap');
+  const preview = document.getElementById('share-image-preview');
+  if (!wrap || !preview) return;
+  if (!url) {
+    wrap.style.display = 'none';
+    preview.removeAttribute('src');
+    return;
+  }
+  preview.src = url;
+  preview.onerror = () => { wrap.style.display = 'none'; };
+  preview.onload = () => { wrap.style.display = 'block'; };
+}
+
+async function uploadShareImage(input) {
+  if (!input.files[0]) return;
+  const formData = new FormData();
+  formData.append('file', input.files[0]);
+  try {
+    const res = await fetch(`${API}/api/admin/upload`, {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${getToken()}` },
+      body: formData,
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || '上传失败');
+    document.getElementById('share-image-url-input').value = data.url || '';
+    updateShareImagePreview(data.url || '');
+    showToast('缩略图已上传，请保存分享设置', 'success');
+  } catch (e) {
+    showToast(e.message || '上传失败', 'error');
+  } finally {
+    input.value = '';
+  }
+}
+
+async function saveShareSettings() {
+  const title = document.getElementById('share-title-input').value.trim();
+  const description = document.getElementById('share-description-input').value.trim();
+  const image_url = document.getElementById('share-image-url-input').value.trim();
+  if (!title) return showToast('请填写分享标题', 'error');
+  try {
+    const res = await fetch(`${API}/api/admin/settings/share`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${getToken()}` },
+      body: JSON.stringify({ title, description, image_url }),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error || '保存失败');
+    document.getElementById('share-image-url-input').value = data.image_url || image_url;
+    updateShareImagePreview(data.image_url || image_url);
+    showToast('分享设置已保存', 'success');
+  } catch (e) {
+    showToast(e.message || '保存失败', 'error');
+  }
 }
 
 function showCreateAgentForm() {

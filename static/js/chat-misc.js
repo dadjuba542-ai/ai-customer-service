@@ -1,20 +1,5 @@
-/* ===== Chat Menu ===== */
-function toggleChatMenu(e) {
-  e.stopPropagation();
-  const menu = document.getElementById('chat-menu');
-  const isActive = menu.classList.toggle('active');
-  if (isActive) {
-    setTimeout(() => document.addEventListener('click', closeChatMenu), 10);
-  }
-}
-function closeChatMenu() {
-  document.getElementById('chat-menu').classList.remove('active');
-  document.removeEventListener('click', closeChatMenu);
-}
-
 /* ===== Clear Chat ===== */
 function clearChat() {
-  closeChatMenu();
   if (state.handoff.session && ['queued', 'assigned', 'active'].includes(state.handoff.session.status)) {
     showToast('人工咨询进行中不能清空对话', 'info');
     return;
@@ -140,4 +125,3 @@ async function regenerateMsg(msgIdx) {
     await executeChatRequest({ text: userText, agentId });
   } catch {}
 }
-

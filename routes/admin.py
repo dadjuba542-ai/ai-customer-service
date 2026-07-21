@@ -7,6 +7,7 @@ from routes.auth import admin_required
 from services.image_service import is_allowed_image_filename, process_uploaded_image
 from services.secret_service import get_secret_setting, set_secret_setting
 from services.handoff_service import HandoffError, get_handoff_settings, update_handoff_settings
+from services.content_security import sanitize_media_url
 
 admin_bp = Blueprint('admin', __name__)
 LEAD_STATUSES = {'pending', 'contacted', 'completed'}
@@ -266,6 +267,45 @@ def case_library_url(current_user):
         set_setting('case_library_url', url)
         return jsonify({'message': '已更新', 'case_library_url': url})
     return jsonify({'case_library_url': get_setting('case_library_url', '')})
+
+
+@admin_bp.route('/settings/share', methods=['GET', 'PUT'])
+@admin_required
+def share_settings(current_user):
+    defaults = {
+        'title': 'AI宝儿智能体',
+        'description': '产品咨询、使用答疑与健康问题解答',
+        'image_url': '/avatar-optimized.png',
+    }
+    if request.method == 'PUT':
+        data = request.get_json(silent=True) or {}
+        title = str(data.get('title') or '').strip()
+        description = str(data.get('description') or '').strip()
+        image_url = sanitize_media_url(str(data.get('image_url') or '').strip())
+        if not title:
+            return jsonify({'error': '分享标题不能为空'}), 400
+        if len(title) > 80:
+            return jsonify({'error': '分享标题不能超过80个字'}), 400
+        if len(description) > 200:
+            return jsonify({'error': '分享简介不能超过200个字'}), 400
+        if image_url.startswith('data:'):
+            return jsonify({'error': '缩略图请使用上传图片或 http(s) 图片地址'}), 400
+        set_setting('share_title', title)
+        set_setting('share_description', description)
+        set_setting('share_image_url', image_url)
+        return jsonify({
+            'message': '分享设置已保存',
+            'title': title,
+            'description': description,
+            'image_url': image_url or defaults['image_url'],
+        })
+
+    return jsonify({
+        'title': get_setting('share_title', defaults['title']) or defaults['title'],
+        'description': get_setting('share_description', defaults['description']),
+        'image_url': get_setting('share_image_url', defaults['image_url']) or defaults['image_url'],
+        'defaults': defaults,
+    })
 
 @admin_bp.route('/settings/waiting-content', methods=['GET', 'PUT'])
 @admin_required
