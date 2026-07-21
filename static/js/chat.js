@@ -93,9 +93,9 @@ function replaceSystemMessage(text) {
   renderMessages();
 }
 
-function renderMessageItem(msg, idx) {
+function renderMessageItem(msg, idx, existing = null) {
   const agent = msg.agentId ? AGENTS.find(a => a.id === msg.agentId) : AGENTS[0];
-  const div = document.createElement('div');
+  const div = existing || document.createElement('div');
   div.className = `msg ${msg.role}`;
   div.dataset.msgId = msg.id;
   if (msg.role === 'system' || msg.role === 'handoff-system') {
@@ -139,19 +139,35 @@ function renderMessages() {
   const emptyChat = document.getElementById('empty-chat');
   emptyChat.style.display = state.messages.length > 0 ? 'none' : 'flex';
 
-  const existingIds = new Set();
-  container.querySelectorAll('.msg').forEach(el => {
-    const id = el.dataset.msgId;
-    if (id) existingIds.add(id);
+  // Reconcile keyed message nodes instead of append-only rendering. This keeps
+  // streaming nodes up to date and removes messages deleted from state.
+  const existingById = new Map();
+  container.querySelectorAll('.msg[data-msg-id]').forEach(el => {
+    const id = String(el.dataset.msgId);
+    if (existingById.has(id)) {
+      el.remove();
+    } else {
+      existingById.set(id, el);
+    }
   });
 
+  const desiredIds = new Set(state.messages.map(msg => String(msg.id)));
+  existingById.forEach((el, id) => {
+    if (!desiredIds.has(id)) el.remove();
+  });
+
+  // appendChild moves existing nodes, so this also restores state order.
   state.messages.forEach((msg, idx) => {
     const msgId = String(msg.id);
-    if (existingIds.has(msgId)) return;
-
-    const div = renderMessageItem(msg, idx);
+    const div = renderMessageItem(msg, idx, existingById.get(msgId) || null);
     container.appendChild(div);
   });
+
+  // Waiting/typing indicators are transient DOM nodes and are not in state;
+  // keep them after the reconciled message list.
+  [...container.children]
+    .filter(el => !el.matches('.msg[data-msg-id]'))
+    .forEach(el => container.appendChild(el));
 
   container.scrollTop = container.scrollHeight;
   updateScrollBtn();
@@ -644,4 +660,3 @@ function hideWaitingPanel() {
 async function streamResponse(text, historyId) {
   addBotMessage(text, { historyId, agentId: state.activeAgentId });
 }
-
