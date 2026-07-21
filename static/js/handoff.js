@@ -44,12 +44,12 @@ function updateHandoffUi() {
   deferAction.hidden = false;
   if (session.status === 'queued') {
     title.textContent = session.queue_position ? `正在排队，第 ${session.queue_position} 位` : '正在等待营养师';
-    detail.textContent = `最多在线等待约 ${Math.max(1, Math.ceil(Number(session.live_wait_sec || config?.live_wait_sec || 120) / 60))} 分钟，超时自动转留言`;
+    detail.textContent = `最多在线等待约 ${Math.max(1, Math.ceil(Number(session.live_wait_sec || config?.live_wait_sec || 600) / 60))} 分钟，超时自动转留言`;
     deferAction.textContent = '立即转留言';
     action.textContent = '取消排队'; action.dataset.action = 'cancel';
     input.placeholder = '给营养师补充问题...';
   } else if (session.status === 'assigned') {
-    title.textContent = '营养师已收到，正在接入'; detail.textContent = `超过 ${Math.max(1, Math.ceil(Number(session.live_wait_sec || config?.live_wait_sec || 120) / 60))} 分钟未回复将自动转留言`;
+    title.textContent = '营养师已收到，正在接入'; detail.textContent = `超过 ${Math.max(1, Math.ceil(Number(session.live_wait_sec || config?.live_wait_sec || 600) / 60))} 分钟未回复将自动转留言`;
     deferAction.textContent = '立即转留言';
     action.textContent = '取消转接'; action.dataset.action = 'cancel'; input.placeholder = '给营养师补充问题...';
   } else if (session.status === 'active') {
@@ -444,4 +444,3 @@ async function deferHandoffSession() {
     showToast(error.message || '转留言失败', 'error');
   }
 }
-

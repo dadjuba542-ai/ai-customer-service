@@ -112,15 +112,16 @@ function renderMessageItem(msg, idx, existing = null) {
     const dislikeActive = msg.feedback === 0 ? ' active' : '';
     const feedbackDisabled = msg.feedback !== undefined ? ' disabled' : '';
     const actions = !msg.isStreaming ? `
-      <div class="msg-actions">
+      <div class="msg-actions" role="group" aria-label="回复操作">
         <button class="msg-action-btn" onclick="copyText('${escapeHtml(msg.content).replace(/'/g, "\\'")}')"><i class="ph ph-copy-simple"></i> 复制</button>
         ${agent && agent.type === '产品咨询' ? '<button class="msg-action-btn" onclick="switchView(\'products\')"><i class="ph ph-shopping-bag"></i> 查看产品</button>' : ''}
         <button class="msg-action-btn share-action" onclick="shareAnswerCard(${idx})"><i class="ph ph-share-network"></i> 生成分享图</button>
-        <button class="msg-action-btn lead-action" onclick="openLeadModal(${idx})"><i class="ph ph-chat-circle-text"></i> 获取方案</button>
         <button class="msg-action-btn" onclick="regenerateMsg(${idx})"><i class="ph ph-arrows-clockwise"></i> 重新回答</button>
         ${msg.historyId ? `
-        <button class="msg-feedback-btn${likeActive}${feedbackDisabled}" onclick="sendFeedback(${msg.historyId}, 1, ${idx})"><i class="ph ph-thumbs-up"></i></button>
-        <button class="msg-feedback-btn${dislikeActive}${feedbackDisabled}" onclick="sendFeedback(${msg.historyId}, 0, ${idx})"><i class="ph ph-thumbs-down"></i></button>` : ''}
+        <span class="msg-feedback-group" role="group" aria-label="回答反馈">
+          <button class="msg-feedback-btn${likeActive}${feedbackDisabled}" aria-label="回答有帮助" title="回答有帮助" onclick="sendFeedback(${msg.historyId}, 1, ${idx})"><i class="ph ph-thumbs-up" aria-hidden="true"></i></button>
+          <button class="msg-feedback-btn${dislikeActive}${feedbackDisabled}" aria-label="回答没帮助" title="回答没帮助" onclick="sendFeedback(${msg.historyId}, 0, ${idx})"><i class="ph ph-thumbs-down" aria-hidden="true"></i></button>
+        </span>` : ''}
       </div>` : '';
     const relatedCases = !msg.isStreaming
       ? renderRelatedCases(msg.relatedCases || [], msg.replyToText || '', msg.relatedCasesTotal)

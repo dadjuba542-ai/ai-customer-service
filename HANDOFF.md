@@ -95,7 +95,7 @@ python3 scripts/reset_admin_password.py admin8
 
 - 前台只在“深度调理答疑”中识别明确的转人工表达；人工咨询作为 AI 的兜底，不在首页常驻展示入口。
 - 营养咨询 AI 由 `handoff_ai_agent_id` 独立配置；进入在线人工状态后消息只发真人通道。
-- 在线等待默认 120 秒，可通过 `handoff_live_wait_sec` 调整；超时或用户主动挂起后转为异步留言并恢复 AI。
+- 在线等待默认 600 秒（10 分钟），可通过 `handoff_live_wait_sec` 调整；超时或用户主动挂起后转为异步留言并恢复 AI。
 - 营养师工作台地址：`http://服务器地址/consultant`，使用管理员账号登录。
 - 工作台支持排队、多会话接待、桌面通知、历史档案、同用户历史回复和 CSV 导出。
 - 导出不包含转人工前 AI 对话，最多 5,000 条，并记录到 `handoff_export_logs`。

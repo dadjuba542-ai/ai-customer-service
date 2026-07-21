@@ -27,7 +27,7 @@ class Config:
     HANDOFF_QUEUE_POLL_SEC = max(2, int(os.environ.get('HANDOFF_QUEUE_POLL_SEC', '4')))
     HANDOFF_AGENT_STALE_SEC = max(30, int(os.environ.get('HANDOFF_AGENT_STALE_SEC', '90')))
     HANDOFF_CLAIM_TIMEOUT_SEC = max(30, int(os.environ.get('HANDOFF_CLAIM_TIMEOUT_SEC', '60')))
-    HANDOFF_LIVE_WAIT_SEC = max(30, int(os.environ.get('HANDOFF_LIVE_WAIT_SEC', '120')))
+    HANDOFF_LIVE_WAIT_SEC = max(30, int(os.environ.get('HANDOFF_LIVE_WAIT_SEC', '600')))
 
     # 四大模块对应的机器人ID
     BOT_MAPPING = {

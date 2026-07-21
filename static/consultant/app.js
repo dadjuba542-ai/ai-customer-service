@@ -652,7 +652,7 @@ async function openSettings() {
     $('setting-agent').value = settings.ai_agent_id || '';
     $('setting-button-label').value = settings.button_label || '';
     $('setting-avg-seconds').value = settings.avg_handle_sec || 180;
-    $('setting-live-wait-seconds').value = settings.live_wait_sec || 120;
+    $('setting-live-wait-seconds').value = settings.live_wait_sec || 600;
     $('setting-queue-msg').value = settings.queue_msg || '';
     $('setting-offline-msg').value = settings.offline_msg || '';
     $('setting-welcome-msg').value = settings.welcome_msg || '';

@@ -57,7 +57,7 @@
 .bulletin-arrow { position: absolute; right: 13px; top: 50%; transform: translateY(-50%); color: var(--primary); font-size: 14px; z-index: 2; }
 
 @media (max-width: 520px) {
-  .msg-actions { opacity: 1; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .msg-actions { opacity: 1; }
   .msg-action-btn { font-size: 10px; min-height: 28px; padding: 4px 5px; }
   .msg-action-btn i { font-size: 12px; flex: 0 0 auto; }
 }

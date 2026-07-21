@@ -120,7 +120,7 @@ CREATE TABLE IF NOT EXISTS cs_agents (
 
 - `live`：同步等待真人，消息只走人工通道。
 - `message`：异步留言，不阻塞 AI；营养师首次回复后自动关闭并归档留言会话。
-- 在线等待默认 120 秒，可由 `handoff_live_wait_sec` 配置；尚无真人回复且到达 `live_deadline_at` 后自动转为 `message`。
+- 在线等待默认 600 秒（10 分钟），可由 `handoff_live_wait_sec` 配置；尚无真人回复且到达 `live_deadline_at` 后自动转为 `message`。
 
 ```
         [前台 mode=ai] 深度调理用户明确表达「转人工」并确认
@@ -240,7 +240,7 @@ est_wait_sec = position * AVG_HANDLE_SECONDS   # 配置项，默认 180s
 | `handoff_button_label` | 按钮文案，默认「联系在线营养师」 |
 | `handoff_queue_msg` / `handoff_offline_msg` / `handoff_welcome_msg` | 排队/离线/接入欢迎文案 |
 | `handoff_avg_handle_sec` | 预计等待计算用，默认 180 |
-| `handoff_live_wait_sec` | 同步在线等待上限，默认 120 秒；超时自动转异步留言 |
+| `handoff_live_wait_sec` | 同步在线等待上限，默认 600 秒（10 分钟）；超时自动转异步留言 |
 | `handoff_business_hours` | 服务时间（JSON），非服务时段引导留资 |
 
 接口：`GET/PUT /api/admin/settings/handoff`。
