@@ -101,6 +101,7 @@ input:focus, textarea:focus, select:focus { border-color: var(--primary); box-sh
 .chat-actions .primary { color: #fff; background: var(--primary); border-color: var(--primary); }
 .chat-actions .danger { color: var(--danger); border-color: #fecaca; }
 .message-list { overflow: auto; padding: 24px; }
+.message-list-label { margin: 0 auto 14px; color: var(--muted); font-size: 12px; font-weight: 700; text-align: center; }
 .message { display: flex; margin: 14px 0; }
 .message.user { justify-content: flex-start; }
 .message.agent { justify-content: flex-end; }

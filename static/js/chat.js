@@ -2,7 +2,9 @@
 async function sendMessage() {
   const input = document.getElementById('message-input');
   const text = input.value.trim();
-  const isHandoffIntent = window.HandoffIntent?.isExplicitHandoffIntent(text) === true;
+  const handoffClassification = window.HandoffIntent?.classifyHandoffInput?.(text)
+    || { isHandoffIntent: window.HandoffIntent?.isExplicitHandoffIntent?.(text) === true, questionText: '' };
+  const isHandoffIntent = handoffClassification.isHandoffIntent === true;
   if (!text || (state.isStreaming && !state.handoff.session && !isHandoffIntent)) return;
   if (speechBusy()) {
     showToast('请先结束语音输入，再确认发送', 'info');
@@ -24,7 +26,7 @@ async function sendMessage() {
     return;
   }
   if (isHandoffIntent) {
-    await handleHandoffIntent(text, time);
+    await handleHandoffIntent(text, time, handoffClassification);
     return;
   }
   lastUserText = text;

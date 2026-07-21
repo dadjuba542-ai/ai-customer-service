@@ -60,6 +60,9 @@ def main():
         guest3_headers = {'Authorization': f'Bearer {guest3_token}'}
         guest4_headers = {'Authorization': f'Bearer {guest4_token}'}
 
+        empty_start = client.post('/api/handoff/start', headers=guest1_headers, json={'query_type': '营养咨询'})
+        assert_true(empty_start.status_code == 400, '空留言不应创建转人工会话')
+
         history_id = save_chat_history(guest1_id, '营养咨询', '最近胃口不好', '可以先观察饮食情况', agent_id='aura')
         start1 = client.post('/api/handoff/start', headers=guest1_headers, json={
             'history_ids': [history_id], 'query_type': '营养咨询', 'note': '希望真人再帮我看看',
@@ -235,7 +238,7 @@ def main():
             for index in range(5)
         ]
         with ThreadPoolExecutor(max_workers=5) as pool:
-            concurrent_sessions = list(pool.map(lambda identity: start_handoff(identity, query_type='营养咨询'), identities))
+            concurrent_sessions = list(pool.map(lambda identity: start_handoff(identity, query_type='营养咨询', note='并发测试问题'), identities))
         statuses = [item['status'] for item in concurrent_sessions]
         assert_true(statuses.count('assigned') == 3 and statuses.count('queued') == 2, statuses)
         assert_true(len({item['session_id'] for item in concurrent_sessions}) == 5, 'concurrent sessions must be unique')

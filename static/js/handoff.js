@@ -138,6 +138,36 @@ function closeHandoffChoice(event) {
   focusInput();
 }
 
+function latestMeaningfulHandoffQuestion() {
+  return [...state.messages].reverse().find(message => (
+    message.role === 'user'
+      && !message.handoffIntent
+      && !message.handoffMessageId
+      && !message.restoredAiContext
+      && String(message.content || '').trim()
+  ))?.content?.trim() || '';
+}
+
+function handoffContextHistoryIds() {
+  const ids = [];
+  state.messages.forEach((message) => {
+    if (message.role !== 'bot' || !message.historyId) return;
+    const id = String(message.historyId);
+    if (!ids.includes(id)) ids.push(id);
+  });
+  return ids.slice(-20);
+}
+
+function syncHandoffDraftState() {
+  const note = document.getElementById('handoff-choice-note');
+  const button = document.getElementById('handoff-choice-human');
+  const error = document.getElementById('handoff-choice-note-error');
+  if (!note || !button) return;
+  const hasNote = !!note.value.trim();
+  button.disabled = !state.handoff.config?.enabled || !hasNote;
+  if (hasNote && error) error.textContent = '';
+}
+
 function openHandoffChoice() {
   const config = state.handoff.config;
   const ai = ensureConfiguredHandoffAgent();
@@ -145,10 +175,13 @@ function openHandoffChoice() {
   const aiName = document.getElementById('handoff-choice-ai-name');
   const status = document.getElementById('handoff-choice-status');
   const humanButton = document.getElementById('handoff-choice-human');
+  const note = document.getElementById('handoff-choice-note');
+  const noteError = document.getElementById('handoff-choice-note-error');
 
   aiName.textContent = ai?.name ? `将由「${ai.name}」继续解答` : '专用营养 AI 暂未配置，将继续使用当前 AI';
-  humanButton.textContent = config?.online ? '仍要联系营养师' : '给营养师留言';
-  humanButton.disabled = !config?.enabled;
+  humanButton.textContent = config?.online ? '确认并联系营养师' : '确认并提交留言';
+  note.value = state.handoff.draftInitialQuestion || '';
+  noteError.textContent = '';
   if (!config) {
     status.textContent = '人工咨询配置暂不可用';
   } else if (!config.enabled) {
@@ -160,6 +193,7 @@ function openHandoffChoice() {
   }
   overlay.classList.add('active');
   overlay.setAttribute('aria-hidden', 'false');
+  syncHandoffDraftState();
   document.getElementById('handoff-choice-ai').focus();
 }
 
@@ -193,14 +227,13 @@ function switchToHandoffEligibleAgent() {
   focusInput();
 }
 
-async function handleHandoffIntent(text, time) {
+async function handleHandoffIntent(text, time, classification = {}) {
+  const draft = String(classification.questionText || '').trim() || latestMeaningfulHandoffQuestion();
+  state.handoff.draftInitialQuestion = draft;
   addMessage({
-    id: `hi-${Date.now()}`,
-    role: 'user',
-    content: text,
-    time,
-    agentId: state.activeAgentId,
-    handoffIntent: true,
+    id: `hs-${Date.now()}`,
+    role: 'handoff-system',
+    content: draft ? '已识别转人工请求，请确认给营养师的留言内容。' : '已识别转人工请求，请补充想让营养师了解的问题。',
   });
   if (state.handoff.session?.service_mode === 'message' && ['queued', 'assigned', 'active'].includes(state.handoff.session.status)) {
     addMessage({
@@ -223,42 +256,42 @@ async function handleHandoffIntent(text, time) {
 }
 
 async function chooseHumanHandoff() {
+  const note = document.getElementById('handoff-choice-note')?.value.trim() || '';
+  const error = document.getElementById('handoff-choice-note-error');
+  if (!note) {
+    if (error) error.textContent = '请先填写要咨询的问题，再联系营养师';
+    document.getElementById('handoff-choice-note')?.focus();
+    return;
+  }
   closeHandoffChoice();
-  await startHumanHandoff();
+  await startHumanHandoff(note);
 }
 
-async function startHumanHandoff() {
+async function startHumanHandoff(note) {
   if (!state.handoff.config?.enabled) return showToast('人工咨询暂未开启，请继续使用 AI', 'error');
+  note = String(note || '').trim();
+  if (!note) return showToast('请先填写要咨询的问题', 'error');
   resetClosedHandoffSession();
   state.handoff.isNutritionMode = true;
   updateHandoffUi();
   state.handoff.interrupting = true;
   if (state.chatAbortController) state.chatAbortController.abort();
-  const contextAgentIds = new Set([HANDOFF_TRIGGER_AGENT_ID, state.handoff.config.ai_agent?.agent_id].filter(Boolean));
-  const historyIds = state.messages
-    .filter(message => message.role === 'bot' && message.historyId && contextAgentIds.has(message.agentId))
-    .map(message => message.historyId)
-    .slice(-20);
-  const latestQuestion = [...state.messages].reverse().find(message => (
-    message.role === 'user'
-      && !message.handoffIntent
-      && !message.handoffMessageId
-      && (!message.agentId || contextAgentIds.has(message.agentId))
-  ))?.content || '';
+  const historyIds = handoffContextHistoryIds();
   try {
     const res = await fetch(`${API_BASE}/api/handoff/start`, {
       method: 'POST', headers: authHeaders({ 'Content-Type': 'application/json' }),
       body: JSON.stringify({
         history_ids: historyIds,
         query_type: state.handoff.config.ai_agent?.type || '营养咨询',
-        note: latestQuestion,
+        note,
       }),
     });
     const data = await res.json().catch(() => ({}));
     if (!res.ok) throw new Error(data.error || '转接失败');
     state.handoff.session = data.session;
     state.handoff.lastMessageId = 0;
-    state.handoff.pendingInitialQuestion = latestQuestion;
+    state.handoff.pendingInitialQuestion = note;
+    state.handoff.draftInitialQuestion = '';
     localStorage.setItem('handoff_session_id', data.session.session_id);
     await pollHandoffSession();
     startHandoffPolling();

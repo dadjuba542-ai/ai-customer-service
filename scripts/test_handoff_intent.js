@@ -1,5 +1,5 @@
 const assert = require('assert');
-const { isExplicitHandoffIntent } = require('../static/handoff-intent.js');
+const { isExplicitHandoffIntent, classifyHandoffInput } = require('../static/handoff-intent.js');
 
 const positives = [
   '转人工',
@@ -22,5 +22,13 @@ const negatives = [
 
 positives.forEach((text) => assert.strictEqual(isExplicitHandoffIntent(text), true, `应识别：${text}`));
 negatives.forEach((text) => assert.strictEqual(isExplicitHandoffIntent(text), false, `不应识别：${text}`));
+
+assert.deepStrictEqual(classifyHandoffInput('转人工'), {
+  isHandoffIntent: true, isPureIntent: true, questionText: '',
+});
+assert.deepStrictEqual(classifyHandoffInput('孕期便秘怎么办，请转人工'), {
+  isHandoffIntent: true, isPureIntent: false, questionText: '孕期便秘怎么办',
+});
+assert.strictEqual(classifyHandoffInput('这个产品怎么使用').isHandoffIntent, false);
 
 console.log('PASS: handoff intent matcher');

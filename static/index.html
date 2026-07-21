@@ -31,7 +31,7 @@
   <link rel="stylesheet" href="/css/share-misc.css?v=20260720-split1">
   <link rel="stylesheet" href="/css/products.css?v=20260720-split1">
   <link rel="stylesheet" href="/css/discover.css?v=20260720-split1">
-  <link rel="stylesheet" href="/css/handoff.css?v=20260720-split1">
+  <link rel="stylesheet" href="/css/handoff.css?v=20260721-handoff1">
   <link rel="stylesheet" href="icon-fallback.css?v=20260713-icons2">
 </head>
 <body>
@@ -318,8 +318,11 @@
           <p>AI 通常响应更快，建议先让营养咨询 AI 继续帮你；如仍需真人，也可以立即转接。</p>
           <div class="handoff-choice-ai-note"><i class="ph ph-robot"></i><span id="handoff-choice-ai-name">将由营养咨询 AI 继续解答</span></div>
           <div id="handoff-choice-status" class="handoff-choice-status"></div>
+          <label class="handoff-choice-note-label" for="handoff-choice-note">给营养师的留言</label>
+          <textarea id="handoff-choice-note" class="handoff-choice-note" rows="3" maxlength="2000" placeholder="请描述想让营养师重点了解的问题" oninput="syncHandoffDraftState()"></textarea>
+          <div id="handoff-choice-note-error" class="handoff-choice-note-error" role="alert"></div>
           <button type="button" id="handoff-choice-ai" class="handoff-choice-primary" onclick="chooseHandoffAi()">继续用 AI</button>
-          <button type="button" id="handoff-choice-human" class="handoff-choice-secondary" onclick="chooseHumanHandoff()">仍要联系营养师</button>
+          <button type="button" id="handoff-choice-human" class="handoff-choice-secondary" onclick="chooseHumanHandoff()">确认并联系营养师</button>
           <button type="button" class="handoff-choice-later" onclick="closeHandoffChoice()">暂不处理</button>
         </section>
       </div>
@@ -358,10 +361,10 @@
 
   <div id="toast"></div>
   <script src="speech-controller.js?v=20260717-speech113"></script>
-  <script src="handoff-intent.js?v=20260720-1"></script>
+  <script src="handoff-intent.js?v=20260721-handoff1"></script>
   <script src="/js/core.js?v=20260720-split1"></script>
   <script src="/js/views.js?v=20260720-split1"></script>
-  <script src="/js/handoff.js?v=20260720-split1"></script>
+  <script src="/js/handoff.js?v=20260721-handoff1"></script>
   <script src="/js/fetch-util.js?v=20260720-split1"></script>
   <script src="/js/voice.js?v=20260720-split1"></script>
   <script src="/js/chat-stream.js?v=20260720-split1"></script>

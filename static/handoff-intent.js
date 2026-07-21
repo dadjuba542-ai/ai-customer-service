@@ -35,5 +35,27 @@
       || trailingCommandPattern.test(lastClause);
   }
 
-  return { isExplicitHandoffIntent };
+  function classifyHandoffInput(value) {
+    const source = String(value || '').trim();
+    const normalized = normalizeClause(source);
+    const isHandoffIntent = isExplicitHandoffIntent(source);
+    if (!isHandoffIntent) return { isHandoffIntent: false, isPureIntent: false, questionText: '' };
+
+    const isPureIntent = exactPattern.test(normalized)
+      || commandPattern.test(normalized)
+      || directTargetPattern.test(normalized);
+    if (isPureIntent) return { isHandoffIntent: true, isPureIntent: true, questionText: '' };
+
+    const clauses = source.split(/[，,。！!？?；;\n]+/).map(item => item.trim()).filter(Boolean);
+    const lastClause = normalizeClause(clauses[clauses.length - 1] || '');
+    const trailingIsCommand = exactPattern.test(lastClause)
+      || commandPattern.test(lastClause)
+      || directTargetPattern.test(lastClause);
+    const questionText = trailingIsCommand && clauses.length > 1
+      ? clauses.slice(0, -1).join('，').trim()
+      : source;
+    return { isHandoffIntent: true, isPureIntent: false, questionText };
+  }
+
+  return { isExplicitHandoffIntent, classifyHandoffInput };
 }));

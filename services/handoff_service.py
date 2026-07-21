@@ -277,10 +277,12 @@ def start_handoff(identity, history_ids=None, query_type='', note=''):
     settings = get_handoff_settings()
     if not settings['enabled']:
         raise HandoffError('在线营养咨询暂未开启', 403)
+    note = str(note or '').strip()[:2000]
+    if not note:
+        raise HandoffError('请先填写要咨询的问题，再联系营养师')
     rows, context = _context_from_history(identity['user_id'], history_ids or [])
     ai_agent_id = settings['ai_agent_id'] or (rows[-1].get('agent_id') if rows else '') or ''
     session_id = uuid.uuid4().hex
-    note = str(note or '').strip()[:2000]
     conn = get_db_connection()
     try:
         conn.execute('BEGIN IMMEDIATE')
@@ -560,7 +562,9 @@ def list_agent_queue(user_id):
         raise HandoffError('当前管理员尚未开通客服坐席', 403)
     rows = conn.execute(
         '''SELECT s.*,
-             COALESCE((SELECT content FROM handoff_messages m WHERE m.session_id = s.session_id ORDER BY m.id DESC LIMIT 1), '') AS last_message,
+             COALESCE((SELECT content FROM handoff_messages m
+                       WHERE m.session_id = s.session_id AND m.sender_role IN ('user', 'agent')
+                       ORDER BY m.id DESC LIMIT 1), '') AS last_message,
              COALESCE((SELECT COUNT(*) FROM handoff_messages m WHERE m.session_id = s.session_id
                        AND m.sender_role = 'user' AND m.id > s.agent_last_read_message_id), 0) AS unread_count
            FROM handoff_sessions s

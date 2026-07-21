@@ -35,6 +35,7 @@ let state = {
     pollTimer: null,
     interrupting: false,
     pendingInitialQuestion: '',
+    draftInitialQuestion: '',
   },
   speech: {
     enabled: false,
@@ -310,4 +311,3 @@ async function submitIdentity() {
     if (button) button.disabled = false;
   }
 }
-

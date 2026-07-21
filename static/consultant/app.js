@@ -514,13 +514,14 @@ function renderDetail() {
   $('reply-input').placeholder = canReply
     ? (detail.service_mode === 'message' ? '回复后将自动归档，Enter 发送' : '回复用户，Enter 发送，Shift+Enter 换行')
     : '确认接入后才能回复';
-  $('message-list').innerHTML = (detail.messages || []).map((item) => `<div class="message ${item.sender_role}"><div class="bubble">${escapeHtml(item.content)}<time>${formatTime(item.created_at)}</time></div></div>`).join('') || '<div class="empty-list">用户尚未留言，可先查看右侧 AI 上下文</div>';
+  const messages = detail.messages || [];
+  $('message-list').innerHTML = `<div class="message-list-label">用户初始留言及后续沟通</div>${messages.map((item) => `<div class="message ${item.sender_role}"><div class="bubble">${escapeHtml(item.content)}<time>${formatTime(item.created_at)}</time></div></div>`).join('') || '<div class="empty-list">暂无用户留言，请先查看右侧 AI 对话上下文</div>'}`;
   $('message-list').scrollTop = $('message-list').scrollHeight;
   $('profile-name').textContent = detail.member_name || '-';
   $('profile-team').textContent = detail.team_name || '-';
   $('profile-status').textContent = statusLabel(detail.status, detail.service_mode);
   $('profile-agent').textContent = detail.agent_name || detail.agent?.display_name || '未接入';
-  $('ai-context-list').innerHTML = (detail.ai_context || []).map((item) => `<div class="context-message ${item.role}"><strong>${item.role === 'ai' ? 'AI' : '用户'}</strong>${escapeHtml(item.text)}</div>`).join('') || '<div class="empty-list">本次转接没有附带 AI 对话</div>';
+  $('ai-context-list').innerHTML = (detail.ai_context || []).map((item) => `<div class="context-message ${item.role}"><strong>${item.role === 'ai' ? 'AI 回复' : '用户问题'}</strong>${escapeHtml(item.text)}</div>`).join('') || '<div class="empty-list">本次转接没有附带 AI 对话</div>';
   setContextTab('profile');
 }
 
