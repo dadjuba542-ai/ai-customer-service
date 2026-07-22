@@ -11,7 +11,7 @@
     "numReplicas": 1,
     "restartPolicyType": "ON_FAILURE",
     "restartPolicyLimit": 3,
-    "startCommand": "DATABASE_DIR=/data UPLOAD_DIR=/data/uploads TRUST_PROXY=true gunicorn app:app -b 0.0.0.0:$PORT -w 4",
+    "startCommand": "DATABASE_DIR=/data UPLOAD_DIR=/data/uploads TRUST_PROXY=true gunicorn app:app -b 0.0.0.0:$PORT --worker-class gthread --workers 2 --threads 4 --timeout 120 --graceful-timeout 30 --keep-alive 5",
     "volumeMounts": [
       {
         "name": "data",

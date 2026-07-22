@@ -27,6 +27,8 @@ let state = {
   profile: JSON.parse(localStorage.getItem('chat_profile') || 'null'),
   teamOptions: [],
   chatAbortController: null,
+  chatJobId: null,
+  chatQueueCanceling: false,
   handoff: {
     config: null,
     isNutritionMode: false,
@@ -208,6 +210,9 @@ async function loadSpeechConfig() {
 async function enterApp() {
   document.getElementById('app').classList.add('active');
   await restoreLatestChat();
+  if (typeof resumeQueuedChat === 'function' && localStorage.getItem('chat_pending_job')) {
+    resumeQueuedChat();
+  }
   loadHotQuestions();
 }
 

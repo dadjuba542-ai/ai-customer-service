@@ -70,6 +70,8 @@ PUBLIC_REGISTRATION_ENABLED='false'
 - 腾讯云 ASR 配置（AppID、SecretId、SecretKey）
 - `TRUST_PROXY=true`（反向代理后使用）
 - `CORS_ORIGINS`（只填写明确域名，禁止 `*`）
+- `CHAT_STREAM_MAX_CONCURRENT_PER_WORKER=3`（每个 worker 的流式聊天上限，应小于 Gunicorn `--threads`）
+- `CHAT_QUEUE_MAX_SIZE=10`、`CHAT_QUEUE_TTL_SECONDS=300`、`CHAT_QUEUE_POLL_INTERVAL_SECONDS=2`（流式聊天等待队列）
 
 重点：`DATABASE_DIR` 和 `UPLOAD_DIR` 必须指向持久化磁盘，否则重启或重新部署可能丢失文章、产品、聊天记录和图片。
 
@@ -160,7 +162,11 @@ python3 -m py_compile app.py models.py db_migrations.py routes/*.py services/*.p
 python3 scripts/test_migrations.py
 python3 scripts/test_security.py
 python3 scripts/test_handoff.py
+python3 scripts/test_chat_capacity.py
+python3 scripts/test_chat_queue.py
 node scripts/test_handoff_intent.js
+node scripts/test_chat_capacity_frontend.js
+node scripts/test_chat_queue_frontend.js
 ```
 
 然后按服务器的进程管理方式重启 Gunicorn/Flask 服务。
