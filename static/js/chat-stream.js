@@ -8,10 +8,25 @@ async function streamChatRequest(payload, agentId) {
     signal: controller.signal,
   });
 
+  if (res.status === 202) {
+    const queued = await res.json().catch(() => ({}));
+    if (queued.job_id) {
+      return {
+        queued: true,
+        jobId: queued.job_id,
+        position: Number(queued.position || 1),
+        retryAfter: Number(queued.retry_after || 2),
+        agentId,
+      };
+    }
+  }
+
   if (!res.ok || !res.body) {
     const errorPayload = await res.json().catch(() => ({}));
     const error = new Error(errorPayload.error || '流式连接失败');
-    error.canFallback = true;
+    error.errorCode = errorPayload.error_code || '';
+    error.retryAfter = Number(errorPayload.retry_after || res.headers?.get?.('Retry-After') || 0);
+    error.canFallback = !['chat_capacity', 'chat_queue_full', 'chat_queue_unavailable', 'chat_pending'].includes(error.errorCode);
     throw error;
   }
 
@@ -98,6 +113,114 @@ async function streamChatRequest(payload, agentId) {
   return null;
 }
 
+function sleepWithSignal(ms, signal) {
+  return new Promise((resolve, reject) => {
+    if (signal?.aborted) {
+      reject(new DOMException('The operation was aborted.', 'AbortError'));
+      return;
+    }
+    const timer = setTimeout(() => {
+      signal?.removeEventListener('abort', onAbort);
+      resolve();
+    }, ms);
+    const onAbort = () => {
+      clearTimeout(timer);
+      reject(new DOMException('The operation was aborted.', 'AbortError'));
+    };
+    signal?.addEventListener('abort', onAbort, { once: true });
+  });
+}
+
+async function waitForChatJob(jobId, agentId, initialPosition = 1) {
+  const controller = new AbortController();
+  state.chatAbortController = controller;
+  state.chatJobId = jobId;
+  localStorage.setItem('chat_pending_job', JSON.stringify({ jobId, agentId }));
+  setWaitingQueueStatus(`当前排队中，前面还有 ${Math.max(0, initialPosition - 1)} 人`);
+
+  try {
+    while (true) {
+      const res = await fetch(`${API_BASE}/api/chat/jobs/${encodeURIComponent(jobId)}`, {
+        headers: authHeaders(),
+        signal: controller.signal,
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        const error = new Error(data.error || '排队状态查询失败');
+        error.errorCode = data.error_code || '';
+        error.canFallback = false;
+        throw error;
+      }
+
+      if (data.status === 'queued') {
+        const position = Number(data.position || 1);
+        setWaitingQueueStatus(`当前排队中，前面还有 ${Math.max(0, position - 1)} 人`);
+      } else if (data.status === 'running') {
+        setWaitingQueueStatus('已轮到您，正在生成完整回答', false);
+      } else if (data.status === 'completed') {
+        localStorage.removeItem('chat_pending_job');
+        state.chatJobId = null;
+        hideWaitingPanel();
+        if (data.history_id && state.messages.some(message => message.historyId === data.history_id)) {
+          return data;
+        }
+        addBotMessage(data.bot_response || '抱歉，我现在无法回答您的问题。', {
+          agentId,
+          historyId: data.history_id,
+          relatedCases: data.related_cases || [],
+          relatedCasesTotal: data.related_cases_total,
+        });
+        return data;
+      } else if (['failed', 'expired', 'cancelled'].includes(data.status)) {
+        localStorage.removeItem('chat_pending_job');
+        state.chatJobId = null;
+        const error = new Error(data.error || '排队任务未能完成');
+        error.errorCode = data.error_code || `chat_${data.status}`;
+        error.canFallback = false;
+        throw error;
+      }
+
+      await sleepWithSignal(Math.max(1000, Number(data.retry_after || 2) * 1000), controller.signal);
+    }
+  } catch (error) {
+    if (error?.name === 'AbortError' && state.chatQueueCanceling) return null;
+    throw error;
+  } finally {
+    if (state.chatJobId === jobId && !state.chatQueueCanceling) {
+      state.chatJobId = null;
+    }
+  }
+}
+
+async function resumeQueuedChat() {
+  let pending = null;
+  try {
+    pending = JSON.parse(localStorage.getItem('chat_pending_job') || 'null');
+  } catch {}
+  if (!pending?.jobId) return null;
+  if (state.chatJobId === pending.jobId) return null;
+
+  const sendBtn = document.getElementById('send-btn');
+  state.isTyping = true;
+  if (sendBtn) sendBtn.disabled = true;
+  showWaitingPanel();
+  try {
+    const result = await waitForChatJob(pending.jobId, pending.agentId || state.activeAgentId, 1);
+    if (result) checkSurvey();
+    return result;
+  } catch (error) {
+    localStorage.removeItem('chat_pending_job');
+    state.chatJobId = null;
+    addBotMessage(error.message || '排队任务未能完成', { agentId: pending.agentId || state.activeAgentId });
+    showToast(error.message || '排队任务未能完成', 'error');
+    return null;
+  } finally {
+    state.chatAbortController = null;
+    state.chatQueueCanceling = false;
+    finishChatRequest(sendBtn);
+  }
+}
+
 async function fallbackToSyncChat(payload, agentId) {
   const res = await fetchWithTimeout(`${API_BASE}/api/chat/send`, {
     method: 'POST',
@@ -123,7 +246,10 @@ async function executeChatRequest({ text, agentId }) {
   const sendBtn = startChatRequest();
 
   try {
-    const result = await streamChatRequest(payload, agentId);
+    let result = await streamChatRequest(payload, agentId);
+    if (result?.queued) {
+      result = await waitForChatJob(result.jobId, agentId, result.position);
+    }
     checkSurvey();
     return result;
   } catch (error) {

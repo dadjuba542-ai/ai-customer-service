@@ -1,13 +1,43 @@
 import time
 from collections import defaultdict, deque
 from functools import wraps
-from threading import Lock
+from threading import BoundedSemaphore, Lock
 
 from flask import g, jsonify, request
 
 
 _request_buckets = defaultdict(deque)
 _bucket_lock = Lock()
+
+
+class ConcurrentRequestLimiter:
+    """Non-blocking, process-local concurrency limiter for long requests."""
+
+    def __init__(self, limit):
+        self.limit = max(1, int(limit))
+        self._semaphore = BoundedSemaphore(self.limit)
+        self._active = 0
+        self._active_lock = Lock()
+
+    @property
+    def active(self):
+        with self._active_lock:
+            return self._active
+
+    def try_acquire(self):
+        if not self._semaphore.acquire(blocking=False):
+            return None
+        with self._active_lock:
+            self._active += 1
+            return self._active
+
+    def release(self):
+        with self._active_lock:
+            if self._active <= 0:
+                raise RuntimeError('Concurrent request limiter released without an active request')
+            self._semaphore.release()
+            self._active -= 1
+            return self._active
 
 
 def rate_limit(scope, limit, window_seconds=60):

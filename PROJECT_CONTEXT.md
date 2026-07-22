@@ -26,7 +26,7 @@
 - 数据库：SQLite
 - HTTP 调用：`requests`
 - 图片处理：Pillow
-- 部署方式：`gunicorn app:app -b 0.0.0.0:$PORT -w 4`
+- 部署方式：`gunicorn app:app -b 0.0.0.0:$PORT --worker-class gthread --workers 2 --threads 4 --timeout 120 --graceful-timeout 30 --keep-alive 5`
 - Python 版本：
   - `runtime.txt` 指向 `python-3.11`
   - `railway.json` 也指定 `pythonVersion: 3.11`
@@ -462,6 +462,10 @@ outputs/                历史生成物/设计产物，非主应用运行核心
 - `HANDOFF_QUEUE_POLL_SEC`
 - `HANDOFF_AGENT_STALE_SEC`
 - `HANDOFF_CLAIM_TIMEOUT_SEC`
+- `CHAT_STREAM_MAX_CONCURRENT_PER_WORKER`
+- `CHAT_QUEUE_MAX_SIZE`
+- `CHAT_QUEUE_TTL_SECONDS`
+- `CHAT_QUEUE_POLL_INTERVAL_SECONDS`
 
 注意：
 
@@ -491,6 +495,10 @@ outputs/                历史生成物/设计产物，非主应用运行核心
 - `scripts/test_case_documents.py`
 - `scripts/test_migrations.py`
 - `scripts/test_security.py`
+- `scripts/test_chat_capacity.py`
+- `scripts/test_chat_capacity_frontend.js`
+- `scripts/test_chat_queue.py`
+- `scripts/test_chat_queue_frontend.js`
 
 验收清单：
 

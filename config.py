@@ -19,6 +19,13 @@ class Config:
     PUBLIC_REGISTRATION_ENABLED = os.environ.get('PUBLIC_REGISTRATION_ENABLED', 'false').lower() == 'true'
     MAX_CONTENT_LENGTH = int(os.environ.get('MAX_CONTENT_LENGTH', 12 * 1024 * 1024))
     CHAT_RATE_LIMIT = int(os.environ.get('CHAT_RATE_LIMIT', '12'))
+    CHAT_STREAM_MAX_CONCURRENT_PER_WORKER = max(
+        1,
+        int(os.environ.get('CHAT_STREAM_MAX_CONCURRENT_PER_WORKER', '3')),
+    )
+    CHAT_QUEUE_MAX_SIZE = max(1, int(os.environ.get('CHAT_QUEUE_MAX_SIZE', '10')))
+    CHAT_QUEUE_TTL_SECONDS = max(60, int(os.environ.get('CHAT_QUEUE_TTL_SECONDS', '300')))
+    CHAT_QUEUE_POLL_INTERVAL_SECONDS = max(1, int(os.environ.get('CHAT_QUEUE_POLL_INTERVAL_SECONDS', '2')))
     SPEECH_RATE_LIMIT = int(os.environ.get('SPEECH_RATE_LIMIT', '20'))
     SPEECH_REALTIME_SESSION_LIMIT = int(os.environ.get('SPEECH_REALTIME_SESSION_LIMIT', '20'))
     HANDOFF_ENABLED = os.environ.get('HANDOFF_ENABLED', 'false').lower() == 'true'

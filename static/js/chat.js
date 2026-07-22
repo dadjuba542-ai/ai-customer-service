@@ -544,6 +544,7 @@ let wbTipTimer = null;
 let wbStepIdx = 0;
 let wbTipIdx = 0;
 let wbMsgId = null;
+let wbQueueMode = false;
 
 const WB_ICONS = [
   'ph-question', 'ph-robot', 'ph-book-open', 'ph-magnifying-glass', 'ph-lightbulb',
@@ -584,6 +585,7 @@ async function loadWaitingContent() {
 
 function showWaitingPanel() {
   if (!waitingContent) return;
+  wbQueueMode = false;
   const steps = waitingContent.steps || [];
   const tips = waitingContent.tips || [];
   if (steps.length === 0) return;
@@ -634,6 +636,54 @@ function showWaitingPanel() {
   }
 }
 
+function setWaitingQueueStatus(message, canCancel = true) {
+  if (!wbMsgId) showWaitingPanel();
+  if (!wbMsgId) return;
+  wbQueueMode = true;
+  clearInterval(wbStepTimer);
+  clearInterval(wbTipTimer);
+  wbStepTimer = null;
+  wbTipTimer = null;
+  const bubble = document.getElementById(wbMsgId + '-bubble');
+  if (!bubble) return;
+  bubble.innerHTML =
+    `<div class="wb-step"><i class="ph ph-hourglass"></i><span>${escapeHtml(message || '正在排队...')}</span></div>` +
+    '<div class="wb-dots"><span class="wb-dot"></span><span class="wb-dot"></span><span class="wb-dot"></span></div>' +
+    (canCancel ? '<button type="button" class="wb-cancel-btn" onclick="cancelQueuedChat()">取消排队</button>' : '');
+  scrollToBottom();
+}
+
+async function cancelQueuedChat() {
+  const jobId = state.chatJobId || (() => {
+    try { return JSON.parse(localStorage.getItem('chat_pending_job') || 'null')?.jobId || ''; } catch { return ''; }
+  })();
+  if (!jobId) return;
+  state.chatQueueCanceling = true;
+  try {
+    const res = await fetch(`${API_BASE}/api/chat/jobs/${encodeURIComponent(jobId)}/cancel`, {
+      method: 'POST',
+      headers: authHeaders({ 'Content-Type': 'application/json' }),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok && data.error_code !== 'chat_job_running') {
+      throw new Error(data.error || '取消排队失败');
+    }
+    if (data.error_code === 'chat_job_running') {
+      showToast(data.error || '任务已经开始生成，暂时不能取消', 'info');
+      state.chatQueueCanceling = false;
+      return;
+    }
+    localStorage.removeItem('chat_pending_job');
+    state.chatJobId = null;
+    state.chatAbortController?.abort();
+    hideWaitingPanel();
+    showToast('已取消排队', 'info');
+  } catch (error) {
+    state.chatQueueCanceling = false;
+    showToast(error.message || '取消排队失败', 'error');
+  }
+}
+
 function renderWbContent(stepIdx, tipText) {
   const steps = waitingContent ? waitingContent.steps : [];
   const step = steps[stepIdx] || '处理中...';
@@ -653,6 +703,7 @@ function hideWaitingPanel() {
   clearInterval(wbTipTimer);
   wbStepTimer = null;
   wbTipTimer = null;
+  wbQueueMode = false;
   if (wbMsgId) {
     const el = document.getElementById(wbMsgId);
     if (el) el.remove();

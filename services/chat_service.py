@@ -42,6 +42,7 @@ class ChatRequestContext:
     headers: dict
     payload: dict
     request_id: str
+    channel: str = ''
 
 
 @dataclass
@@ -68,6 +69,7 @@ def build_chat_context(data, identity):
 
     query_type = str(data.get('query_type') or '其他')[:40]
     agent_id = str(data.get('agent_id') or '')[:64]
+    channel = str(data.get('channel') or '')[:64]
     user_id = identity['user_id']
     team_name = identity.get('team_name', '')
     member_name = identity.get('member_name', '')
@@ -116,6 +118,7 @@ def build_chat_context(data, identity):
         headers=headers,
         payload=payload,
         request_id=uuid.uuid4().hex[:12],
+        channel=channel,
     )
 
 

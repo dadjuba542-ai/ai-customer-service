@@ -234,6 +234,34 @@ MIGRATIONS = [
             'CREATE INDEX IF NOT EXISTS idx_handoff_export_logs_user_time ON handoff_export_logs(exported_by, created_at DESC)',
         ],
     },
+    {
+        'version': '202607220001',
+        'name': 'create_chat_jobs_table',
+        'sqls': [
+            '''CREATE TABLE IF NOT EXISTS chat_jobs (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                job_id TEXT NOT NULL UNIQUE,
+                user_id TEXT NOT NULL,
+                request_id TEXT NOT NULL,
+                payload_json TEXT NOT NULL DEFAULT '{}',
+                identity_json TEXT NOT NULL DEFAULT '{}',
+                status TEXT NOT NULL DEFAULT 'queued'
+                    CHECK(status IN ('queued', 'running', 'completed', 'failed', 'expired', 'cancelled')),
+                worker_pid TEXT DEFAULT '',
+                result_json TEXT DEFAULT '{}',
+                error_code TEXT DEFAULT '',
+                error_message TEXT DEFAULT '',
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                started_at TIMESTAMP DEFAULT NULL,
+                finished_at TIMESTAMP DEFAULT NULL,
+                expires_at TIMESTAMP NOT NULL,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )''',
+            'CREATE INDEX IF NOT EXISTS idx_chat_jobs_status_id ON chat_jobs(status, id ASC)',
+            'CREATE INDEX IF NOT EXISTS idx_chat_jobs_user_status ON chat_jobs(user_id, status)',
+            "CREATE UNIQUE INDEX IF NOT EXISTS uq_chat_jobs_user_active ON chat_jobs(user_id) WHERE status IN ('queued', 'running')",
+        ],
+    },
 ]
 
 
