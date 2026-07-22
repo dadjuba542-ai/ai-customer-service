@@ -100,6 +100,7 @@ function resumeAiAfterHandoff({ announce = true } = {}) {
   state.handoff.pollTimer = null;
   state.handoff.session = null;
   state.handoff.lastMessageId = 0;
+  localStorage.removeItem('handoff_session_id');
   state.handoff.isNutritionMode = true;
   const ai = ensureConfiguredHandoffAgent();
   if (ai) state.activeAgentId = ai.agent_id;
