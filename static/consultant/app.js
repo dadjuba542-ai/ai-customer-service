@@ -29,6 +29,7 @@ const state = {
   reviewPagination: { page: 1, pages: 1, total: 0 },
   reviewActiveId: 0,
   reviewLoading: false,
+  reviewEditingNote: false,
 };
 
 const $ = (id) => document.getElementById(id);
@@ -76,6 +77,7 @@ function resetToLogin(message = '') {
   state.reviewItems = [];
   state.reviewPagination = { page: 1, pages: 1, total: 0 };
   state.reviewActiveId = 0;
+  state.reviewEditingNote = false;
   localStorage.removeItem('token');
   localStorage.removeItem('user');
 
@@ -353,6 +355,7 @@ function renderAiReviewList() {
 
 function openAiReview(historyId) {
   state.reviewActiveId = Number(historyId);
+  state.reviewEditingNote = false;
   renderAiReviewList();
   renderReviewDetail();
 }
@@ -376,11 +379,17 @@ function renderReviewDetail() {
   const feedbackText = item.feedback === 0 ? '用户差评' : item.feedback === 1 ? '用户好评' : '未评价';
   $('review-feedback-badge').textContent = feedbackText;
   $('review-feedback-badge').className = `review-badge ${item.feedback === 0 ? 'negative' : item.feedback === 1 ? 'positive' : ''}`;
-  $('review-note-content').value = note?.content || '';
+  $('review-published-note').hidden = !note;
+  $('review-published-content').textContent = note?.content || '';
+  $('review-published-version').textContent = note ? `第 ${note.revision} 版` : '';
+  $('review-published-time').textContent = note ? formatTime(note.updated_at) : '';
+  $('review-note-form').hidden = !!note && !state.reviewEditingNote;
+  $('review-note-label').textContent = note ? '编辑营养师留言' : '营养师留言输入框';
+  $('review-note-content').value = note && state.reviewEditingNote ? note.content : '';
   $('review-note-count').textContent = `${$('review-note-content').value.length} / 4000`;
   $('review-note-revision').textContent = note ? `第 ${note.revision} 版` : item.note_revision ? '已撤回' : '尚未留言';
   $('review-note-save').textContent = note ? '更新留言' : '发布留言';
-  $('review-withdraw').hidden = !note;
+  $('review-edit-cancel').hidden = !note || !state.reviewEditingNote;
   $('review-member').textContent = item.member_name || '匿名用户';
   $('review-team').textContent = item.team_name || '未填写';
   $('review-type').textContent = item.query_type || '-';
@@ -401,9 +410,24 @@ async function saveReviewNote(event) {
       body: JSON.stringify({ content, expected_revision: Number(item.note_revision || 0) }),
     });
     toast(item.nutritionist_note ? '营养师留言已更新' : '营养师留言已发布', 'success');
+    state.reviewEditingNote = false;
     await loadAiReviews(state.reviewPagination.page, item.id);
+    requestAnimationFrame(() => $('review-published-note')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' }));
   } catch (error) { toast(error.message, 'error'); }
   finally { $('review-note-save').disabled = false; }
+}
+
+function editReviewNote() {
+  const item = activeReviewItem();
+  if (!item?.nutritionist_note) return;
+  state.reviewEditingNote = true;
+  renderReviewDetail();
+  requestAnimationFrame(() => $('review-note-content')?.focus());
+}
+
+function cancelReviewNoteEdit() {
+  state.reviewEditingNote = false;
+  renderReviewDetail();
 }
 
 async function withdrawReviewNote() {
@@ -415,6 +439,7 @@ async function withdrawReviewNote() {
       body: JSON.stringify({ expected_revision: Number(item.note_revision || 0) }),
     });
     toast('营养师留言已撤回', 'success');
+    state.reviewEditingNote = false;
     await loadAiReviews(state.reviewPagination.page, item.id);
   } catch (error) { toast(error.message, 'error'); }
 }
@@ -929,7 +954,9 @@ document.addEventListener('DOMContentLoaded', () => {
   $('review-prev').addEventListener('click', () => loadAiReviews(Math.max(1, state.reviewPagination.page - 1), 0));
   $('review-next').addEventListener('click', () => loadAiReviews(Math.min(state.reviewPagination.pages, state.reviewPagination.page + 1), 0));
   $('review-note-form').addEventListener('submit', saveReviewNote);
-  $('review-withdraw').addEventListener('click', withdrawReviewNote);
+  $('review-edit-note').addEventListener('click', editReviewNote);
+  $('review-edit-cancel').addEventListener('click', cancelReviewNoteEdit);
+  $('review-published-withdraw').addEventListener('click', withdrawReviewNote);
   $('review-note-content').addEventListener('input', () => { $('review-note-count').textContent = `${$('review-note-content').value.length} / 4000`; });
   $('back-current-button').addEventListener('click', returnToCurrentSession);
   document.body.addEventListener('click', (event) => {
