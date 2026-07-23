@@ -189,14 +189,14 @@ input:focus, textarea:focus, select:focus { border-color: var(--primary); box-sh
 .review-message.user strong { color: #64748b; }
 .review-message.ai { background: #f5f3ff; border: 1px solid #ddd6fe; }
 .review-message.ai strong { color: #6d28d9; }
-.review-message.nutritionist { border: 1px solid #5eead4; border-left: 4px solid #0f766e; color: #134e4a; background: #f0fdfa; box-shadow: 0 8px 22px rgba(15, 118, 110, .08); }
-.review-published-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 8px; }
+.review-message.nutritionist { width: fit-content; min-width: 320px; max-width: 82%; padding: 12px 14px; border: 1px solid #5eead4; border-left: 4px solid #0f766e; border-radius: 12px; color: #134e4a; background: #f0fdfa; box-shadow: 0 5px 14px rgba(15, 118, 110, .07); line-height: 1.55; }
+.review-published-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 6px; }
 .review-published-head strong { margin: 0; color: #0f766e; }
 .review-published-head span { color: #4b7d77; font-size: 11px; }
-.review-message.nutritionist footer { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 12px; padding-top: 10px; border-top: 1px solid #b9eee6; }
+.review-message.nutritionist footer { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: 8px; padding-top: 7px; border-top: 1px solid #b9eee6; }
 .review-message.nutritionist footer time { color: #6b7f7c; font-size: 11px; }
 .review-message.nutritionist footer div { display: flex; gap: 8px; }
-.review-message.nutritionist footer button, .review-note-actions .secondary { border: 1px solid #99f6e4; border-radius: 8px; padding: 7px 10px; color: #0f766e; background: #fff; font-size: 12px; font-weight: 700; }
+.review-message.nutritionist footer button, .review-note-actions .secondary { border: 1px solid #99f6e4; border-radius: 7px; padding: 5px 9px; color: #0f766e; background: #fff; font-size: 12px; font-weight: 700; }
 .review-message.nutritionist footer .danger { color: var(--danger); border-color: #fecaca; }
 .review-note-editor { position: relative; z-index: 1; flex-shrink: 0; padding: 16px 20px 18px; background: #fff; border-top: 1px solid var(--line); box-shadow: 0 -8px 24px rgba(15, 76, 69, .06); }
 .review-note-title { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
