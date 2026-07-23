@@ -55,10 +55,12 @@ def main():
         guest2_token, guest2_id = guest('用户乙')
         guest3_token, guest3_id = guest('用户丙')
         guest4_token, guest4_id = guest('用户丁')
+        guest5_token, guest5_id = guest('用户戊')
         guest1_headers = {'Authorization': f'Bearer {guest1_token}'}
         guest2_headers = {'Authorization': f'Bearer {guest2_token}'}
         guest3_headers = {'Authorization': f'Bearer {guest3_token}'}
         guest4_headers = {'Authorization': f'Bearer {guest4_token}'}
+        guest5_headers = {'Authorization': f'Bearer {guest5_token}'}
 
         empty_start = client.post('/api/handoff/start', headers=guest1_headers, json={'query_type': '营养咨询'})
         assert_true(empty_start.status_code == 400, '空留言不应创建转人工会话')
@@ -243,8 +245,23 @@ def main():
         reply4 = client.post(f"/api/admin/handoff/{session4['session_id']}/reply", headers=admin_headers, json={'content': '超时留言回复'})
         assert_true(reply4.get_json()['message']['auto_closed'], reply4.get_data(as_text=True))
 
+        offline = client.post('/api/admin/handoff/agent/status', headers=admin_headers, json={'online': False, 'max_concurrent': 3})
+        assert_true(offline.status_code == 200, offline.get_data(as_text=True))
+        offline_start = client.post('/api/handoff/start', headers=guest5_headers, json={
+            'query_type': '营养咨询', 'note': '营养师离线时直接留言', 'service_mode': 'message',
+        })
+        assert_true(offline_start.status_code == 201, offline_start.get_data(as_text=True))
+        offline_session = offline_start.get_json()['session']
+        assert_true(offline_session['service_mode'] == 'message', offline_session)
+        assert_true(offline_session['status'] == 'queued', offline_session)
+        assert_true(not has_open_handoff_session(guest5_id), '离线留言不应进入在线排队状态')
+
         status = client.post('/api/admin/handoff/agent/status', headers=admin_headers, json={'online': True, 'max_concurrent': 3})
         assert_true(status.status_code == 200, status.get_data(as_text=True))
+        offline_claim = client.post(f"/api/admin/handoff/{offline_session['session_id']}/claim", headers=admin_headers)
+        assert_true(offline_claim.status_code == 200, offline_claim.get_data(as_text=True))
+        offline_reply = client.post(f"/api/admin/handoff/{offline_session['session_id']}/reply", headers=admin_headers, json={'content': '离线留言回复'})
+        assert_true(offline_reply.get_json()['message']['auto_closed'], offline_reply.get_data(as_text=True))
         from services.handoff_service import start_handoff
         identities = [
             {'user_id': f'concurrent-user-{index}', 'team_name': '营养一组', 'member_name': f'并发用户{index}'}

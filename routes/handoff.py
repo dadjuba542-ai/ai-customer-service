@@ -42,6 +42,7 @@ def start(identity):
             history_ids=history_ids,
             query_type=str(data.get('query_type') or '')[:50],
             note=str(data.get('note') or '')[:2000],
+            service_mode=str(data.get('service_mode') or 'auto')[:20],
         )
         return jsonify({'session': session}), 201
     except HandoffError as exc:

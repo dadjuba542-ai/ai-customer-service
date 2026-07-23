@@ -293,6 +293,7 @@ async function startHumanHandoff(note) {
         history_ids: historyIds,
         query_type: state.handoff.config.ai_agent?.type || '营养咨询',
         note,
+        service_mode: state.handoff.config?.online ? 'live' : 'message',
       }),
     });
     const data = await res.json().catch(() => ({}));
@@ -304,7 +305,12 @@ async function startHumanHandoff(note) {
     localStorage.setItem('handoff_session_id', data.session.session_id);
     await pollHandoffSession();
     startHandoffPolling();
-    showToast('已发起转接，可继续给营养师留言', 'success');
+    showToast(
+      data.session.service_mode === 'message'
+        ? '留言已提交，营养师稍后回复'
+        : '已发起转接，可继续给营养师留言',
+      'success',
+    );
   } catch (error) {
     showToast(error.message || '转接失败', 'error');
   } finally {

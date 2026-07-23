@@ -177,6 +177,28 @@ def _reconcile_locked(conn):
            WHERE online = 1 AND (last_seen_at IS NULL OR last_seen_at < datetime('now', ?))''',
         (f'-{Config.HANDOFF_AGENT_STALE_SEC} seconds',),
     )
+    online_count = conn.execute(
+        '''SELECT COUNT(*) AS cnt FROM cs_agents
+           WHERE online = 1 AND last_seen_at >= datetime('now', ?)''',
+        (f'-{Config.HANDOFF_AGENT_STALE_SEC} seconds',),
+    ).fetchone()['cnt']
+    if not online_count:
+        offline_queued = conn.execute(
+            '''SELECT id, session_id FROM handoff_sessions
+               WHERE status = 'queued' AND COALESCE(service_mode, 'live') = 'live' '''
+        ).fetchall()
+        for item in offline_queued:
+            conn.execute(
+                '''UPDATE handoff_sessions SET service_mode = 'message',
+                   live_deadline_at = NULL, message_converted_at = CURRENT_TIMESTAMP,
+                   updated_at = CURRENT_TIMESTAMP WHERE id = ?''',
+                (item['id'],),
+            )
+            conn.execute(
+                '''INSERT INTO handoff_messages (session_id, sender_role, content)
+                   VALUES (?, 'system', '营养师暂未在线，已直接转为留言。你可以继续使用 AI，营养师稍后回复。')''',
+                (item['session_id'],),
+            )
     conn.execute(
         '''UPDATE cs_agents
            SET current_load = (
@@ -278,19 +300,28 @@ def _session_payload(conn, row, include_context=False):
     return data
 
 
-def start_handoff(identity, history_ids=None, query_type='', note=''):
+def start_handoff(identity, history_ids=None, query_type='', note='', service_mode='auto'):
     settings = get_handoff_settings()
     if not settings['enabled']:
         raise HandoffError('在线营养咨询暂未开启', 403)
     note = str(note or '').strip()[:2000]
     if not note:
         raise HandoffError('请先填写要咨询的问题，再联系营养师')
+    service_mode = str(service_mode or 'auto').strip()
+    if service_mode not in {'auto', 'live', 'message'}:
+        raise HandoffError('服务方式无效')
     rows, context = _context_from_history(identity['user_id'], history_ids or [])
     ai_agent_id = settings['ai_agent_id'] or (rows[-1].get('agent_id') if rows else '') or ''
     session_id = uuid.uuid4().hex
     conn = get_db_connection()
     try:
         conn.execute('BEGIN IMMEDIATE')
+        online_count = conn.execute(
+            '''SELECT COUNT(*) AS cnt FROM cs_agents
+               WHERE online = 1 AND last_seen_at >= datetime('now', ?)''',
+            (f'-{Config.HANDOFF_AGENT_STALE_SEC} seconds',),
+        ).fetchone()['cnt']
+        resolved_mode = 'message' if service_mode == 'message' or not online_count else 'live'
         existing = conn.execute(
             f'''SELECT * FROM handoff_sessions
                 WHERE user_id = ? AND status IN ({_open_status_sql()})
@@ -298,17 +329,32 @@ def start_handoff(identity, history_ids=None, query_type='', note=''):
             (identity['user_id'],),
         ).fetchone()
         if existing:
+            if resolved_mode == 'message' and (existing['service_mode'] or 'live') != 'message':
+                conn.execute(
+                    '''UPDATE handoff_sessions SET service_mode = 'message',
+                       live_deadline_at = NULL, message_converted_at = CURRENT_TIMESTAMP,
+                       updated_at = CURRENT_TIMESTAMP WHERE id = ?''',
+                    (existing['id'],),
+                )
+                conn.execute(
+                    '''INSERT INTO handoff_messages (session_id, sender_role, content)
+                       VALUES (?, 'system', '营养师暂未在线，已直接转为留言。你可以继续使用 AI，营养师稍后回复。')''',
+                    (existing['session_id'],),
+                )
+                existing = conn.execute('SELECT * FROM handoff_sessions WHERE id = ?', (existing['id'],)).fetchone()
             conn.commit()
             return _session_payload(conn, existing)
         cursor = conn.execute(
             '''INSERT INTO handoff_sessions
                (session_id, user_id, team_name, member_name, query_type, ai_agent_id, ai_context_json,
-                service_mode, live_deadline_at)
-               VALUES (?, ?, ?, ?, ?, ?, ?, 'live', datetime('now', ?))''',
+                service_mode, live_deadline_at, message_converted_at)
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?,
+                       CASE WHEN ? = 'live' THEN datetime('now', ?) ELSE NULL END,
+                       CASE WHEN ? = 'message' THEN CURRENT_TIMESTAMP ELSE NULL END)''',
             (
                 session_id, identity['user_id'], identity.get('team_name', ''), identity.get('member_name', ''),
                 str(query_type or '')[:50], ai_agent_id, json.dumps(context, ensure_ascii=False),
-                f"+{settings['live_wait_sec']} seconds",
+                resolved_mode, resolved_mode, f"+{settings['live_wait_sec']} seconds", resolved_mode,
             ),
         )
         if note:
