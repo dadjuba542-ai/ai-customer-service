@@ -262,6 +262,34 @@ MIGRATIONS = [
             "CREATE UNIQUE INDEX IF NOT EXISTS uq_chat_jobs_user_active ON chat_jobs(user_id) WHERE status IN ('queued', 'running')",
         ],
     },
+    {
+        'version': '202607230001',
+        'name': 'create_nutritionist_review_notes',
+        'sqls': [
+            '''CREATE TABLE IF NOT EXISTS nutritionist_review_notes (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                history_id INTEGER NOT NULL UNIQUE,
+                user_id TEXT NOT NULL,
+                content TEXT NOT NULL DEFAULT '',
+                status TEXT NOT NULL DEFAULT 'published'
+                    CHECK(status IN ('published', 'withdrawn')),
+                revision INTEGER NOT NULL DEFAULT 1,
+                user_read_revision INTEGER NOT NULL DEFAULT 0,
+                created_by TEXT NOT NULL,
+                updated_by TEXT NOT NULL,
+                published_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                withdrawn_at TIMESTAMP,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (history_id) REFERENCES chat_history(id) ON DELETE CASCADE,
+                FOREIGN KEY (user_id) REFERENCES users(user_id),
+                FOREIGN KEY (created_by) REFERENCES users(user_id),
+                FOREIGN KEY (updated_by) REFERENCES users(user_id)
+            )''',
+            'CREATE INDEX IF NOT EXISTS idx_review_notes_user_unread ON nutritionist_review_notes(user_id, status, revision, user_read_revision)',
+            'CREATE INDEX IF NOT EXISTS idx_review_notes_status_updated ON nutritionist_review_notes(status, updated_at DESC)',
+        ],
+    },
 ]
 
 

@@ -31,7 +31,7 @@
   <link rel="stylesheet" href="/css/share-misc.css?v=20260720-split1">
   <link rel="stylesheet" href="/css/products.css?v=20260720-split1">
   <link rel="stylesheet" href="/css/discover.css?v=20260720-split1">
-  <link rel="stylesheet" href="/css/handoff.css?v=20260721-bulletin-arrow1">
+  <link rel="stylesheet" href="/css/handoff.css?v=20260723-ai-review1">
   <link rel="stylesheet" href="icon-fallback.css?v=20260713-icons2">
 </head>
 <body>
@@ -57,6 +57,11 @@
 
   <div id="app" class="page active">
     <div id="app-container">
+      <button id="nutritionist-note-alert" class="nutritionist-note-alert" type="button" hidden onclick="openLatestNutritionistNote()">
+        <span class="nutritionist-note-alert-icon"><i class="ph ph-headset"></i></span>
+        <span><strong>在线营养师有新留言</strong><small id="nutritionist-note-alert-text">点击查看补充内容</small></span>
+        <b id="nutritionist-note-alert-count">1</b><i class="ph ph-caret-right"></i>
+      </button>
       <!-- Home View -->
       <div id="home-view" class="view active">
         <div class="home-content">
@@ -362,14 +367,15 @@
   <div id="toast"></div>
   <script src="speech-controller.js?v=20260717-speech113"></script>
   <script src="handoff-intent.js?v=20260721-handoff1"></script>
-  <script src="/js/core.js?v=20260722-queue1"></script>
+  <script src="/js/core.js?v=20260723-ai-review1"></script>
   <script src="/js/views.js?v=20260721-handoff2"></script>
   <script src="/js/handoff.js?v=20260722-message-only2"></script>
   <script src="/js/fetch-util.js?v=20260720-split1"></script>
   <script src="/js/voice.js?v=20260720-split1"></script>
   <script src="/js/chat-stream.js?v=20260722-queue1"></script>
-  <script src="/js/chat.js?v=20260722-queue1"></script>
-  <script src="/js/history-community.js?v=20260721-restore1"></script>
+  <script src="/js/chat.js?v=20260723-ai-review1"></script>
+  <script src="/js/history-community.js?v=20260723-ai-review1"></script>
+  <script src="/js/nutritionist-notes.js?v=20260723-ai-review1"></script>
   <script src="/js/news-discover.js?v=20260721-bulletin-arrow1"></script>
   <script src="/js/admin-share.js?v=20260720-split1"></script>
   <script src="/js/chat-misc.js?v=20260721-clear2"></script>

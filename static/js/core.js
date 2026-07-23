@@ -39,6 +39,13 @@ let state = {
     pendingInitialQuestion: '',
     draftInitialQuestion: '',
   },
+  nutritionistNotes: {
+    items: [],
+    total: 0,
+    pollTimer: null,
+    revisionKeys: new Set(),
+    initialized: false,
+  },
   speech: {
     enabled: false,
     mode: 'auto',
@@ -210,6 +217,7 @@ async function loadSpeechConfig() {
 async function enterApp() {
   document.getElementById('app').classList.add('active');
   await restoreLatestChat();
+  if (typeof startNutritionistNotePolling === 'function') await startNutritionistNotePolling();
   if (typeof resumeQueuedChat === 'function' && localStorage.getItem('chat_pending_job')) {
     resumeQueuedChat();
   }

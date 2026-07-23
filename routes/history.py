@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify
 from models import get_chat_history, get_chat_history_by_id, get_setting, get_chat_sessions, delete_chat_history_batch
 from routes.auth import identity_required
 from services.security_service import rate_limit
+from services.ai_review_service import enrich_history_records
 
 history_bp = Blueprint('history', __name__)
 
@@ -10,7 +11,7 @@ history_bp = Blueprint('history', __name__)
 def get_history(identity):
     uid = identity['user_id']
     query_type = request.args.get('query_type')
-    history = get_chat_history(uid, query_type)
+    history = enrich_history_records(get_chat_history(uid, query_type))
     return jsonify({'history': history})
 
 @history_bp.route('/<int:history_id>', methods=['GET'])
@@ -20,6 +21,7 @@ def get_history_detail(identity, history_id):
     history = get_chat_history_by_id(history_id, uid)
     if not history:
         return jsonify({'error': 'Not found'}), 404
+    enrich_history_records([history])
     return jsonify(history)
 
 @history_bp.route('/sessions')
@@ -28,6 +30,8 @@ def get_sessions(identity):
     uid = identity['user_id']
     query_type = request.args.get('query_type')
     sessions = get_chat_sessions(uid, query_type)
+    flat = [item for session in sessions for item in session.get('items', [])]
+    enrich_history_records(flat)
     return jsonify({'sessions': sessions})
 
 @history_bp.route('/batch-delete', methods=['POST'])

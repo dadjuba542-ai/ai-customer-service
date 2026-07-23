@@ -24,6 +24,11 @@ const state = {
   notificationReady: false,
   soundEnabled: localStorage.getItem('consultant_sound') !== '0',
   audioContext: null,
+  primaryModule: 'consultations',
+  reviewItems: [],
+  reviewPagination: { page: 1, pages: 1, total: 0 },
+  reviewActiveId: 0,
+  reviewLoading: false,
 };
 
 const $ = (id) => document.getElementById(id);
@@ -67,6 +72,10 @@ function resetToLogin(message = '') {
   state.initialQueueLoaded = false;
   state.previousStatuses.clear();
   state.notificationReady = false;
+  state.primaryModule = 'consultations';
+  state.reviewItems = [];
+  state.reviewPagination = { page: 1, pages: 1, total: 0 };
+  state.reviewActiveId = 0;
   localStorage.removeItem('token');
   localStorage.removeItem('user');
 
@@ -86,6 +95,8 @@ function resetToLogin(message = '') {
   $('history-list').innerHTML = '';
   $('message-list').innerHTML = '';
   $('ai-context-list').innerHTML = '';
+  $('review-list').innerHTML = '';
+  renderReviewDetail();
   $('active-chat').hidden = true;
   $('empty-chat').hidden = false;
   setTimeout(() => $('login-username').focus(), 0);
@@ -141,6 +152,7 @@ async function bootWorkspace() {
       toast('点击“上线接单”开通当前账号的客服坐席', 'success');
     }
     await pollAll();
+    await applyPrimaryHash();
     clearInterval(state.queueTimer);
     clearInterval(state.heartbeatTimer);
     state.queueTimer = setInterval(pollAll, 4000);
@@ -228,7 +240,183 @@ function renderSessions() {
   const unread = mine.reduce((sum, item) => sum + Number(item.unread_count || 0), 0);
   $('total-unread').hidden = unread === 0;
   $('total-unread').textContent = unread;
+  const navCount = queued.length + unread;
+  $('consultations-nav-badge').hidden = navCount === 0;
+  $('consultations-nav-badge').textContent = navCount > 99 ? '99+' : navCount;
   document.title = unread ? `(${unread}) 营养师工作台` : '营养师工作台';
+}
+
+async function setPrimaryModule(module, updateHash = true) {
+  state.primaryModule = module === 'ai-review' ? 'ai-review' : 'consultations';
+  const review = state.primaryModule === 'ai-review';
+  $('consultations-nav').classList.toggle('active', !review);
+  $('ai-review-nav').classList.toggle('active', review);
+  $('consultations-module').hidden = review;
+  $('ai-review-module').hidden = !review;
+  if (updateHash) {
+    const next = review ? '#/ai-review' : '#/consultations';
+    if (window.location.hash !== next) window.location.hash = next;
+  }
+  if (review && !state.reviewItems.length) await loadAiReviews(1);
+}
+
+function applyPrimaryHash() {
+  return setPrimaryModule(window.location.hash === '#/ai-review' ? 'ai-review' : 'consultations', false);
+}
+
+function updateReviewPeriodFields() {
+  const period = $('review-period').value;
+  $('review-week-field').hidden = period !== 'week';
+  $('review-day-field').hidden = period !== 'day';
+  $('review-range-field').hidden = period !== 'range';
+  if (period !== 'week') $('review-week').value = '';
+  if (period !== 'day') $('review-date').value = '';
+  if (period !== 'range') {
+    $('review-from').value = '';
+    $('review-to').value = '';
+  }
+}
+
+function weekValueToMonday(value) {
+  const match = /^(\d{4})-W(\d{2})$/.exec(value || '');
+  if (!match) return '';
+  const year = Number(match[1]);
+  const week = Number(match[2]);
+  const januaryFourth = new Date(Date.UTC(year, 0, 4));
+  const monday = new Date(januaryFourth);
+  monday.setUTCDate(januaryFourth.getUTCDate() - ((januaryFourth.getUTCDay() + 6) % 7) + (week - 1) * 7);
+  return monday.toISOString().slice(0, 10);
+}
+
+function reviewFilterValues() {
+  const values = {
+    keyword: $('review-keyword').value.trim(),
+    period: $('review-period').value,
+    query_type: $('review-query-type').value,
+    feedback: $('review-feedback').value,
+    note_status: $('review-note-status').value,
+  };
+  if (values.period === 'week') values.week_start = weekValueToMonday($('review-week').value);
+  if (values.period === 'day') values.date = $('review-date').value;
+  if (values.period === 'range') {
+    values.from_date = $('review-from').value;
+    values.to_date = $('review-to').value;
+  }
+  return values;
+}
+
+function reviewQuery(page) {
+  const params = new URLSearchParams({ page: String(page), limit: '20' });
+  Object.entries(reviewFilterValues()).forEach(([key, value]) => { if (value) params.set(key, value); });
+  return params.toString();
+}
+
+async function loadAiReviews(page = 1, preserveId = state.reviewActiveId) {
+  if (state.reviewLoading) return;
+  state.reviewLoading = true;
+  $('review-list').innerHTML = '<div class="empty-list">正在加载 AI 问答…</div>';
+  try {
+    const data = await api(`/api/admin/ai-review?${reviewQuery(page)}`);
+    state.reviewItems = data.items || [];
+    state.reviewPagination = data.pagination || { page: 1, pages: 1, total: 0 };
+    const typeSelect = $('review-query-type');
+    const currentType = typeSelect.value;
+    typeSelect.innerHTML = '<option value="">全部类型</option>' + (data.query_types || []).map((item) => `<option value="${escapeHtml(item)}">${escapeHtml(item)}</option>`).join('');
+    typeSelect.value = currentType;
+    state.reviewActiveId = state.reviewItems.some((item) => item.id === preserveId) ? preserveId : 0;
+    $('review-summary').textContent = `${data.period_label || '近30天全部'} · ${state.reviewPagination.total || 0} 条`;
+    renderAiReviewList();
+    renderReviewDetail();
+  } catch (error) {
+    $('review-list').innerHTML = `<div class="empty-list">${escapeHtml(error.message)}</div>`;
+    toast(error.message, 'error');
+  } finally {
+    state.reviewLoading = false;
+  }
+}
+
+function renderAiReviewList() {
+  $('review-list').innerHTML = state.reviewItems.length ? state.reviewItems.map((item) => {
+    const noted = !!item.nutritionist_note;
+    return `<button class="review-card ${item.id === state.reviewActiveId ? 'active' : ''}" data-review-id="${item.id}">
+      <span class="review-card-head"><strong>${escapeHtml(item.member_name || '匿名用户')}</strong><time>${formatShortDate(item.created_at)}</time></span>
+      <span class="review-card-preview">${escapeHtml(item.user_message)}</span>
+      <span class="review-card-meta">${escapeHtml(item.team_name || '未填写团队')} · ${escapeHtml(item.query_type || '未分类')}</span>
+      <span class="review-card-status ${noted ? 'noted' : ''}">${noted ? '已留言' : '未留言'}</span>
+    </button>`;
+  }).join('') : '<div class="empty-list">没有符合条件的 AI 问答</div>';
+  const paging = state.reviewPagination;
+  $('review-page-label').textContent = `第 ${paging.page || 1} / ${paging.pages || 1} 页 · ${paging.total || 0} 条`;
+  $('review-prev').disabled = (paging.page || 1) <= 1;
+  $('review-next').disabled = (paging.page || 1) >= (paging.pages || 1);
+}
+
+function openAiReview(historyId) {
+  state.reviewActiveId = Number(historyId);
+  renderAiReviewList();
+  renderReviewDetail();
+}
+
+function activeReviewItem() {
+  return state.reviewItems.find((item) => item.id === state.reviewActiveId) || null;
+}
+
+function renderReviewDetail() {
+  const item = activeReviewItem();
+  $('review-empty').hidden = !!item;
+  $('review-detail').hidden = !item;
+  $('review-meta-empty').hidden = !!item;
+  $('review-meta').hidden = !item;
+  if (!item) return;
+  const note = item.nutritionist_note;
+  $('review-detail-title').textContent = item.member_name ? `${item.member_name}的问答` : '匿名用户的问答';
+  $('review-detail-time').textContent = formatTime(item.created_at);
+  $('review-user-message').textContent = item.user_message || '';
+  $('review-ai-response').textContent = item.bot_response || '';
+  const feedbackText = item.feedback === 0 ? '用户差评' : item.feedback === 1 ? '用户好评' : '未评价';
+  $('review-feedback-badge').textContent = feedbackText;
+  $('review-feedback-badge').className = `review-badge ${item.feedback === 0 ? 'negative' : item.feedback === 1 ? 'positive' : ''}`;
+  $('review-note-content').value = note?.content || '';
+  $('review-note-count').textContent = `${$('review-note-content').value.length} / 4000`;
+  $('review-note-revision').textContent = note ? `第 ${note.revision} 版` : item.note_revision ? '已撤回' : '尚未留言';
+  $('review-note-save').textContent = note ? '更新留言' : '发布留言';
+  $('review-withdraw').hidden = !note;
+  $('review-member').textContent = item.member_name || '匿名用户';
+  $('review-team').textContent = item.team_name || '未填写';
+  $('review-type').textContent = item.query_type || '-';
+  $('review-history-id').textContent = String(item.id);
+  $('review-feedback-reason').textContent = item.feedback_reason || '-';
+  $('review-note-state').textContent = note ? (note.unread ? '已发布 · 用户未读' : '已发布 · 用户已读') : item.note_revision ? '已撤回' : '未留言';
+}
+
+async function saveReviewNote(event) {
+  event.preventDefault();
+  const item = activeReviewItem();
+  const content = $('review-note-content').value.trim();
+  if (!item || !content) return toast('请输入营养师留言', 'error');
+  $('review-note-save').disabled = true;
+  try {
+    await api(`/api/admin/ai-review/${item.id}/note`, {
+      method: 'PUT', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ content, expected_revision: Number(item.note_revision || 0) }),
+    });
+    toast(item.nutritionist_note ? '营养师留言已更新' : '营养师留言已发布', 'success');
+    await loadAiReviews(state.reviewPagination.page, item.id);
+  } catch (error) { toast(error.message, 'error'); }
+  finally { $('review-note-save').disabled = false; }
+}
+
+async function withdrawReviewNote() {
+  const item = activeReviewItem();
+  if (!item?.nutritionist_note || !confirm('确认撤回这条营养师留言？用户将不再看到它。')) return;
+  try {
+    await api(`/api/admin/ai-review/${item.id}/note`, {
+      method: 'DELETE', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ expected_revision: Number(item.note_revision || 0) }),
+    });
+    toast('营养师留言已撤回', 'success');
+    await loadAiReviews(state.reviewPagination.page, item.id);
+  } catch (error) { toast(error.message, 'error'); }
 }
 
 async function setWorkspaceMode(mode) {
@@ -732,6 +920,17 @@ document.addEventListener('DOMContentLoaded', () => {
   $('export-current-button').addEventListener('click', exportCurrentArchive);
   $('profile-tab').addEventListener('click', () => setContextTab('profile'));
   $('history-tab').addEventListener('click', () => setContextTab('history'));
+  $('consultations-nav').addEventListener('click', () => setPrimaryModule('consultations'));
+  $('ai-review-nav').addEventListener('click', () => setPrimaryModule('ai-review'));
+  window.addEventListener('hashchange', applyPrimaryHash);
+  $('review-period').addEventListener('change', updateReviewPeriodFields);
+  $('review-filter-form').addEventListener('submit', (event) => { event.preventDefault(); state.reviewActiveId = 0; loadAiReviews(1); });
+  $('review-reset').addEventListener('click', () => { $('review-filter-form').reset(); updateReviewPeriodFields(); state.reviewActiveId = 0; loadAiReviews(1); });
+  $('review-prev').addEventListener('click', () => loadAiReviews(Math.max(1, state.reviewPagination.page - 1), 0));
+  $('review-next').addEventListener('click', () => loadAiReviews(Math.min(state.reviewPagination.pages, state.reviewPagination.page + 1), 0));
+  $('review-note-form').addEventListener('submit', saveReviewNote);
+  $('review-withdraw').addEventListener('click', withdrawReviewNote);
+  $('review-note-content').addEventListener('input', () => { $('review-note-count').textContent = `${$('review-note-content').value.length} / 4000`; });
   $('back-current-button').addEventListener('click', returnToCurrentSession);
   document.body.addEventListener('click', (event) => {
     const liveCard = event.target.closest('[data-session]');
@@ -740,6 +939,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (archiveCard) return openArchivedSession(archiveCard.dataset.archiveSession);
     const historyCard = event.target.closest('[data-history-session]');
     if (historyCard) return openArchivedSession(historyCard.dataset.historySession, true);
+    const reviewCard = event.target.closest('[data-review-id]');
+    if (reviewCard) return openAiReview(reviewCard.dataset.reviewId);
   });
   $('max-concurrent').addEventListener('change', () => { if (state.agent) setOnline(!!state.agent.online); });
   if ('Notification' in window && Notification.permission === 'granted') $('notification-button').textContent = '桌面通知已开启';

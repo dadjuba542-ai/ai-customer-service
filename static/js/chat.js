@@ -103,9 +103,11 @@ function renderMessageItem(msg, idx, existing = null) {
   if (msg.role === 'system' || msg.role === 'handoff-system') {
     if (msg.role === 'handoff-system') div.classList.add('handoff-system');
     div.innerHTML = `<div class="system-bubble"><i class="ph ph-check-circle"></i><div class="sb-text">${msg.content}</div></div>`;
-  } else if (msg.role === 'handoff-agent') {
+  } else if (msg.role === 'handoff-agent' || msg.role === 'nutritionist') {
     div.classList.add('handoff-agent');
-    div.innerHTML = `<div class="msg-avatar"><i class="ph ph-headset"></i></div><div class="msg-body"><span class="msg-sender-name">在线营养师</span><div class="msg-bubble">${escapeHtml(msg.content)}</div><span class="msg-time">${msg.time || ''}</span></div>`;
+    if (msg.role === 'nutritionist') div.classList.add('nutritionist');
+    const sender = msg.role === 'nutritionist' ? '在线营养师补充' : '在线营养师';
+    div.innerHTML = `<div class="msg-avatar"><i class="ph ph-headset"></i></div><div class="msg-body"><span class="msg-sender-name">${sender}</span><div class="msg-bubble">${escapeHtml(msg.content)}</div><span class="msg-time">${msg.time || ''}</span></div>`;
   } else if (msg.role === 'bot') {
     const icon = agent ? agent.icon : 'sparkle';
     const color = agent ? agent.color : '#4F46E5';

@@ -12,17 +12,24 @@ async function restoreLatestChat() {
     const items = latestSession?.items || [];
     if (!items.length) return;
 
-    const firstItem = items[0];
-    const agent = AGENTS.find(a => a.id === firstItem.agent_id)
-      || AGENTS.find(a => a.type === firstItem.query_type)
-      || AGENTS[0];
-    if (agent) state.activeAgentId = agent.id;
+    applyHistoryItems(items);
+  } catch {}
+}
 
+function applyHistoryItems(items) {
+    const firstItem = items[0];
+    const firstAgent = AGENTS.find(a => a.id === firstItem?.agent_id)
+      || AGENTS.find(a => a.type === firstItem?.query_type)
+      || AGENTS[0];
+    if (firstAgent) state.activeAgentId = firstAgent.id;
     state.messages = [];
-    items.forEach(item => {
+    (items || []).forEach(item => {
       const time = typeof formatTime === 'function'
         ? formatTime(item.created_at, true)
         : item.created_at || '';
+      const agent = AGENTS.find(a => a.id === item.agent_id)
+        || AGENTS.find(a => a.type === item.query_type)
+        || firstAgent;
       state.messages.push({
         id: `history-user-${item.id}`,
         role: 'user',
@@ -42,10 +49,20 @@ async function restoreLatestChat() {
           replyToText: item.user_message || '',
         });
       }
+      if (item.nutritionist_note) {
+        state.messages.push({
+          id: `nutritionist-note-${item.nutritionist_note.id}`,
+          role: 'nutritionist',
+          content: item.nutritionist_note.content || '',
+          time: typeof formatTime === 'function' ? formatTime(item.nutritionist_note.updated_at, true) : '',
+          historyId: item.id,
+          nutritionistNoteId: item.nutritionist_note.id,
+          revision: item.nutritionist_note.revision,
+        });
+      }
     });
     renderAgentTabs();
     renderMessages();
-  } catch {}
 }
 
 async function loadHistory(queryType = '') {

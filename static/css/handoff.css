@@ -13,6 +13,15 @@
 .msg.handoff-agent .msg-avatar { background: #0f766e; color: #fff; }
 .msg.handoff-agent .msg-bubble { background: #f0fdfa; border: 1px solid #99f6e4; color: #134e4a; }
 .msg.handoff-agent .msg-sender-name { color: #0f766e; font-size: 12px; font-weight: 700; }
+.msg.nutritionist { margin-top: -12px; margin-left: 42px; width: calc(88% - 42px); }
+.msg.nutritionist .msg-bubble { border-left: 4px solid #0f766e; }
+.nutritionist-note-alert { position: fixed; z-index: 24; top: 12px; left: 50%; transform: translateX(-50%); width: min(calc(100% - 28px), 520px); display: grid; grid-template-columns: 38px 1fr auto auto; align-items: center; gap: 10px; padding: 10px 13px; border: 1px solid #5eead4; border-radius: 14px; color: #134e4a; background: #f0fdfa; box-shadow: 0 12px 30px rgba(15,118,110,.18); font: inherit; text-align: left; cursor: pointer; }
+.nutritionist-note-alert[hidden] { display: none; }
+.nutritionist-note-alert-icon { width: 36px; height: 36px; display: grid; place-items: center; border-radius: 11px; color: #fff; background: #0f766e; font-size: 18px; }
+.nutritionist-note-alert span:nth-child(2) { min-width: 0; display: grid; gap: 2px; }
+.nutritionist-note-alert strong { font-size: 13px; }
+.nutritionist-note-alert small { overflow: hidden; color: #4b7d77; font-size: 11px; text-overflow: ellipsis; white-space: nowrap; }
+.nutritionist-note-alert b { min-width: 22px; height: 22px; display: grid; place-items: center; padding: 0 5px; border-radius: 999px; color: #fff; background: #ef4444; font-size: 11px; }
 .msg.handoff-system { justify-content: center; }
 .msg.handoff-system .system-bubble { background: #e6fffa; color: #0f766e; }
 .handoff-inline-action { display: inline-flex; margin: 7px 0 0; padding: 6px 10px; border: 1px solid #5eead4; border-radius: 999px; color: #0f766e; background: #fff; font: inherit; font-size: 12px; font-weight: 700; cursor: pointer; }

@@ -48,17 +48,17 @@ async function loadSession(itemIds) {
     const agent = AGENTS.find(a => a.type === first.query_type) || AGENTS[0];
     if (agent) state.activeAgentId = agent.id;
     renderAgentTabs();
-    state.messages = [];
-    for (const id of itemIds.reverse()) {
+    const items = [];
+    for (const id of [...itemIds].reverse()) {
       try {
         const r = await fetch(`${API_BASE}/api/history/${id}`, { headers: authHeaders() });
         if (r.ok) {
           const item = await r.json();
-          addMessage({ id: Date.now(), role: 'user', content: item.user_message, time: formatTime(item.created_at, true) });
-          if (item.bot_response) addMessage({ id: Date.now() + 1, role: 'bot', content: item.bot_response, time: formatTime(item.created_at, true), agentId: state.activeAgentId, historyId: item.id, feedback: item.feedback });
+          items.push(item);
         }
       } catch {}
     }
+    applyHistoryItems(items);
     switchView('chat');
   } catch { showToast('加载会话失败', 'error'); }
 }

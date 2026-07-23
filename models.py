@@ -226,6 +226,7 @@ def _init_db_locked():
 # ===== Cleanup =====
 def cleanup_old_history():
     conn = get_db_connection()
+    conn.execute("DELETE FROM nutritionist_review_notes WHERE history_id IN (SELECT id FROM chat_history WHERE created_at < datetime('now', '-30 days'))")
     conn.execute("DELETE FROM chat_history WHERE created_at < datetime('now', '-30 days')")
     conn.commit()
     conn.close()
@@ -236,11 +237,19 @@ def delete_chat_history_batch(ids, user_id=None):
     conn = get_db_connection()
     placeholders = ','.join(['?'] * len(ids))
     if user_id:
+        conn.execute(
+            f'DELETE FROM nutritionist_review_notes WHERE history_id IN (SELECT id FROM chat_history WHERE user_id = ? AND id IN ({placeholders}))',
+            [user_id] + ids
+        )
         cursor = conn.execute(
             f'DELETE FROM chat_history WHERE user_id = ? AND id IN ({placeholders})',
             [user_id] + ids
         )
     else:
+        conn.execute(
+            f'DELETE FROM nutritionist_review_notes WHERE history_id IN ({placeholders})',
+            ids
+        )
         cursor = conn.execute(
             f'DELETE FROM chat_history WHERE id IN ({placeholders})',
             ids

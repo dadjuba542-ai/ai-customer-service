@@ -53,6 +53,8 @@ from routes.speech import speech_bp
 from routes.leads import leads_bp
 from routes.handoff import handoff_bp
 from routes.admin_handoff import admin_handoff_bp
+from routes.ai_review import ai_review_bp
+from routes.nutritionist_notes import nutritionist_notes_bp
 
 app = Flask(__name__, static_folder='static', static_url_path='')
 Config.validate()
@@ -84,6 +86,8 @@ app.register_blueprint(speech_bp, url_prefix='/api/speech')
 app.register_blueprint(leads_bp, url_prefix='/api/leads')
 app.register_blueprint(handoff_bp, url_prefix='/api/handoff')
 app.register_blueprint(admin_handoff_bp, url_prefix='/api/admin/handoff')
+app.register_blueprint(ai_review_bp, url_prefix='/api/admin/ai-review')
+app.register_blueprint(nutritionist_notes_bp, url_prefix='/api/nutritionist-notes')
 
 
 @app.after_request

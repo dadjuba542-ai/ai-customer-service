@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>营养师工作台</title>
-  <link rel="stylesheet" href="/consultant/styles.css?v=20260721-handoff1">
+  <link rel="stylesheet" href="/consultant/styles.css?v=20260723-ai-review1">
 </head>
 <body>
   <section id="login-page" class="login-page">
@@ -31,7 +31,13 @@
       </div>
     </header>
 
-    <main class="desk">
+    <div class="workspace-body">
+      <aside class="primary-nav" aria-label="工作台主菜单">
+        <button id="consultations-nav" type="button" class="primary-nav-item active"><span class="nav-icon">咨</span><span>人工咨询</span><b id="consultations-nav-badge" hidden>0</b></button>
+        <button id="ai-review-nav" type="button" class="primary-nav-item"><span class="nav-icon">巡</span><span>AI 答复巡检</span></button>
+      </aside>
+
+    <main id="consultations-module" class="desk">
       <aside class="session-panel">
         <div class="panel-heading"><div><h2>咨询会话</h2><p id="load-label">当前 0 / 3</p></div><span id="total-unread" class="count" hidden>0</span></div>
         <nav class="workspace-tabs" aria-label="会话视图"><button id="live-tab" type="button" class="active">进行中</button><button id="archive-tab" type="button">咨询档案</button></nav>
@@ -79,6 +85,48 @@
         </div>
       </aside>
     </main>
+
+    <main id="ai-review-module" class="review-desk" hidden>
+      <aside class="review-list-panel">
+        <div class="panel-heading"><div><h2>AI 答复巡检</h2><p id="review-summary">近30天全部 · 0 条</p></div></div>
+        <form id="review-filter-form" class="review-filters">
+          <input id="review-keyword" placeholder="搜索用户、团队、问题或回复">
+          <label>日期方式<select id="review-period">
+            <option value="all">全部</option><option value="this_week">本周</option><option value="last_week">上周</option><option value="week">选择周</option><option value="day">指定日期</option><option value="range">日期范围</option>
+          </select></label>
+          <label id="review-week-field" hidden>选择自然周<input id="review-week" type="week"></label>
+          <label id="review-day-field" hidden>指定日期<input id="review-date" type="date"></label>
+          <div id="review-range-field" class="filter-row" hidden><label>开始日期<input id="review-from" type="date"></label><label>结束日期<input id="review-to" type="date"></label></div>
+          <div class="filter-row"><label>AI 类型<select id="review-query-type"><option value="">全部类型</option></select></label><label>用户反馈<select id="review-feedback"><option value="all">全部</option><option value="negative">差评</option><option value="positive">好评</option><option value="unrated">未评价</option></select></label></div>
+          <label>留言状态<select id="review-note-status"><option value="all">全部</option><option value="unnoted">未留言</option><option value="noted">已留言</option></select></label>
+          <div class="filter-actions"><button id="review-reset" type="button">重置</button><button type="submit" class="primary">查询</button></div>
+        </form>
+        <div id="review-list" class="review-list"><div class="empty-list">请选择巡检菜单加载记录</div></div>
+        <div class="archive-pagination"><button id="review-prev" type="button">上一页</button><span id="review-page-label">第 1 页</span><button id="review-next" type="button">下一页</button></div>
+      </aside>
+
+      <section class="review-detail-panel">
+        <div id="review-empty" class="empty-state"><div class="empty-icon">🔎</div><h2>选择一条 AI 问答</h2><p>查看完整答复并添加营养师补充</p></div>
+        <div id="review-detail" class="review-detail" hidden>
+          <header class="review-detail-head"><div><h2 id="review-detail-title">AI 问答详情</h2><p id="review-detail-time"></p></div><span id="review-feedback-badge" class="review-badge">未评价</span></header>
+          <div class="review-conversation">
+            <article class="review-message user"><strong>用户问题</strong><div id="review-user-message"></div></article>
+            <article class="review-message ai"><strong>AI 回复</strong><div id="review-ai-response"></div></article>
+          </div>
+          <form id="review-note-form" class="review-note-editor">
+            <div class="review-note-title"><label for="review-note-content">在线营养师补充</label><span id="review-note-revision">尚未留言</span></div>
+            <textarea id="review-note-content" rows="5" maxlength="4000" placeholder="补充或纠正 AI 回复中的问题"></textarea>
+            <div class="review-note-actions"><button id="review-withdraw" type="button" class="danger" hidden>撤回留言</button><span id="review-note-count">0 / 4000</span><button id="review-note-save" type="submit" class="primary">发布留言</button></div>
+          </form>
+        </div>
+      </section>
+
+      <aside class="review-meta-panel">
+        <div id="review-meta-empty" class="context-empty"><h3>问答信息</h3><p>选择记录后查看用户与智能体信息。</p></div>
+        <div id="review-meta" hidden><h3>问答信息</h3><dl class="profile-grid"><div><dt>姓名</dt><dd id="review-member">-</dd></div><div><dt>团队</dt><dd id="review-team">-</dd></div><div><dt>AI 类型</dt><dd id="review-type">-</dd></div><div><dt>问答编号</dt><dd id="review-history-id">-</dd></div><div><dt>反馈原因</dt><dd id="review-feedback-reason">-</dd></div><div><dt>留言状态</dt><dd id="review-note-state">-</dd></div></dl></div>
+      </aside>
+    </main>
+    </div>
   </section>
 
   <div id="settings-modal" class="modal" hidden>
@@ -97,6 +145,6 @@
   </div>
 
   <div id="toast-region" class="toast-region" aria-live="polite"></div>
-  <script src="/consultant/app.js?v=20260721-handoff2"></script>
+  <script src="/consultant/app.js?v=20260723-ai-review1"></script>
 </body>
 </html>
