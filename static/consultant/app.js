@@ -380,7 +380,7 @@ function renderReviewDetail() {
   $('review-feedback-badge').textContent = feedbackText;
   $('review-feedback-badge').className = `review-badge ${item.feedback === 0 ? 'negative' : item.feedback === 1 ? 'positive' : ''}`;
   $('review-published-note').hidden = !note;
-  $('review-published-content').textContent = note?.content || '';
+  $('review-published-content').textContent = note ? String(note.content || '').trim() : '';
   $('review-published-version').textContent = note ? `第 ${note.revision} 版` : '';
   $('review-published-time').textContent = note ? formatTime(note.updated_at) : '';
   $('review-note-form').hidden = !!note && !state.reviewEditingNote;

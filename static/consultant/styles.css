@@ -193,6 +193,7 @@ input:focus, textarea:focus, select:focus { border-color: var(--primary); box-sh
 .review-published-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 4px; }
 .review-published-head strong { margin: 0; color: #0f766e; }
 .review-published-head span { color: #4b7d77; font-size: 11px; }
+.review-published-content { white-space: pre-line; }
 .review-message.nutritionist footer { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 5px; padding-top: 5px; border-top: 1px solid #b9eee6; }
 .review-message.nutritionist footer time { color: #6b7f7c; font-size: 11px; }
 .review-message.nutritionist footer div { display: flex; gap: 8px; }
