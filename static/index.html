@@ -22,7 +22,7 @@
   </script>
   <link rel="stylesheet" href="/css/base.css?v=20260720-split1">
   <link rel="stylesheet" href="/css/home.css?v=20260720-split1">
-  <link rel="stylesheet" href="/css/chat.css?v=20260722-queue1">
+  <link rel="stylesheet" href="/css/chat.css?v=20260724-voice-press1">
   <link rel="stylesheet" href="/css/community.css?v=20260720-split1">
   <link rel="stylesheet" href="/css/overlays.css?v=20260720-split1">
   <link rel="stylesheet" href="/css/news-nav.css?v=20260720-split1">
@@ -134,7 +134,7 @@
           </div>
         </div>
         <div class="chat-input-area">
-          <button type="button" class="voice-btn" id="voice-btn" onclick="toggleVoiceInput()" style="display:none" title="语音输入" aria-label="开始语音输入" aria-pressed="false"><i class="ph ph-microphone"></i></button>
+          <button type="button" class="voice-btn" id="voice-btn" style="display:none" title="按住说话，松手结束" aria-label="按住说话，松手结束" aria-pressed="false"><i class="ph ph-microphone"></i></button>
           <div class="input-wrapper">
             <button class="input-plus"><i class="ph ph-plus"></i></button>
             <textarea id="message-input" rows="1" placeholder="说点什么..." onkeydown="handleInputKeydown(event)"></textarea>
@@ -367,11 +367,11 @@
   <div id="toast"></div>
   <script src="speech-controller.js?v=20260717-speech113"></script>
   <script src="handoff-intent.js?v=20260721-handoff1"></script>
-  <script src="/js/core.js?v=20260723-ai-review1"></script>
+  <script src="/js/core.js?v=20260724-voice-press1"></script>
   <script src="/js/views.js?v=20260721-handoff2"></script>
   <script src="/js/handoff.js?v=20260723-offline-message1"></script>
-  <script src="/js/fetch-util.js?v=20260720-split1"></script>
-  <script src="/js/voice.js?v=20260720-split1"></script>
+  <script src="/js/fetch-util.js?v=20260724-voice-press1"></script>
+  <script src="/js/voice.js?v=20260724-voice-press1"></script>
   <script src="/js/chat-stream.js?v=20260722-queue1"></script>
   <script src="/js/chat.js?v=20260723-ai-review1"></script>
   <script src="/js/history-community.js?v=20260723-ai-review1"></script>

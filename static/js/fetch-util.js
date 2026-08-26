@@ -69,15 +69,17 @@ function updateVoiceButton(message = '') {
   btn.classList.toggle('recording', phase === 'recording');
   btn.classList.toggle('transcribing', phase === 'transcribing' || phase === 'finalizing');
   btn.classList.toggle('connecting', phase === 'connecting');
-  btn.disabled = ['connecting', 'transcribing', 'finalizing'].includes(phase) || state.isStreaming || state.isTyping;
+  const disabledPhase = ['connecting', 'transcribing', 'finalizing'].includes(phase);
+  btn.disabled = (disabledPhase && !state.speech.pressActive) || state.isStreaming || state.isTyping;
   btn.setAttribute('aria-pressed', phase === 'recording' ? 'true' : 'false');
-  btn.setAttribute('aria-label', phase === 'recording' ? '结束语音输入' : busy ? '语音处理中' : '开始语音输入');
+  btn.setAttribute('aria-label', phase === 'recording' ? '松手结束录音' : busy ? '语音处理中' : '按住说话，松手结束');
   btn.innerHTML = ['connecting', 'transcribing', 'finalizing'].includes(phase)
     ? '<i class="ph ph-spinner-gap"></i>'
     : phase === 'recording' ? '<i class="ph ph-stop"></i>' : '<i class="ph ph-microphone"></i>';
+  btn.title = phase === 'recording' ? '松手结束录音' : busy ? '语音处理中' : '按住说话，松手结束';
   const defaults = {
     connecting: '正在连接腾讯云...',
-    recording: state.speech.realtimeEnabled && state.speech.mode !== 'batch' ? '边说边转文字' : '正在录音，点一下结束',
+    recording: state.speech.realtimeEnabled && state.speech.mode !== 'batch' ? '正在录音，松手结束' : '正在录音，松手结束',
     finalizing: '正在整理最后一句...',
     transcribing: '正在转写录音...',
   };
