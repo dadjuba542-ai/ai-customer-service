@@ -290,6 +290,14 @@ MIGRATIONS = [
             'CREATE INDEX IF NOT EXISTS idx_review_notes_status_updated ON nutritionist_review_notes(status, updated_at DESC)',
         ],
     },
+    {
+        'version': '202607240001',
+        'name': 'add_chat_job_attempt_and_worker_token',
+        'columns': [
+            ('chat_jobs', 'attempt', 'INTEGER NOT NULL DEFAULT 0'),
+            ('chat_jobs', 'worker_token', 'TEXT DEFAULT ""'),
+        ],
+    },
 ]
 
 

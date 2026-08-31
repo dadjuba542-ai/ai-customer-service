@@ -40,7 +40,13 @@ def decrypt_secret(value):
 
 def get_secret_setting(key, default=''):
     raw = get_setting(key, '')
-    return decrypt_secret(raw) if raw else default
+    if not raw:
+        return default
+    try:
+        return decrypt_secret(raw)
+    except RuntimeError:
+        logger.exception('Failed to decrypt setting %s; falling back to default', key)
+        return default
 
 
 def set_secret_setting(key, value):

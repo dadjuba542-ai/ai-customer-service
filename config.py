@@ -35,6 +35,11 @@ class Config:
     HANDOFF_AGENT_STALE_SEC = max(30, int(os.environ.get('HANDOFF_AGENT_STALE_SEC', '90')))
     HANDOFF_CLAIM_TIMEOUT_SEC = max(30, int(os.environ.get('HANDOFF_CLAIM_TIMEOUT_SEC', '60')))
     HANDOFF_LIVE_WAIT_SEC = max(30, int(os.environ.get('HANDOFF_LIVE_WAIT_SEC', '600')))
+    HANDOFF_RECONCILE_INTERVAL_SECONDS = max(2, int(os.environ.get('HANDOFF_RECONCILE_INTERVAL_SECONDS', '5')))
+
+    # 聊天记录保留与启动清理
+    CLEANUP_ON_STARTUP = os.environ.get('CLEANUP_ON_STARTUP', 'false').lower() == 'true'
+    CHAT_RETENTION_DAYS = max(1, int(os.environ.get('CHAT_RETENTION_DAYS', '30')))
 
     # 四大模块对应的机器人ID
     BOT_MAPPING = {

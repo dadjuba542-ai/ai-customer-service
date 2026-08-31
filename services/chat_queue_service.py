@@ -95,11 +95,13 @@ def _cleanup_locked(conn):
     )
     conn.execute(
         '''UPDATE chat_jobs
-              SET status = 'queued', started_at = NULL, worker_pid = NULL, updated_at = CURRENT_TIMESTAMP
+              SET status = 'queued', started_at = NULL, worker_pid = NULL, worker_token = '',
+                  expires_at = datetime('now', ?), attempt = attempt + 1,
+                  updated_at = CURRENT_TIMESTAMP
             WHERE status = 'running'
               AND started_at <= datetime('now', ?)
               AND expires_at > CURRENT_TIMESTAMP''',
-        (f'-{STALE_RUNNING_SECONDS} seconds',),
+        (f'+{Config.CHAT_QUEUE_TTL_SECONDS} seconds', f'-{STALE_RUNNING_SECONDS} seconds'),
     )
 
 
@@ -180,12 +182,13 @@ def claim_next_job(worker_pid=None):
         if not row:
             conn.commit()
             return None
+        worker_token = uuid.uuid4().hex
         cursor = conn.execute(
             '''UPDATE chat_jobs
                   SET status = 'running', started_at = CURRENT_TIMESTAMP, updated_at = CURRENT_TIMESTAMP,
-                      worker_pid = ?
+                      worker_pid = ?, worker_token = ?
                 WHERE job_id = ? AND status = 'queued' ''',
-            (str(worker_pid or os.getpid()), row['job_id']),
+            (str(worker_pid or os.getpid()), worker_token, row['job_id']),
         )
         if cursor.rowcount != 1:
             conn.commit()
@@ -200,30 +203,30 @@ def claim_next_job(worker_pid=None):
         conn.close()
 
 
-def complete_job(job_id, result):
+def complete_job(job_id, result, worker_token=''):
     conn = get_db_connection()
     try:
         conn.execute(
             '''UPDATE chat_jobs
                   SET status = 'completed', result_json = ?, finished_at = CURRENT_TIMESTAMP,
                       updated_at = CURRENT_TIMESTAMP, error_code = '', error_message = ''
-                WHERE job_id = ? AND status = 'running' ''',
-            (json.dumps(result or {}, ensure_ascii=False), job_id),
+                WHERE job_id = ? AND status = 'running' AND worker_token = ? ''',
+            (json.dumps(result or {}, ensure_ascii=False), job_id, worker_token),
         )
         conn.commit()
     finally:
         conn.close()
 
 
-def fail_job(job_id, message, error_code='chat_failed'):
+def fail_job(job_id, message, error_code='chat_failed', worker_token=''):
     conn = get_db_connection()
     try:
         conn.execute(
             '''UPDATE chat_jobs
                   SET status = 'failed', finished_at = CURRENT_TIMESTAMP, updated_at = CURRENT_TIMESTAMP,
                       error_code = ?, error_message = ?
-                WHERE job_id = ? AND status = 'running' ''',
-            (error_code, str(message or '回答生成失败')[:500], job_id),
+                WHERE job_id = ? AND status = 'running' AND worker_token = ? ''',
+            (error_code, str(message or '回答生成失败')[:500], job_id, worker_token),
         )
         conn.commit()
     finally:
@@ -332,7 +335,7 @@ class ChatQueueDispatcher:
             except Exception:
                 with self._jobs_lock:
                     self._jobs.discard(thread)
-                fail_job(job['job_id'], '任务启动失败', 'chat_dispatch_failed')
+                fail_job(job['job_id'], '任务启动失败', 'chat_dispatch_failed', job.get('worker_token', ''))
                 self.limiter.release()
                 raise
 
@@ -349,21 +352,21 @@ class ChatQueueDispatcher:
             ctx = build_chat_context(payload, identity)
             ctx.request_id = job['request_id']
             result = execute_sync_chat(ctx)
-            complete_job(job_id, result)
+            complete_job(job_id, result, job.get('worker_token', ''))
             logger.info(
                 'chat.queue finished job_id=%s request_id=%s worker_pid=%s active=%s duration_ms=%s outcome=success',
                 job_id, job['request_id'], os.getpid(), self.limiter.active,
                 int((time.monotonic() - started) * 1000),
             )
         except ChatServiceError as exc:
-            fail_job(job_id, exc.message, f'chat_upstream_{exc.status_code}')
+            fail_job(job_id, exc.message, f'chat_upstream_{exc.status_code}', job.get('worker_token', ''))
             logger.warning(
                 'chat.queue finished job_id=%s request_id=%s worker_pid=%s active=%s duration_ms=%s outcome=error',
                 job_id, job['request_id'], os.getpid(), self.limiter.active,
                 int((time.monotonic() - started) * 1000),
             )
         except Exception:
-            fail_job(job_id, '回答生成失败，请稍后重试', 'chat_queue_failed')
+            fail_job(job_id, '回答生成失败，请稍后重试', 'chat_queue_failed', job.get('worker_token', ''))
             logger.exception(
                 'chat.queue failed job_id=%s request_id=%s worker_pid=%s active=%s',
                 job_id, job['request_id'], os.getpid(), self.limiter.active,

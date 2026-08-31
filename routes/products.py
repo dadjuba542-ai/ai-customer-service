@@ -75,7 +75,7 @@ def remove_product(current_user, product_id):
 @products_bp.route('/category-order', methods=['POST'])
 @admin_required
 def save_category_order(current_user):
-    data = request.get_json()
+    data = request.get_json(silent=True) or {}
     order = data.get('categories', [])
     set_product_category_order(order)
     return jsonify({'message': 'Category order saved'})
@@ -83,7 +83,17 @@ def save_category_order(current_user):
 @products_bp.route('/reorder', methods=['POST'])
 @admin_required
 def reorder(current_user):
-    data = request.get_json()
+    data = request.get_json(silent=True) or {}
     items = data.get('items', [])
-    reorder_products([(i['id'], i['sort_order']) for i in items])
+    if not isinstance(items, list):
+        return jsonify({'error': 'items 格式不正确'}), 400
+    try:
+        order_list = [
+            (int(item['id']), int(item.get('sort_order', 0)))
+            for item in items
+            if isinstance(item, dict) and 'id' in item
+        ]
+    except (TypeError, ValueError, KeyError):
+        return jsonify({'error': '排序参数格式不正确'}), 400
+    reorder_products(order_list)
     return jsonify({'message': 'Reordered'})

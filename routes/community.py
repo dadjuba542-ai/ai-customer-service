@@ -31,8 +31,7 @@ def add_reply(identity, qid):
     viewer_id = identity['user_id']
     if not content:
         return jsonify({'error': '回复不能为空'}), 400
-    status = 0 if not check_content(content) else 1
-    if not status:
+    if not check_content(content):
         return jsonify({'error': '内容包含限制词汇', 'blocked': True}), 400
     id = create_reply(qid, nickname, content, 0, viewer_id)
     return jsonify({'id': id, 'status': 0, 'message': '评论已提交，精选后公开展示'}), 201
@@ -64,7 +63,7 @@ def admin_list(current_user):
 @community_bp.route('/admin/questions', methods=['POST'])
 @admin_required
 def admin_create(current_user):
-    data = request.get_json()
+    data = request.get_json(silent=True) or {}
     title = (data.get('title') or '').strip()
     content = (data.get('content') or '').strip()
     category = (data.get('category') or '').strip()
@@ -76,7 +75,7 @@ def admin_create(current_user):
 @community_bp.route('/admin/questions/<int:qid>', methods=['PUT'])
 @admin_required
 def admin_update(current_user, qid):
-    data = request.get_json()
+    data = request.get_json(silent=True) or {}
     title = (data.get('title') or '').strip()
     content = (data.get('content') or '').strip()
     category = (data.get('category') or '').strip()

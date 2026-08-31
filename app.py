@@ -1,6 +1,7 @@
 import os
 import json
 import html
+import time
 from urllib.parse import urljoin
 from flask import Flask, jsonify, request, make_response, render_template, send_from_directory
 from werkzeug.middleware.proxy_fix import ProxyFix
@@ -37,6 +38,7 @@ from flask_cors import CORS
 from config import Config
 from models import init_db, get_setting
 from services.content_security import sanitize_media_url
+from services.handoff_service import start_handoff_reconciler
 from routes.auth import auth_bp, token_required
 from routes.chat import chat_bp
 from routes.history import history_bp
@@ -69,6 +71,7 @@ os.makedirs(Config.UPLOAD_DIR, exist_ok=True)
 init_db()
 from services.secret_service import migrate_plaintext_secrets
 migrate_plaintext_secrets()
+start_handoff_reconciler()
 
 app.register_blueprint(auth_bp, url_prefix='/api/auth')
 app.register_blueprint(chat_bp, url_prefix='/api/chat')
@@ -117,35 +120,52 @@ def add_cache_headers(response):
     return response
 
 
+
+_INDEX_PAGE_CACHE = {}
+_INDEX_PAGE_CACHE_TTL = 5
+_INDEX_PAGE_CACHE_MAX = 8
+
 @app.route('/')
 @app.route('/index.html')
 def index():
-    with open(os.path.join(Config.BASE_DIR, 'static', 'index.html'), encoding='utf-8') as file_obj:
-        document = file_obj.read()
+    cache_key = request.host
+    now = time.monotonic()
+    cached = _INDEX_PAGE_CACHE.get(cache_key)
+    if cached and now - cached[0] < _INDEX_PAGE_CACHE_TTL:
+        document = cached[1]
+    else:
+        with open(os.path.join(Config.BASE_DIR, 'static', 'index.html'), encoding='utf-8') as file_obj:
+            document = file_obj.read()
 
-    title = (get_setting('share_title', 'AI宝儿智能体') or 'AI宝儿智能体').strip()[:80]
-    description = (get_setting('share_description', '产品咨询、使用答疑与健康问题解答') or '').strip()[:200]
-    image_url = sanitize_media_url(get_setting('share_image_url', '/avatar-optimized.png')) or '/avatar-optimized.png'
-    absolute_image_url = urljoin(request.url_root, image_url.lstrip('/'))
-    absolute_page_url = request.base_url
+        title = (get_setting('share_title', 'AI宝儿智能体') or 'AI宝儿智能体').strip()[:80]
+        description = (get_setting('share_description', '产品咨询、使用答疑与健康问题解答') or '').strip()[:200]
+        image_url = sanitize_media_url(get_setting('share_image_url', '/avatar-optimized.png')) or '/avatar-optimized.png'
+        absolute_image_url = urljoin(request.url_root, image_url.lstrip('/'))
+        absolute_page_url = request.base_url
 
-    replacements = {
-        '<title>AI宝儿智能体</title>': f'<title>{html.escape(title)}</title>',
-        '<meta name="description" content="产品咨询、使用答疑与健康问题解答">': f'<meta name="description" content="{html.escape(description, quote=True)}">',
-        '<meta property="og:site_name" content="AI宝儿智能体">': f'<meta property="og:site_name" content="{html.escape(title, quote=True)}">',
-        '<meta property="og:title" content="AI宝儿智能体">': f'<meta property="og:title" content="{html.escape(title, quote=True)}">',
-        '<meta property="og:description" content="产品咨询、使用答疑与健康问题解答">': f'<meta property="og:description" content="{html.escape(description, quote=True)}">',
-        '<meta property="og:image" content="/avatar-optimized.png">': f'<meta property="og:image" content="{html.escape(absolute_image_url, quote=True)}">',
-        '<meta property="og:url" content="/">': f'<meta property="og:url" content="{html.escape(absolute_page_url, quote=True)}">',
-        '<meta name="twitter:title" content="AI宝儿智能体">': f'<meta name="twitter:title" content="{html.escape(title, quote=True)}">',
-        '<meta name="twitter:description" content="产品咨询、使用答疑与健康问题解答">': f'<meta name="twitter:description" content="{html.escape(description, quote=True)}">',
-        '<meta name="twitter:image" content="/avatar-optimized.png">': f'<meta name="twitter:image" content="{html.escape(absolute_image_url, quote=True)}">',
-    }
-    for old, new in replacements.items():
-        document = document.replace(old, new)
+        replacements = {
+            '<title>AI宝儿智能体</title>': f'<title>{html.escape(title)}</title>',
+            '<meta name="description" content="产品咨询、使用答疑与健康问题解答">': f'<meta name="description" content="{html.escape(description, quote=True)}">',
+            '<meta property="og:site_name" content="AI宝儿智能体">': f'<meta property="og:site_name" content="{html.escape(title, quote=True)}">',
+            '<meta property="og:title" content="AI宝儿智能体">': f'<meta property="og:title" content="{html.escape(title, quote=True)}">',
+            '<meta property="og:description" content="产品咨询、使用答疑与健康问题解答">': f'<meta property="og:description" content="{html.escape(description, quote=True)}">',
+            '<meta property="og:image" content="/avatar-optimized.png">': f'<meta property="og:image" content="{html.escape(absolute_image_url, quote=True)}">',
+            '<meta property="og:url" content="/">': f'<meta property="og:url" content="{html.escape(absolute_page_url, quote=True)}">',
+            '<meta name="twitter:title" content="AI宝儿智能体">': f'<meta name="twitter:title" content="{html.escape(title, quote=True)}">',
+            '<meta name="twitter:description" content="产品咨询、使用答疑与健康问题解答">': f'<meta name="twitter:description" content="{html.escape(description, quote=True)}">',
+            '<meta name="twitter:image" content="/avatar-optimized.png">': f'<meta name="twitter:image" content="{html.escape(absolute_image_url, quote=True)}">',
+        }
+        for old, new_value in replacements.items():
+            document = document.replace(old, new_value)
+
+        if len(_INDEX_PAGE_CACHE) >= _INDEX_PAGE_CACHE_MAX:
+            _INDEX_PAGE_CACHE.pop(next(iter(_INDEX_PAGE_CACHE)))
+        _INDEX_PAGE_CACHE[cache_key] = (now, document)
+
     response = make_response(document)
     response.headers['Content-Type'] = 'text/html; charset=utf-8'
     return response
+
 
 @app.route('/admin')
 def admin_page():
@@ -163,21 +183,18 @@ def uploaded_file(filename):
 
 @app.route('/api/waiting-content')
 def waiting_content():
-    from models import get_setting
-    import json
     raw_tips = get_setting('waiting_tips', '[]')
     raw_steps = get_setting('waiting_steps', '[]')
     try: tips = json.loads(raw_tips)
-    except: tips = []
+    except (TypeError, ValueError): tips = []
     try: steps = json.loads(raw_steps)
-    except: steps = []
+    except (TypeError, ValueError): steps = []
     if not tips: tips = DEFAULT_TIPS
     if not steps: steps = DEFAULT_STEPS
     return jsonify({'tips': tips, 'steps': steps})
 
 @app.route('/api/example-questions')
 def example_questions():
-    from models import get_setting
     raw = get_setting('example_questions', '[]')
     try:
         questions = json.loads(raw)
@@ -188,14 +205,12 @@ def example_questions():
 
 @app.route('/api/default-team')
 def default_team():
-    from models import get_setting
-    import json
     raw = get_setting('default_team_names', '[]')
     try:
         teams = json.loads(raw)
         if not isinstance(teams, list):
             teams = []
-    except:
+    except (TypeError, ValueError):
         teams = []
     if not teams:
         single = get_setting('default_team_name', '').strip()
@@ -205,7 +220,6 @@ def default_team():
 
 @app.route('/api/case-library-config')
 def case_library_config():
-    from models import get_setting
     return jsonify({'case_library_url': get_setting('case_library_url', '')})
 
 @app.route('/api/user/profile')

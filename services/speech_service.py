@@ -6,7 +6,9 @@ import os
 import shutil
 import subprocess
 import tempfile
+import time
 import uuid
+from datetime import datetime, timezone
 
 import requests
 
@@ -78,8 +80,8 @@ def _tencent_api_request(action, payload, secret_id, secret_key):
     host = 'asr.tencentcloudapi.com'
     service = 'asr'
     version = '2019-06-14'
-    timestamp = int(__import__('time').time())
-    date = __import__('datetime').datetime.utcfromtimestamp(timestamp).strftime('%Y-%m-%d')
+    timestamp = int(time.time())
+    date = datetime.fromtimestamp(timestamp, timezone.utc).strftime('%Y-%m-%d')
     body = json.dumps(payload, separators=(',', ':'), ensure_ascii=False)
     content_type = 'application/json; charset=utf-8'
     signed_headers = 'content-type;host'

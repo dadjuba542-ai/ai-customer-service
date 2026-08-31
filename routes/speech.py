@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify, request
 
 from config import Config
+from models import get_setting
 from routes.auth import identity_required
 from services.security_service import rate_limit
 from services.speech_service import SpeechServiceError, transcribe_audio_file
@@ -15,7 +16,6 @@ speech_bp = Blueprint('speech', __name__)
 
 @speech_bp.route('/config', methods=['GET'])
 def speech_config():
-    from models import get_setting
     enabled = get_setting('speech_enabled', '0') == '1'
     mode = get_setting('speech_mode', 'auto').strip() or 'auto'
     return jsonify({

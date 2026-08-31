@@ -1,7 +1,9 @@
 import csv
 import io
 import json
+import logging
 import sqlite3
+import threading
 import uuid
 from datetime import datetime
 
@@ -23,6 +25,11 @@ DEFAULTS = {
 }
 
 
+_reconcile_thread = None
+_reconcile_stop = threading.Event()
+_reconcile_started_lock = threading.Lock()
+
+
 class HandoffError(Exception):
     def __init__(self, message, status_code=400):
         super().__init__(message)
@@ -30,29 +37,52 @@ class HandoffError(Exception):
         self.status_code = status_code
 
 
-def _bool_setting(key, default=False):
-    raw = str(get_setting(key, '1' if default else '0')).strip().lower()
+def _bool_setting(key, default=False, values=None):
+    raw = str((values or {}).get(key, get_setting(key, '1' if default else '0'))).strip().lower()
     return raw in {'1', 'true', 'yes', 'on'}
 
 
-def _int_setting(key, default, minimum=1, maximum=86400):
+def _int_setting(key, default, minimum=1, maximum=86400, values=None):
     try:
-        value = int(get_setting(key, str(default)))
+        value = int((values or {}).get(key, get_setting(key, str(default))))
     except (TypeError, ValueError):
         value = default
     return max(minimum, min(maximum, value))
 
 
-def get_handoff_settings():
+def _read_settings(conn=None):
+    keys = (
+        'handoff_enabled', 'handoff_ai_agent_id', 'handoff_button_label', 'handoff_queue_msg',
+        'handoff_offline_msg', 'handoff_welcome_msg', 'handoff_avg_handle_sec', 'handoff_live_wait_sec',
+    )
+    if conn is None:
+        conn = get_db_connection()
+        try:
+            rows = conn.execute(
+                f'SELECT key, value FROM settings WHERE key IN ({",".join("?" for _ in keys)})',
+                keys,
+            ).fetchall()
+        finally:
+            conn.close()
+    else:
+        rows = conn.execute(
+            f'SELECT key, value FROM settings WHERE key IN ({",".join("?" for _ in keys)})',
+            keys,
+        ).fetchall()
+    return {row['key']: row['value'] for row in rows}
+
+
+def get_handoff_settings(conn=None):
+    values = _read_settings(conn)
     return {
-        'enabled': _bool_setting('handoff_enabled', DEFAULTS['enabled']),
-        'ai_agent_id': get_setting('handoff_ai_agent_id', DEFAULTS['ai_agent_id']).strip(),
-        'button_label': get_setting('handoff_button_label', DEFAULTS['button_label']).strip() or DEFAULTS['button_label'],
-        'queue_msg': get_setting('handoff_queue_msg', DEFAULTS['queue_msg']).strip() or DEFAULTS['queue_msg'],
-        'offline_msg': get_setting('handoff_offline_msg', DEFAULTS['offline_msg']).strip() or DEFAULTS['offline_msg'],
-        'welcome_msg': get_setting('handoff_welcome_msg', DEFAULTS['welcome_msg']).strip() or DEFAULTS['welcome_msg'],
-        'avg_handle_sec': _int_setting('handoff_avg_handle_sec', DEFAULTS['avg_handle_sec'], 30, 86400),
-        'live_wait_sec': _int_setting('handoff_live_wait_sec', DEFAULTS['live_wait_sec'], 30, 3600),
+        'enabled': _bool_setting('handoff_enabled', DEFAULTS['enabled'], values=values),
+        'ai_agent_id': values.get('handoff_ai_agent_id', DEFAULTS['ai_agent_id']).strip(),
+        'button_label': values.get('handoff_button_label', DEFAULTS['button_label']).strip() or DEFAULTS['button_label'],
+        'queue_msg': values.get('handoff_queue_msg', DEFAULTS['queue_msg']).strip() or DEFAULTS['queue_msg'],
+        'offline_msg': values.get('handoff_offline_msg', DEFAULTS['offline_msg']).strip() or DEFAULTS['offline_msg'],
+        'welcome_msg': values.get('handoff_welcome_msg', DEFAULTS['welcome_msg']).strip() or DEFAULTS['welcome_msg'],
+        'avg_handle_sec': _int_setting('handoff_avg_handle_sec', DEFAULTS['avg_handle_sec'], 30, 86400, values=values),
+        'live_wait_sec': _int_setting('handoff_live_wait_sec', DEFAULTS['live_wait_sec'], 30, 3600, values=values),
     }
 
 
@@ -79,6 +109,40 @@ def update_handoff_settings(data):
     for key, value in values.items():
         set_setting(key, value)
     return get_handoff_settings()
+
+
+def start_handoff_reconciler():
+    """Start a process-local background thread that periodically runs assign_available()."""
+    global _reconcile_thread
+    with _reconcile_started_lock:
+        if _reconcile_thread and _reconcile_thread.is_alive():
+            return _reconcile_thread
+        _reconcile_stop.clear()
+        thread = threading.Thread(
+            target=_reconcile_loop,
+            name='handoff-reconciler',
+            daemon=True,
+        )
+        thread.start()
+        _reconcile_thread = thread
+        return thread
+
+
+def stop_handoff_reconciler_for_tests():
+    global _reconcile_thread
+    _reconcile_stop.set()
+    if _reconcile_thread:
+        _reconcile_thread.join(timeout=2)
+        _reconcile_thread = None
+
+
+def _reconcile_loop():
+    while not _reconcile_stop.is_set():
+        try:
+            assign_available()
+        except Exception:
+            logging.getLogger(__name__).exception('handoff.reconciler error')
+        _reconcile_stop.wait(max(2, int(Config.HANDOFF_RECONCILE_INTERVAL_SECONDS)))
 
 
 def _open_status_sql():
@@ -135,7 +199,7 @@ def _context_from_history(user_id, history_ids):
 
 
 def _reconcile_locked(conn):
-    settings = get_handoff_settings()
+    settings = get_handoff_settings(conn)
     deadline_modifier = f"+{settings['live_wait_sec']} seconds"
     conn.execute(
         f'''UPDATE handoff_sessions
@@ -276,9 +340,10 @@ def _session_payload(conn, row, include_context=False):
            WHERE online = 1 AND last_seen_at >= datetime('now', ?)''',
         (f'-{Config.HANDOFF_AGENT_STALE_SEC} seconds',),
     ).fetchone()['cnt']
+    settings = get_handoff_settings(conn)
     data['queue_position'] = position
-    data['live_wait_sec'] = get_handoff_settings()['live_wait_sec']
-    data['est_wait_sec'] = None if position and not online else (position * get_handoff_settings()['avg_handle_sec'] // max(1, online) if position else 0)
+    data['live_wait_sec'] = settings['live_wait_sec']
+    data['est_wait_sec'] = None if position and not online else (position * settings['avg_handle_sec'] // max(1, online) if position else 0)
     data['unread_count'] = conn.execute(
         '''SELECT COUNT(*) AS cnt FROM handoff_messages
            WHERE session_id = ? AND sender_role = 'agent' AND id > ?''',
@@ -386,7 +451,6 @@ def start_handoff(identity, history_ids=None, query_type='', note='', service_mo
 
 
 def get_current_session(user_id):
-    assign_available()
     conn = get_db_connection()
     row = conn.execute(
         f'''SELECT * FROM handoff_sessions WHERE user_id = ?
@@ -399,7 +463,6 @@ def get_current_session(user_id):
 
 
 def get_user_session(user_id, session_id, include_context=True):
-    assign_available()
     conn = get_db_connection()
     row = conn.execute('SELECT * FROM handoff_sessions WHERE session_id = ? AND user_id = ?', (session_id, user_id)).fetchone()
     payload = _session_payload(conn, row, include_context=include_context)
@@ -587,7 +650,6 @@ def set_agent_status(user, online, max_concurrent=None):
 
 
 def get_agent_me(user_id):
-    assign_available()
     conn = get_db_connection()
     row = conn.execute('SELECT * FROM cs_agents WHERE user_id = ?', (user_id,)).fetchone()
     if not row:
@@ -605,7 +667,6 @@ def get_agent_me(user_id):
 
 
 def list_agent_queue(user_id):
-    assign_available()
     conn = get_db_connection()
     agent = conn.execute('SELECT * FROM cs_agents WHERE user_id = ?', (user_id,)).fetchone()
     if not agent:
@@ -654,7 +715,7 @@ def claim_session(user_id, session_id):
             conn.execute('UPDATE cs_agents SET current_load = current_load + 1 WHERE user_id = ?', (user_id,))
         else:
             raise HandoffError('会话已被其他客服接入或当前接待已满', 409)
-        handoff_settings = get_handoff_settings()
+        handoff_settings = get_handoff_settings(conn)
         conn.execute(
             '''UPDATE handoff_sessions SET status = 'active', active_at = CURRENT_TIMESTAMP,
                agent_claim_deadline = NULL, live_deadline_at = datetime('now', ?),
@@ -1011,11 +1072,15 @@ def append_agent_reply(user_id, session_id, content):
 
 
 def mark_agent_read(user_id, session_id, message_id):
+    try:
+        message_id = max(0, int(message_id or 0))
+    except (TypeError, ValueError):
+        raise HandoffError('message_id 必须是整数', 400)
     conn = get_db_connection()
     cursor = conn.execute(
         '''UPDATE handoff_sessions SET agent_last_read_message_id = MAX(agent_last_read_message_id, ?)
            WHERE session_id = ? AND agent_id = ?''',
-        (max(0, int(message_id or 0)), session_id, user_id),
+        (message_id, session_id, user_id),
     )
     conn.commit()
     conn.close()

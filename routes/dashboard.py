@@ -1,5 +1,7 @@
+import json
+
 from flask import Blueprint, request, jsonify
-from models import get_db_connection, get_setting, set_setting
+from models import get_db_connection, get_feedback_reasons, get_feedback_stats, get_setting, set_setting
 from routes.auth import admin_required
 
 dashboard_bp = Blueprint('dashboard', __name__)
@@ -49,7 +51,7 @@ def get_stats(current_user):
 @dashboard_bp.route('/trends')
 @admin_required
 def get_trends(current_user):
-    days = min(request.args.get('days', 30, type=int), 90)
+    days = max(1, min(request.args.get('days', 30, type=int) or 1, 90))
     dclause, dparams = date_filter()
     conn = get_db_connection()
     query = '''
@@ -121,8 +123,6 @@ def get_user_stats(current_user):
 @dashboard_bp.route('/feedback-stats')
 @admin_required
 def feedback_stats(current_user):
-    dclause, dparams = date_filter()
-    from models import get_feedback_stats
     return jsonify(get_feedback_stats(
         request.args.get('start_date'),
         request.args.get('end_date')
@@ -202,7 +202,6 @@ def negative_feedback(current_user):
 @dashboard_bp.route('/feedback-reasons')
 @admin_required
 def feedback_reasons(current_user):
-    from models import get_feedback_reasons
     rows = get_feedback_reasons(
         request.args.get('start_date'),
         request.args.get('end_date')
@@ -212,8 +211,7 @@ def feedback_reasons(current_user):
 @dashboard_bp.route('/hot-questions/save', methods=['POST'])
 @admin_required
 def save_hot_questions(current_user):
-    import json
-    data = request.get_json()
+    data = request.get_json(silent=True) or {}
     questions = data.get('questions', [])
     set_setting('approved_hot_questions', json.dumps(questions, ensure_ascii=False))
     return jsonify({'message': 'Saved', 'count': len(questions)})

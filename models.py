@@ -220,14 +220,21 @@ def _init_db_locked():
 
     seed_case_documents()
 
-    # 自动清理30天前的聊天记录
-    cleanup_old_history()
+    if Config.CLEANUP_ON_STARTUP:
+        # 默认关闭，避免每次部署/重启都不可逆地删除历史聊天记录。
+        cleanup_old_history(days=Config.CHAT_RETENTION_DAYS)
 
 # ===== Cleanup =====
-def cleanup_old_history():
+def cleanup_old_history(days=30):
     conn = get_db_connection()
-    conn.execute("DELETE FROM nutritionist_review_notes WHERE history_id IN (SELECT id FROM chat_history WHERE created_at < datetime('now', '-30 days'))")
-    conn.execute("DELETE FROM chat_history WHERE created_at < datetime('now', '-30 days')")
+    conn.execute(
+        "DELETE FROM nutritionist_review_notes WHERE history_id IN (SELECT id FROM chat_history WHERE created_at < datetime('now', ?))",
+        (f'-{int(days)} days',),
+    )
+    conn.execute(
+        "DELETE FROM chat_history WHERE created_at < datetime('now', ?)",
+        (f'-{int(days)} days',),
+    )
     conn.commit()
     conn.close()
 
@@ -526,7 +533,7 @@ def get_product_category_order():
     raw = get_setting('product_category_order', '[]')
     try:
         return json.loads(raw)
-    except:
+    except (TypeError, ValueError):
         return []
 
 def set_product_category_order(order_list):
@@ -1344,7 +1351,7 @@ def get_chat_sessions(user_id='anonymous', query_type=None):
                     last['items'].insert(0, item)
                     last['count'] = len(last['items'])
                     continue
-            except:
+            except (TypeError, ValueError):
                 pass
         sessions.append({
             'query_type': item['query_type'],
@@ -1417,6 +1424,7 @@ def get_questions(page=1, limit=10, category=None, status=1):
 def get_question_detail(id, viewer_id=None):
     conn = get_db_connection()
     conn.execute('UPDATE questions SET view_count = view_count + 1 WHERE id = ?', (id,))
+    conn.commit()
     row = conn.execute('SELECT * FROM questions WHERE id = ?', (id,)).fetchone()
     if not row:
         conn.close()

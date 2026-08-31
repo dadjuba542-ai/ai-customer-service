@@ -199,39 +199,42 @@ def upsert_review_note(history_id, agent_id, content, expected_revision):
     except (TypeError, ValueError) as exc:
         raise AiReviewError('修订号无效') from exc
     conn = get_db_connection()
-    conn.execute('BEGIN IMMEDIATE')
-    history = conn.execute('SELECT id, user_id FROM chat_history WHERE id = ?', (history_id,)).fetchone()
-    if not history:
-        conn.rollback(); conn.close()
-        raise AiReviewError('AI问答不存在或已被清理', 404)
-    current = conn.execute('SELECT * FROM nutritionist_review_notes WHERE history_id = ?', (history_id,)).fetchone()
-    if current and current['revision'] != expected_revision:
-        conn.rollback(); conn.close()
-        raise AiReviewError('留言已被其他营养师更新，请刷新后重试', 409)
-    if not current and expected_revision != 0:
-        conn.rollback(); conn.close()
-        raise AiReviewError('留言状态已变化，请刷新后重试', 409)
-    if current:
-        revision = current['revision'] + 1
-        conn.execute(
-            '''UPDATE nutritionist_review_notes SET content = ?, status = 'published', revision = ?,
-               updated_by = ?, published_at = CURRENT_TIMESTAMP, withdrawn_at = NULL,
-               updated_at = CURRENT_TIMESTAMP WHERE history_id = ?''',
-            (content, revision, agent_id, history_id),
-        )
-    else:
-        revision = 1
-        conn.execute(
-            '''INSERT INTO nutritionist_review_notes
-               (history_id, user_id, content, revision, created_by, updated_by)
-               VALUES (?, ?, ?, 1, ?, ?)''',
-            (history_id, history['user_id'], content, agent_id, agent_id),
-        )
-    row = conn.execute('SELECT * FROM nutritionist_review_notes WHERE history_id = ?', (history_id,)).fetchone()
-    conn.commit(); conn.close()
-    result = dict(row)
-    result.pop('created_by', None); result.pop('updated_by', None); result.pop('user_id', None)
-    return result
+    try:
+        conn.execute('BEGIN IMMEDIATE')
+        history = conn.execute('SELECT id, user_id FROM chat_history WHERE id = ?', (history_id,)).fetchone()
+        if not history:
+            raise AiReviewError('AI问答不存在或已被清理', 404)
+        current = conn.execute('SELECT * FROM nutritionist_review_notes WHERE history_id = ?', (history_id,)).fetchone()
+        if current and current['revision'] != expected_revision:
+            raise AiReviewError('留言已被其他营养师更新，请刷新后重试', 409)
+        if not current and expected_revision != 0:
+            raise AiReviewError('留言状态已变化，请刷新后重试', 409)
+        if current:
+            revision = current['revision'] + 1
+            conn.execute(
+                '''UPDATE nutritionist_review_notes SET content = ?, status = 'published', revision = ?,
+                   updated_by = ?, published_at = CURRENT_TIMESTAMP, withdrawn_at = NULL,
+                   updated_at = CURRENT_TIMESTAMP WHERE history_id = ?''',
+                (content, revision, agent_id, history_id),
+            )
+        else:
+            revision = 1
+            conn.execute(
+                '''INSERT INTO nutritionist_review_notes
+                   (history_id, user_id, content, revision, created_by, updated_by)
+                   VALUES (?, ?, ?, 1, ?, ?)''',
+                (history_id, history['user_id'], content, agent_id, agent_id),
+            )
+        row = conn.execute('SELECT * FROM nutritionist_review_notes WHERE history_id = ?', (history_id,)).fetchone()
+        conn.commit()
+        result = dict(row)
+        result.pop('created_by', None); result.pop('updated_by', None); result.pop('user_id', None)
+        return result
+    except Exception:
+        conn.rollback()
+        raise
+    finally:
+        conn.close()
 
 
 def withdraw_review_note(history_id, agent_id, expected_revision):
@@ -240,23 +243,27 @@ def withdraw_review_note(history_id, agent_id, expected_revision):
     except (TypeError, ValueError) as exc:
         raise AiReviewError('修订号无效') from exc
     conn = get_db_connection()
-    conn.execute('BEGIN IMMEDIATE')
-    row = conn.execute('SELECT * FROM nutritionist_review_notes WHERE history_id = ?', (history_id,)).fetchone()
-    if not row:
-        conn.rollback(); conn.close()
-        raise AiReviewError('留言不存在', 404)
-    if row['revision'] != expected_revision:
-        conn.rollback(); conn.close()
-        raise AiReviewError('留言已被其他营养师更新，请刷新后重试', 409)
-    revision = row['revision'] + 1
-    conn.execute(
-        '''UPDATE nutritionist_review_notes SET status = 'withdrawn', revision = ?,
-           user_read_revision = ?, updated_by = ?, withdrawn_at = CURRENT_TIMESTAMP,
-           updated_at = CURRENT_TIMESTAMP WHERE history_id = ?''',
-        (revision, revision, agent_id, history_id),
-    )
-    conn.commit(); conn.close()
-    return {'history_id': history_id, 'status': 'withdrawn', 'revision': revision}
+    try:
+        conn.execute('BEGIN IMMEDIATE')
+        row = conn.execute('SELECT * FROM nutritionist_review_notes WHERE history_id = ?', (history_id,)).fetchone()
+        if not row:
+            raise AiReviewError('留言不存在', 404)
+        if row['revision'] != expected_revision:
+            raise AiReviewError('留言已被其他营养师更新，请刷新后重试', 409)
+        revision = row['revision'] + 1
+        conn.execute(
+            '''UPDATE nutritionist_review_notes SET status = 'withdrawn', revision = ?,
+               user_read_revision = ?, updated_by = ?, withdrawn_at = CURRENT_TIMESTAMP,
+               updated_at = CURRENT_TIMESTAMP WHERE history_id = ?''',
+            (revision, revision, agent_id, history_id),
+        )
+        conn.commit()
+        return {'history_id': history_id, 'status': 'withdrawn', 'revision': revision}
+    except Exception:
+        conn.rollback()
+        raise
+    finally:
+        conn.close()
 
 
 def list_unread_notes(user_id, limit=20):

@@ -1,3 +1,4 @@
+import json
 import jwt
 import hashlib
 import re
@@ -206,8 +207,6 @@ def login():
 @auth_bp.route('/session', methods=['POST'])
 @rate_limit('session', limit=10, window_seconds=60)
 def create_guest_session():
-    import json
-
     data = request.get_json(silent=True) or {}
     team_name = (data.get('team_name') or '').strip()
     member_name = (data.get('member_name') or '').strip()

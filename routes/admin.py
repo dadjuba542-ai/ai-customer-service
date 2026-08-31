@@ -73,7 +73,7 @@ def get_agent(current_user, agent_id):
 @admin_bp.route('/agents/<agent_id>', methods=['PUT'])
 @admin_required
 def edit_agent(current_user, agent_id):
-    data = request.get_json()
+    data = request.get_json(silent=True) or {}
     update_agent_config(
         agent_id,
         data.get('name', ''),
@@ -90,7 +90,7 @@ def edit_agent(current_user, agent_id):
 @admin_bp.route('/agents', methods=['POST'])
 @admin_required
 def add_agent(current_user):
-    data = request.get_json()
+    data = request.get_json(silent=True) or {}
     agent_id = data.get('agent_id', '').strip()
     if not agent_id:
         return jsonify({'error': 'agent_id is required'}), 400
@@ -161,14 +161,14 @@ def coze_api_key(current_user):
         set_secret_setting('coze_api_key', key)
         return jsonify({'message': 'API Key updated'})
     current_key = get_secret_setting('coze_api_key', Config.COZE_API_KEY)
-    masked = current_key[:8] + '****' + current_key[-4:] if len(current_key) > 12 else ''
+    masked = _mask_secret(current_key)
     return jsonify({'masked': masked or '未设置', 'configured': bool(current_key)})
 
 @admin_bp.route('/settings/blocked-keywords', methods=['GET', 'PUT'])
 @admin_required
 def blocked_keywords(current_user):
     if request.method == 'PUT':
-        data = request.get_json()
+        data = request.get_json(silent=True) or {}
         val = data.get('keywords', '').strip()
         set_setting('blocked_keywords', val)
         return jsonify({'message': '已更新'})
@@ -251,7 +251,7 @@ def _mask_secret(value):
     value = (value or '').strip()
     if not value:
         return ''
-    if len(value) <= 8:
+    if len(value) <= 12:
         return '****'
     return value[:4] + '****' + value[-4:]
 
@@ -311,7 +311,7 @@ def share_settings(current_user):
 @admin_required
 def waiting_content(current_user):
     if request.method == 'PUT':
-        data = request.get_json()
+        data = request.get_json(silent=True) or {}
         tips = data.get('tips', '[]')
         steps = data.get('steps', '[]')
         set_setting('waiting_tips', tips)
@@ -320,9 +320,9 @@ def waiting_content(current_user):
     raw_tips = get_setting('waiting_tips', '[]')
     raw_steps = get_setting('waiting_steps', '[]')
     try: tips = json.loads(raw_tips)
-    except: tips = []
+    except (TypeError, ValueError): tips = []
     try: steps = json.loads(raw_steps)
-    except: steps = []
+    except (TypeError, ValueError): steps = []
     if not tips:
         tips = ["试试问我：你的产品有什么功效？","我可以帮你写朋友圈文案","关注资讯栏目获取最新动态","试试问我产品怎么使用","我还能帮你写口播文案","试试问我：你们的产品怎么使用？","我还能帮你写口播文案","快速了解产品：试试问我产品的主要成分"]
     if not steps:
@@ -349,7 +349,7 @@ def default_team(current_user):
         teams = json.loads(raw)
         if not isinstance(teams, list):
             teams = []
-    except:
+    except (TypeError, ValueError):
         teams = []
     if not teams:
         single = get_setting('default_team_name', '').strip()

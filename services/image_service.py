@@ -27,7 +27,9 @@ class ProcessedImage:
 
 
 def is_allowed_image_filename(filename: str) -> bool:
-    ext = filename.rsplit('.', 1)[1].lower() if '.' in filename else 'jpg'
+    if not filename or '.' not in filename:
+        return False
+    ext = filename.rsplit('.', 1)[1].lower()
     return ext in ALLOWED_IMAGE_EXTENSIONS
 
 
@@ -107,9 +109,15 @@ def optimize_image_file(
     )
 
 
+MAX_IMAGE_PIXELS = 50_000_000
+
+
 def _open_image(file_obj: BinaryIO) -> Image.Image:
     try:
         image = Image.open(file_obj)
+        width, height = image.size
+        if width * height > MAX_IMAGE_PIXELS:
+            raise ValueError('图片尺寸过大，请上传小于 5000 万像素的图片')
         image.load()
     except UnidentifiedImageError as exc:
         raise ValueError('无法识别图片文件') from exc

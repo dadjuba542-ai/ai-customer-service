@@ -1,3 +1,5 @@
+import json
+
 from flask import Blueprint, request, jsonify
 from models import get_chat_history, get_chat_history_by_id, get_setting, get_chat_sessions, delete_chat_history_batch
 from routes.auth import identity_required
@@ -52,7 +54,6 @@ def batch_delete(identity):
 
 @history_bp.route('/hot-questions')
 def hot_questions():
-    import json
     raw = get_setting('approved_hot_questions', '[]')
     try:
         questions = json.loads(raw)

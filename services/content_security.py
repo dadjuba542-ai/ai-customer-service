@@ -68,7 +68,13 @@ class _AllowlistHtmlParser(HTMLParser):
         self.output.append(f'<{tag}{rendered_attrs}>')
 
     def handle_startendtag(self, tag, attrs):
+        tag = tag.lower()
+        if tag in DROP_CONTENT_TAGS:
+            # Self-closing dangerous tags never emit an end tag; do not change drop_depth.
+            return
         self.handle_starttag(tag, attrs)
+        if tag in ALLOWED_TAGS and tag not in VOID_TAGS:
+            self.output.append(f'</{tag}>')
 
     def handle_endtag(self, tag):
         tag = tag.lower()
