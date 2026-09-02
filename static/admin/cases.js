@@ -186,9 +186,6 @@ function renderCaseRecognitionPreview(data) {
         <div class="field"><label>使用场景</label><input type="text" id="case-preview-scenario" value="${esc(fields.scenario || '')}"></div>
       </div>
       <div class="admin-row">
-        <div class="field"><label>封面图 URL</label><input type="text" id="case-preview-image-url" value="${esc(fields.image_url || '')}"></div>
-      </div>
-      <div class="admin-row">
         <div class="field"><label>摘要</label><textarea id="case-preview-summary" rows="2">${esc(fields.summary || '')}</textarea></div>
       </div>
       <div class="admin-row">
@@ -221,7 +218,6 @@ function readCaseRecognitionPreviewFields() {
     symptom_tags: get('case-preview-symptom-tags'),
     product_tags: get('case-preview-product-tags'),
     scenario: get('case-preview-scenario'),
-    image_url: get('case-preview-image-url'),
     summary: get('case-preview-summary'),
     content: get('case-preview-content'),
     status: document.getElementById('case-preview-status')?.checked ? 1 : 0,
@@ -244,18 +240,6 @@ function applyCaseFieldsToForm(fields, resetEditing = true) {
   document.getElementById('case-content').value = fields.content || '';
   document.getElementById('case-sort-order').value = fields.sort_order || 0;
   document.getElementById('case-status').checked = String(fields.status ?? 1) !== '0';
-  const preview = document.getElementById('case-image-preview');
-  if (fields.image_url) {
-    preview.src = fields.image_url;
-    preview.dataset.url = fields.image_url;
-    preview.classList.remove('hidden');
-    document.getElementById('case-upload-placeholder').classList.add('hidden');
-  } else {
-    preview.src = '';
-    preview.dataset.url = '';
-    preview.classList.add('hidden');
-    document.getElementById('case-upload-placeholder').classList.remove('hidden');
-  }
 }
 
 function fillCaseFormFromPreview() {
@@ -285,12 +269,6 @@ function resetCaseForm() {
   document.getElementById('case-content').value = '';
   document.getElementById('case-sort-order').value = '0';
   document.getElementById('case-status').checked = true;
-  const preview = document.getElementById('case-image-preview');
-  preview.src = '';
-  preview.dataset.url = '';
-  preview.classList.add('hidden');
-  document.getElementById('case-upload-placeholder').classList.remove('hidden');
-  document.getElementById('case-image-input').value = '';
 }
 
 async function loadAdminCases() {
@@ -309,7 +287,7 @@ async function loadAdminCases() {
     list.innerHTML = cases.map(item => `
       <div class="admin-list-item">
         <div style="display:flex;gap:12px;align-items:flex-start;min-width:0">
-          ${item.image_url ? `<img src="${esc(item.image_url)}" style="width:58px;height:58px;border-radius:8px;object-fit:cover">` : `<div style="width:58px;height:58px;border-radius:8px;background:var(--slate-100);display:flex;align-items:center;justify-content:center;color:var(--slate-400)"><i class="ph ph-file-text"></i></div>`}
+          <div style="width:58px;height:58px;border-radius:8px;background:var(--slate-100);display:flex;align-items:center;justify-content:center;color:var(--slate-400)"><i class="ph ph-file-text"></i></div>
           <div style="min-width:0">
             <div class="item-title">${esc(item.title)} ${item.status ? '' : '<span class="tag tag-rose">已隐藏</span>'}</div>
             <div class="item-meta">${esc(item.customer_profile || '')} · 排序 ${item.sort_order || 0}</div>
@@ -343,7 +321,6 @@ async function loadCaseLibraryUrl() {
 async function saveCase() {
   const title = document.getElementById('case-title').value.trim();
   if (!title) return showToast('请输入案例标题', 'error');
-  const preview = document.getElementById('case-image-preview');
   const payload = {
     title,
     customer_profile: document.getElementById('case-customer-profile').value.trim(),
@@ -352,7 +329,6 @@ async function saveCase() {
     scenario: document.getElementById('case-scenario').value.trim(),
     summary: document.getElementById('case-summary').value.trim(),
     content: document.getElementById('case-content').value.trim(),
-    image_url: preview.classList.contains('hidden') ? '' : (preview.dataset.url || ''),
     status: document.getElementById('case-status').checked ? 1 : 0,
     sort_order: parseInt(document.getElementById('case-sort-order').value || '0', 10),
   };
@@ -393,18 +369,6 @@ async function editCase(id) {
     document.getElementById('case-content').value = item.content || '';
     document.getElementById('case-sort-order').value = item.sort_order || 0;
     document.getElementById('case-status').checked = !!item.status;
-    const preview = document.getElementById('case-image-preview');
-    if (item.image_url) {
-      preview.src = item.image_url;
-      preview.dataset.url = item.image_url;
-      preview.classList.remove('hidden');
-      document.getElementById('case-upload-placeholder').classList.add('hidden');
-    } else {
-      preview.src = '';
-      preview.dataset.url = '';
-      preview.classList.add('hidden');
-      document.getElementById('case-upload-placeholder').classList.remove('hidden');
-    }
     window.scrollTo({ top: 0, behavior: 'smooth' });
   } catch { showToast('案例加载失败', 'error'); }
 }
@@ -438,26 +402,6 @@ async function deleteCase(id) {
   } catch { showToast('删除失败', 'error'); }
 }
 
-async function uploadCaseImage(input) {
-  if (!input.files[0]) return;
-  const formData = new FormData();
-  formData.append('file', input.files[0]);
-  try {
-    const res = await fetch(`${API}/api/admin/upload`, {
-      method: 'POST',
-      headers: { 'Authorization': `Bearer ${getToken()}` },
-      body: formData,
-    });
-    const data = await res.json();
-    if (!res.ok) return showToast(data.error || '上传失败', 'error');
-    const preview = document.getElementById('case-image-preview');
-    preview.src = data.url;
-    preview.dataset.url = data.url;
-    preview.classList.remove('hidden');
-    document.getElementById('case-upload-placeholder').classList.add('hidden');
-  } catch { showToast('上传失败', 'error'); }
-}
-
 async function saveCaseLibraryUrl() {
   const val = document.getElementById('case-library-url-input').value.trim();
   try {
@@ -476,6 +420,214 @@ async function saveCaseLibraryUrl() {
 }
 
 
+// ===== 批量识别导入 =====
+const CB_INPUT_STYLE = 'width:100%;padding:6px 8px;font-size:12px;font-family:inherit;border:1.5px solid var(--slate-200);border-radius:6px;outline:none';
+const SHEETJS_CDN = 'https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js';
+
+function cbAttr(value) {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
+function cbVal(id) {
+  return (document.getElementById(id)?.value || '').trim();
+}
+
+async function ensureSheetJS() {
+  if (typeof XLSX !== 'undefined') return;
+  await loadScriptOnce(SHEETJS_CDN);
+  if (typeof XLSX === 'undefined') throw new Error('表格解析库加载失败，请检查网络');
+}
+
+function rowsFromMatrix(matrix) {
+  const nonEmpty = (matrix || []).filter(
+    row => (row || []).some(cell => String(cell ?? '').trim() !== '')
+  );
+  if (!nonEmpty.length) return [];
+  const header = (nonEmpty[0] || []).map(cell => String(cell ?? '').trim());
+  const hasHeader = nonEmpty.length > 1 && header.some(Boolean);
+  const body = hasHeader ? nonEmpty.slice(1) : nonEmpty;
+  return body.map(cells => (cells || [])
+    .map((cell, i) => {
+      const value = String(cell ?? '').trim();
+      if (!value) return '';
+      const key = hasHeader ? header[i] : '';
+      return key ? `${key}：${value}` : value;
+    })
+    .filter(Boolean)
+    .join('；')
+  ).filter(Boolean);
+}
+
+async function loadCaseBatchFile(input) {
+  const file = input.files && input.files[0];
+  if (!file) return;
+  try {
+    await ensureSheetJS();
+    const buffer = await file.arrayBuffer();
+    const workbook = XLSX.read(buffer, { type: 'array' });
+    const sheet = workbook.Sheets[workbook.SheetNames[0]];
+    const matrix = XLSX.utils.sheet_to_json(sheet, { header: 1, blankrows: false, defval: '' });
+    const rows = rowsFromMatrix(matrix);
+    if (!rows.length) {
+      showToast('表格里没有识别到有效行', 'error');
+      return;
+    }
+    document.getElementById('case-batch-text').value = rows.join('\n');
+    showToast(`已读取 ${rows.length} 条，点识别开始归纳`, 'success');
+  } catch (err) {
+    showToast(err?.message || '表格读取失败', 'error');
+  } finally {
+    input.value = '';
+  }
+}
+
+async function recognizeCaseBatch() {
+  const text = document.getElementById('case-batch-text').value || '';
+  const rows = text.split('\n').map(line => line.trim()).filter(Boolean);
+  if (!rows.length) return showToast('请先粘贴内容或上传表格', 'error');
+  const btn = document.getElementById('case-batch-btn');
+  const box = document.getElementById('case-batch-result');
+  btn.disabled = true;
+  btn.innerHTML = '<i class="ph ph-spinner"></i> 识别中...';
+  box.style.display = 'block';
+  box.innerHTML = `<div class="empty-state" style="padding:16px"><i class="ph ph-spinner"></i>正在归纳 ${rows.length} 条案例，请稍候...</div>`;
+  try {
+    const res = await fetch(`${API}/api/admin/cases/recognize-batch`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${getToken()}` },
+      body: JSON.stringify({ rows }),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      box.innerHTML = `<div style="background:#FEF2F2;color:#B91C1C;border:1px solid #FECACA;border-radius:8px;padding:8px 10px;font-size:12px">${esc(data.error || '识别失败')}</div>`;
+      return showToast(data.error || '识别失败', 'error');
+    }
+    renderCaseBatchPreview(data);
+    showToast(`识别完成，共 ${(data.cases || []).length} 条，确认后入库`, 'success');
+  } catch {
+    box.innerHTML = '<div style="background:#FEF2F2;color:#B91C1C;border:1px solid #FECACA;border-radius:8px;padding:8px 10px;font-size:12px">网络错误，识别失败</div>';
+    showToast('识别失败，请检查网络', 'error');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<i class="ph ph-sparkle"></i> 识别';
+  }
+}
+
+function cbField(id, label, value, rows) {
+  const control = rows > 1
+    ? `<textarea id="${id}" rows="${rows}" style="${CB_INPUT_STYLE};resize:vertical">${esc(value || '')}</textarea>`
+    : `<input type="text" id="${id}" value="${cbAttr(value || '')}" style="${CB_INPUT_STYLE}">`;
+  return `<div class="field" style="flex:1;min-width:0"><label style="font-size:11px">${label}</label>${control}</div>`;
+}
+
+function caseBatchCard(item, i) {
+  return `
+  <div class="case-batch-item" style="border:1px solid var(--slate-200);border-radius:10px;padding:10px;margin-bottom:8px;background:#F8FAFC">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+      <label style="display:flex;align-items:center;gap:6px;font-size:13px;font-weight:600;cursor:pointer;margin:0">
+        <input type="checkbox" class="case-batch-pick" data-idx="${i}" checked> 第 ${i + 1} 条
+      </label>
+    </div>
+    <div class="admin-row">
+      ${cbField(`cb-title-${i}`, '标题', item.title, 1)}
+      ${cbField(`cb-customer-profile-${i}`, '客户画像', item.customer_profile, 1)}
+    </div>
+    <div class="admin-row">
+      ${cbField(`cb-symptom-tags-${i}`, '症状标签（逗号分隔）', item.symptom_tags, 1)}
+      ${cbField(`cb-product-tags-${i}`, '产品标签（逗号分隔）', item.product_tags, 1)}
+    </div>
+    <div class="admin-row">${cbField(`cb-scenario-${i}`, '使用场景', item.scenario, 1)}</div>
+    <div class="admin-row">${cbField(`cb-summary-${i}`, '摘要', item.summary, 2)}</div>
+    <div class="admin-row">${cbField(`cb-content-${i}`, '详细记录', item.content, 4)}</div>
+  </div>`;
+}
+
+function renderCaseBatchPreview(data) {
+  const items = data.cases || [];
+  const warnings = data.warnings || [];
+  const box = document.getElementById('case-batch-result');
+  if (!items.length) {
+    box.innerHTML = '<div class="empty-state" style="padding:16px"><i class="ph ph-table"></i><p>没有识别到案例</p></div>';
+    return;
+  }
+  box.innerHTML = `
+    ${warnings.length ? `<div style="background:#FFF7ED;color:#B45309;border:1px solid #FED7AA;border-radius:8px;padding:8px 10px;font-size:12px;margin-bottom:10px">${warnings.map(w => `<div>${esc(w)}</div>`).join('')}</div>` : ''}
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px;flex-wrap:wrap">
+      <div style="font-size:13px;color:var(--slate-600)">共识别 <b>${items.length}</b> 条，可就地修改后勾选入库</div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-secondary btn-sm" onclick="toggleCaseBatchAll(true)">全选</button>
+        <button class="btn btn-secondary btn-sm" onclick="toggleCaseBatchAll(false)">全不选</button>
+        <button class="btn btn-primary btn-sm" id="case-batch-save-btn" onclick="saveSelectedCases()"><i class="ph ph-check"></i> 入库选中</button>
+      </div>
+    </div>
+    ${items.map((item, i) => caseBatchCard(item, i)).join('')}
+  `;
+}
+
+function toggleCaseBatchAll(checked) {
+  document.querySelectorAll('.case-batch-pick').forEach(el => { el.checked = !!checked; });
+}
+
+async function saveSelectedCases() {
+  const picks = Array.from(document.querySelectorAll('.case-batch-pick:checked'));
+  if (!picks.length) return showToast('请先勾选要入库的案例', 'error');
+  const btn = document.getElementById('case-batch-save-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<i class="ph ph-spinner"></i> 入库中...';
+  let ok = 0;
+  let fail = 0;
+  for (const pick of picks) {
+    const i = parseInt(pick.dataset.idx, 10);
+    const payload = {
+      title: cbVal(`cb-title-${i}`),
+      customer_profile: cbVal(`cb-customer-profile-${i}`),
+      symptom_tags: cbVal(`cb-symptom-tags-${i}`),
+      product_tags: cbVal(`cb-product-tags-${i}`),
+      scenario: cbVal(`cb-scenario-${i}`),
+      summary: cbVal(`cb-summary-${i}`),
+      content: cbVal(`cb-content-${i}`),
+      status: 1,
+      sort_order: 0,
+    };
+    if (!payload.title) { fail += 1; continue; }
+    try {
+      const res = await fetch(`${API}/api/admin/cases`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${getToken()}` },
+        body: JSON.stringify(payload),
+      });
+      if (res.ok) {
+        ok += 1;
+        pick.checked = false;
+        const card = pick.closest('.case-batch-item');
+        if (card) card.style.opacity = '0.45';
+      } else {
+        fail += 1;
+      }
+    } catch {
+      fail += 1;
+    }
+  }
+  btn.disabled = false;
+  btn.innerHTML = '<i class="ph ph-check"></i> 入库选中';
+  showToast(fail ? `已入库 ${ok} 条，失败 ${fail} 条` : `已入库 ${ok} 条`, fail ? 'error' : 'success');
+  if (ok) {
+    loadAdminCases();
+    loadCaseTags();
+  }
+}
+
+function clearCaseBatch() {
+  document.getElementById('case-batch-text').value = '';
+  const box = document.getElementById('case-batch-result');
+  box.style.display = 'none';
+  box.innerHTML = '';
+}
+
 Object.assign(window, {
   resetCaseTagForm,
   loadCaseTags,
@@ -493,6 +645,10 @@ Object.assign(window, {
   editCase,
   toggleCaseStatus,
   deleteCase,
-  uploadCaseImage,
   saveCaseLibraryUrl,
+  loadCaseBatchFile,
+  recognizeCaseBatch,
+  toggleCaseBatchAll,
+  saveSelectedCases,
+  clearCaseBatch,
 });

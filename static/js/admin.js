@@ -890,21 +890,20 @@ function initQuill() {
       placeholder: '输入正文内容...',
     });
     quill.getModule('toolbar').addHandler('image', handleNewsEditorImage);
-    quill.root.addEventListener('drop', handleNewsEditorDrop);
-    quill.root.addEventListener('paste', handleNewsEditorPaste);
+    bindEditorImageEvents(quill);
     quillInited = true;
   } catch (e) { console.error('Quill init error:', e); }
 }
 
-function insertNewsEditorImage(url) {
-  if (!quill || !url) return;
-  const range = quill.getSelection(true);
-  const index = range ? range.index : quill.getLength();
-  quill.insertEmbed(index, 'image', url, 'user');
-  quill.setSelection(index + 1);
+function insertEditorImage(editor, url) {
+  if (!editor || !url) return;
+  const range = editor.getSelection(true);
+  const index = range ? range.index : editor.getLength();
+  editor.insertEmbed(index, 'image', url, 'user');
+  editor.setSelection(index + 1);
 }
 
-async function uploadNewsEditorImageFile(file) {
+async function uploadEditorImageFile(editor, file) {
   if (!file || !file.type || !file.type.startsWith('image/')) {
     showToast('请上传图片文件', 'error');
     return;
@@ -922,32 +921,57 @@ async function uploadNewsEditorImageFile(file) {
       showToast(data.error || '图片上传失败', 'error');
       return;
     }
-    insertNewsEditorImage(data.url);
+    insertEditorImage(editor, data.url);
   } catch {
     showToast('图片上传失败', 'error');
   }
 }
 
-function handleNewsEditorImage() {
+function pickEditorImage(editor) {
   const input = document.createElement('input');
   input.type = 'file';
   input.accept = 'image/*';
-  input.onchange = () => uploadNewsEditorImageFile(input.files && input.files[0]);
+  input.onchange = () => uploadEditorImageFile(editor, input.files && input.files[0]);
   input.click();
 }
 
-function handleNewsEditorDrop(event) {
-  const file = Array.from(event.dataTransfer?.files || []).find(f => f.type && f.type.startsWith('image/'));
-  if (!file) return;
+function insertEditorImageFromEvent(editor, event) {
+  const files = event.dataTransfer?.files || event.clipboardData?.files || [];
+  const file = Array.from(files).find(f => f.type && f.type.startsWith('image/'));
+  if (!file) return false;
   event.preventDefault();
-  uploadNewsEditorImageFile(file);
+  event.stopPropagation();
+  uploadEditorImageFile(editor, file);
+  return true;
 }
 
-function handleNewsEditorPaste(event) {
-  const file = Array.from(event.clipboardData?.files || []).find(f => f.type && f.type.startsWith('image/'));
-  if (!file) return;
-  event.preventDefault();
-  uploadNewsEditorImageFile(file);
+// 图片拖拽 / 粘贴必须绑在 document 捕获阶段：Quill 自己也在 quill.root 上
+// 监听了 paste（Clipboard）和 drop（Uploader，且不检查 defaultPrevented），
+// 若绑在 root 冒泡阶段，会先由 Quill 插入一张 base64 内嵌图，再叠加我们上传的图。
+const EDITOR_IMAGE_EVENTS = new WeakMap();
+
+function bindEditorImageEvents(editor) {
+  if (!editor || EDITOR_IMAGE_EVENTS.has(editor)) return;
+  const root = editor.root;
+  const handler = (event) => {
+    if (!root.isConnected || !root.contains(event.target)) return;
+    insertEditorImageFromEvent(editor, event);
+  };
+  document.addEventListener('paste', handler, true);
+  document.addEventListener('drop', handler, true);
+  EDITOR_IMAGE_EVENTS.set(editor, handler);
+}
+
+function unbindEditorImageEvents(editor) {
+  const handler = EDITOR_IMAGE_EVENTS.get(editor);
+  if (!handler) return;
+  document.removeEventListener('paste', handler, true);
+  document.removeEventListener('drop', handler, true);
+  EDITOR_IMAGE_EVENTS.delete(editor);
+}
+
+function handleNewsEditorImage() {
+  pickEditorImage(quill);
 }
 
 async function loadAdminNews() {
@@ -1567,6 +1591,7 @@ function initProdQuill() {
   if (!card || card.style.display === 'none') return;
   if (typeof Quill === 'undefined') return;
   if (prodQuill) {
+    unbindEditorImageEvents(prodQuill);
     prodQuill.destroy();
     prodQuill = null;
   }
@@ -1577,11 +1602,17 @@ function initProdQuill() {
         [{ header: [1, 2, 3, false] }],
         ['bold', 'italic', 'underline'],
         [{ list: 'ordered' }, { list: 'bullet' }],
-        ['link', 'clean'],
+        ['link', 'image', 'clean'],
       ]
     },
     placeholder: '输入产品详细介绍...',
   });
+  prodQuill.getModule('toolbar').addHandler('image', handleProdEditorImage);
+  bindEditorImageEvents(prodQuill);
+}
+
+function handleProdEditorImage() {
+  pickEditorImage(prodQuill);
 }
 
 function showProdForm() {

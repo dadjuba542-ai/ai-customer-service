@@ -255,7 +255,7 @@ function renderRelatedCases(cases, query = '', total) {
     <div class="related-case-list">
       ${cases.map(item => `
         <div class="related-case-card" role="button" tabindex="0" onclick="openCaseDrawerDetail(${Number(item.id)}, { openedFromList: false })">
-          ${item.image_url ? renderImage(item.image_url, '', 'related-case-img') : `<div class="related-case-img placeholder"><i class="ph ph-file-text"></i></div>`}
+          <div class="related-case-img placeholder"><i class="ph ph-file-text"></i></div>
           <div class="related-case-body">
             <div class="related-case-name">${escapeHtml(item.title || '')}</div>
             <div class="related-case-profile">${escapeHtml(item.customer_profile || item.scenario || '')}</div>
@@ -350,7 +350,6 @@ function renderCaseDrawerDetail(item) {
   if (!body) return;
   body.className = 'case-drawer-body case-drawer-detail-body';
   body.innerHTML = `
-      ${item.image_url ? renderImage(item.image_url, item.title || '', 'case-detail-hero', { thumb: false }) : ''}
       <div class="case-detail-content">
         <p class="case-detail-profile">${escapeHtml(item.customer_profile || '')}</p>
         <div class="case-detail-tags">
@@ -505,7 +504,7 @@ async function loadCases(reset = false) {
 function renderCaseListItems(items) {
   return items.map(item => `
     <div class="case-list-item" role="button" tabindex="0" onclick="openCaseDrawerDetail(${Number(item.id)}, { openedFromList: true })">
-      ${item.image_url ? renderImage(item.image_url, '', 'case-list-img') : `<div class="case-list-img placeholder"><i class="ph ph-file-text"></i></div>`}
+      <div class="case-list-img placeholder"><i class="ph ph-file-text"></i></div>
       <div class="case-list-info">
         <div class="case-list-name">${escapeHtml(item.title || '')}</div>
         <div class="case-list-profile">${escapeHtml(item.customer_profile || item.scenario || '')}</div>

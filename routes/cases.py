@@ -15,7 +15,11 @@ from models import (
     update_case_tag,
 )
 from routes.auth import admin_required
-from services.case_recognition_service import CaseRecognitionError, recognize_case_from_link
+from services.case_recognition_service import (
+    CaseRecognitionError,
+    recognize_case_from_link,
+    recognize_cases_from_rows,
+)
 
 cases_bp = Blueprint('cases', __name__)
 
@@ -61,6 +65,29 @@ def admin_recognize_case_link(current_user):
     data = request.get_json(silent=True) or {}
     try:
         result = recognize_case_from_link(data.get('url', ''))
+    except CaseRecognitionError as exc:
+        return jsonify({'error': exc.message}), exc.status_code
+    return jsonify(result)
+
+
+@cases_bp.route('/admin/cases/recognize-batch', methods=['POST'])
+@admin_required
+def admin_recognize_cases_batch(current_user):
+    data = request.get_json(silent=True) or {}
+    raw_rows = data.get('rows')
+    if raw_rows is None:
+        raw_rows = [line for line in str(data.get('text') or '').splitlines()]
+    if not isinstance(raw_rows, list):
+        return jsonify({'error': 'rows 格式不正确'}), 400
+
+    rows = []
+    for row in raw_rows:
+        if isinstance(row, (list, tuple)):
+            rows.append(' '.join(str(cell) for cell in row if str(cell or '').strip()))
+        else:
+            rows.append(str(row or ''))
+    try:
+        result = recognize_cases_from_rows(rows)
     except CaseRecognitionError as exc:
         return jsonify({'error': exc.message}), exc.status_code
     return jsonify(result)

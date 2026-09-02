@@ -198,8 +198,7 @@
                 <div id="news-upload-placeholder"><i class="ph ph-upload"></i><span>点击上传</span></div>
               </div>
               <input type="file" id="news-image-input" accept="image/*" class="hidden" onchange="uploadNewsImage(this)">
-              <div style="font-size:11px;color:var(--slate-400);margin-top:4px">建议 800×400，jpg/png/webp，不超过 2MB</div>
-              <div style="font-size:11px;color:var(--slate-400);margin-top:4px">建议 800×400，jpg/png/webp，不超过 2MB</div>
+              <div style="font-size:11px;color:var(--slate-400);margin-top:4px">建议 800×400，jpg/png/webp，单张不超过 8MB</div>
             </div>
           </div>
           <div style="display:flex;gap:8px;margin-top:4px">
@@ -245,11 +244,11 @@
                   <input type="file" accept="image/*" onchange="uploadProductImage(this)" style="display:none">
                 </label>
               </div>
-              <div style="font-size:11px;color:var(--slate-400);margin-top:4px">建议 800×400，jpg/png/webp，不超过 2MB</div>
+              <div style="font-size:11px;color:var(--slate-400);margin-top:4px">建议 800×400，jpg/png/webp，单张不超过 8MB。详情正文内插图请点工具栏的图片按钮，也可直接拖拽或粘贴</div>
             </div>
           </div>
           <div class="admin-row">
-            <div class="field"><label>详情</label><div id="prod-editor" style="height:220px"></div></div>
+            <div class="field"><label>详情</label><div id="prod-editor" style="height:220px;border:1.5px solid var(--slate-200);border-radius:8px"></div></div>
           </div>
           <div style="display:flex;gap:8px;margin-top:8px">
             <button class="btn btn-secondary" onclick="hideProdForm()">取消</button>
@@ -326,6 +325,28 @@
           <div id="case-recognize-result" style="display:none;margin-top:12px"></div>
         </div>
         <div class="admin-card">
+          <h3><i class="ph ph-table"></i>批量导入案例</h3>
+          <p style="font-size:12px;color:var(--slate-500);margin-bottom:12px">粘贴文字（一行一条）或上传表格（一行一条，首行作表头）。AI 会逐条归纳字段，标签只从标准标签库中选取。识别结果先预览，勾选后才入库。</p>
+          <div class="admin-row">
+            <div class="field">
+              <label>粘贴内容（一行一条案例）</label>
+              <textarea id="case-batch-text" rows="5" placeholder="45岁女性，久坐办公室，长期便秘，用益生菌两周后排便频率提升&#10;38岁男性，经常外食应酬，饭后胀气明显"></textarea>
+            </div>
+          </div>
+          <div class="admin-row">
+            <div class="field">
+              <label>或上传表格（xlsx / xls / csv）</label>
+              <input type="file" id="case-batch-file" accept=".xlsx,.xls,.csv" onchange="loadCaseBatchFile(this)">
+              <div style="font-size:11px;color:var(--slate-400);margin-top:4px">表格首行作为表头，其余每行一条案例；单次最多 40 条</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:4px">
+            <button class="btn btn-secondary" onclick="clearCaseBatch()">清空</button>
+            <button class="btn btn-primary" id="case-batch-btn" onclick="recognizeCaseBatch()"><i class="ph ph-sparkle"></i> 识别</button>
+          </div>
+          <div id="case-batch-result" style="display:none;margin-top:12px"></div>
+        </div>
+        <div class="admin-card">
           <h3><i class="ph ph-pencil"></i><span id="case-form-title">新增案例档案</span></h3>
           <input type="hidden" id="case-editing-id">
           <div class="admin-row">
@@ -347,17 +368,6 @@
           </div>
           <div class="admin-row">
             <div class="field"><label>详细记录</label><textarea id="case-content" rows="6" placeholder="完整案例记录，可写客户背景、使用过程、反馈结果"></textarea></div>
-          </div>
-          <div class="admin-row">
-            <div class="field">
-              <label>封面图</label>
-              <div class="upload-area" onclick="document.getElementById('case-image-input').click()">
-                <img id="case-image-preview" class="hidden" style="max-height:80px;border-radius:6px">
-                <div id="case-upload-placeholder"><i class="ph ph-upload"></i><span>点击上传</span></div>
-              </div>
-              <input type="file" id="case-image-input" accept="image/*" class="hidden" onchange="uploadCaseImage(this)">
-              <div style="font-size:11px;color:var(--slate-400);margin-top:4px">图片只用于案例卡片和详情展示，不参与检索</div>
-            </div>
           </div>
           <div class="admin-row">
             <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--slate-600)">
