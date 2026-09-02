@@ -1736,7 +1736,8 @@ async function saveProduct() {
     summary: document.getElementById('prod-summary').value.trim(),
     highlights: document.getElementById('prod-highlights').value.trim(),
     image_url: document.getElementById('prod-image-url').value.trim(),
-    content: prodQuill ? prodQuill.root.innerHTML : '',
+    // 编辑器未就绪时不能用空串覆盖正文：编辑已有产品保留原 content，避免把数据库正文清空
+    content: prodQuill ? prodQuill.root.innerHTML : (id ? (prodCache.find(x => x.id === parseInt(id)) || {}).content || '' : ''),
     sort_order: id ? (prodCache.find(x => x.id === parseInt(id)) || {}).sort_order || 0 : (prodCache.length + 1) * 10,
   };
   if (!body.name) { alert('请输入产品名称'); return; }

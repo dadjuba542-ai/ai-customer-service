@@ -586,4 +586,10 @@
         justify-content: center;
       }
     }
+
+/* ===== 富文本编辑器：正文图片不撑破容器（含手机端） ===== */
+.ql-editor img {
+  max-width: 100%; height: auto;
+  border-radius: 8px;
+}
   

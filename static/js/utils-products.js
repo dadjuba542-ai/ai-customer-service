@@ -126,6 +126,11 @@ async function showProductDetail(id) {
       ${tags.length ? `<div class="product-detail-tags">${tags.map(t => `<span class="product-tag">${escapeHtml(t.trim())}</span>`).join('')}</div>` : ''}
       ${item.content ? `<div class="product-detail-content">${item.content}</div>` : ''}
     `;
+    // 正文图片懒加载：滚动到可视区域才加载，提升详情页首屏速度
+    container.querySelectorAll('.product-detail-content img').forEach(img => {
+      img.loading = 'lazy';
+      img.decoding = 'async';
+    });
     document.getElementById('product-detail-overlay').classList.add('active');
   } catch {}
 }
