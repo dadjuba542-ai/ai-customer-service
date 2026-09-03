@@ -30,6 +30,8 @@ const state = {
   reviewActiveId: 0,
   reviewLoading: false,
   reviewEditingNote: false,
+  quickReplies: [],
+  quickReplyFilter: '',
 };
 
 const $ = (id) => document.getElementById(id);
@@ -151,9 +153,10 @@ async function bootWorkspace() {
       $('max-concurrent').value = String(state.agent.max_concurrent || 3);
       renderOnlineState();
     } else {
-      toast('点击“上线接单”开通当前账号的客服坐席', 'success');
+      toast('当前账号尚未开通客服坐席，请联系管理员在后台「人工客服」页添加', 'error');
     }
     await pollAll();
+    await loadQuickReplies();
     await applyPrimaryHash();
     clearInterval(state.queueTimer);
     clearInterval(state.heartbeatTimer);
@@ -725,7 +728,7 @@ function renderDetail() {
   $('reply-input').disabled = !canReply;
   $('reply-button').disabled = !canReply;
   $('reply-input').placeholder = canReply
-    ? (detail.service_mode === 'message' ? '回复后将自动归档，Enter 发送' : '回复用户，Enter 发送，Shift+Enter 换行')
+    ? (detail.service_mode === 'message' ? '回复用户，留言将保持跟进，24 小时无新消息自动归档' : '回复用户，Enter 发送，Shift+Enter 换行')
     : '确认接入后才能回复';
   const messages = detail.messages || [];
   $('message-list').innerHTML = `<div class="message-list-label">用户初始留言及后续沟通</div>${messages.map((item) => `<div class="message ${item.sender_role}"><div class="bubble">${escapeHtml(item.content)}<time>${formatTime(item.created_at)}</time></div></div>`).join('') || '<div class="empty-list">暂无用户留言，请先查看右侧 AI 对话上下文</div>'}`;
@@ -775,22 +778,54 @@ async function sendReply(event) {
   if (!content || !state.activeSessionId) return;
   $('reply-button').disabled = true;
   try {
-    const data = await api(`/api/admin/handoff/${encodeURIComponent(state.activeSessionId)}/reply`, {
+    await api(`/api/admin/handoff/${encodeURIComponent(state.activeSessionId)}/reply`, {
       method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ content }),
     });
     $('reply-input').value = '';
-    if (data.message?.auto_closed) {
-      toast('留言已回复并自动归档', 'success');
-      state.activeSessionId = '';
-      state.liveSessionId = '';
-      state.activeDetail = null;
-      renderDetail();
-      await pollAll();
-    } else {
-      await loadDetail(state.activeSessionId, true);
-    }
+    await loadDetail(state.activeSessionId, true);
   } catch (error) { toast(error.message, 'error'); }
   finally { $('reply-button').disabled = false; }
+}
+
+async function loadQuickReplies() {
+  try {
+    const data = await api('/api/admin/handoff/quick-replies?enabled=1');
+    state.quickReplies = data.quick_replies || [];
+  } catch (error) {
+    state.quickReplies = [];
+  }
+  renderQuickReplies();
+}
+
+function renderQuickReplies() {
+  const list = $('quick-reply-list');
+  if (!list) return;
+  const keyword = state.quickReplyFilter.trim().toLowerCase();
+  const items = state.quickReplies.filter((item) =>
+    !keyword || `${item.title} ${item.content}`.toLowerCase().includes(keyword),
+  );
+  if (!items.length) {
+    list.innerHTML = '<div class="quick-reply-empty">暂无可用的快捷话术</div>';
+    return;
+  }
+  list.innerHTML = items.map((item) =>
+    `<button type="button" class="quick-reply-chip" data-content="${escapeHtml(item.content)}" title="${escapeHtml(item.content)}">${escapeHtml(item.title)}</button>`,
+  ).join('');
+}
+
+function toggleQuickReplies() {
+  const list = $('quick-reply-list');
+  const filter = $('quick-reply-filter');
+  const toggle = $('quick-reply-toggle');
+  const expanded = list.hidden;
+  list.hidden = !expanded;
+  filter.hidden = !expanded;
+  toggle.setAttribute('aria-expanded', String(expanded));
+  if (expanded) {
+    state.quickReplyFilter = '';
+    filter.value = '';
+    renderQuickReplies();
+  }
 }
 
 async function closeActive() {
@@ -912,6 +947,14 @@ document.addEventListener('DOMContentLoaded', () => {
   $('close-button').addEventListener('click', closeActive);
   $('reply-form').addEventListener('submit', sendReply);
   $('reply-input').addEventListener('keydown', (event) => { if (event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); $('reply-form').requestSubmit(); } });
+  $('quick-reply-toggle').addEventListener('click', toggleQuickReplies);
+  $('quick-reply-filter').addEventListener('input', (event) => { state.quickReplyFilter = event.target.value; renderQuickReplies(); });
+  $('quick-reply-list').addEventListener('click', (event) => {
+    const chip = event.target.closest('.quick-reply-chip');
+    if (!chip) return;
+    $('reply-input').value = chip.dataset.content;
+    $('reply-input').focus();
+  });
   $('live-tab').addEventListener('click', () => setWorkspaceMode('live'));
   $('archive-tab').addEventListener('click', () => setWorkspaceMode('archive'));
   $('archive-filter-form').addEventListener('submit', (event) => {

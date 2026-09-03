@@ -40,6 +40,19 @@ def main():
         set_setting('handoff_enabled', '1')
         set_setting('handoff_ai_agent_id', 'aura')
 
+        unregistered = client.post('/api/admin/handoff/agent/status', headers=admin_headers, json={'online': True})
+        assert_true(unregistered.status_code == 403, '未添加坐席不应允许自动开通上线')
+
+        add_agent = client.post('/api/admin/handoff/agents', headers=admin_headers, json={
+            'username': 'nutritionist', 'display_name': '营养师小王', 'max_concurrent': 1,
+        })
+        assert_true(add_agent.status_code == 201, add_agent.get_data(as_text=True))
+        assert_true(add_agent.get_json()['agent']['max_concurrent'] == 1, add_agent.get_json())
+        duplicate_agent = client.post('/api/admin/handoff/agents', headers=admin_headers, json={'username': 'nutritionist'})
+        assert_true(duplicate_agent.status_code == 409, '重复添加坐席应返回409')
+        bad_agent = client.post('/api/admin/handoff/agents', headers=admin_headers, json={'username': '不存在的用户'})
+        assert_true(bad_agent.status_code == 404, '不存在的用户名应返回404')
+
         status = client.post('/api/admin/handoff/agent/status', headers=admin_headers, json={'online': True, 'max_concurrent': 1})
         assert_true(status.status_code == 200, status.get_data(as_text=True))
         assert_true(status.get_json()['agent']['online'] == 1, 'agent should be online')
@@ -104,6 +117,8 @@ def main():
         assert_true(user_message.status_code == 201, user_message.get_data(as_text=True))
         reply = client.post(f"/api/admin/handoff/{session1['session_id']}/reply", headers=admin_headers, json={'content': '请先告诉我每天的饮食情况'})
         assert_true(reply.status_code == 201, reply.get_data(as_text=True))
+        active_remove = client.delete(f'/api/admin/handoff/agents/{admin_id}', headers=admin_headers)
+        assert_true(active_remove.status_code == 409, '有进行中会话的坐席不应被移除')
         messages = client.get(f"/api/handoff/messages/{session1['session_id']}", headers=guest1_headers)
         roles = [item['sender_role'] for item in messages.get_json()['messages']]
         assert_true('user' in roles and 'agent' in roles and 'system' in roles, roles)
@@ -211,8 +226,30 @@ def main():
         reply3 = client.post(f"/api/admin/handoff/{session3['session_id']}/reply", headers=admin_headers, json={
             'content': '这是营养师稍后的留言回复',
         })
-        assert_true(reply3.status_code == 201 and reply3.get_json()['message']['auto_closed'], reply3.get_data(as_text=True))
-        assert_true(client.get('/api/handoff/current', headers=guest3_headers).get_json()['session'] is None, '留言回复后应自动归档')
+        assert_true(reply3.status_code == 201, reply3.get_data(as_text=True))
+        assert_true(not reply3.get_json()['message']['auto_closed'], '留言回复后不应立即关闭')
+        current3 = client.get('/api/handoff/current', headers=guest3_headers).get_json()['session']
+        assert_true(current3 is not None and current3['status'] == 'active', current3)
+        assert_true(current3['service_mode'] == 'message', current3)
+        follow3 = client.post('/api/handoff/message', headers=guest3_headers, json={
+            'session_id': session3['session_id'], 'content': '请问需要注意哪些饮食禁忌？',
+        })
+        assert_true(follow3.status_code == 201, follow3.get_data(as_text=True))
+        reply3b = client.post(f"/api/admin/handoff/{session3['session_id']}/reply", headers=admin_headers, json={'content': '避免辛辣刺激'})
+        assert_true(reply3b.status_code == 201, reply3b.get_data(as_text=True))
+        assert_true(not reply3b.get_json()['message']['auto_closed'], '多轮留言中不应关闭')
+        from services.handoff_service import _reconcile_locked
+        conn = get_db_connection()
+        conn.execute(
+            "UPDATE handoff_sessions SET last_message_at = datetime('now', '-25 hour') WHERE session_id = ?",
+            (session3['session_id'],),
+        )
+        _reconcile_locked(conn)
+        conn.commit()
+        conn.close()
+        archived3 = client.get(f"/api/handoff/session/{session3['session_id']}", headers=guest3_headers).get_json()['session']
+        assert_true(archived3['status'] == 'closed' and archived3['close_reason'] == 'message_idle', archived3)
+        assert_true(client.get('/api/handoff/current', headers=guest3_headers).get_json()['session'] is None, '留言 24h 空闲后应自动归档')
         recent3 = client.get('/api/handoff/recent?limit=20', headers=guest3_headers)
         assert_true(recent3.status_code == 200, recent3.get_data(as_text=True))
         recent3_session = next(item for item in recent3.get_json()['sessions'] if item['session_id'] == session3['session_id'])
@@ -222,7 +259,7 @@ def main():
         restored3_messages = restored3.get_json()['session']
         assert_true(restored3_messages['unread_count'] == 1, restored3_messages)
         visible3 = client.get(f"/api/handoff/messages/{session3['session_id']}", headers=guest3_headers)
-        assert_true(any(item['sender_role'] == 'agent' and item['content'] == '这是营养师稍后的留言回复' for item in visible3.get_json()['messages']), visible3.get_json())
+        assert_true(any(item['sender_role'] == 'agent' and item['content'] == '避免辛辣刺激' for item in visible3.get_json()['messages']), visible3.get_json())
         recent3_read = client.get('/api/handoff/recent?limit=20', headers=guest3_headers).get_json()
         recent3_read_session = next(item for item in recent3_read['sessions'] if item['session_id'] == session3['session_id'])
         assert_true(recent3_read_session['unread_count'] == 0, recent3_read_session)
@@ -231,11 +268,13 @@ def main():
             'query_type': '营养咨询', 'note': '测试等待超时自动留言',
         })
         session4 = start4.get_json()['session']
+        from services.handoff_service import _reconcile_locked
         conn = get_db_connection()
         conn.execute(
             "UPDATE handoff_sessions SET live_deadline_at = datetime('now', '-1 second') WHERE session_id = ?",
             (session4['session_id'],),
         )
+        _reconcile_locked(conn)
         conn.commit()
         conn.close()
         timed_out4 = client.get(f"/api/handoff/session/{session4['session_id']}", headers=guest4_headers).get_json()['session']
@@ -243,10 +282,56 @@ def main():
         claim4 = client.post(f"/api/admin/handoff/{session4['session_id']}/claim", headers=admin_headers)
         assert_true(claim4.status_code == 200, claim4.get_data(as_text=True))
         reply4 = client.post(f"/api/admin/handoff/{session4['session_id']}/reply", headers=admin_headers, json={'content': '超时留言回复'})
-        assert_true(reply4.get_json()['message']['auto_closed'], reply4.get_data(as_text=True))
+        assert_true(reply4.status_code == 201, reply4.get_data(as_text=True))
+        assert_true(not reply4.get_json()['message']['auto_closed'], '超时转留言后回复不应立即关闭')
+        close4 = client.post(f"/api/admin/handoff/{session4['session_id']}/close", headers=admin_headers, json={'reason': 'done'})
+        assert_true(close4.status_code == 200, close4.get_data(as_text=True))
 
         offline = client.post('/api/admin/handoff/agent/status', headers=admin_headers, json={'online': False, 'max_concurrent': 3})
         assert_true(offline.status_code == 200, offline.get_data(as_text=True))
+
+        removed_agent = client.delete(f'/api/admin/handoff/agents/{admin_id}', headers=admin_headers)
+        assert_true(removed_agent.status_code == 200, removed_agent.get_data(as_text=True))
+        blocked_after_remove = client.post('/api/admin/handoff/agent/status', headers=admin_headers, json={'online': True})
+        assert_true(blocked_after_remove.status_code == 403, '移除坐席后不应允许上线')
+        re_add_agent = client.post('/api/admin/handoff/agents', headers=admin_headers, json={
+            'username': 'nutritionist', 'display_name': '营养师小王', 'max_concurrent': 3,
+        })
+        assert_true(re_add_agent.status_code == 201, re_add_agent.get_data(as_text=True))
+
+        qr_empty = client.get('/api/admin/handoff/quick-replies', headers=admin_headers)
+        assert_true(qr_empty.status_code == 200 and qr_empty.get_json()['quick_replies'] == [], qr_empty.get_data(as_text=True))
+        qr_create = client.post('/api/admin/handoff/quick-replies', headers=admin_headers, json={
+            'title': '确认收货地址', 'content': '您好，麻烦确认一下您的收货地址和联系方式。', 'sort_order': 1, 'enabled': True,
+        })
+        assert_true(qr_create.status_code == 201, qr_create.get_data(as_text=True))
+        qr_id = qr_create.get_json()['quick_reply']['id']
+        qr_create2 = client.post('/api/admin/handoff/quick-replies', headers=admin_headers, json={
+            'title': '饮食禁忌提醒', 'content': '请避免辛辣、生冷及高糖食物。', 'sort_order': 2, 'enabled': False,
+        })
+        assert_true(qr_create2.status_code == 201, qr_create2.get_data(as_text=True))
+        qr_id2 = qr_create2.get_json()['quick_reply']['id']
+        qr_bad = client.post('/api/admin/handoff/quick-replies', headers=admin_headers, json={'title': '', 'content': 'x'})
+        assert_true(qr_bad.status_code == 400, '空标题应返回400')
+        qr_all = client.get('/api/admin/handoff/quick-replies', headers=admin_headers)
+        assert_true(qr_all.get_json()['quick_replies'][0]['id'] == qr_id, qr_all.get_json())
+        qr_enabled = client.get('/api/admin/handoff/quick-replies?enabled=1', headers=admin_headers)
+        enabled_ids = [item['id'] for item in qr_enabled.get_json()['quick_replies']]
+        assert_true(qr_id in enabled_ids and qr_id2 not in enabled_ids, enabled_ids)
+        qr_update = client.put(f'/api/admin/handoff/quick-replies/{qr_id}', headers=admin_headers, json={
+            'content': '您好，请确认收货地址和联系电话。', 'sort_order': 3,
+        })
+        assert_true(qr_update.status_code == 200, qr_update.get_data(as_text=True))
+        assert_true(qr_update.get_json()['quick_reply']['sort_order'] == 3, qr_update.get_json())
+        qr_toggle = client.put(f'/api/admin/handoff/quick-replies/{qr_id2}', headers=admin_headers, json={'enabled': True})
+        assert_true(qr_toggle.status_code == 200 and qr_toggle.get_json()['quick_reply']['enabled'] == 1, qr_toggle.get_json())
+        qr_delete = client.delete(f'/api/admin/handoff/quick-replies/{qr_id}', headers=admin_headers)
+        assert_true(qr_delete.status_code == 200, qr_delete.get_data(as_text=True))
+        qr_missing = client.delete(f'/api/admin/handoff/quick-replies/{qr_id}', headers=admin_headers)
+        assert_true(qr_missing.status_code == 404, '删除不存在话术应返回404')
+        qr_remaining = client.get('/api/admin/handoff/quick-replies', headers=admin_headers).get_json()['quick_replies']
+        assert_true(len(qr_remaining) == 1 and qr_remaining[0]['id'] == qr_id2, qr_remaining)
+
         offline_start = client.post('/api/handoff/start', headers=guest5_headers, json={
             'query_type': '营养咨询', 'note': '营养师离线时直接留言', 'service_mode': 'message',
         })
@@ -261,7 +346,10 @@ def main():
         offline_claim = client.post(f"/api/admin/handoff/{offline_session['session_id']}/claim", headers=admin_headers)
         assert_true(offline_claim.status_code == 200, offline_claim.get_data(as_text=True))
         offline_reply = client.post(f"/api/admin/handoff/{offline_session['session_id']}/reply", headers=admin_headers, json={'content': '离线留言回复'})
-        assert_true(offline_reply.get_json()['message']['auto_closed'], offline_reply.get_data(as_text=True))
+        assert_true(offline_reply.status_code == 201, offline_reply.get_data(as_text=True))
+        assert_true(not offline_reply.get_json()['message']['auto_closed'], '离线留言回复不应立即关闭')
+        close_offline = client.post(f"/api/admin/handoff/{offline_session['session_id']}/close", headers=admin_headers, json={'reason': 'done'})
+        assert_true(close_offline.status_code == 200, close_offline.get_data(as_text=True))
         from services.handoff_service import start_handoff
         identities = [
             {'user_id': f'concurrent-user-{index}', 'team_name': '营养一组', 'member_name': f'并发用户{index}'}

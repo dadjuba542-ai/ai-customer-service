@@ -298,6 +298,23 @@ MIGRATIONS = [
             ('chat_jobs', 'worker_token', 'TEXT DEFAULT ""'),
         ],
     },
+    {
+        'version': '202609020001',
+        'name': 'create_handoff_quick_replies_table',
+        'sqls': [
+            '''CREATE TABLE IF NOT EXISTS handoff_quick_replies (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                title TEXT NOT NULL DEFAULT '',
+                content TEXT NOT NULL DEFAULT '',
+                sort_order INTEGER DEFAULT 0,
+                enabled INTEGER DEFAULT 1,
+                created_by TEXT DEFAULT '',
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )''',
+            'CREATE INDEX IF NOT EXISTS idx_handoff_quick_replies_order ON handoff_quick_replies(enabled, sort_order ASC, id DESC)',
+        ],
+    },
 ]
 
 

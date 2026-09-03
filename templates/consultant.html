@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>营养师工作台</title>
-  <link rel="stylesheet" href="/consultant/styles.css?v=20260724-ai-review7">
+  <link rel="stylesheet" href="/consultant/styles.css?v=20260903-handoff2">
 </head>
 <body>
   <section id="login-page" class="login-page">
@@ -66,6 +66,13 @@
             <div class="chat-actions"><button id="export-current-button" hidden>导出本次咨询</button><button id="back-current-button" hidden>返回当前咨询</button><button id="claim-button" class="primary" hidden>确认接入</button><button id="close-button" class="danger" hidden>结束咨询</button></div>
           </header>
           <div id="message-list" class="message-list"></div>
+          <div id="quick-reply-panel" class="quick-reply-panel">
+            <div class="quick-reply-head">
+              <button id="quick-reply-toggle" type="button" class="quick-reply-toggle" aria-expanded="false">快捷话术</button>
+              <input id="quick-reply-filter" class="quick-reply-filter" placeholder="搜索话术关键词" hidden>
+            </div>
+            <div id="quick-reply-list" class="quick-reply-list" hidden></div>
+          </div>
           <form id="reply-form" class="reply-box">
             <textarea id="reply-input" rows="2" maxlength="4000" placeholder="回复用户，Enter 发送，Shift+Enter 换行"></textarea>
             <button id="reply-button" type="submit">发送</button>
@@ -150,6 +157,6 @@
   </div>
 
   <div id="toast-region" class="toast-region" aria-live="polite"></div>
-  <script src="/consultant/app.js?v=20260724-ai-review7"></script>
+  <script src="/consultant/app.js?v=20260903-handoff1"></script>
 </body>
 </html>

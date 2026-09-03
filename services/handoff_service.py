@@ -8,7 +8,7 @@ import uuid
 from datetime import datetime
 
 from config import Config
-from models import get_agent_config, get_chat_history_by_ids, get_db_connection, get_setting, set_setting
+from models import get_agent_config, get_chat_history_by_ids, get_db_connection, get_setting, get_user_by_username, set_setting
 
 
 OPEN_STATUSES = ('queued', 'assigned', 'active')
@@ -263,6 +263,27 @@ def _reconcile_locked(conn):
                    VALUES (?, 'system', '营养师暂未在线，已直接转为留言。你可以继续使用 AI，营养师稍后回复。')''',
                 (item['session_id'],),
             )
+    # 留言多轮：留言会话在最后一次消息后超过 HANDOFF_MESSAGE_IDLE_SEC 无新消息即自动归档
+    idle_cutoff = f"-{Config.HANDOFF_MESSAGE_IDLE_SEC} seconds"
+    idle_sessions = conn.execute(
+        f'''SELECT id, session_id FROM handoff_sessions
+            WHERE COALESCE(service_mode, 'live') = 'message'
+              AND status IN ({_open_status_sql()})
+              AND last_message_at <= datetime('now', ?)''',
+        (idle_cutoff,),
+    ).fetchall()
+    for item in idle_sessions:
+        conn.execute(
+            '''UPDATE handoff_sessions SET status = 'closed', close_reason = 'message_idle',
+               closed_at = CURRENT_TIMESTAMP, agent_claim_deadline = NULL,
+               updated_at = CURRENT_TIMESTAMP WHERE id = ?''',
+            (item['id'],),
+        )
+        conn.execute(
+            '''INSERT INTO handoff_messages (session_id, sender_role, content)
+               VALUES (?, 'system', '留言已长时间未回复，已自动归档。如需帮助可再次发起咨询。')''',
+            (item['session_id'],),
+        )
     conn.execute(
         '''UPDATE cs_agents
            SET current_load = (
@@ -623,28 +644,135 @@ def _close_session(session_id, user_id=None, agent_id=None, reason='done'):
 
 
 def set_agent_status(user, online, max_concurrent=None):
+    """坐席上线/下线。白名单制：仅已在 cs_agents 名单中的账号可操作，
+    不再自动注册坐席（注册入口为 add_cs_agent，由管理员在后台维护）。"""
     online = 1 if online else 0
-    if max_concurrent is None:
-        max_concurrent = 3
-    max_concurrent = max(1, min(int(max_concurrent), 10))
     conn = get_db_connection()
     try:
         conn.execute('BEGIN IMMEDIATE')
+        row = conn.execute('SELECT * FROM cs_agents WHERE user_id = ?', (user['user_id'],)).fetchone()
+        if not row:
+            conn.rollback()
+            raise HandoffError('尚未开通客服坐席权限，请联系管理员在后台添加', 403)
+        if max_concurrent is None:
+            max_concurrent = row['max_concurrent']
+        max_concurrent = max(1, min(int(max_concurrent), 10))
         conn.execute(
-            '''INSERT INTO cs_agents (user_id, display_name, online, max_concurrent, last_seen_at)
-               VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)
-               ON CONFLICT(user_id) DO UPDATE SET
-                 display_name = excluded.display_name,
-                 online = excluded.online,
-                 max_concurrent = excluded.max_concurrent,
-                 last_seen_at = CURRENT_TIMESTAMP,
-                 updated_at = CURRENT_TIMESTAMP''',
-            (user['user_id'], user.get('username', ''), online, max_concurrent),
+            '''UPDATE cs_agents
+               SET online = ?, max_concurrent = ?, last_seen_at = CURRENT_TIMESTAMP,
+                   updated_at = CURRENT_TIMESTAMP
+               WHERE user_id = ?''',
+            (online, max_concurrent, user['user_id']),
         )
         _reconcile_locked(conn)
+        agent = conn.execute('SELECT * FROM cs_agents WHERE user_id = ?', (user['user_id'],)).fetchone()
+        conn.commit()
+        return dict(agent)
+    finally:
+        conn.close()
+
+
+def list_cs_agents():
+    """坐席名单列表（后台管理用），附 users 表用户名。"""
+    conn = get_db_connection()
+    rows = conn.execute(
+        '''SELECT a.user_id, a.display_name, a.online, a.max_concurrent, a.current_load,
+                  a.last_seen_at, a.updated_at, u.username
+           FROM cs_agents a LEFT JOIN users u ON u.user_id = a.user_id
+           ORDER BY a.online DESC, a.updated_at DESC, a.user_id ASC'''
+    ).fetchall()
+    conn.close()
+    return [dict(row) for row in rows]
+
+
+def add_cs_agent(operator_id, username, display_name='', max_concurrent=3):
+    """添加坐席（白名单注册入口）。要求用户存在且为管理员。"""
+    username = str(username or '').strip()
+    if not username:
+        raise HandoffError('请填写要添加的管理员用户名')
+    display_name = str(display_name or '').strip()[:40]
+    max_concurrent = max(1, min(int(max_concurrent if max_concurrent is not None else 3), 10))
+    user = get_user_by_username(username)
+    if not user or not user.get('is_admin'):
+        raise HandoffError('该用户不存在或不是管理员账号', 404)
+    if not display_name:
+        display_name = user.get('username') or username
+    conn = get_db_connection()
+    try:
+        conn.execute('BEGIN IMMEDIATE')
+        existing = conn.execute('SELECT user_id FROM cs_agents WHERE user_id = ?', (user['user_id'],)).fetchone()
+        if existing:
+            conn.rollback()
+            raise HandoffError('该账号已在坐席名单中', 409)
+        conn.execute(
+            '''INSERT INTO cs_agents (user_id, display_name, online, max_concurrent, current_load)
+               VALUES (?, ?, 0, ?, 0)''',
+            (user['user_id'], display_name, max_concurrent),
+        )
         row = conn.execute('SELECT * FROM cs_agents WHERE user_id = ?', (user['user_id'],)).fetchone()
         conn.commit()
         return dict(row)
+    finally:
+        conn.close()
+
+
+def update_cs_agent(user_id, display_name=None, max_concurrent=None):
+    """更新坐席显示名/并发上限（不影响在线状态）。"""
+    conn = get_db_connection()
+    try:
+        conn.execute('BEGIN IMMEDIATE')
+        row = conn.execute('SELECT * FROM cs_agents WHERE user_id = ?', (user_id,)).fetchone()
+        if not row:
+            conn.rollback()
+            raise HandoffError('坐席不存在', 404)
+        updates, params = [], []
+        if display_name is not None:
+            name = str(display_name).strip()[:40]
+            if not name:
+                raise HandoffError('显示名不能为空')
+            updates.append('display_name = ?')
+            params.append(name)
+        if max_concurrent is not None:
+            updates.append('max_concurrent = ?')
+            params.append(max(1, min(int(max_concurrent), 10)))
+        if updates:
+            updates.append('updated_at = CURRENT_TIMESTAMP')
+            params.append(user_id)
+            conn.execute(f"UPDATE cs_agents SET {', '.join(updates)} WHERE user_id = ?", params)
+        row = conn.execute('SELECT * FROM cs_agents WHERE user_id = ?', (user_id,)).fetchone()
+        conn.commit()
+        return dict(row)
+    finally:
+        conn.close()
+
+
+def remove_cs_agent(operator_id, user_id):
+    """移除坐席。有进行中(active)会话时拒绝；已分配(assigned)会话释放回排队。"""
+    conn = get_db_connection()
+    try:
+        conn.execute('BEGIN IMMEDIATE')
+        row = conn.execute('SELECT * FROM cs_agents WHERE user_id = ?', (user_id,)).fetchone()
+        if not row:
+            conn.rollback()
+            raise HandoffError('坐席不存在', 404)
+        active_count = conn.execute(
+            "SELECT COUNT(*) AS cnt FROM handoff_sessions WHERE agent_id = ? AND status = 'active'",
+            (user_id,),
+        ).fetchone()['cnt']
+        if active_count:
+            conn.rollback()
+            raise HandoffError('该坐席仍有进行中的会话，请先结束会话后再移除', 409)
+        released = conn.execute(
+            '''UPDATE handoff_sessions
+               SET status = 'queued', agent_id = '', assigned_at = NULL, agent_claim_deadline = NULL,
+                   updated_at = CURRENT_TIMESTAMP
+               WHERE agent_id = ? AND status = 'assigned' ''',
+            (user_id,),
+        ).rowcount
+        conn.execute('DELETE FROM cs_agents WHERE user_id = ?', (user_id,))
+        _reconcile_locked(conn)
+        conn.commit()
+        return {'user_id': user_id, 'released_sessions': int(released or 0)}
     finally:
         conn.close()
 
@@ -664,6 +792,112 @@ def get_agent_me(user_id):
     data['sessions'] = [_session_payload(conn, item) for item in sessions]
     conn.close()
     return data
+
+
+# ---------------------------------------------------------------------------
+# 快捷话术库
+# ---------------------------------------------------------------------------
+
+def _quick_reply_validate(title, content):
+    title = str(title or '').strip()
+    content = str(content or '').strip()
+    if not title:
+        raise HandoffError('话术标题不能为空')
+    if len(title) > 40:
+        raise HandoffError('话术标题不能超过40字')
+    if not content:
+        raise HandoffError('话术内容不能为空')
+    if len(content) > 1000:
+        raise HandoffError('话术内容不能超过1000字')
+    return title, content
+
+
+def list_quick_replies(include_disabled=False):
+    """快捷话术列表。坐席工作台默认只返回启用项；后台管理返回全部。"""
+    conn = get_db_connection()
+    sql = '''SELECT id, title, content, sort_order, enabled, created_by, created_at, updated_at
+             FROM handoff_quick_replies'''
+    if not include_disabled:
+        sql += " WHERE enabled = 1"
+    sql += ' ORDER BY sort_order ASC, id DESC'
+    rows = conn.execute(sql).fetchall()
+    conn.close()
+    return [dict(row) for row in rows]
+
+
+def create_quick_reply(operator_id, title, content, sort_order=0, enabled=True):
+    title, content = _quick_reply_validate(title, content)
+    try:
+        sort_order = int(sort_order or 0)
+    except (TypeError, ValueError):
+        sort_order = 0
+    enabled = 1 if enabled else 0
+    conn = get_db_connection()
+    try:
+        cursor = conn.execute(
+            '''INSERT INTO handoff_quick_replies (title, content, sort_order, enabled, created_by)
+               VALUES (?, ?, ?, ?, ?)''',
+            (title, content, sort_order, enabled, str(operator_id or '')),
+        )
+        row = conn.execute('SELECT * FROM handoff_quick_replies WHERE id = ?', (cursor.lastrowid,)).fetchone()
+        conn.commit()
+        return dict(row)
+    finally:
+        conn.close()
+
+
+def update_quick_reply(operator_id, reply_id, title=None, content=None, sort_order=None, enabled=None):
+    conn = get_db_connection()
+    try:
+        conn.execute('BEGIN IMMEDIATE')
+        row = conn.execute('SELECT * FROM handoff_quick_replies WHERE id = ?', (reply_id,)).fetchone()
+        if not row:
+            conn.rollback()
+            raise HandoffError('话术不存在', 404)
+        updates, params = [], []
+        if title is not None or content is not None:
+            new_title, new_content = _quick_reply_validate(
+                title if title is not None else row['title'],
+                content if content is not None else row['content'],
+            )
+            updates.append('title = ?')
+            params.append(new_title)
+            updates.append('content = ?')
+            params.append(new_content)
+        if sort_order is not None:
+            try:
+                updates.append('sort_order = ?')
+                params.append(int(sort_order or 0))
+            except (TypeError, ValueError):
+                raise HandoffError('排序值必须是整数', 400)
+        if enabled is not None:
+            updates.append('enabled = ?')
+            params.append(1 if enabled else 0)
+        if updates:
+            updates.append('updated_at = CURRENT_TIMESTAMP')
+            params.append(reply_id)
+            conn.execute(f"UPDATE handoff_quick_replies SET {', '.join(updates)} WHERE id = ?", params)
+        row = conn.execute('SELECT * FROM handoff_quick_replies WHERE id = ?', (reply_id,)).fetchone()
+        conn.commit()
+        return dict(row)
+    finally:
+        conn.close()
+
+
+def delete_quick_reply(operator_id, reply_id):
+    conn = get_db_connection()
+    try:
+        conn.execute('BEGIN IMMEDIATE')
+        row = conn.execute('SELECT id FROM handoff_quick_replies WHERE id = ?', (reply_id,)).fetchone()
+        if not row:
+            conn.rollback()
+            raise HandoffError('话术不存在', 404)
+        conn.execute('DELETE FROM handoff_quick_replies WHERE id = ?', (reply_id,))
+        conn.commit()
+        return {'id': reply_id}
+    finally:
+        conn.close()
+
 
 
 def list_agent_queue(user_id):
@@ -1043,26 +1277,17 @@ def append_agent_reply(user_id, session_id, content):
                VALUES (?, 'agent', ?, ?)''',
             (session_id, user_id, content),
         )
-        auto_closed = (row['service_mode'] or 'live') == 'message'
-        if auto_closed:
-            conn.execute(
-                '''UPDATE handoff_sessions SET status = 'closed', close_reason = 'message_replied',
-                   closed_at = CURRENT_TIMESTAMP, agent_claim_deadline = NULL,
-                   last_message_at = CURRENT_TIMESTAMP, agent_last_read_message_id = ?,
-                   updated_at = CURRENT_TIMESTAMP WHERE id = ?''',
-                (cursor.lastrowid, row['id']),
-            )
-            _reconcile_locked(conn)
-        else:
-            conn.execute(
-                '''UPDATE handoff_sessions SET last_message_at = CURRENT_TIMESTAMP,
-                   agent_last_read_message_id = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?''',
-                (cursor.lastrowid, row['id']),
-            )
+        # 留言多轮：留言会话首次回复后不再自动关闭，保持 active 供双方继续一来一回，
+        # 由 _reconcile_locked 在超过 HANDOFF_MESSAGE_IDLE_SEC 无新消息时自动归档。
+        conn.execute(
+            '''UPDATE handoff_sessions SET last_message_at = CURRENT_TIMESTAMP,
+               agent_last_read_message_id = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?''',
+            (cursor.lastrowid, row['id']),
+        )
         message = conn.execute('SELECT * FROM handoff_messages WHERE id = ?', (cursor.lastrowid,)).fetchone()
         conn.commit()
         data = dict(message)
-        data['auto_closed'] = auto_closed
+        data['auto_closed'] = False
         return data
     except HandoffError:
         conn.rollback()

@@ -1,670 +1,788 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<html lang="zh-CN" data-page-node-id="5qbHYsvKMMDXoOtrn2k941">
+<head data-page-node-id="XpgHroQI5lkt7q9LBFAinG">
+  <meta charset="UTF-8" data-page-node-id="SPIrWErf3l4kWInnsCm1JS">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" data-page-node-id="LlLnCeS4TJDRsOmthkqD31">
   <title>AI宝儿 · 管理后台</title>
-  <link rel="stylesheet" href="/icon-fallback.css?v=20260714-admin-icons">
-  <link rel="stylesheet" href="/css/admin.css?v=20260902-editorimg1">
+  <link rel="stylesheet" href="/icon-fallback.css?v=20260714-admin-icons" data-page-node-id="wVSQAXqpJsDspYqM8fA6f7">
+  <link rel="stylesheet" href="/css/admin.css?v=20260902-editorimg1" data-page-node-id="YgX9ukhM2eftjt5Z1gfe3J">
 </head>
-<body>
+<body data-page-node-id="iHP7hfTWdAOYNwDf9SQ2my">
 
 <!-- ===== Login ===== -->
-<div id="login-page">
-  <div class="login-card">
-    <div class="logo"><i class="ph ph-shield-check"></i></div>
-    <h1>管理员登录</h1>
-    <p>AI宝儿智能体 · 管理后台</p>
-    <div class="login-error" id="login-error"></div>
-    <div class="login-field">
-      <label>账号</label>
-      <input type="text" id="login-username" placeholder="输入管理员账号" autocomplete="username">
+<div id="login-page" data-page-node-id="1ZpCUpFFm3X86ZA9Hg5tIN">
+  <div class="login-card" data-page-node-id="H6B25u0Zsb73kJDsDdy98W">
+    <div class="logo" data-page-node-id="5HoS4X3MiJLNHboS0UrzYj"><i class="ph ph-shield-check" data-page-node-id="DlJwnDDAn2QalPqQfn1Pyd"></i></div>
+    <h1 data-page-node-id="XJQvUZk3018S4VF2mZh4C0">管理员登录</h1>
+    <p data-page-node-id="yJiKaVccZRjf3SQ7JGU3uo">AI宝儿智能体 · 管理后台</p>
+    <div class="login-error" id="login-error" data-page-node-id="0Yat84YFZvmRhcdprE4UiF"></div>
+    <div class="login-field" data-page-node-id="nByugyzw1ZdutKBW7MEYXC">
+      <label data-page-node-id="d6bwYXUOjREKHrwyqqKyH5">账号</label>
+      <input type="text" id="login-username" placeholder="输入管理员账号" autocomplete="username" data-page-node-id="qasjs9hHv7UWWtBidxCp6Q">
     </div>
-    <div class="login-field">
-      <label>密码</label>
-      <input type="password" id="login-password" placeholder="输入密码" autocomplete="current-password" onkeydown="if(event.key==='Enter') doLogin()">
+    <div class="login-field" data-page-node-id="3K0EDIGLAiYE4XsIZNFm5A">
+      <label data-page-node-id="BsAgBxFQs31Be7WTYx4LCB">密码</label>
+      <input type="password" id="login-password" placeholder="输入密码" autocomplete="current-password" onkeydown="if(event.key==='Enter') doLogin()" data-page-node-id="p34qIuh0dod1OcKm7JKrvK">
     </div>
-    <button class="login-btn" id="login-btn" onclick="doLogin()">登录</button>
-    <div class="login-back"><a href="/">&larr; 返回首页</a></div>
+    <button class="login-btn" id="login-btn" onclick="doLogin()" data-page-node-id="EJJ0Hx5c3KfH7RK2jToVNK">登录</button>
+    <div class="login-back" data-page-node-id="a2Rl1r8CsKzroYlMAGC6RE"><a href="/" data-page-node-id="YKEPwqzw5U66s61vHNS723">&larr; 返回首页</a></div>
   </div>
 </div>
 
 <!-- ===== Dashboard ===== -->
-<div id="dashboard-page">
-  <div class="layout">
-    <aside class="sidebar">
-      <div class="sidebar-brand">
-        <div class="brand-icon"><i class="ph ph-robot"></i></div>
-        <span>AI宝儿后台</span>
+<div id="dashboard-page" data-page-node-id="FPf5noF5Y3BSww007gyzjn">
+  <div class="layout" data-page-node-id="9OXBp4mGGV9k89YdTO7MbB">
+    <aside class="sidebar" data-page-node-id="Ra2bTxAvFCvWRimFKuuyKp">
+      <div class="sidebar-brand" data-page-node-id="KsdFE35Jk6ILN9n7JUmy0c">
+        <div class="brand-icon" data-page-node-id="QmniWDIsZg40nd1gqOjpc1"><i class="ph ph-robot" data-page-node-id="lDpMcieF9akuaHSEg6w1rg"></i></div>
+        <span data-page-node-id="OfnprSIckeEU4Yudk2YqCJ">AI宝儿后台</span>
       </div>
-      <nav class="sidebar-nav">
-        <div class="nav-item active" data-page="dashboard" onclick="switchPage('dashboard')">
-          <i class="ph ph-chart-bar"></i><span>数据看板</span>
+      <nav class="sidebar-nav" data-page-node-id="rfqJWbfQpeuX80PcJc2XDR">
+        <div class="nav-item active" data-page="dashboard" onclick="switchPage('dashboard')" data-page-node-id="xVqbkNr2zr7nsAaj4eJ1g4">
+          <i class="ph ph-chart-bar" data-page-node-id="KkG8Tz1dQnsUIp2ygc2IDa"></i><span data-page-node-id="Ve6V7M6jnXox9EkyrdCjLX">数据看板</span>
         </div>
-        <div class="nav-item" data-page="news" onclick="switchPage('news')">
-          <i class="ph ph-newspaper"></i><span>资讯管理</span>
+        <div class="nav-item" data-page="news" onclick="switchPage('news')" data-page-node-id="Uok0JR7rnnO0nRZJJXLr8Y">
+          <i class="ph ph-newspaper" data-page-node-id="yFsyLmEqeGBeyR6bXorrQz"></i><span data-page-node-id="RH7CyKSQgeWVCkrajMqUbK">资讯管理</span>
         </div>
-        <div class="nav-item" data-page="products" onclick="switchPage('products')">
-          <i class="ph ph-shopping-bag"></i><span>产品管理</span>
+        <div class="nav-item" data-page="products" onclick="switchPage('products')" data-page-node-id="sR8ECPQmqR3ki3sUGSE5Cy">
+          <i class="ph ph-shopping-bag" data-page-node-id="GvmyxuC6cj6y6Nxnyu6PDb"></i><span data-page-node-id="hK9Y7LXj7WFDO0VEOtCXIK">产品管理</span>
         </div>
-        <div class="nav-item" data-page="cases" onclick="switchPage('cases')">
-          <i class="ph ph-files"></i><span>案例档案</span>
+        <div class="nav-item" data-page="cases" onclick="switchPage('cases')" data-page-node-id="sk2U9tuhYcaFbGTRApx6YU">
+          <i class="ph ph-files" data-page-node-id="TLd1KPFMNGBeJIDRUModsG"></i><span data-page-node-id="riCr3CMF6sBxSCdh12FpEL">案例档案</span>
         </div>
-        <div class="nav-item" data-page="agents" onclick="switchPage('agents')">
-          <i class="ph ph-robot"></i><span>智能体配置</span>
+        <div class="nav-item" data-page="agents" onclick="switchPage('agents')" data-page-node-id="VzQqCdb1raslbZ2KXwM5bN">
+          <i class="ph ph-robot" data-page-node-id="GDsfhgjAejVq16BrkNIPxT"></i><span data-page-node-id="mQJx5fOE7E4N5yb8Piay6x">智能体配置</span>
         </div>
-        <div class="nav-item" data-page="share" onclick="switchPage('share')">
-          <i class="ph ph-share-network"></i><span>分享设置</span>
+        <div class="nav-item" data-page="share" onclick="switchPage('share')" data-page-node-id="VcitDMh8BrRR5qX7AqLhMl">
+          <i class="ph ph-share-network" data-page-node-id="HpMpPd0arJnuowov8wNE62"></i><span data-page-node-id="tBhh0IhhCKqLsN7cE8iA9F">分享设置</span>
         </div>
-        <div class="nav-item" data-page="feedback" onclick="switchPage('feedback')">
-          <i class="ph ph-star"></i><span>评价看板</span>
+        <div class="nav-item" data-page="feedback" onclick="switchPage('feedback')" data-page-node-id="C8FoeAyPydTA5Ogsb7L4t5">
+          <i class="ph ph-star" data-page-node-id="PXwdZerfmcg7rGIVeJbVmP"></i><span data-page-node-id="GC133vWwZuHXAOPVXdhDYp">评价看板</span>
         </div>
-        <div class="nav-item" data-page="community" onclick="switchPage('community')">
-          <i class="ph ph-users-three"></i><span>问答管理</span>
+        <div class="nav-item" data-page="community" onclick="switchPage('community')" data-page-node-id="cvxXpm1jkNuA956PjYngpZ">
+          <i class="ph ph-users-three" data-page-node-id="ZSvSPeNDSvbB6KZFEY2CI7"></i><span data-page-node-id="1N5dzixqkCGSYkwWHmluqB">问答管理</span>
         </div>
-        <div class="nav-item" data-page="team-stats" onclick="switchPage('team-stats')">
-          <i class="ph ph-buildings"></i><span>团队提问统计</span>
+        <div class="nav-item" data-page="team-stats" onclick="switchPage('team-stats')" data-page-node-id="iLXSttTbaxfIjUkQ3qnCXT">
+          <i class="ph ph-buildings" data-page-node-id="FfpXuTd0er8gNEpE8ZE5Hl"></i><span data-page-node-id="moP8wXX5ZmW2VGTW3vQsbE">团队提问统计</span>
         </div>
-        <div class="nav-item" data-page="leads" onclick="switchPage('leads')">
-          <i class="ph ph-chat-circle-text"></i><span>客户需求</span>
+        <div class="nav-item" data-page="leads" onclick="switchPage('leads')" data-page-node-id="o8B8NH1fT9ADE9de78FB5o">
+          <i class="ph ph-chat-circle-text" data-page-node-id="8CzpElh86MNy10TfkLopg4"></i><span data-page-node-id="Swz8qIDaDQvjkARgRv7P85">客户需求</span>
         </div>
-        <div class="nav-item" onclick="window.location.href='/consultant'">
-          <i class="ph ph-headset"></i><span>营养师工作台</span>
+        <div class="nav-item" data-page="handoff" onclick="switchPage('handoff')" data-page-node-id="m7bpt5jY9iRzQIGuVd5WVq">
+          <i class="ph ph-users" data-page-node-id="2pGHL6P53yyIkn2f4QzMgW"></i><span data-page-node-id="GNeCe9hcq7OrNru5EhMA6G">人工客服</span>
+        </div>
+        <div class="nav-item" onclick="window.location.href='/consultant'" data-page-node-id="xOQsOnBCPAw6CKMawIkbvz">
+          <i class="ph ph-headset" data-page-node-id="C6reS2d3XJl21ENgTUg9Lc"></i><span data-page-node-id="8LIFyPy68Jb89aTp6JLXPS">营养师工作台</span>
         </div>
       </nav>
-      <div class="sidebar-footer">
-        <div class="nav-item" onclick="logout()">
-          <i class="ph ph-sign-out"></i><span>退出登录</span>
+      <div class="sidebar-footer" data-page-node-id="2V2zH6CgG59RRSa9ru0Cn0">
+        <div class="nav-item" onclick="logout()" data-page-node-id="fBNL604mTDpeVKdPo178ly">
+          <i class="ph ph-sign-out" data-page-node-id="h6ezD2yJK7FbOBrN9Zjhuy"></i><span data-page-node-id="jAMBXE6xM6IGfZr0xlTAsR">退出登录</span>
         </div>
       </div>
 
     </aside>
 
-    <main class="main">
-      <div class="main-header">
-        <div><h1><span id="page-title-text">数据看板</span> <span class="sub" id="last-update"></span></h1></div>
-        <div class="user-badge">
-          <span class="dot"></span>
-          <span id="admin-username">admin</span>
+    <main class="main" data-page-node-id="nbiTK2tEBaiPphQBusUcy2">
+      <div class="main-header" data-page-node-id="cpJFJtP2RStmDdWCYM3Ww1">
+        <div data-page-node-id="77d8RPjKSsjaIm3iFEyheU"><h1 data-page-node-id="MAlhVEwVZl5hM5bjc6iB60"><span id="page-title-text" data-page-node-id="TdBsOGBE6NtLCjNOivHrRl">数据看板</span> <span class="sub" id="last-update" data-page-node-id="j8LwMMYh9NVnL9BuYWrhC7"></span></h1></div>
+        <div class="user-badge" data-page-node-id="TicBSCxIQbQhV1FAkn0lUn">
+          <span class="dot" data-page-node-id="aK3P1zRhRZ5lAUOJRCdCiJ"></span>
+          <span id="admin-username" data-page-node-id="KmUB8w6uUeUamGPMb07tOI">admin</span>
         </div>
       </div>
 
       <!-- ===== Page: Dashboard ===== -->
-      <div id="page-dashboard" class="page-content active">
-        <div class="date-filter">
-          <label>日期：</label>
-          <input type="date" id="filter-start">
-          <span style="color:var(--slate-400)">~</span>
-          <input type="date" id="filter-end">
-          <button class="quick-btn active" data-days="30" onclick="setDateRange(30)">近30天</button>
-          <button class="quick-btn" data-days="7" onclick="setDateRange(7)">近7天</button>
-          <button class="quick-btn" data-days="90" onclick="setDateRange(90)">近90天</button>
-          <button class="quick-btn" data-days="0" onclick="setDateRange(0)">全部</button>
-          <button class="btn btn-primary btn-sm" onclick="applyDateFilter()" style="margin-left:4px">查询</button>
-          <button class="btn btn-secondary btn-sm" onclick="exportCSV()" style="margin-left:auto"><i class="ph ph-download"></i> 导出CSV</button>
+      <div id="page-dashboard" class="page-content active" data-page-node-id="DY7xNJiKGJufaLhSlyiRzd">
+        <div class="date-filter" data-page-node-id="H8PmKtLNhsPa5trYnAK7n2">
+          <label data-page-node-id="KjC1Kg22ISHMG4LWJ4WJ9C">日期：</label>
+          <input type="date" id="filter-start" data-page-node-id="HvB39GckHMnBYFA2JnB1Bh">
+          <span style="color:var(--slate-400)" data-page-node-id="Am7Phi1ldZoERLVM1USwuF">~</span>
+          <input type="date" id="filter-end" data-page-node-id="IMl0Noe1XkJPne8iqifW2d">
+          <button class="quick-btn active" data-days="30" onclick="setDateRange(30)" data-page-node-id="HFVmGYCbF51zIpz00aX7G0">近30天</button>
+          <button class="quick-btn" data-days="7" onclick="setDateRange(7)" data-page-node-id="jdmCGOCNCEw8juGoLcHFIA">近7天</button>
+          <button class="quick-btn" data-days="90" onclick="setDateRange(90)" data-page-node-id="WVkuxlZgZRcbw9WHfFApFx">近90天</button>
+          <button class="quick-btn" data-days="0" onclick="setDateRange(0)" data-page-node-id="6wB7KHrgzzBEHEAoaa7Gc5">全部</button>
+          <button class="btn btn-primary btn-sm" onclick="applyDateFilter()" style="margin-left:4px" data-page-node-id="SUy5kLRybVvUqb0gdQY6T9">查询</button>
+          <button class="btn btn-secondary btn-sm" onclick="exportCSV()" style="margin-left:auto" data-page-node-id="Ej5NcbF69PjGwlJtzmgcwk"><i class="ph ph-download" data-page-node-id="EroqIVdIho6dbRJpzZ7qqG"></i> 导出CSV</button>
         </div>
-        <div class="stats-grid" id="stats-grid">
-          <div class="stat-card">
-            <div class="stat-icon" style="background:var(--primary-light);color:var(--primary)"><i class="ph ph-chats"></i></div>
-            <div class="stat-label">总对话数</div>
-            <div class="stat-value" id="stat-conversations">-</div>
-            <div class="stat-change" style="color:var(--slate-400)">今日 <span id="stat-today">-</span></div>
+        <div class="stats-grid" id="stats-grid" data-page-node-id="KWqxge4ZCs8y9zaWVvjPQW">
+          <div class="stat-card" data-page-node-id="uvDdOgxzG0CkKpO86n3Xtm">
+            <div class="stat-icon" style="background:var(--primary-light);color:var(--primary)" data-page-node-id="KVTQ6f2oOFBTZoSKbZcFmB"><i class="ph ph-chats" data-page-node-id="sP2Qr7l7vjwWNGRERPXx7J"></i></div>
+            <div class="stat-label" data-page-node-id="BMX6pWYnFl7l5u2FaGitVx">总对话数</div>
+            <div class="stat-value" id="stat-conversations" data-page-node-id="nuURzCfHppwYAlx1UCUfrO">-</div>
+            <div class="stat-change" style="color:var(--slate-400)" data-page-node-id="IAcDhZdG22j3uZbjyvudO2">今日 <span id="stat-today" data-page-node-id="EKeEdRkgvZYI1B8PFcAOcY">-</span></div>
           </div>
-          <div class="stat-card">
-            <div class="stat-icon" style="background:var(--emerald-light);color:var(--emerald)"><i class="ph ph-users"></i></div>
-            <div class="stat-label">独立用户</div>
-            <div class="stat-value" id="stat-users">-</div>
-            <div class="stat-change" style="color:var(--slate-400)">今日 <span id="stat-today-users">-</span></div>
+          <div class="stat-card" data-page-node-id="o3RYNYRZzoOgeH5yApPy87">
+            <div class="stat-icon" style="background:var(--emerald-light);color:var(--emerald)" data-page-node-id="wPDQfySBhYnPti9qtshOur"><i class="ph ph-users" data-page-node-id="UWfbdjKaPhzcmyfwCWcquc"></i></div>
+            <div class="stat-label" data-page-node-id="Yox8avBgKlhgbgieTTzaDf">独立用户</div>
+            <div class="stat-value" id="stat-users" data-page-node-id="0Vwyl4ixtHB1fFKbjxuDOP">-</div>
+            <div class="stat-change" style="color:var(--slate-400)" data-page-node-id="B5dCuryn3ebiJiZuAS76Td">今日 <span id="stat-today-users" data-page-node-id="5ng7muthWjVe1Sb1d5unhu">-</span></div>
           </div>
-          <div class="stat-card">
-            <div class="stat-icon" style="background:var(--sky-light);color:var(--sky)"><i class="ph ph-robot"></i></div>
-            <div class="stat-label">智能体</div>
-            <div class="stat-value" id="stat-agents">-</div>
+          <div class="stat-card" data-page-node-id="QKHi2478BEoMHWv8Da6BjI">
+            <div class="stat-icon" style="background:var(--sky-light);color:var(--sky)" data-page-node-id="nabaDxpgYqxG6TmqUk1LZ7"><i class="ph ph-robot" data-page-node-id="bSKjU4KIVCLoqakkgx1gAv"></i></div>
+            <div class="stat-label" data-page-node-id="38fTpvlAVfxdIVRQ7Cl54k">智能体</div>
+            <div class="stat-value" id="stat-agents" data-page-node-id="tuhTk5zzDQ0dMPgBgAi8PC">-</div>
           </div>
-          <div class="stat-card">
-            <div class="stat-icon" style="background:var(--amber-light);color:var(--amber)"><i class="ph ph-newspaper"></i></div>
-            <div class="stat-label">资讯</div>
-            <div class="stat-value" id="stat-news">-</div>
+          <div class="stat-card" data-page-node-id="fv44z9oki6ujsmSPyHp3a1">
+            <div class="stat-icon" style="background:var(--amber-light);color:var(--amber)" data-page-node-id="yIFfqh1NOhClqvsaETyV0J"><i class="ph ph-newspaper" data-page-node-id="f5XUMThC4BE9LHChNPtS2d"></i></div>
+            <div class="stat-label" data-page-node-id="zETKyYuhOWF82r4y8neex6">资讯</div>
+            <div class="stat-value" id="stat-news" data-page-node-id="W8ORovOl90D4BlDyzlpXHw">-</div>
           </div>
-          <div class="stat-card">
-            <div class="stat-icon" style="background:var(--rose-light);color:var(--rose)"><i class="ph ph-hand-thumbs-up"></i></div>
-            <div class="stat-label">用户反馈</div>
-            <div class="stat-value" id="stat-feedback">-</div>
-            <div class="stat-change" id="stat-feedback-detail" style="color:var(--slate-400)">加载中...</div>
-          </div>
-        </div>
-        <div class="charts-grid">
-          <div class="chart-card">
-            <div class="chart-title"><i class="ph ph-trend-up"></i>对话趋势（近14天）</div>
-            <canvas id="trendChart"></canvas>
-          </div>
-          <div class="chart-card">
-            <div class="chart-title"><i class="ph ph-pie-chart"></i>咨询类型分布</div>
-            <canvas id="typeChart"></canvas>
+          <div class="stat-card" data-page-node-id="H3WdDtIeRJPLEklM8saKkx">
+            <div class="stat-icon" style="background:var(--rose-light);color:var(--rose)" data-page-node-id="ZO4DgoOjQsgoM1Nj4TRI4A"><i class="ph ph-hand-thumbs-up" data-page-node-id="4h2W8pWldR2ldCzWHlfZNx"></i></div>
+            <div class="stat-label" data-page-node-id="4OnGSmff6S7EPIxdXKS69z">用户反馈</div>
+            <div class="stat-value" id="stat-feedback" data-page-node-id="3lXjMa5kXjvkhrrORwoJx9">-</div>
+            <div class="stat-change" id="stat-feedback-detail" style="color:var(--slate-400)" data-page-node-id="0DlEmZKAQJKGCejIrwBH3P">加载中...</div>
           </div>
         </div>
-        <div class="tables-grid">
-          <div class="table-card">
-            <div class="table-title"><span><i class="ph ph-clock-counter-clockwise"></i>最近对话</span><span class="count-badge" id="recent-count">0</span></div>
-            <div id="recent-loading" class="loading"><i class="ph ph-spinner"></i>加载中...</div>
-            <div id="recent-table-wrap" style="display:none">
-              <table><thead><tr><th>消息</th><th>类型</th><th>时间</th></tr></thead><tbody id="recent-body"></tbody></table>
+        <div class="charts-grid" data-page-node-id="3vLHKfvyIEQQfeBObfkQXT">
+          <div class="chart-card" data-page-node-id="sgyltGOpY2wrl5eWCHcFEb">
+            <div class="chart-title" data-page-node-id="LEz4O9EBtFeuBhEr7smc9m"><i class="ph ph-trend-up" data-page-node-id="oAJNUECKkCm1DGk1iBULYj"></i>对话趋势（近14天）</div>
+            <canvas id="trendChart" data-page-node-id="j61NNQi15mNJw3iAff89GU"></canvas>
+          </div>
+          <div class="chart-card" data-page-node-id="6GvYUrH1wv431rRG6yxdli">
+            <div class="chart-title" data-page-node-id="5UnA6RgNp2EP1a68FNwoxw"><i class="ph ph-pie-chart" data-page-node-id="JfwSGVtCx2VkPhcBjT0vCs"></i>咨询类型分布</div>
+            <canvas id="typeChart" data-page-node-id="HyflY20ZXQU7nB80ZuHwiV"></canvas>
+          </div>
+        </div>
+        <div class="tables-grid" data-page-node-id="GsBH7YkhklMvTcKK4Aoii3">
+          <div class="table-card" data-page-node-id="WAlJ2VvdvsVjIUwBWPS6ES">
+            <div class="table-title" data-page-node-id="W1qAhU8mhMDccdLJifwQd6"><span data-page-node-id="ZwmZJuAxtAdGCpOJj25yV2"><i class="ph ph-clock-counter-clockwise" data-page-node-id="6gsYy3frCiEayADfzKajbw"></i>最近对话</span><span class="count-badge" id="recent-count" data-page-node-id="ij1sm6yGBHLUJIsGgojaYy">0</span></div>
+            <div id="recent-loading" class="loading" data-page-node-id="rDJ6CiuhHpEdP8AzkTYyV9"><i class="ph ph-spinner" data-page-node-id="22kgJetM7p4wjBhBOT3Lcb"></i>加载中...</div>
+            <div id="recent-table-wrap" style="display:none" data-page-node-id="P7NdwO1Boy1eFs7Hs018Gr">
+              <table data-page-node-id="BlMwzmXbeYY9vbH2RGbtAP"><thead data-page-node-id="7HeNaFnthDtdKaDAKJBDWE"><tr data-page-node-id="2Nq89EPZJRusR7PRPy9Z3H"><th data-page-node-id="RGw4CVUwhHCmWLagWwlbcy">消息</th><th data-page-node-id="N0cDM4G9aMbnnk6pepp5C7">类型</th><th data-page-node-id="pMnGBQi7CjWaSFKShz4GI8">时间</th></tr></thead><tbody id="recent-body" data-page-node-id="mh2iR7j0F4kbVGZyUtmMvL"></tbody></table>
             </div>
           </div>
-          <div class="table-card">
-            <div class="table-title"><span><i class="ph ph-lightbulb"></i>首页热门问题（最多5条）</span></div>
-            <div id="hot-loading" class="loading"><i class="ph ph-spinner"></i>加载中...</div>
-            <div id="hot-check-wrap" style="display:none;padding:12px 0">
-              <div style="display:flex;gap:8px;margin-bottom:12px">
-                <input type="text" id="hot-manual-input" placeholder="自行输入热门问题..." style="flex:1;padding:8px 12px;font-size:13px;font-family:inherit;border:1.5px solid var(--slate-200);border-radius:8px;outline:none" onkeydown="if(event.key==='Enter') addManualHot()">
-                <button class="btn btn-secondary btn-sm" onclick="addManualHot()"><i class="ph ph-plus"></i> 添加</button>
+          <div class="table-card" data-page-node-id="Clj6VjTFhODOmgCDNq02OV">
+            <div class="table-title" data-page-node-id="FPwWOX1ysyvPXGuG9QpuUI"><span data-page-node-id="AvRnOcut70O5Ae3iriEQqp"><i class="ph ph-lightbulb" data-page-node-id="zjJAEaZX2ib1YTtqnzwZ0N"></i>首页热门问题（最多5条）</span></div>
+            <div id="hot-loading" class="loading" data-page-node-id="l6CXIsZ6SQNCDZC5Bf1JeH"><i class="ph ph-spinner" data-page-node-id="BL3LcBH9gUG6iU0f6v0Mka"></i>加载中...</div>
+            <div id="hot-check-wrap" style="display:none;padding:12px 0" data-page-node-id="1oh4DFsdONfvWA0E4JPGFf">
+              <div style="display:flex;gap:8px;margin-bottom:12px" data-page-node-id="8qfjrU7cDlJVVE3kR1Xhq5">
+                <input type="text" id="hot-manual-input" placeholder="自行输入热门问题..." style="flex:1;padding:8px 12px;font-size:13px;font-family:inherit;border:1.5px solid var(--slate-200);border-radius:8px;outline:none" onkeydown="if(event.key==='Enter') addManualHot()" data-page-node-id="7ybSrr5OI3g23ZpwkzhSzg">
+                <button class="btn btn-secondary btn-sm" onclick="addManualHot()" data-page-node-id="cHA9pL3AhbQoiKHDz3feix"><i class="ph ph-plus" data-page-node-id="pPnLFTiLQzo4T8CaMyCrcG"></i> 添加</button>
               </div>
-              <div id="hot-check-list" style="display:flex;flex-direction:column;gap:4px;max-height:300px;overflow-y:auto;margin-bottom:12px"></div>
-              <div style="display:flex;align-items:center;gap:8px">
-                <button class="btn btn-primary btn-sm" onclick="saveHotQuestions()"><i class="ph ph-check"></i> 保存</button>
-                <span class="count-badge" id="hot-selected-count">0</span>
-                <span style="font-size:12px;color:var(--slate-400)">已选 / 最多5条</span>
+              <div id="hot-check-list" style="display:flex;flex-direction:column;gap:4px;max-height:300px;overflow-y:auto;margin-bottom:12px" data-page-node-id="yiHJNT5Ho0CH7bT8mWXkg6"></div>
+              <div style="display:flex;align-items:center;gap:8px" data-page-node-id="ue6AFrMCwMVAwzZpKAG9IJ">
+                <button class="btn btn-primary btn-sm" onclick="saveHotQuestions()" data-page-node-id="WoAIAG446CaMcglqiS9ZDZ"><i class="ph ph-check" data-page-node-id="RMGtbMC1httksIAG4ir4iY"></i> 保存</button>
+                <span class="count-badge" id="hot-selected-count" data-page-node-id="YCCnTmehKx6gf7vHYHiS6m">0</span>
+                <span style="font-size:12px;color:var(--slate-400)" data-page-node-id="k6pqxcdoZzg7BERQlH7gau">已选 / 最多5条</span>
               </div>
             </div>
           </div>
-          <div class="table-card">
-            <div class="table-title"><span><i class="ph ph-chat-circle-text"></i>首页「不知道怎么问」</span></div>
-            <p style="font-size:12px;color:var(--slate-500);margin:0 0 10px">每行一条，最多6条；保存后刷新首页即可生效。</p>
+          <div class="table-card" data-page-node-id="5TGwN4AliZ0pn6REUIOLIF">
+            <div class="table-title" data-page-node-id="P0FwApUNTjaNc7dZBbXhKH"><span data-page-node-id="7YAn4T4TEXM5jjcRMqTax5"><i class="ph ph-chat-circle-text" data-page-node-id="kXyucAmWuBpCbyS3LngVVz"></i>首页「不知道怎么问」</span></div>
+            <p style="font-size:12px;color:var(--slate-500);margin:0 0 10px" data-page-node-id="YIQ8mzVhhiw7qzcSOQc4ye">每行一条，最多6条；保存后刷新首页即可生效。</p>
             <textarea id="example-questions-input" rows="6" placeholder="每行输入一个问题" style="width:100%;padding:10px 12px;font-size:13px;font-family:inherit;border:1.5px solid var(--slate-200);border-radius:8px;outline:none;resize:vertical"></textarea>
-            <button class="btn btn-primary btn-sm" onclick="saveExampleQuestions()" style="margin-top:8px"><i class="ph ph-check"></i> 保存示例问题</button>
+            <button class="btn btn-primary btn-sm" onclick="saveExampleQuestions()" style="margin-top:8px" data-page-node-id="3BHGmXOwfQjuFyXAfrcocp"><i class="ph ph-check" data-page-node-id="3AUqpYr0SrVaaOnHqP2dWs"></i> 保存示例问题</button>
           </div>
         </div>
       </div>
 
       <!-- ===== Page: News ===== -->
-      <div id="page-news" class="page-content">
-        <div class="admin-card">
-          <h3><i class="ph ph-pencil"></i><span id="news-form-title">添加资讯</span></h3>
-          <div class="admin-row">
-            <div class="field" style="flex:1"><label>标题</label><input type="text" id="news-title" placeholder="资讯标题"></div>
-            <div class="field" style="flex:1"><label>分类</label><input type="text" id="news-category" placeholder="如：产品动态"></div>
+      <div id="page-news" class="page-content" data-page-node-id="VijihHbRS64zNZCHxAZoVi">
+        <div class="admin-card" data-page-node-id="MPRXlMyMqM76cjM2TqC4HD">
+          <h3 data-page-node-id="Is0STrG10oN8vGcFqVynmc"><i class="ph ph-pencil" data-page-node-id="UU9abbTlKH1DQs40dRFFF2"></i><span id="news-form-title" data-page-node-id="EGA0JLZR0Mc7ltv5PTsVC7">添加资讯</span></h3>
+          <div class="admin-row" data-page-node-id="LralpvDRIs1cSeoofRDoxz">
+            <div class="field" style="flex:1" data-page-node-id="mIAAzqUaDD0LXyeuFqZNBz"><label data-page-node-id="Hy0W8o7CpeHqeEEFRKxxuB">标题</label><input type="text" id="news-title" placeholder="资讯标题" data-page-node-id="cuROdklePZHJwOkRrP6IaG"></div>
+            <div class="field" style="flex:1" data-page-node-id="hF7TA4IWmMpiGyS6m8nvAN"><label data-page-node-id="TOWL7qbOHYsziO9a285EFh">分类</label><input type="text" id="news-category" placeholder="如：产品动态" data-page-node-id="Li4wzSeAz59dcJL62EeJDW"></div>
           </div>
-          <div class="admin-row">
-            <div class="field"><label>摘要</label><textarea id="news-summary" rows="2" placeholder="简短摘要"></textarea></div>
+          <div class="admin-row" data-page-node-id="rshxc80xHkJPFUogBCgxE5">
+            <div class="field" data-page-node-id="PCwkTdIFxVVN8btzEyx9Zx"><label data-page-node-id="iMokocfsPxV82hvprlWF2d">摘要</label><textarea id="news-summary" rows="2" placeholder="简短摘要"></textarea></div>
           </div>
-          <div class="admin-row">
-            <div class="field"><label>正文内容</label><div id="news-editor" style="height:280px;border:1.5px solid var(--slate-200);border-radius:8px"></div></div>
+          <div class="admin-row" data-page-node-id="I5JnVQ7HITGShMJ9OqKvbr">
+            <div class="field" data-page-node-id="eKVrW6JR2h3PNAzltUIsXq"><label data-page-node-id="QXKQgIjA8H05hZJPlfJcw9">正文内容</label><div id="news-editor" style="height:280px;border:1.5px solid var(--slate-200);border-radius:8px" data-page-node-id="D7CqUfZ8uHDoOHtCxP4PIB"></div></div>
           </div>
-          <div class="admin-row">
-            <div class="field">
-              <label>封面图</label>
-              <div class="upload-area" onclick="document.getElementById('news-image-input').click()">
-                <img id="news-image-preview" class="hidden" style="max-height:80px;border-radius:6px">
-                <div id="news-upload-placeholder"><i class="ph ph-upload"></i><span>点击上传</span></div>
+          <div class="admin-row" data-page-node-id="xYXHmwPFEZhsUovHBbJ0Pf">
+            <div class="field" data-page-node-id="fhxphy04idCvLtOK7FipUU">
+              <label data-page-node-id="sbYgvUfRTZPAv3Kch7fJ6T">封面图</label>
+              <div class="upload-area" onclick="document.getElementById('news-image-input').click()" data-page-node-id="PW3UgmXXUn5DEnIXSXkCqk">
+                <img id="news-image-preview" class="hidden" style="max-height:80px;border-radius:6px" data-page-node-id="0Eq2hulorTlD4H14elWhci">
+                <div id="news-upload-placeholder" data-page-node-id="bDAP1bLV1x3NKvVjvyk66L"><i class="ph ph-upload" data-page-node-id="TrLCVMoRqqXQ1U5ZYgYIk2"></i><span data-page-node-id="2tNxwaizkZq6bVWNcIW6IM">点击上传</span></div>
               </div>
-              <input type="file" id="news-image-input" accept="image/*" class="hidden" onchange="uploadNewsImage(this)">
-              <div style="font-size:11px;color:var(--slate-400);margin-top:4px">建议 800×400，jpg/png/webp，单张不超过 8MB</div>
+              <input type="file" id="news-image-input" accept="image/*" class="hidden" onchange="uploadNewsImage(this)" data-page-node-id="YQNhndefGhcwdF9aqMO2Bx">
+              <div style="font-size:11px;color:var(--slate-400);margin-top:4px" data-page-node-id="WnU2S4br48xttTbU4zvfL5">建议 800×400，jpg/png/webp，单张不超过 8MB</div>
             </div>
           </div>
-          <div style="display:flex;gap:8px;margin-top:4px">
-            <button class="btn btn-secondary" onclick="resetNewsForm()">取消</button>
-            <button class="btn btn-primary" onclick="saveNews()">保存</button>
+          <div style="display:flex;gap:8px;margin-top:4px" data-page-node-id="H4K4TUp08umDMhykBbUlOg">
+            <button class="btn btn-secondary" onclick="resetNewsForm()" data-page-node-id="qMrsZRQdEH964yeh4hxqZ9">取消</button>
+            <button class="btn btn-primary" onclick="saveNews()" data-page-node-id="YGCkOuIM6A8ILeXQRuV4hq">保存</button>
           </div>
         </div>
-        <div class="admin-card">
-          <h3><i class="ph ph-list"></i>所有资讯</h3>
-          <div id="admin-news-list"></div>
+        <div class="admin-card" data-page-node-id="aDCfP9lZRsacqvAIQPIA7Q">
+          <h3 data-page-node-id="LjhKqNvGbU4gTEzJ4ieBWF"><i class="ph ph-list" data-page-node-id="AjdmyEFtqH2G1J8fd5MIMJ"></i>所有资讯</h3>
+          <div id="admin-news-list" data-page-node-id="FJqsfCd4hP68c9lit8PXRW"></div>
         </div>
-        <div class="admin-card">
-          <div class="home-bulletin-header"><span><i class="ph ph-megaphone"></i>首页滚动管理</span><button class="btn btn-primary btn-sm" onclick="newHomeBulletin()"><i class="ph ph-plus"></i> 新增</button></div>
-          <p style="margin:0 0 12px;color:var(--slate-500);font-size:13px">首页滚动内容独立于资讯列表，仅用于首页精选条。点击编辑可修改对应文章。</p>
-          <div id="admin-home-bulletin-list"></div>
+        <div class="admin-card" data-page-node-id="D4PKCHyCW4BSmUEZhjoEXe">
+          <div class="home-bulletin-header" data-page-node-id="js9GXdeZWChHMK2FuZca1h"><span data-page-node-id="y8HLzcrZH8L2HQOH5fcgNr"><i class="ph ph-megaphone" data-page-node-id="E9bdCqbnUEQqojztzaGw9j"></i>首页滚动管理</span><button class="btn btn-primary btn-sm" onclick="newHomeBulletin()" data-page-node-id="i8TQx5ZHbNuY7kLYBRdzBD"><i class="ph ph-plus" data-page-node-id="adWBnwt6JBpwPrydi7vhVJ"></i> 新增</button></div>
+          <p style="margin:0 0 12px;color:var(--slate-500);font-size:13px" data-page-node-id="2PKWO8JcOGVDC0W01Hk8HB">首页滚动内容独立于资讯列表，仅用于首页精选条。点击编辑可修改对应文章。</p>
+          <div id="admin-home-bulletin-list" data-page-node-id="v9jeilIY6rH6rZNz9KlrkU"></div>
         </div>
       </div>
 
       <!-- ===== Page: Products ===== -->
-      <div id="page-products" class="page-content">
-        <div class="admin-card" id="prod-form-card" style="display:none">
-          <h3 id="prod-form-title"><i class="ph ph-pencil"></i> 新增产品</h3>
-          <input type="hidden" id="prod-editing-id">
-          <div class="admin-row">
-            <div class="field"><label>产品名称</label><input type="text" id="prod-name" placeholder="如：胶原蛋白肽饮品"></div>
+      <div id="page-products" class="page-content" data-page-node-id="yquvcNSFVVafcCgbPmCZUr">
+        <div class="admin-card" id="prod-form-card" style="display:none" data-page-node-id="VDqiMXXNaSBB7uB0F3Pb4A">
+          <h3 id="prod-form-title" data-page-node-id="Fyw9NOpC2RkxSYdbT49p5l"><i class="ph ph-pencil" data-page-node-id="gReD0gCmTG0pWmOskFkBTI"></i> 新增产品</h3>
+          <input type="hidden" id="prod-editing-id" data-page-node-id="ntD0utk4nmBoJoLad6E7SF">
+          <div class="admin-row" data-page-node-id="84hoUhH6BhZrnCSer6Gf3L">
+            <div class="field" data-page-node-id="T5NSlHCByOSjDHiD7IbKIG"><label data-page-node-id="w51t8GczLpxq2RtA5Jq827">产品名称</label><input type="text" id="prod-name" placeholder="如：胶原蛋白肽饮品" data-page-node-id="1ypOsK4beCFPVf9aBAqdzf"></div>
           </div>
-          <div class="admin-row">
-            <div class="field"><label>分类</label><input type="text" id="prod-category" placeholder="如：护肤系列"></div>
+          <div class="admin-row" data-page-node-id="KqdNUUG6xf9WHeWo5qSaLG">
+            <div class="field" data-page-node-id="q5G55wYhkkRZvNoHFVhUPE"><label data-page-node-id="2difXO6Ld498azd58ycNyV">分类</label><input type="text" id="prod-category" placeholder="如：护肤系列" data-page-node-id="BDxzMOJKf1JKlZexkTNLhP"></div>
           </div>
-          <div class="admin-row">
-            <div class="field"><label>一句话介绍</label><input type="text" id="prod-summary" placeholder="简短描述产品亮点"></div>
+          <div class="admin-row" data-page-node-id="gUNl8yyfoCz9Xo3X7l3CHB">
+            <div class="field" data-page-node-id="sgfR4MV7oRGIZsuF41gZzb"><label data-page-node-id="0GNZeoJW1rvMrEw8AtjBCo">一句话介绍</label><input type="text" id="prod-summary" placeholder="简短描述产品亮点" data-page-node-id="zH3elZMIDHx4aLcIJvI1xY"></div>
           </div>
-          <div class="admin-row">
-            <div class="field"><label>亮点标签（逗号分隔）</label><input type="text" id="prod-highlights" placeholder="小分子, 易吸收, 零添加"></div>
+          <div class="admin-row" data-page-node-id="oDNNzwIvXe6BnHZQy5lCVr">
+            <div class="field" data-page-node-id="wH08lowGmAlNjBIKMRARF9"><label data-page-node-id="vVJfIzSGScGbIFBWYV3YW9">亮点标签（逗号分隔）</label><input type="text" id="prod-highlights" placeholder="小分子, 易吸收, 零添加" data-page-node-id="jHriKRIdQmJfFPNrLdNXrn"></div>
           </div>
-          <div class="admin-row">
-            <div class="field">
-              <label>主图</label>
-              <div style="display:flex;gap:8px">
-                <input type="text" id="prod-image-url" placeholder="图片URL 或点击右侧上传" style="flex:1">
-                <label class="btn btn-secondary btn-sm" style="cursor:pointer;white-space:nowrap">
-                  <i class="ph ph-upload"></i> 上传
-                  <input type="file" accept="image/*" onchange="uploadProductImage(this)" style="display:none">
+          <div class="admin-row" data-page-node-id="JZH2Jt2bImVOEx8EGLGlio">
+            <div class="field" data-page-node-id="a9z9kOZlFE5Owqa2l0p5uo">
+              <label data-page-node-id="3ezlJVMcDK8bRr5Xci5KgE">主图</label>
+              <div style="display:flex;gap:8px" data-page-node-id="EEGFZcSMkGIDA0TpYN4HDI">
+                <input type="text" id="prod-image-url" placeholder="图片URL 或点击右侧上传" style="flex:1" data-page-node-id="GDtN1CxIS2pIZKzD0qjGjw">
+                <label class="btn btn-secondary btn-sm" style="cursor:pointer;white-space:nowrap" data-page-node-id="buEJsEgt9qAStSlC8PV5JH">
+                  <i class="ph ph-upload" data-page-node-id="vqyW63Y0kKzj3xAfPB5gut"></i> 上传
+                  <input type="file" accept="image/*" onchange="uploadProductImage(this)" style="display:none" data-page-node-id="M4VGBVHUGPxOKg2JkoBeaC">
                 </label>
               </div>
-              <div style="font-size:11px;color:var(--slate-400);margin-top:4px">建议 800×400，jpg/png/webp，单张不超过 8MB。详情正文内插图请点工具栏的图片按钮，也可直接拖拽或粘贴</div>
+              <div style="font-size:11px;color:var(--slate-400);margin-top:4px" data-page-node-id="t7TXHiSUFPgWLODgMKHu6Q">建议 800×400，jpg/png/webp，单张不超过 8MB。详情正文内插图请点工具栏的图片按钮，也可直接拖拽或粘贴</div>
             </div>
           </div>
-          <div class="admin-row">
-            <div class="field"><label>详情</label><div id="prod-editor" style="height:220px;border:1.5px solid var(--slate-200);border-radius:8px"></div></div>
+          <div class="admin-row" data-page-node-id="OBg4k7NDPOkudAA1b5nh4l">
+            <div class="field" data-page-node-id="dAvFnvRvvpnNqltjZDIzgk"><label data-page-node-id="e2bEVwhpRoQst5rb9bBmVd">详情</label><div id="prod-editor" style="height:220px;border:1.5px solid var(--slate-200);border-radius:8px" data-page-node-id="W3Iq60JhJUfIOPy6ItYG0H"></div></div>
           </div>
-          <div style="display:flex;gap:8px;margin-top:8px">
-            <button class="btn btn-secondary" onclick="hideProdForm()">取消</button>
-            <button class="btn btn-primary" onclick="saveProduct()">保存</button>
+          <div style="display:flex;gap:8px;margin-top:8px" data-page-node-id="LdtozJmhqNFj3RMzq95NyN">
+            <button class="btn btn-secondary" onclick="hideProdForm()" data-page-node-id="NqkhhtzAwQwA6DLryFwHo1">取消</button>
+            <button class="btn btn-primary" onclick="saveProduct()" data-page-node-id="TNERpfEj6jR1jZTZBRlLYA">保存</button>
           </div>
         </div>
-        <div class="admin-card">
-          <h3><i class="ph ph-sort-ascending"></i>分类排序</h3>
-          <p style="font-size:12px;color:var(--slate-500);margin-bottom:8px">拖动调整分类在前端的展示顺序</p>
-          <div id="category-sort-list"></div>
-          <button class="btn btn-primary btn-sm" onclick="saveCategoryOrder()" style="margin-top:8px"><i class="ph ph-check"></i> 保存排序</button>
+        <div class="admin-card" data-page-node-id="6yZ7rCgsxqzIWy2PtxvwK0">
+          <h3 data-page-node-id="ZXTYCEfoxgMSsQZz5vh9ap"><i class="ph ph-sort-ascending" data-page-node-id="CcWb4TzaD1y5C8WL2NeN09"></i>分类排序</h3>
+          <p style="font-size:12px;color:var(--slate-500);margin-bottom:8px" data-page-node-id="LWhcfaYjL7T0pphXbyrOca">拖动调整分类在前端的展示顺序</p>
+          <div id="category-sort-list" data-page-node-id="rjEYLCuqBDLH240kSHPSUF"></div>
+          <button class="btn btn-primary btn-sm" onclick="saveCategoryOrder()" style="margin-top:8px" data-page-node-id="xzSaqBuzjrQlDtBVLxZKLf"><i class="ph ph-check" data-page-node-id="08KaJBCYbBuBCGnapBhExo"></i> 保存排序</button>
         </div>
-        <div class="admin-card">
-          <h3 style="display:flex;align-items:center;justify-content:space-between">
-            <span><i class="ph ph-list"></i>产品列表</span>
-            <button class="btn btn-primary btn-sm" onclick="showProdForm()"><i class="ph ph-plus"></i> 新增</button>
+        <div class="admin-card" data-page-node-id="YJxEeqiXNPolSTG6qKgbax">
+          <h3 style="display:flex;align-items:center;justify-content:space-between" data-page-node-id="xf0npPcduTEl1K3FWrtAcL">
+            <span data-page-node-id="3QxpMLZk5VtGOAnAYI1NYQ"><i class="ph ph-list" data-page-node-id="icCFOBZJkCHMAqagAD1Mqm"></i>产品列表</span>
+            <button class="btn btn-primary btn-sm" onclick="showProdForm()" data-page-node-id="PhEXuBp6aX1r5Kse3pe8g1"><i class="ph ph-plus" data-page-node-id="UaYKiLkKwGui1qh93XX6Pc"></i> 新增</button>
           </h3>
-          <div id="admin-products-list"></div>
+          <div id="admin-products-list" data-page-node-id="mTuH1K1CdzGzpQbCgnZv3R"></div>
         </div>
       </div>
 
       <!-- ===== Page: Cases ===== -->
-      <div id="page-cases" class="page-content">
-        <div class="admin-card">
-          <h3><i class="ph ph-gear-six"></i>案例设置</h3>
-          <p style="font-size:12px;color:var(--slate-500);margin-bottom:12px">配置前台案例详情里的统一外部跳转入口。</p>
-          <div class="admin-row">
-            <div class="field">
-              <label>客户案例库 H5 链接</label>
-              <div style="display:flex;gap:8px">
-                <input type="text" id="case-library-url-input" placeholder="https://...；为空则前台不显示“查看更多客户案例”" style="flex:1;padding:8px 12px;font-size:13px;font-family:inherit;border:1.5px solid var(--slate-200);border-radius:8px;outline:none">
-                <button class="btn btn-primary" onclick="saveCaseLibraryUrl()">保存</button>
+      <div id="page-cases" class="page-content" data-page-node-id="vidUAtioBIfzsXX2uBl6qM">
+        <div class="admin-card" data-page-node-id="POl4bFmH7sZsGtAowZM6Qk">
+          <h3 data-page-node-id="rq4FHQ1AWwjivUC6i9Rycr"><i class="ph ph-gear-six" data-page-node-id="xypUGG6MAwFzKg2HHgyuvC"></i>案例设置</h3>
+          <p style="font-size:12px;color:var(--slate-500);margin-bottom:12px" data-page-node-id="7B4X2LOG8PTETn4KKT6goj">配置前台案例详情里的统一外部跳转入口。</p>
+          <div class="admin-row" data-page-node-id="BhpkhErncpt7u0SPfEfsNw">
+            <div class="field" data-page-node-id="7JBLxHTmomFFrEPy7BqGD0">
+              <label data-page-node-id="HcRRECvnBM54FJtDoJGmpa">客户案例库 H5 链接</label>
+              <div style="display:flex;gap:8px" data-page-node-id="5UkAkdjk3j3Gt0nhRtgVhM">
+                <input type="text" id="case-library-url-input" placeholder="https://...；为空则前台不显示“查看更多客户案例”" style="flex:1;padding:8px 12px;font-size:13px;font-family:inherit;border:1.5px solid var(--slate-200);border-radius:8px;outline:none" data-page-node-id="8oTl4xqt2sOzZHqMoEsCwL">
+                <button class="btn btn-primary" onclick="saveCaseLibraryUrl()" data-page-node-id="cZecKyV2wvW7l9s7AvFsvB">保存</button>
               </div>
-              <div style="margin-top:4px;font-size:11px;color:var(--slate-400)">所有案例共用这个入口；只在前台案例详情底部显示，不会出现在首页或底部导航。</div>
+              <div style="margin-top:4px;font-size:11px;color:var(--slate-400)" data-page-node-id="Ocpyg9unvZHTyEyRJ21hnN">所有案例共用这个入口；只在前台案例详情底部显示，不会出现在首页或底部导航。</div>
             </div>
           </div>
-          <div style="height:1px;background:var(--slate-100);margin:14px 0"></div>
-          <h4 style="font-size:14px;margin:0 0 10px;color:var(--slate-700)">标签库</h4>
-          <input type="hidden" id="case-tag-editing-id">
-          <div class="admin-row">
-            <div class="field" style="width:130px">
-              <label>类型</label>
-              <select id="case-tag-type" style="width:100%;padding:8px 12px;font-size:13px;font-family:inherit;border:1.5px solid var(--slate-200);border-radius:8px;outline:none">
-                <option value="symptom">症状标签</option>
-                <option value="product">产品标签</option>
+          <div style="height:1px;background:var(--slate-100);margin:14px 0" data-page-node-id="AxEJ8ylznRl0eTlpF4PFWg"></div>
+          <h4 style="font-size:14px;margin:0 0 10px;color:var(--slate-700)" data-page-node-id="wEtTiqkKsF6SMrrSDdiKel">标签库</h4>
+          <input type="hidden" id="case-tag-editing-id" data-page-node-id="CSnwpw2B4PVkbJmOONrfiw">
+          <div class="admin-row" data-page-node-id="SsCv8BKReBcxQVTJid78cr">
+            <div class="field" style="width:130px" data-page-node-id="cZOA7SoH2HbvZn58C1GwUU">
+              <label data-page-node-id="PWhfiJah9M6pXestqn1uIT">类型</label>
+              <select id="case-tag-type" style="width:100%;padding:8px 12px;font-size:13px;font-family:inherit;border:1.5px solid var(--slate-200);border-radius:8px;outline:none" data-page-node-id="nSBEbaITggnqULcjbtJJ8J">
+                <option value="symptom" data-page-node-id="kFsEygrSrrvx44V2Y6jEXL">症状标签</option>
+                <option value="product" data-page-node-id="V8ofEWsNCxzAg4ejon3mlG">产品标签</option>
               </select>
             </div>
-            <div class="field" style="flex:1"><label>标准名称</label><input type="text" id="case-tag-name" placeholder="如：便秘"></div>
-            <div class="field" style="flex:1"><label>别名（逗号分隔）</label><input type="text" id="case-tag-aliases" placeholder="如：排便困难,排便不畅,大便干"></div>
-            <div class="field" style="width:100px"><label>排序</label><input type="number" id="case-tag-sort-order" value="0"></div>
+            <div class="field" style="flex:1" data-page-node-id="a1qRF9q10riCTFy24wxz35"><label data-page-node-id="KiWMbYGD10GiGAUvByyE1h">标准名称</label><input type="text" id="case-tag-name" placeholder="如：便秘" data-page-node-id="bG3dTNF0xqMSSF8dk5Vtp2"></div>
+            <div class="field" style="flex:1" data-page-node-id="eNwr9uJFfDfvlWhXRxumuL"><label data-page-node-id="xKNxTXbvNaOy6D9PsY8NCF">别名（逗号分隔）</label><input type="text" id="case-tag-aliases" placeholder="如：排便困难,排便不畅,大便干" data-page-node-id="q5tmSWNd0ysfg3ClZhGvCg"></div>
+            <div class="field" style="width:100px" data-page-node-id="7jVLH1feQJBvp7R0IYzdDQ"><label data-page-node-id="O91CACvOmCCU1VKTAu0Kfv">排序</label><input type="number" id="case-tag-sort-order" value="0" data-page-node-id="kKvtqc8gDuiQVrOPsfqXFm"></div>
           </div>
-          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:4px">
-            <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--slate-600)">
-              <input type="checkbox" id="case-tag-status" checked> 启用
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:4px" data-page-node-id="FtXcERWXQBHesbAXJVzai0">
+            <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--slate-600)" data-page-node-id="LTlxm00nGAFGpFC5IRBI9i">
+              <input type="checkbox" id="case-tag-status" checked data-page-node-id="6MEcv5b0IZqQyNeVxpES76"> 启用
             </label>
-            <button class="btn btn-secondary btn-sm" onclick="resetCaseTagForm()">取消</button>
-            <button class="btn btn-primary btn-sm" onclick="saveCaseTag()">保存标签</button>
+            <button class="btn btn-secondary btn-sm" onclick="resetCaseTagForm()" data-page-node-id="bBvB3d5nP4OGMx6PrpX0ZO">取消</button>
+            <button class="btn btn-primary btn-sm" onclick="saveCaseTag()" data-page-node-id="L0sBXChUTk7L3pwKpGlu7B">保存标签</button>
           </div>
-          <div id="case-tags-list" style="margin-top:12px"></div>
+          <div id="case-tags-list" style="margin-top:12px" data-page-node-id="y1MbenpMQJgfS0nvBlLrWS"></div>
         </div>
-        <div class="admin-card">
-          <h3><i class="ph ph-magic-wand"></i>从链接识别案例</h3>
-          <p style="font-size:12px;color:var(--slate-500);margin-bottom:12px">适合公开 H5/网页案例链接。识别结果会先预览，不会直接入库。</p>
-          <div class="admin-row">
-            <div class="field" style="flex:1">
-              <label>案例链接</label>
-              <input type="text" id="case-recognize-url" placeholder="https://...">
+        <div class="admin-card" data-page-node-id="8U6gJc3Gf5AS98HUeZu8Kw">
+          <h3 data-page-node-id="j8avJnCrU21IAsqIlxQb18"><i class="ph ph-magic-wand" data-page-node-id="9M3j7CyFzc1HQ5ldJW0sTU"></i>从链接识别案例</h3>
+          <p style="font-size:12px;color:var(--slate-500);margin-bottom:12px" data-page-node-id="JHYxgqAcgtIfArGx0NopBc">适合公开 H5/网页案例链接。识别结果会先预览，不会直接入库。</p>
+          <div class="admin-row" data-page-node-id="DEx2rkM7AEa26gqGjiSPhU">
+            <div class="field" style="flex:1" data-page-node-id="c0J5Bi034KlFkyBpHT6zKH">
+              <label data-page-node-id="IK2AOy3gJj3fH6pBBA6uaD">案例链接</label>
+              <input type="text" id="case-recognize-url" placeholder="https://..." data-page-node-id="lLM7E2hJeYDgZ2TL9QCMRu">
             </div>
-            <div class="field" style="width:140px;justify-content:flex-end">
-              <label>&nbsp;</label>
-              <button class="btn btn-primary" id="case-recognize-btn" onclick="recognizeCaseLink()"><i class="ph ph-sparkle"></i> 识别案例</button>
+            <div class="field" style="width:140px;justify-content:flex-end" data-page-node-id="FPVK2vih2A5YUHC2PjV9pe">
+              <label data-page-node-id="rYPDJvXNYZ3UubrXiUHhoV">&nbsp;</label>
+              <button class="btn btn-primary" id="case-recognize-btn" onclick="recognizeCaseLink()" data-page-node-id="hvfL6NZ7kSCrF71pIWIkD9"><i class="ph ph-sparkle" data-page-node-id="dsvmOaOIkaPGDmLt54vcVA"></i> 识别案例</button>
             </div>
           </div>
-          <div id="case-recognize-result" style="display:none;margin-top:12px"></div>
+          <div id="case-recognize-result" style="display:none;margin-top:12px" data-page-node-id="ObxA9zdvHtnNrfzM2UUy62"></div>
         </div>
-        <div class="admin-card">
-          <h3><i class="ph ph-table"></i>批量导入案例</h3>
-          <p style="font-size:12px;color:var(--slate-500);margin-bottom:12px">粘贴文字（一行一条）或上传表格（一行一条，首行作表头）。AI 会逐条归纳字段，标签只从标准标签库中选取。识别结果先预览，勾选后才入库。</p>
-          <div class="admin-row">
-            <div class="field">
-              <label>粘贴内容（一行一条案例）</label>
+        <div class="admin-card" data-page-node-id="DoUNs61PcO7u1hO5dx4D8Q">
+          <h3 data-page-node-id="E7f6jy2ZOGQsDzeXUiPVVt"><i class="ph ph-table" data-page-node-id="8eA8hZyQ2eP0Z7IjkZXq52"></i>批量导入案例</h3>
+          <p style="font-size:12px;color:var(--slate-500);margin-bottom:12px" data-page-node-id="mB0ULrpyLqzFTGcnbXnLVs">粘贴文字（一行一条）或上传表格（一行一条，首行作表头）。AI 会逐条归纳字段，标签只从标准标签库中选取。识别结果先预览，勾选后才入库。</p>
+          <div class="admin-row" data-page-node-id="ciIpsEs6e9Npjudsufmq3e">
+            <div class="field" data-page-node-id="oJWKXqvtPufgGxmIgwNuVm">
+              <label data-page-node-id="4vnBM4Cl9uoBI8Th72Iibj">粘贴内容（一行一条案例）</label>
               <textarea id="case-batch-text" rows="5" placeholder="45岁女性，久坐办公室，长期便秘，用益生菌两周后排便频率提升&#10;38岁男性，经常外食应酬，饭后胀气明显"></textarea>
             </div>
           </div>
-          <div class="admin-row">
-            <div class="field">
-              <label>或上传表格（xlsx / xls / csv）</label>
-              <input type="file" id="case-batch-file" accept=".xlsx,.xls,.csv" onchange="loadCaseBatchFile(this)">
-              <div style="font-size:11px;color:var(--slate-400);margin-top:4px">表格首行作为表头，其余每行一条案例；单次最多 40 条</div>
+          <div class="admin-row" data-page-node-id="rLBpguQLHM397gwY5vgwka">
+            <div class="field" data-page-node-id="NlGaITZEZWwfhqlueJaOCO">
+              <label data-page-node-id="HXW82zwApWZkI4lS4NWQKZ">或上传表格（xlsx / xls / csv）</label>
+              <input type="file" id="case-batch-file" accept=".xlsx,.xls,.csv" onchange="loadCaseBatchFile(this)" data-page-node-id="wBmH0BTMAsc4Jf2MZe9myF">
+              <div style="font-size:11px;color:var(--slate-400);margin-top:4px" data-page-node-id="K2XOYWDnZBcWckeMskLNt7">表格首行作为表头，其余每行一条案例；单次最多 40 条</div>
             </div>
           </div>
-          <div style="display:flex;gap:8px;margin-top:4px">
-            <button class="btn btn-secondary" onclick="clearCaseBatch()">清空</button>
-            <button class="btn btn-primary" id="case-batch-btn" onclick="recognizeCaseBatch()"><i class="ph ph-sparkle"></i> 识别</button>
+          <div style="display:flex;gap:8px;margin-top:4px" data-page-node-id="N9X06trXympW5EFUqMk2yC">
+            <button class="btn btn-secondary" onclick="clearCaseBatch()" data-page-node-id="BTCjBWvAvDI5XW3YoI19OE">清空</button>
+            <button class="btn btn-primary" id="case-batch-btn" onclick="recognizeCaseBatch()" data-page-node-id="bAnIIazRbCRl01e3En8q29"><i class="ph ph-sparkle" data-page-node-id="5MRB5qhZSLBPVs5k2krHPu"></i> 识别</button>
           </div>
-          <div id="case-batch-result" style="display:none;margin-top:12px"></div>
+          <div id="case-batch-result" style="display:none;margin-top:12px" data-page-node-id="D2Yr8XAU7AW17NPpZIJJ5b"></div>
         </div>
-        <div class="admin-card">
-          <h3><i class="ph ph-pencil"></i><span id="case-form-title">新增案例档案</span></h3>
-          <input type="hidden" id="case-editing-id">
-          <div class="admin-row">
-            <div class="field" style="flex:1"><label>标题</label><input type="text" id="case-title" placeholder="如：长期便秘客户调理记录"></div>
-            <div class="field" style="width:160px"><label>排序</label><input type="number" id="case-sort-order" value="0"></div>
+        <div class="admin-card" data-page-node-id="QuvBNTK86HnOOLBe7FLSAD">
+          <h3 data-page-node-id="6nQnjhmsdDACOjygPHozQH"><i class="ph ph-pencil" data-page-node-id="jcCjlCCm9wBFkh4LXjiQ1g"></i><span id="case-form-title" data-page-node-id="OjWFmgQEpuZCmL8abyN8GL">新增案例档案</span></h3>
+          <input type="hidden" id="case-editing-id" data-page-node-id="ObnkViRDOXTBup21LcTK9Z">
+          <div class="admin-row" data-page-node-id="6qMO5KrggnTx8AmmpzND24">
+            <div class="field" style="flex:1" data-page-node-id="qA8AlqYBEXc3EUfzLFjGOd"><label data-page-node-id="FBJ9pB2JZ4Bepn4CtbRwD6">标题</label><input type="text" id="case-title" placeholder="如：长期便秘客户调理记录" data-page-node-id="88tAyaEQ7PkPyFftZ1sV2v"></div>
+            <div class="field" style="width:160px" data-page-node-id="LjlLnoK53R6km8mU796TP7"><label data-page-node-id="oGvTXTGAIVdq65CT4ayDP5">排序</label><input type="number" id="case-sort-order" value="0" data-page-node-id="nYt8NhWXDxJlNkH3Qjpcei"></div>
           </div>
-          <div class="admin-row">
-            <div class="field"><label>客户画像</label><input type="text" id="case-customer-profile" placeholder="如：45岁女性，久坐办公室，饮食不规律"></div>
+          <div class="admin-row" data-page-node-id="DRzxjrqJwaWcE6yCU21dV9">
+            <div class="field" data-page-node-id="QPg25cHixuGYqGDLjupk8y"><label data-page-node-id="pbeVCcgF4QdzbGMDAhQ9p8">客户画像</label><input type="text" id="case-customer-profile" placeholder="如：45岁女性，久坐办公室，饮食不规律" data-page-node-id="zBi6rUYCYFCPZwXkAIT3rn"></div>
           </div>
-          <div class="admin-row">
-            <div class="field" style="flex:1"><label>症状标签（逗号分隔）</label><input type="text" id="case-symptom-tags" placeholder="便秘,腹胀,排便困难"></div>
-            <div class="field" style="flex:1"><label>产品标签（逗号分隔）</label><input type="text" id="case-product-tags" placeholder="益生菌,膳食纤维"></div>
+          <div class="admin-row" data-page-node-id="YKGhnOeWxVCy20b1OETluQ">
+            <div class="field" style="flex:1" data-page-node-id="AUX1u3BWGpMNqsUld1LvRK"><label data-page-node-id="XXaZzoSPqBwOOftxGqjIoB">症状标签（逗号分隔）</label><input type="text" id="case-symptom-tags" placeholder="便秘,腹胀,排便困难" data-page-node-id="JgZtTfn1I6Sk5H7IDwgn1w"></div>
+            <div class="field" style="flex:1" data-page-node-id="HtUC9JeEXltYhLADGauLf3"><label data-page-node-id="VvkfgfkW8FD6xS2xrlf1WE">产品标签（逗号分隔）</label><input type="text" id="case-product-tags" placeholder="益生菌,膳食纤维" data-page-node-id="9LdHqSnKW8SjWiKqGiAnCG"></div>
           </div>
-          <div class="admin-row">
-            <div class="field"><label>使用场景</label><input type="text" id="case-scenario" placeholder="如：连续使用两周后反馈排便频率提升"></div>
+          <div class="admin-row" data-page-node-id="dij6aZY5Ti1Jw4DwD1Cbew">
+            <div class="field" data-page-node-id="lNOlsCRqtfchx42pO8CEde"><label data-page-node-id="5a5wahCg4mizjnf9PsAw1A">使用场景</label><input type="text" id="case-scenario" placeholder="如：连续使用两周后反馈排便频率提升" data-page-node-id="fiszlbQDEd96KDCgG2xPgk"></div>
           </div>
-          <div class="admin-row">
-            <div class="field"><label>摘要</label><textarea id="case-summary" rows="2" placeholder="用于前台推荐卡片展示"></textarea></div>
+          <div class="admin-row" data-page-node-id="6RNDUwgeZyAuw6Qsyu7FP4">
+            <div class="field" data-page-node-id="fjYiyebdD6F9xl3AC53TFz"><label data-page-node-id="hSjGvjeeRWRrHDJHPR6yMQ">摘要</label><textarea id="case-summary" rows="2" placeholder="用于前台推荐卡片展示"></textarea></div>
           </div>
-          <div class="admin-row">
-            <div class="field"><label>详细记录</label><textarea id="case-content" rows="6" placeholder="完整案例记录，可写客户背景、使用过程、反馈结果"></textarea></div>
+          <div class="admin-row" data-page-node-id="gfWvYSr9N1dkgXUtaTVMH7">
+            <div class="field" data-page-node-id="DsjtywC7HcRg7qnbO64EKP"><label data-page-node-id="P9qFA5siI4L6zKPlrbQSPt">详细记录</label><textarea id="case-content" rows="6" placeholder="完整案例记录，可写客户背景、使用过程、反馈结果"></textarea></div>
           </div>
-          <div class="admin-row">
-            <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--slate-600)">
-              <input type="checkbox" id="case-status" checked> 前台可推荐
+          <div class="admin-row" data-page-node-id="FgZnjhXD9PAyUnCPzZBTEE">
+            <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--slate-600)" data-page-node-id="nXXOuQJ9WrLNclYvMkaRSp">
+              <input type="checkbox" id="case-status" checked data-page-node-id="l4hkita3PFFxw7p9iCFZJW"> 前台可推荐
             </label>
           </div>
-          <div style="display:flex;gap:8px;margin-top:4px">
-            <button class="btn btn-secondary" onclick="resetCaseForm()">取消</button>
-            <button class="btn btn-primary" onclick="saveCase()">保存案例</button>
+          <div style="display:flex;gap:8px;margin-top:4px" data-page-node-id="cV9fF9blv9UIFKi6OgGakL">
+            <button class="btn btn-secondary" onclick="resetCaseForm()" data-page-node-id="dEXbHYq67gm5WlWLWNVqwJ">取消</button>
+            <button class="btn btn-primary" onclick="saveCase()" data-page-node-id="ihzqBeba7UblSCgWnA83vd">保存案例</button>
           </div>
         </div>
-        <div class="admin-card">
-          <h3><i class="ph ph-list"></i>案例列表</h3>
-          <div id="admin-cases-list"></div>
+        <div class="admin-card" data-page-node-id="E7tYVwgwasPsec9l7WrJ64">
+          <h3 data-page-node-id="R21l5LC7keA1NAZGkONHkL"><i class="ph ph-list" data-page-node-id="S0jHigLAfWDtyyoXonfVqN"></i>案例列表</h3>
+          <div id="admin-cases-list" data-page-node-id="Sd96nFsK698caJrt20qmnb"></div>
         </div>
       </div>
 
       <!-- ===== Page: Agents ===== -->
-      <div id="page-agents" class="page-content">
-        <div class="admin-card">
-          <h3><i class="ph ph-key"></i>系统配置</h3>
-          <div class="admin-row">
-            <div class="field">
-              <label id="coze-key-label">Coze API Key（当前: 未设置）</label>
-              <div style="display:flex;gap:8px">
-                <input type="password" id="coze-api-key-input" placeholder="粘贴新的 API Key" style="flex:1;padding:8px 12px;font-size:13px;font-family:inherit;border:1.5px solid var(--slate-200);border-radius:8px;outline:none">
-                <button class="btn btn-primary" onclick="updateCozeApiKey()">更新</button>
+      <div id="page-agents" class="page-content" data-page-node-id="3eHaz6V4GfkX8fxnB1Fy3Y">
+        <div class="admin-card" data-page-node-id="nyd7naAgSUYUhBqvlTja0e">
+          <h3 data-page-node-id="JTYDmycQGWqS9yhoS4rm6C"><i class="ph ph-key" data-page-node-id="Zsj54Jg6DRIwN1oNr0I4nr"></i>系统配置</h3>
+          <div class="admin-row" data-page-node-id="Nvzk7W0gGAfOGkeGBxpzv5">
+            <div class="field" data-page-node-id="rnU9CTMDgIczZpqqJVnOYC">
+              <label id="coze-key-label" data-page-node-id="jx2MkfnmCpfL9EEPLDCQL8">Coze API Key（当前: 未设置）</label>
+              <div style="display:flex;gap:8px" data-page-node-id="b6sotCn6GlUXMPnGaSF1lg">
+                <input type="password" id="coze-api-key-input" placeholder="粘贴新的 API Key" style="flex:1;padding:8px 12px;font-size:13px;font-family:inherit;border:1.5px solid var(--slate-200);border-radius:8px;outline:none" data-page-node-id="gJeiSatmBSlhE8sD6gcANF">
+                <button class="btn btn-primary" onclick="updateCozeApiKey()" data-page-node-id="5l2jlLQ5gADGNEAS6SIUcO">更新</button>
               </div>
             </div>
           </div>
-          <div class="admin-row">
-            <div class="field">
-              <label>屏蔽关键词（逗号分隔）</label>
+          <div class="admin-row" data-page-node-id="7ktRaCkjOJXWihcR4aPY7l">
+            <div class="field" data-page-node-id="vM89Q51EG5GdtDPZu8YvLV">
+              <label data-page-node-id="e2eeOOGgBFNSMSKBSLuKMF">屏蔽关键词（逗号分隔）</label>
               <textarea id="blocked-keywords-input" rows="3" style="width:100%;padding:8px 12px;font-size:13px;font-family:inherit;border:1.5px solid var(--slate-200);border-radius:8px;outline:none;resize:vertical"></textarea>
-              <div style="margin-top:4px;font-size:11px;color:var(--slate-400)" id="blocked-hint"></div>
-              <button class="btn btn-primary btn-sm" style="margin-top:6px" onclick="saveBlockedKeywords()">保存屏蔽词</button>
+              <div style="margin-top:4px;font-size:11px;color:var(--slate-400)" id="blocked-hint" data-page-node-id="MnyOmtTaKD6vuVfyxJRB0D"></div>
+              <button class="btn btn-primary btn-sm" style="margin-top:6px" onclick="saveBlockedKeywords()" data-page-node-id="HH24ntGwnFB6MYWIWQimLi">保存屏蔽词</button>
             </div>
           </div>
-          <div class="admin-row">
-            <div class="field">
-              <label>语音输入</label>
-              <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--slate-600);margin:6px 0 8px">
-                <input type="checkbox" id="speech-enabled-input"> 开启前台语音识别
+          <div class="admin-row" data-page-node-id="stcVPz9FDHdAiLet7sylzP">
+            <div class="field" data-page-node-id="upxK4qo9ZG4OYEis0eFCwi">
+              <label data-page-node-id="NMV73WCXv6hv3xLItY89ex">语音输入</label>
+              <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--slate-600);margin:6px 0 8px" data-page-node-id="3qc4XJpBHWzQI88RHpa7Fz">
+                <input type="checkbox" id="speech-enabled-input" data-page-node-id="nUtEEr8IaTfSBolMDpn3RY"> 开启前台语音识别
               </label>
-              <select id="speech-mode-input" style="width:100%;padding:8px 12px;font-size:13px;font-family:inherit;border:1.5px solid var(--slate-200);border-radius:8px;outline:none;margin-bottom:8px">
-                <option value="auto">实时优先，失败自动转写（推荐）</option>
-                <option value="realtime">仅腾讯云实时识别</option>
-                <option value="batch">仅录音完成后转写</option>
+              <select id="speech-mode-input" style="width:100%;padding:8px 12px;font-size:13px;font-family:inherit;border:1.5px solid var(--slate-200);border-radius:8px;outline:none;margin-bottom:8px" data-page-node-id="8DjAN0QK2our6lz2YovdSB">
+                <option value="auto" data-page-node-id="20a5ajMYsoGgC03yVvqP65">实时优先，失败自动转写（推荐）</option>
+                <option value="realtime" data-page-node-id="YRWEKBdbw9CsnNjsKv5GH8">仅腾讯云实时识别</option>
+                <option value="batch" data-page-node-id="XuX1tXoCaXhZkUjlmBXrT8">仅录音完成后转写</option>
               </select>
-              <input type="text" id="tencent-app-id-input" inputmode="numeric" placeholder="腾讯云 AppID（实时识别必填）" style="width:100%;padding:8px 12px;font-size:13px;font-family:inherit;border:1.5px solid var(--slate-200);border-radius:8px;outline:none;margin-bottom:8px">
-              <input type="text" id="tencent-secret-id-input" placeholder="腾讯云 SecretId" style="width:100%;padding:8px 12px;font-size:13px;font-family:inherit;border:1.5px solid var(--slate-200);border-radius:8px;outline:none;margin-bottom:8px">
-              <input type="password" id="tencent-secret-key-input" placeholder="腾讯云 SecretKey（留空表示不修改）" style="width:100%;padding:8px 12px;font-size:13px;font-family:inherit;border:1.5px solid var(--slate-200);border-radius:8px;outline:none">
-              <div id="tencent-secret-hint" style="margin:4px 0 0;font-size:11px;color:var(--slate-400)"></div>
-              <div style="margin-top:4px;font-size:11px;color:var(--slate-400)">实时音频直连腾讯云 ASR；长期密钥只保存在服务端。识别文字只填入输入框，不会自动发送。</div>
-              <button class="btn btn-primary btn-sm" style="margin-top:6px" onclick="saveSpeechSettings()">保存语音设置</button>
+              <input type="text" id="tencent-app-id-input" inputmode="numeric" placeholder="腾讯云 AppID（实时识别必填）" style="width:100%;padding:8px 12px;font-size:13px;font-family:inherit;border:1.5px solid var(--slate-200);border-radius:8px;outline:none;margin-bottom:8px" data-page-node-id="pjnVLPH1zGXP7Cs9O7lpdq">
+              <input type="text" id="tencent-secret-id-input" placeholder="腾讯云 SecretId" style="width:100%;padding:8px 12px;font-size:13px;font-family:inherit;border:1.5px solid var(--slate-200);border-radius:8px;outline:none;margin-bottom:8px" data-page-node-id="F90ypJywoHpbBnesE5Z5j2">
+              <input type="password" id="tencent-secret-key-input" placeholder="腾讯云 SecretKey（留空表示不修改）" style="width:100%;padding:8px 12px;font-size:13px;font-family:inherit;border:1.5px solid var(--slate-200);border-radius:8px;outline:none" data-page-node-id="Mzw9ru1bw06e0Rr0fR9aWQ">
+              <div id="tencent-secret-hint" style="margin:4px 0 0;font-size:11px;color:var(--slate-400)" data-page-node-id="txaaFYT0EQxnbsc1BNStLR"></div>
+              <div style="margin-top:4px;font-size:11px;color:var(--slate-400)" data-page-node-id="8BF4UaEZQwS24LAFe9CGL3">实时音频直连腾讯云 ASR；长期密钥只保存在服务端。识别文字只填入输入框，不会自动发送。</div>
+              <button class="btn btn-primary btn-sm" style="margin-top:6px" onclick="saveSpeechSettings()" data-page-node-id="lHM9ycmZRy7HPYkezjU7Yc">保存语音设置</button>
             </div>
           </div>
         </div>
-        <div class="admin-card">
-          <h3><i class="ph ph-hourglass"></i>等待小贴士</h3>
-          <p style="font-size:12px;color:var(--slate-500);margin-bottom:12px">用户等待时轮播的小贴士，每 10 秒切一条。可拖拽排序，右侧 ✕ 删除。</p>
-          <p style="font-size:12px;color:var(--slate-500);margin-bottom:12px" id="tip-count">当前共 0 条</p>
-          <div id="tip-list"></div>
-          <div style="display:flex;gap:8px;margin-top:12px">
-            <input type="text" id="tip-input" placeholder="输入新提示语..." style="flex:1;padding:8px 12px;font-size:13px;font-family:inherit;border:1.5px solid var(--slate-200);border-radius:8px;outline:none" onkeydown="if(event.key==='Enter') addTip()">
-            <button class="btn btn-primary" onclick="addTip()">添加</button>
+        <div class="admin-card" data-page-node-id="u6cN6y9xt91qoI3XKxaIzp">
+          <h3 data-page-node-id="Lm3L1KY7Lmgmlp9I4NEFEI"><i class="ph ph-hourglass" data-page-node-id="K3TOGQlfftAiYwk0wHaNkY"></i>等待小贴士</h3>
+          <p style="font-size:12px;color:var(--slate-500);margin-bottom:12px" data-page-node-id="K6bYzeF9q277nG9vAa7NYh">用户等待时轮播的小贴士，每 10 秒切一条。可拖拽排序，右侧 ✕ 删除。</p>
+          <p style="font-size:12px;color:var(--slate-500);margin-bottom:12px" id="tip-count" data-page-node-id="pnE0oIxPNGiXtc1sEDWG7b">当前共 0 条</p>
+          <div id="tip-list" data-page-node-id="Ddi4oC2MMKjC0rx2IkQE4V"></div>
+          <div style="display:flex;gap:8px;margin-top:12px" data-page-node-id="PrpHJw6V4Ie1HyedP2ygHH">
+            <input type="text" id="tip-input" placeholder="输入新提示语..." style="flex:1;padding:8px 12px;font-size:13px;font-family:inherit;border:1.5px solid var(--slate-200);border-radius:8px;outline:none" onkeydown="if(event.key==='Enter') addTip()" data-page-node-id="26jb0BP9kDMp1tdOetMyUQ">
+            <button class="btn btn-primary" onclick="addTip()" data-page-node-id="pKLtUa7T9iqu8OBy2pKGT0">添加</button>
           </div>
-          <div style="margin-top:10px;display:flex;gap:8px">
-            <button class="btn btn-primary" onclick="saveWaitingTips()">保存全部</button>
-          </div>
-        </div>
-        <div class="add-agent-card" onclick="showCreateAgentForm()">
-          <i class="ph ph-plus"></i><span>新建智能体</span>
-        </div>
-        <div id="create-agent-form" class="agent-card" style="display:none">
-          <div class="agent-header"><div class="agent-name">新建智能体</div></div>
-          <div class="field"><label>标识 ID（英文唯一，如 mybot）</label><input type="text" id="new-agent-id" placeholder="mybot"></div>
-          <div class="field"><label>名称</label><input type="text" id="new-agent-name" placeholder="智能体名称"></div>
-          <div class="field"><label>首页描述（简洁）</label><input type="text" id="new-agent-desc" placeholder="如：快速获取产品详情"></div>
-          <div class="field"><label>聊天描述（详细，切换时展示）</label><textarea id="new-agent-chat-desc" rows="2" placeholder="如：帮你查询产品成分、功效、使用方法等，支持多轮对话"></textarea></div>
-          <div class="field"><label>快捷消息</label><input type="text" id="new-agent-prompt" placeholder="点击后自动发送的消息"></div>
-          <div style="display:flex;gap:12px">
-            <div class="field" style="flex:1"><label>颜色</label><input type="color" id="new-agent-color" value="#4F46E5"></div>
-            <div class="field" style="flex:1"><label>图标（Phosphor 名）</label><input type="text" id="new-agent-icon" placeholder="robot"></div>
-          </div>
-          <div class="field"><label>机器人 ID（Coze Bot ID）</label><input type="text" id="new-agent-bot" placeholder=""></div>
-          <div class="agent-actions">
-            <button class="btn btn-secondary" onclick="hideCreateAgentForm()">取消</button>
-            <button class="btn btn-primary" onclick="createAgent()">创建</button>
+          <div style="margin-top:10px;display:flex;gap:8px" data-page-node-id="qVRNp5n4bQvDCXx0gjCxXS">
+            <button class="btn btn-primary" onclick="saveWaitingTips()" data-page-node-id="Baqa83wa0mUxMELboMLDkQ">保存全部</button>
           </div>
         </div>
-        <div id="admin-agents-list"></div>
+        <div class="add-agent-card" onclick="showCreateAgentForm()" data-page-node-id="4j87AabzKclVOJ3yfGycFd">
+          <i class="ph ph-plus" data-page-node-id="DTOPiwvWDJKXdmpXCHAwzF"></i><span data-page-node-id="Dzn00oujGw4PRkW6jcrqbo">新建智能体</span>
+        </div>
+        <div id="create-agent-form" class="agent-card" style="display:none" data-page-node-id="2qtNb0NHvYAAMBysoqAUeB">
+          <div class="agent-header" data-page-node-id="JF1YGmw62QGAGpOUhA17OE"><div class="agent-name" data-page-node-id="ABCmOp4J1VMVYCBgarrVJz">新建智能体</div></div>
+          <div class="field" data-page-node-id="d6hasZ03FHhSLhogVEkuAm"><label data-page-node-id="oNBZdfxMhFfgavWjA1x9fX">标识 ID（英文唯一，如 mybot）</label><input type="text" id="new-agent-id" placeholder="mybot" data-page-node-id="puQjNbLktACGfD0CJlqoPd"></div>
+          <div class="field" data-page-node-id="NwQb0CNZMqYsPEKgBAJqtB"><label data-page-node-id="Pe1xpZmaWugIIJT5z9411v">名称</label><input type="text" id="new-agent-name" placeholder="智能体名称" data-page-node-id="8OMB2p0hPKjWBvXLOKz3GX"></div>
+          <div class="field" data-page-node-id="CSpOnQvTFEcQYyHCj7wDSG"><label data-page-node-id="vKBTZTD4bwCs9GqkwfPJEV">首页描述（简洁）</label><input type="text" id="new-agent-desc" placeholder="如：快速获取产品详情" data-page-node-id="EXKR5ugO6WPOtlpH7I9IM1"></div>
+          <div class="field" data-page-node-id="iXYbpdKf6fXEVFHOJdUWBC"><label data-page-node-id="3VWr61vjy79rNq43xJ3yTy">聊天描述（详细，切换时展示）</label><textarea id="new-agent-chat-desc" rows="2" placeholder="如：帮你查询产品成分、功效、使用方法等，支持多轮对话"></textarea></div>
+          <div class="field" data-page-node-id="XeuMPiDokUW5FD6xIDgf53"><label data-page-node-id="PFDAdRrX36vU7MxYGgoFYy">快捷消息</label><input type="text" id="new-agent-prompt" placeholder="点击后自动发送的消息" data-page-node-id="mc06XLl72znrok2M52rmWL"></div>
+          <div style="display:flex;gap:12px" data-page-node-id="FOosaYCopVJeyKAuXQ2Q5p">
+            <div class="field" style="flex:1" data-page-node-id="y5XtaHsHxWhx4Dq8BJO7TM"><label data-page-node-id="6ICFh1nLTljAftVRPiCc4K">颜色</label><input type="color" id="new-agent-color" value="#4F46E5" data-page-node-id="94pzwo546RjHG5nAIVLKvm"></div>
+            <div class="field" style="flex:1" data-page-node-id="ECbvBgVzsKCh1BmwjpYyz8"><label data-page-node-id="0NlNo6cc1rNFHJmvFsLq7w">图标（Phosphor 名）</label><input type="text" id="new-agent-icon" placeholder="robot" data-page-node-id="bDjRaBmHN4ZGs7rwKsDP1E"></div>
+          </div>
+          <div class="field" data-page-node-id="HbhP6E6hDRSsEAuiJ2pY8m"><label data-page-node-id="6avoiJF8PojwfTSlT3PpJI">机器人 ID（Coze Bot ID）</label><input type="text" id="new-agent-bot" placeholder="" data-page-node-id="F0biovAEmQsmAqsvhwUaKr"></div>
+          <div class="agent-actions" data-page-node-id="WoBCDg1YA68dOPPem28vEo">
+            <button class="btn btn-secondary" onclick="hideCreateAgentForm()" data-page-node-id="jdsm57OsPtKXB7h6pF1Fn0">取消</button>
+            <button class="btn btn-primary" onclick="createAgent()" data-page-node-id="x1HF3KDnyXGVpukXdfjwgT">创建</button>
+          </div>
+        </div>
+        <div id="admin-agents-list" data-page-node-id="UCazSUkl4xGzdG6hvqh2S4"></div>
       </div>
 
       <!-- ===== Page: Share Settings ===== -->
-      <div id="page-share" class="page-content">
-        <div class="admin-card">
-          <h3><i class="ph ph-share-network"></i>微信链接分享设置</h3>
-          <p style="font-size:12px;color:var(--slate-500);margin:0 0 14px">控制微信转发网页链接时显示的标题、简介和右侧缩略图。保存后，微信可能需要一段时间刷新缓存。</p>
-          <div class="admin-row">
-            <div class="field">
-              <label>分享标题</label>
-              <input type="text" id="share-title-input" maxlength="80" placeholder="如：AI宝儿｜智能健康咨询">
-              <div class="hint">建议不超过 30 个字，过长时微信可能截断。</div>
+      <div id="page-share" class="page-content" data-page-node-id="BHbXdgI17B2WLWcNzhn4me">
+        <div class="admin-card" data-page-node-id="zV4fYm3l6zFMtHDEHodnAq">
+          <h3 data-page-node-id="Lc1lqKkHeRVT6s8Qq3cXDr"><i class="ph ph-share-network" data-page-node-id="4JjkfD5Mp6Qtl03ShhM9tq"></i>微信链接分享设置</h3>
+          <p style="font-size:12px;color:var(--slate-500);margin:0 0 14px" data-page-node-id="QWQQUpJifEnOEDaQY7EeG8">控制微信转发网页链接时显示的标题、简介和右侧缩略图。保存后，微信可能需要一段时间刷新缓存。</p>
+          <div class="admin-row" data-page-node-id="qyLNPo3hbUzeGshrREjGD2">
+            <div class="field" data-page-node-id="XAGr4P1ws0tAx2lGEJQsWn">
+              <label data-page-node-id="R6wGjO37QoLk8QlCcXzgsm">分享标题</label>
+              <input type="text" id="share-title-input" maxlength="80" placeholder="如：AI宝儿｜智能健康咨询" data-page-node-id="nJVJwrwLGQQIxjBU6Tag5n">
+              <div class="hint" data-page-node-id="ClisQtbrmUNFuMmBpwoEHe">建议不超过 30 个字，过长时微信可能截断。</div>
             </div>
           </div>
-          <div class="admin-row">
-            <div class="field">
-              <label>分享简介</label>
+          <div class="admin-row" data-page-node-id="NkNSQYmbkm6Geg5e9N4eYs">
+            <div class="field" data-page-node-id="JZRDjuDmhbKl6AVYbqlLE8">
+              <label data-page-node-id="nA7gJPwDP8UImWXtHYqRQb">分享简介</label>
               <textarea id="share-description-input" rows="3" maxlength="200" placeholder="如：产品咨询、使用答疑与健康问题解答"></textarea>
-              <div class="hint">用于链接预览卡片的辅助说明。</div>
+              <div class="hint" data-page-node-id="zp85mmKf1J06q7aAIrEGNk">用于链接预览卡片的辅助说明。</div>
             </div>
           </div>
-          <div class="admin-row">
-            <div class="field">
-              <label>分享缩略图</label>
-              <div style="display:flex;gap:8px;align-items:flex-start">
-                <input type="text" id="share-image-url-input" placeholder="图片 URL 或点击右侧上传" style="flex:1">
-                <label class="btn btn-secondary btn-sm" style="cursor:pointer;white-space:nowrap">
-                  <i class="ph ph-upload"></i> 上传
-                  <input type="file" accept="image/*" onchange="uploadShareImage(this)" style="display:none">
+          <div class="admin-row" data-page-node-id="QRgp5jJ6xAoFL15CMpHbrl">
+            <div class="field" data-page-node-id="mr4Z0H8T420ElNGtgENfBE">
+              <label data-page-node-id="s4FB2nt2vz87oWEnFayBMV">分享缩略图</label>
+              <div style="display:flex;gap:8px;align-items:flex-start" data-page-node-id="VaoIW1DAyeDrmokDSTp40F">
+                <input type="text" id="share-image-url-input" placeholder="图片 URL 或点击右侧上传" style="flex:1" data-page-node-id="c1Vwh5ReOAytddklAgm9N3">
+                <label class="btn btn-secondary btn-sm" style="cursor:pointer;white-space:nowrap" data-page-node-id="mmA8JSHjwTjR8ByunmN6YE">
+                  <i class="ph ph-upload" data-page-node-id="EIsrjsWqZwD8TdsOwawFwf"></i> 上传
+                  <input type="file" accept="image/*" onchange="uploadShareImage(this)" style="display:none" data-page-node-id="dcjQNligfvEBqNCKKdtDcY">
                 </label>
               </div>
-              <div style="font-size:11px;color:var(--slate-400);margin-top:4px">建议 600×600 正方形，jpg/png/webp，不超过 2MB；默认使用 AI 宝儿头像。</div>
-              <div id="share-image-preview-wrap" style="margin-top:8px;display:none">
-                <img id="share-image-preview" alt="分享缩略图预览" style="width:96px;height:96px;object-fit:cover;border-radius:10px;border:1px solid var(--slate-200)">
+              <div style="font-size:11px;color:var(--slate-400);margin-top:4px" data-page-node-id="VhdtDTHERlhpXK1JoJQJXZ">建议 600×600 正方形，jpg/png/webp，不超过 2MB；默认使用 AI 宝儿头像。</div>
+              <div id="share-image-preview-wrap" style="margin-top:8px;display:none" data-page-node-id="TJMna9x5W0q0WWYdSGdLwQ">
+                <img id="share-image-preview" alt="分享缩略图预览" style="width:96px;height:96px;object-fit:cover;border-radius:10px;border:1px solid var(--slate-200)" data-page-node-id="8GHjHQuSshhzBbiPUfzFdr">
               </div>
             </div>
           </div>
-          <button class="btn btn-primary" onclick="saveShareSettings()"><i class="ph ph-check"></i> 保存分享设置</button>
+          <button class="btn btn-primary" onclick="saveShareSettings()" data-page-node-id="6rmu8yzYfQMY4SrHuveDlf"><i class="ph ph-check" data-page-node-id="YuZ8vKAthODqcalq32gULo"></i> 保存分享设置</button>
         </div>
       </div>
 
       <!-- ===== Feedback Page ===== -->
-      <div id="page-feedback" class="page-content">
-        <div class="date-filter">
-          <label>日期：</label>
-          <input type="date" id="fb-filter-start">
-          <span style="color:var(--slate-400)">~</span>
-          <input type="date" id="fb-filter-end">
-          <button class="quick-btn active" data-days="30" onclick="setFbDateRange(30)">近30天</button>
-          <button class="quick-btn" data-days="7" onclick="setFbDateRange(7)">近7天</button>
-          <button class="quick-btn" data-days="90" onclick="setFbDateRange(90)">近90天</button>
-          <button class="quick-btn" data-days="0" onclick="setFbDateRange(0)">全部</button>
-          <button class="btn btn-primary btn-sm" onclick="applyFbDateFilter()" style="margin-left:4px">查询</button>
-          <button class="btn btn-secondary btn-sm" onclick="exportFbCSV()" style="margin-left:auto"><i class="ph ph-download"></i> 导出CSV</button>
+      <div id="page-feedback" class="page-content" data-page-node-id="AqibTx1O3NyfUmkZvQLOL1">
+        <div class="date-filter" data-page-node-id="L1lEUYeH65d3NwAgyejYwG">
+          <label data-page-node-id="zb7f09BcUlHN3UF27tS8oj">日期：</label>
+          <input type="date" id="fb-filter-start" data-page-node-id="1mJUp2QPogitHmXQH0nPkB">
+          <span style="color:var(--slate-400)" data-page-node-id="5TNMelowkwWVxRlbrkFLH7">~</span>
+          <input type="date" id="fb-filter-end" data-page-node-id="VSXHKqtaysOmSc7ZBvONSA">
+          <button class="quick-btn active" data-days="30" onclick="setFbDateRange(30)" data-page-node-id="xjGQNCGhDdM2Yo8YRiGnpX">近30天</button>
+          <button class="quick-btn" data-days="7" onclick="setFbDateRange(7)" data-page-node-id="oEYkDULkoGGelwpSC8xImN">近7天</button>
+          <button class="quick-btn" data-days="90" onclick="setFbDateRange(90)" data-page-node-id="gCq3zrnvSfJAKUDbuHnNWy">近90天</button>
+          <button class="quick-btn" data-days="0" onclick="setFbDateRange(0)" data-page-node-id="O2Nk73MxBaqL3ohFlu5TrB">全部</button>
+          <button class="btn btn-primary btn-sm" onclick="applyFbDateFilter()" style="margin-left:4px" data-page-node-id="7eUqwRGmMNgj91Ae5R9BBi">查询</button>
+          <button class="btn btn-secondary btn-sm" onclick="exportFbCSV()" style="margin-left:auto" data-page-node-id="MMkFAaqfuqwg6SgxcmV0ZC"><i class="ph ph-download" data-page-node-id="lJYoFfrUPLS1MHBJatZLKq"></i> 导出CSV</button>
         </div>
 
-        <div class="stats-grid" id="fb-stats-grid">
-          <div class="stat-card">
-            <div class="stat-icon" style="background:var(--emerald-light);color:var(--emerald)"><i class="ph ph-hand-thumbs-up"></i></div>
-            <div class="stat-label">好评率</div>
-            <div class="stat-value" id="fb-ratio">-</div>
+        <div class="stats-grid" id="fb-stats-grid" data-page-node-id="96wzfKlUhhb5z5aBXQZaFt">
+          <div class="stat-card" data-page-node-id="cCO5sCiQvQ7KSXGCrrQuSp">
+            <div class="stat-icon" style="background:var(--emerald-light);color:var(--emerald)" data-page-node-id="2y9kH7cJM22AzSgMHJij8R"><i class="ph ph-hand-thumbs-up" data-page-node-id="LJWlNnuctlh3pKEZJ9EBH8"></i></div>
+            <div class="stat-label" data-page-node-id="WVXrT0FRZH6nsEcOdSoUmA">好评率</div>
+            <div class="stat-value" id="fb-ratio" data-page-node-id="eHOWZc1GApJwjPoNiYa2X8">-</div>
           </div>
-          <div class="stat-card">
-            <div class="stat-icon" style="background:var(--primary-light);color:var(--primary)"><i class="ph ph-thumbs-up"></i></div>
-            <div class="stat-label">好评数</div>
-            <div class="stat-value" id="fb-likes">-</div>
+          <div class="stat-card" data-page-node-id="Bg9iA1BggChDvv1v0u1QfR">
+            <div class="stat-icon" style="background:var(--primary-light);color:var(--primary)" data-page-node-id="1Uo0EVCx4WoH57W6NWuJ6s"><i class="ph ph-thumbs-up" data-page-node-id="btZyMf5btOAZEd2DbGwhtk"></i></div>
+            <div class="stat-label" data-page-node-id="riWOmvnbV5cPQyT3LCZInR">好评数</div>
+            <div class="stat-value" id="fb-likes" data-page-node-id="Y0mlD9vULo7RPHqVusUxHy">-</div>
           </div>
-          <div class="stat-card">
-            <div class="stat-icon" style="background:var(--rose-light);color:var(--rose)"><i class="ph ph-thumbs-down"></i></div>
-            <div class="stat-label">差评数</div>
-            <div class="stat-value" id="fb-dislikes">-</div>
+          <div class="stat-card" data-page-node-id="Wu2hPwt2NE6CobWFIhd614">
+            <div class="stat-icon" style="background:var(--rose-light);color:var(--rose)" data-page-node-id="MEvRoyEbmrQp8ZfiNCxyNp"><i class="ph ph-thumbs-down" data-page-node-id="LsjyeiVOCaAsWgnqfPZ1P4"></i></div>
+            <div class="stat-label" data-page-node-id="arqjqrs6o0FnWb36SZpee6">差评数</div>
+            <div class="stat-value" id="fb-dislikes" data-page-node-id="Pk2HE17FdKyytxY3O4zMFV">-</div>
           </div>
-          <div class="stat-card">
-            <div class="stat-icon" style="background:var(--amber-light);color:var(--amber)"><i class="ph ph-chats"></i></div>
-            <div class="stat-label">评价总数</div>
-            <div class="stat-value" id="fb-total">-</div>
-          </div>
-        </div>
-
-        <div class="table-card" style="margin-bottom:20px">
-          <div class="table-title">
-            <span><i class="ph ph-gauge"></i>各智能体评价详情</span>
-          </div>
-          <div id="fb-agent-loading" class="loading"><i class="ph ph-spinner"></i> 加载中...</div>
-          <div id="fb-agent-wrap" style="display:none">
-            <div id="fb-agent-list"></div>
+          <div class="stat-card" data-page-node-id="u543fVfRHp4nqYwyXGBKDi">
+            <div class="stat-icon" style="background:var(--amber-light);color:var(--amber)" data-page-node-id="rhDBMpuHU1olRphkxbpYn2"><i class="ph ph-chats" data-page-node-id="BTNXGd8jT3Az4xawm59X3F"></i></div>
+            <div class="stat-label" data-page-node-id="lUqEpBOnX94nP7kdYbmDI0">评价总数</div>
+            <div class="stat-value" id="fb-total" data-page-node-id="cI429TIBaVVUZqWKJnAx02">-</div>
           </div>
         </div>
 
-        <div class="table-card">
-          <div class="table-title">
-            <span><i class="ph ph-warning"></i>差评问题</span>
-            <span class="count-badge" id="fb-negative-count">0</span>
+        <div class="table-card" style="margin-bottom:20px" data-page-node-id="bMFazdQJB1xc5qteKgkmwF">
+          <div class="table-title" data-page-node-id="D0loxLN48agB4bbUQ88YFs">
+            <span data-page-node-id="xDHp3qHUBO2qIET2bhVX6n"><i class="ph ph-gauge" data-page-node-id="mezexRhWSxcJ5CRnFJ1hsY"></i>各智能体评价详情</span>
           </div>
-          <div id="fb-negative-loading" class="loading"><i class="ph ph-spinner"></i> 加载中...</div>
-          <div id="fb-negative-wrap" style="display:none">
-            <table><thead><tr><th>智能体</th><th style="width:30%">用户问题</th><th style="width:30%">AI回答</th><th>时间</th></tr></thead><tbody id="fb-negative-body"></tbody></table>
+          <div id="fb-agent-loading" class="loading" data-page-node-id="p1icohCi57igxUd4LZMlkU"><i class="ph ph-spinner" data-page-node-id="WTvZevYCYGYoYVBcvTIct9"></i> 加载中...</div>
+          <div id="fb-agent-wrap" style="display:none" data-page-node-id="7KnyUwfIUWBFAoHUR7pa7n">
+            <div id="fb-agent-list" data-page-node-id="mBXhTK8CdwCe5DOyduuZYH"></div>
           </div>
         </div>
 
-        <div class="table-card">
-          <div class="table-title">
-            <span><i class="ph ph-barricade"></i>差评原因分布</span>
+        <div class="table-card" data-page-node-id="vT17mGxga4HJ4RPZayCIks">
+          <div class="table-title" data-page-node-id="eqqDvkuvdaDbtnVLnCbWMk">
+            <span data-page-node-id="50jaTIUY27alFaG9GDkKRi"><i class="ph ph-warning" data-page-node-id="ZwNoPdkH4aJzdC82N1RwuS"></i>差评问题</span>
+            <span class="count-badge" id="fb-negative-count" data-page-node-id="k8XNGJp4gVphLnf2lrCcPT">0</span>
           </div>
-          <div id="fb-reasons-loading" class="loading"><i class="ph ph-spinner"></i> 加载中...</div>
-          <div id="fb-reasons-wrap" style="display:none">
-            <table><thead><tr><th>智能体</th><th>差评原因</th><th>次数</th></tr></thead><tbody id="fb-reasons-body"></tbody></table>
+          <div id="fb-negative-loading" class="loading" data-page-node-id="zTlTA2vBlQDu0uF9vlnHJh"><i class="ph ph-spinner" data-page-node-id="QjMhNWpKetmzwG7qaMuGUR"></i> 加载中...</div>
+          <div id="fb-negative-wrap" style="display:none" data-page-node-id="2wTjmQ1BKyeCWqanBo3KQx">
+            <table data-page-node-id="espahgP126pXigC3XeH7H1"><thead data-page-node-id="h81QILhMN3xHySzGSJqaep"><tr data-page-node-id="w22Lc3OYAwGgewYHGUYecA"><th data-page-node-id="1Eic3Du8hsBy6PUyuAW7nt">智能体</th><th style="width:30%" data-page-node-id="hW5WSbdVyUlfyibSUR4sym">用户问题</th><th style="width:30%" data-page-node-id="Bye1Z0h8kOPOILsJ3MmwdC">AI回答</th><th data-page-node-id="4Hyu1DYnpTdwaiEfJcXyHp">时间</th></tr></thead><tbody id="fb-negative-body" data-page-node-id="doSzWIZBEPFtgYteA3FH05"></tbody></table>
+          </div>
+        </div>
+
+        <div class="table-card" data-page-node-id="Hii6tAuz4GUPX98kkYkTR5">
+          <div class="table-title" data-page-node-id="1Q1q35hQicUF6ocmdhHwnV">
+            <span data-page-node-id="XKxzGvlKuQaq2MKEQ14cbf"><i class="ph ph-barricade" data-page-node-id="pJcBD4oX2nB3ZGYE6Lcn7d"></i>差评原因分布</span>
+          </div>
+          <div id="fb-reasons-loading" class="loading" data-page-node-id="AUpr0AntBuy744JiEak2gf"><i class="ph ph-spinner" data-page-node-id="InpCHpc0A8W5DWaNeeDRUn"></i> 加载中...</div>
+          <div id="fb-reasons-wrap" style="display:none" data-page-node-id="gxdZVG0Fzqg8jRacE6RuGI">
+            <table data-page-node-id="xJAqaVO42uOrjoEFHhCrpG"><thead data-page-node-id="C8AZc85dr1Oor1vvz4XvqM"><tr data-page-node-id="YFpEP8RX40LZyA1v5IEUOe"><th data-page-node-id="50Vuryaih9Vy5ovfKGVARx">智能体</th><th data-page-node-id="cBQ5IMKB0klZanetD5xBQE">差评原因</th><th data-page-node-id="i2KdiWm522BQk6ZViWQ9Jt">次数</th></tr></thead><tbody id="fb-reasons-body" data-page-node-id="dJ7kK0GwQqAhfccB7yMx6G"></tbody></table>
           </div>
         </div>
       </div>
 
       <!-- ===== Page: Community ===== -->
-      <div id="page-community" class="page-content">
-        <div class="admin-card">
-          <h3 id="qa-form-title"><i class="ph ph-pencil"></i> 新增问答</h3>
-          <input type="hidden" id="qa-editing-id">
-          <div class="admin-row">
-            <div class="field" style="flex:1"><label>问题（Q）</label><input type="text" id="qa-question" placeholder="如：胶原蛋白肽怎么吃效果最好？"></div>
-            <div class="field" style="flex:1"><label>分类</label><input type="text" id="qa-category" placeholder="如：产品知识 / 使用技巧"></div>
+      <div id="page-community" class="page-content" data-page-node-id="MBnbSHp9qxgxWO513A5WVx">
+        <div class="admin-card" data-page-node-id="au9toOPY2TEdnxhVrEeRC8">
+          <h3 id="qa-form-title" data-page-node-id="eL5CcHwujrNGWvAA1yu7AX"><i class="ph ph-pencil" data-page-node-id="tUhk0ncp4hXQrBPZlKmqWC"></i> 新增问答</h3>
+          <input type="hidden" id="qa-editing-id" data-page-node-id="lFt5u45fUsOQt8VsFQm7re">
+          <div class="admin-row" data-page-node-id="2CdZ79RgCi2eUSlzYfsq7Q">
+            <div class="field" style="flex:1" data-page-node-id="Xu8NLiiZSEAHEPAYMHMNhE"><label data-page-node-id="kcRsl6VYALumDgu9WM9L7t">问题（Q）</label><input type="text" id="qa-question" placeholder="如：胶原蛋白肽怎么吃效果最好？" data-page-node-id="EYDgRtsoZSrz52ubPsmZBo"></div>
+            <div class="field" style="flex:1" data-page-node-id="gRR2mRj9YvMSD0XKkAc8St"><label data-page-node-id="AW3hYGP07WeHrMIDND6AQR">分类</label><input type="text" id="qa-category" placeholder="如：产品知识 / 使用技巧" data-page-node-id="dEcdjIdyqCwoOCliZZ8duR"></div>
           </div>
-          <div class="admin-row">
-            <div class="field"><label>答案（A）</label><textarea id="qa-answer" rows="5" placeholder="回答正文"></textarea></div>
+          <div class="admin-row" data-page-node-id="K6GUZU7Jg5TZi4GPPQBSXQ">
+            <div class="field" data-page-node-id="LfrGoRspFXCxeg1DXfsDBK"><label data-page-node-id="LVEdnVfDHAOaNOeD6IPsob">答案（A）</label><textarea id="qa-answer" rows="5" placeholder="回答正文"></textarea></div>
           </div>
-          <div style="display:flex;gap:8px;margin-top:4px">
-            <button class="btn btn-secondary" onclick="resetQAForm()">取消</button>
-            <button class="btn btn-primary" onclick="saveQA()">保存</button>
+          <div style="display:flex;gap:8px;margin-top:4px" data-page-node-id="YzSa1G5ANzJJMyYmVB7pHO">
+            <button class="btn btn-secondary" onclick="resetQAForm()" data-page-node-id="0ADfYioHTjYXs9EHGHV4Vn">取消</button>
+            <button class="btn btn-primary" onclick="saveQA()" data-page-node-id="eLRpw6CkBIJ7hF4SOHH9TH">保存</button>
           </div>
         </div>
-        <div class="admin-card">
-          <h3><i class="ph ph-list"></i>问答列表</h3>
-          <div id="admin-qa-list"></div>
+        <div class="admin-card" data-page-node-id="uowrqPrSNYO8Q22f3O97tL">
+          <h3 data-page-node-id="xc2zhvU5REkbfByzWg0G5B"><i class="ph ph-list" data-page-node-id="a91rocpxFPArhx23GCNLnG"></i>问答列表</h3>
+          <div id="admin-qa-list" data-page-node-id="mERmeViy1Bp2W7BvgJKN3J"></div>
         </div>
       </div>
 
       <!-- ===== Page: Team Stats ===== -->
-      <div id="page-team-stats" class="page-content">
-        <div class="admin-card team-settings-card">
-          <h3><i class="ph ph-gear"></i>默认团队设置</h3>
-          <div class="admin-row team-settings-row">
-            <div class="field team-input-field">
-              <label>团队名单（逗号分隔，登录页仅可选这些团队）</label>
-              <input type="text" id="default-team-input" placeholder="如：一团队,二团队,三团队">
-              <div class="hint">示例：一团队,二团队,三团队。前台登录时只能选择这里配置的团队。</div>
+      <div id="page-team-stats" class="page-content" data-page-node-id="GpMqJ1Lyh5zQxT5xTsXu8h">
+        <div class="admin-card team-settings-card" data-page-node-id="vthrCEScYpgttNQ3TT44Uw">
+          <h3 data-page-node-id="MOqJNhPcbSCx0bWHGwHC6i"><i class="ph ph-gear" data-page-node-id="9YTuR1iVREb6zLEajDUMya"></i>默认团队设置</h3>
+          <div class="admin-row team-settings-row" data-page-node-id="JZlosT8DdzoxQxXniMtP3V">
+            <div class="field team-input-field" data-page-node-id="NsIRVmZfcO3bbV3T67lgHv">
+              <label data-page-node-id="OdJUOlsEBUNKO1vDFrINoq">团队名单（逗号分隔，登录页仅可选这些团队）</label>
+              <input type="text" id="default-team-input" placeholder="如：一团队,二团队,三团队" data-page-node-id="CAe3EImEusGkuPe42pVrot">
+              <div class="hint" data-page-node-id="GLtAdLMDQaVS6CLE1qEV5L">示例：一团队,二团队,三团队。前台登录时只能选择这里配置的团队。</div>
             </div>
-            <div class="field team-save-field">
-              <button class="btn btn-primary" onclick="saveDefaultTeam()">保存团队名单</button>
+            <div class="field team-save-field" data-page-node-id="UgpYqfgTOVtGcG4XCAU5vu">
+              <button class="btn btn-primary" onclick="saveDefaultTeam()" data-page-node-id="cluY7KHA7WT0pmwxRGf7qP">保存团队名单</button>
             </div>
           </div>
         </div>
 
-        <div class="date-filter team-filter">
-          <div class="team-filter-row top">
-            <div class="team-filter-main">
-              <span class="filter-label">日期：</span>
-              <input type="date" id="team-filter-start">
-              <span class="range-sep">~</span>
-              <input type="date" id="team-filter-end">
-              <span class="filter-label">团队：</span>
-              <select id="team-filter-team" class="team-select">
-                <option value="">全部团队</option>
+        <div class="date-filter team-filter" data-page-node-id="URWuVpARaJN7WTMm275QxL">
+          <div class="team-filter-row top" data-page-node-id="NaapP48SZFuDTPwCDGaBGx">
+            <div class="team-filter-main" data-page-node-id="mr55liPENujN1yuJy4OisQ">
+              <span class="filter-label" data-page-node-id="cm6oTk5UkWn8IutVquU0G7">日期：</span>
+              <input type="date" id="team-filter-start" data-page-node-id="6JTT4Rqf8hND8OGdenzlNj">
+              <span class="range-sep" data-page-node-id="wc2RHAhEwDsH9rNR3tkwN7">~</span>
+              <input type="date" id="team-filter-end" data-page-node-id="E0ERKf5eGNzGAHvuGm1ZnB">
+              <span class="filter-label" data-page-node-id="TOQ2VfNJbVXCfSlE4KB3xH">团队：</span>
+              <select id="team-filter-team" class="team-select" data-page-node-id="v3COzn1SGw493xpllpX3EQ">
+                <option value="" data-page-node-id="UFb4Mf8kzG3vCPSk1as4eP">全部团队</option>
               </select>
-              <span class="filter-label">姓名：</span>
-              <input type="text" id="team-filter-member" class="member-input" placeholder="输入姓名筛选" onkeydown="if(event.key==='Enter') loadTeamQuestionStats()">
+              <span class="filter-label" data-page-node-id="RZtH99YxcczBBnTw1vCcoq">姓名：</span>
+              <input type="text" id="team-filter-member" class="member-input" placeholder="输入姓名筛选" onkeydown="if(event.key==='Enter') loadTeamQuestionStats()" data-page-node-id="PaDAjr6fxrALZpS6U8AIa0">
             </div>
           </div>
-          <div class="team-filter-row">
-            <div class="quick-group">
-              <button class="quick-btn active" data-days="30" onclick="setTeamDateRange(30)">近30天</button>
-              <button class="quick-btn" data-days="7" onclick="setTeamDateRange(7)">近7天</button>
-              <button class="quick-btn" data-days="90" onclick="setTeamDateRange(90)">近90天</button>
-              <button class="quick-btn" data-days="0" onclick="setTeamDateRange(0)">全部</button>
+          <div class="team-filter-row" data-page-node-id="JqsBO2xSxdD54DfuVpsbvH">
+            <div class="quick-group" data-page-node-id="XIxUWCCohDgqkKQmVEzaY4">
+              <button class="quick-btn active" data-days="30" onclick="setTeamDateRange(30)" data-page-node-id="fralew6Fl9Z2AaNKQsUTmI">近30天</button>
+              <button class="quick-btn" data-days="7" onclick="setTeamDateRange(7)" data-page-node-id="pvA7J8DO35w6Ru7thnId7f">近7天</button>
+              <button class="quick-btn" data-days="90" onclick="setTeamDateRange(90)" data-page-node-id="b50GBA0eoPH0t0FvH3K1h4">近90天</button>
+              <button class="quick-btn" data-days="0" onclick="setTeamDateRange(0)" data-page-node-id="fNLsRKctMHDsnnS9ZZgYtU">全部</button>
             </div>
-            <div class="action-group">
-              <button class="btn btn-primary btn-sm" onclick="loadTeamQuestionStats()">查询</button>
+            <div class="action-group" data-page-node-id="dRDGCi1BOJUllOy3iBhkKX">
+              <button class="btn btn-primary btn-sm" onclick="loadTeamQuestionStats()" data-page-node-id="DLenK2DHTlqOmBUHuIEWyY">查询</button>
             </div>
           </div>
         </div>
 
-        <div class="table-card team-table-card">
-          <div class="table-title">
-            <span><i class="ph ph-chart-bar"></i>团队提问统计（团队/成员/问题）</span>
-            <span class="count-badge" id="team-stats-count">0</span>
+        <div class="table-card team-table-card" data-page-node-id="GwYQAKXpH1GFs8NW1tmzC3">
+          <div class="table-title" data-page-node-id="CGxM1XNxezsOCYwBkQ7P4c">
+            <span data-page-node-id="t20OF2JZGoMgyir7MLXr39"><i class="ph ph-chart-bar" data-page-node-id="Xnyt65GE4RVpEiyHn05SBu"></i>团队提问统计（团队/成员/问题）</span>
+            <span class="count-badge" id="team-stats-count" data-page-node-id="yNx6yvilnxXadZ3txJKNE2">0</span>
           </div>
-          <div id="team-stats-loading" class="loading"><i class="ph ph-spinner"></i> 加载中...</div>
-          <div id="team-stats-wrap" style="display:none">
-            <table class="team-table">
-              <thead>
-                <tr><th>团队</th><th>姓名</th><th>问题</th><th>次数</th></tr>
+          <div id="team-stats-loading" class="loading" data-page-node-id="sfEremiiqCpkMEYv3hkMpz"><i class="ph ph-spinner" data-page-node-id="7O77Mj5p2yg5F1tovcUBxN"></i> 加载中...</div>
+          <div id="team-stats-wrap" style="display:none" data-page-node-id="aXBrTCMTssbhomCtOE7JJm">
+            <table class="team-table" data-page-node-id="BpWtvVJ56nNrBhyUdY4pZP">
+              <thead data-page-node-id="igN0SheqNsDoQwK7rGPynb">
+                <tr data-page-node-id="yFVl1JDzzxn8vgV2IthSpm"><th data-page-node-id="EWbWbrirHFSH7ybqtDaTg8">团队</th><th data-page-node-id="aAvCNTpS5mJo5f8wQSXDbN">姓名</th><th data-page-node-id="JQtHsA86VhDXBqAGla7VaB">问题</th><th data-page-node-id="Gj8sfuG8DXDZn1vgEm4O7R">次数</th></tr>
               </thead>
-              <tbody id="team-stats-body"></tbody>
+              <tbody id="team-stats-body" data-page-node-id="dA0SqLzWEPCvRP6Y3XPNuY"></tbody>
             </table>
           </div>
         </div>
       </div>
       <!-- ===== Page: Customer Leads ===== -->
-      <div id="page-leads" class="page-content">
-        <div class="admin-card"><div class="table-title"><span><i class="ph ph-chat-circle-text"></i>客户需求记录</span><span class="count-badge" id="lead-count">0</span></div><p style="font-size:12px;color:var(--slate-500);margin-bottom:12px">这里只记录客户联系方式和诉求，便于后续需要时查阅，不做复杂跟进流程。</p><div id="lead-list"></div></div>
+      <div id="page-leads" class="page-content" data-page-node-id="G7UEDtEOuzjaLq7bHixmis">
+        <div class="admin-card" data-page-node-id="8bDAlLnW1ymlPagnEDvEql"><div class="table-title" data-page-node-id="Oi4J6TvUqJ9FzbRGe7Y1E1"><span data-page-node-id="60dEL8KjdneiKZcqW3CpBu"><i class="ph ph-chat-circle-text" data-page-node-id="qDQaT5FOJ38uDUj8vLLXtR"></i>客户需求记录</span><span class="count-badge" id="lead-count" data-page-node-id="VHu0KCD3qdDXXk7ju5gWvM">0</span></div><p style="font-size:12px;color:var(--slate-500);margin-bottom:12px" data-page-node-id="DMvDSPSr7I2JQtMh9kQN2G">这里只记录客户联系方式和诉求，便于后续需要时查阅，不做复杂跟进流程。</p><div id="lead-list" data-page-node-id="i3PzeVmba7tLNfDW691hDs"></div></div>
+      </div>
+
+      <!-- ===== Page: Handoff (人工客服) ===== -->
+      <div id="page-handoff" class="page-content" data-page-node-id="uTWLOH1tBBRWLsMNDHiuls">
+        <div class="admin-card" data-page-node-id="ACRhUCUsI5b8xxqtPKKxIE">
+          <h3 data-page-node-id="XN91BhEmLMVZRYGeRr7vrS"><i class="ph ph-headset" data-page-node-id="RSYPJOAbU4b9o3jKDKRxwW"></i>转人工咨询设置</h3>
+          <p style="font-size:12px;color:var(--slate-500);margin:0 0 14px" data-page-node-id="BtVBROZf2XqhXwsRCFctIH">控制前台「AI 转人工营养咨询」的开关、专用 AI 与各环节文案。未开启时用户无法发起新的转人工请求。</p>
+          <div class="admin-row" data-page-node-id="JPTOWj2BPG0SaXsLwd0XQw">
+            <div class="field" data-page-node-id="yGGzwAJgMdR2hwuJBRFZ7Z">
+              <label data-page-node-id="iXcEfh4HsUuXbKcIjA5f9p">功能开关</label>
+              <div class="hint" style="display:flex;align-items:center;gap:8px" data-page-node-id="0nwmAzjXluHUrcxClMKRk0">
+                <input type="checkbox" id="handoff-enabled-input" style="width:auto" data-page-node-id="wajh6MsZR3TtNFR4erkPLB">
+                <span data-page-node-id="lioGqzMJwbtBmgiafs9jC0">启用在线营养咨询（灰度开关，关闭后前台不再触发转人工）</span>
+              </div>
+            </div>
+          </div>
+          <div class="admin-row" data-page-node-id="FCs0lD95Peca5WfyJlhgAj">
+            <div class="field" data-page-node-id="RLEHp5ycaTM5OYzmHGStgv">
+              <label data-page-node-id="hFxFFzS6NE52q6RHax8hfm">营养咨询 AI 智能体</label>
+              <select id="handoff-ai-agent-select" style="width:100%" data-page-node-id="08q5oerz16orBuvBY29Xei"></select>
+              <div class="hint" data-page-node-id="sAH3mvW8Xx1IMZahBJ0U6a">转人工前的 AI 咨询阶段统一使用该智能体，服务端强制生效；需选择已配置 Bot ID 的智能体。</div>
+            </div>
+          </div>
+          <div class="admin-row" data-page-node-id="Cjyde5iS3l0HabdcRbrr3r">
+            <div class="field" data-page-node-id="NF70B32PtJpqpNp6A1CdnC">
+              <label data-page-node-id="kIS2A87poZP6lHSmJJC4SS">入口按钮文案</label>
+              <input type="text" id="handoff-button-label-input" maxlength="40" placeholder="联系在线营养师" data-page-node-id="PE2BJtRiE0jgppNjVyPKam">
+              <div class="hint" data-page-node-id="DZtRtHNbZwqvuoZisqPRHw">前台转人工入口按钮的文字，默认「联系在线营养师」。</div>
+            </div>
+          </div>
+          <div class="admin-row" data-page-node-id="fSCRWO1CJWAAFFMwwMeKWU">
+            <div class="field" data-page-node-id="DtIhtDATWoQ2uww19NvGKU">
+              <label data-page-node-id="QeMrIMYPO4YBEqkT2wF4KV">排队提示文案</label>
+              <input type="text" id="handoff-queue-msg-input" maxlength="200" placeholder="客服忙线中，您前面还有 {position} 位" data-page-node-id="ydMeqjmb8kDpkDghLYxLcF">
+              <div class="hint" data-page-node-id="rYMWtsW61QSBixwEsZCoo6">可用变量 {position}（排队位次）；默认「客服忙线中，您前面还有 {position} 位」。</div>
+            </div>
+          </div>
+          <div class="admin-row" data-page-node-id="UB8Jom6ylxFPNy69gSY5dt">
+            <div class="field" data-page-node-id="UzGHdyIFzAPJWk76AMmHXs">
+              <label data-page-node-id="CEGmblCsFSt0TgOF5o4tzm">离线提示文案</label>
+              <input type="text" id="handoff-offline-msg-input" maxlength="200" placeholder="当前营养师暂未在线，已为您留言" data-page-node-id="ZsdjUhpjcFlBg5JzTAfiVH">
+              <div class="hint" data-page-node-id="rKAzOHmt5TwPL9TFHGnqn8">无坐席在线、自动转为留言时的提示语。</div>
+            </div>
+          </div>
+          <div class="admin-row" data-page-node-id="ZUViBE7RusE0MmrWtVH6jH">
+            <div class="field" data-page-node-id="W4DAt4uLVX6g9oL5gxvDJq">
+              <label data-page-node-id="Ytrr5QAqzeOALvRrTtO4Ab">接入欢迎文案</label>
+              <input type="text" id="handoff-welcome-msg-input" maxlength="200" placeholder="营养师已接入，本次咨询将由真人为您解答" data-page-node-id="QBAhxG0rp7sLxHMIbcabq4">
+              <div class="hint" data-page-node-id="5oh3ADQE9riD0tX5EMxwpk">客服确认接入后展示的欢迎语。</div>
+            </div>
+          </div>
+          <div class="admin-row" data-page-node-id="UZGQQGoUU5hUnRsQgwF43I">
+            <div class="field" data-page-node-id="4gZKgA2oliWarduSSUvipp">
+              <label data-page-node-id="ilHz4PMiq1rbKPw9vfDzfI">平均处理时长（秒）</label>
+              <input type="number" id="handoff-avg-handle-input" min="30" max="86400" step="10" data-page-node-id="8NisgFIWaK2F2et42IzSHT">
+              <div class="hint" data-page-node-id="jvDVLuupJOx6pNtPS5tlEE">用于计算排队预计等待时间（位次 × 该值），默认 180。</div>
+            </div>
+            <div class="field" data-page-node-id="udntDMuRO8EHV9Pyzk2003">
+              <label data-page-node-id="N5iG4DToGYwmigBYTQ7sDX">在线等待上限（秒）</label>
+              <input type="number" id="handoff-live-wait-input" min="30" max="3600" step="10" data-page-node-id="nXrRqdHDHl6BcyFkIF3WdP">
+              <div class="hint" data-page-node-id="pFsEVyvzh1dUVJ0GDAJHBu">等待真人超过该时长自动转为留言，默认 600（10 分钟）。</div>
+            </div>
+          </div>
+          <button class="btn btn-primary" onclick="saveHandoffSettings()" data-page-node-id="wcQCncgkpc2UscHey4imPh"><i class="ph ph-check" data-page-node-id="aN1aZjYvZAKr0PusrpTGqu"></i> 保存转人工设置</button>
+        </div>
+
+        <div class="admin-card" style="margin-top:16px" data-page-node-id="rLXLq6c3k0my047EfKFJ6l">
+          <h3 data-page-node-id="HNURlP7rjTWp0hlCViBssN"><i class="ph ph-users" data-page-node-id="Zj9JICWpgcULI8t3IWS3MD"></i>客服坐席名单</h3>
+          <p style="font-size:12px;color:var(--slate-500);margin:0 0 14px" data-page-node-id="zvPTOkyTdQtZVSxScKbtWr">白名单制：只有名单内的管理员可以在营养师工作台上线接单。移除坐席时，其排队中的会话会自动释放回队列。</p>
+          <div class="admin-row" style="align-items:flex-end" data-page-node-id="swDilLwxapcDTBnMW1el2g">
+            <div class="field" data-page-node-id="cfKVoKuHqne9C9usFb3jVP">
+              <label data-page-node-id="mNgTfNA8bX2Sl4khZkITT9">管理员用户名</label>
+              <input type="text" id="cs-agent-username-input" maxlength="40" placeholder="要添加的后台账号用户名" data-page-node-id="jMm0khHr3jZD35jtfz5rhg">
+            </div>
+            <div class="field" data-page-node-id="HIoiUsm2qFEAIjswuKAXnk">
+              <label data-page-node-id="MauqdB9ui53h4xbTlZ8LZJ">坐席显示名</label>
+              <input type="text" id="cs-agent-display-input" maxlength="40" placeholder="如：营养师小王（留空用用户名）" data-page-node-id="yjTnZKaA21rQz5QIm9haXa">
+            </div>
+            <div class="field" style="max-width:130px" data-page-node-id="nwbNeHQGJipbyj9LnP4K1o">
+              <label data-page-node-id="IoBh42Nu7I8Qrdcye3KlIF">并发上限</label>
+              <input type="number" id="cs-agent-max-input" min="1" max="10" value="3" data-page-node-id="ZuPe5vaSCnVUELNUQ0wBOI">
+            </div>
+            <button class="btn btn-primary" onclick="addCsAgent()" data-page-node-id="ad62pXXnN5s0RH2rnLUrjl"><i class="ph ph-plus" data-page-node-id="5PMEG3GKlRsi4CUsTUsg3y"></i> 添加坐席</button>
+          </div>
+          <div id="cs-agent-list" data-page-node-id="WKJYmVo6fpEfYponU6AXzZ"></div>
+        </div>
+
+        <div class="admin-card" style="margin-top:16px">
+          <h3><i class="ph ph-chat-dots"></i>快捷话术库</h3>
+          <p style="font-size:12px;color:var(--slate-500);margin:0 0 14px">坐席在营养师工作台回复区可一键填入常用话术，提升接待效率。禁用后坐席端不再展示。</p>
+          <div class="admin-row" style="align-items:flex-end">
+            <div class="field">
+              <label>话术标题</label>
+              <input type="text" id="quick-reply-title-input" maxlength="40" placeholder="如：确认收货地址">
+            </div>
+            <div class="field" style="max-width:120px">
+              <label>排序</label>
+              <input type="number" id="quick-reply-sort-input" value="0" min="0" step="1">
+            </div>
+          </div>
+          <div class="admin-row" style="align-items:flex-end">
+            <div class="field">
+              <label>话术内容</label>
+              <textarea id="quick-reply-content-input" rows="3" maxlength="1000" placeholder="点击后填入坐席输入框的完整话术"></textarea>
+            </div>
+          </div>
+          <div class="admin-row" style="align-items:center">
+            <label class="hint" style="display:flex;align-items:center;gap:8px;margin:0">
+              <input type="checkbox" id="quick-reply-enabled-input" checked style="width:auto"> 立即启用
+            </label>
+            <button class="btn btn-primary" id="quick-reply-submit-btn" onclick="addQuickReply()"><i class="ph ph-plus"></i> <span id="quick-reply-submit-text">添加话术</span></button>
+            <button class="btn btn-secondary" id="quick-reply-cancel-edit" onclick="cancelQuickReplyEdit()" hidden>取消编辑</button>
+          </div>
+          <div id="quick-reply-list" style="margin-top:14px"></div>
+        </div>
       </div>
     </main>
   </div>
 </div>
 
-<div class="toast" id="toast"></div>
+<div class="toast" id="toast" data-page-node-id="8Ztsru779Gl5WfFgBlEIOZ"></div>
 
-<script src="/js/admin.js?v=20260902-prodimg1"></script>
+<script src="/js/admin.js?v=20260903-handoff2"></script>
 <script src="/admin/cases.js?v=20260902-casebatch1"></script>
 </body>
 </html>

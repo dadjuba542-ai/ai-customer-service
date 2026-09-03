@@ -145,7 +145,8 @@ async function switchPage(page) {
     feedback: '评价看板',
     community: '问答管理',
     'team-stats': '团队提问统计',
-    leads: '客户需求'
+    leads: '客户需求',
+    handoff: '人工客服'
   };
   document.getElementById('page-title-text').textContent = titles[page] || '数据看板';
 
@@ -171,6 +172,7 @@ async function switchPage(page) {
   if (page === 'community') loadAdminQA();
   if (page === 'team-stats') loadTeamStatsPage();
   if (page === 'leads') loadAdminLeads();
+  if (page === 'handoff') loadHandoffPage();
 }
 
 // ===== Dashboard Data =====
@@ -1572,6 +1574,281 @@ async function loadAdminLeads() {
       <div style="font-size:12px;color:var(--slate-500)">联系方式：${esc([item.phone, item.wechat].filter(Boolean).join(' / '))} · 来源：${esc(item.query_type || item.agent_id || '-')}</div>
     </div>`).join('');
   } catch (err) { list.innerHTML = `<div class="empty-state">${esc(err.message || '加载失败')}</div>`; }
+}
+
+// ===== Handoff (人工客服) Page =====
+async function loadHandoffPage() {
+  await Promise.all([loadHandoffSettings(), loadCsAgents(), loadQuickReplies()]);
+}
+
+async function loadHandoffSettings() {
+  try {
+    const [settingsRes, agentsRes] = await Promise.all([
+      fetch(apiUrl('/api/admin/settings/handoff'), { headers: { Authorization: `Bearer ${getToken()}` } }),
+      fetch(apiUrl('/api/admin/agents'), { headers: { Authorization: `Bearer ${getToken()}` } }),
+    ]);
+    const settings = await settingsRes.json();
+    if (!settingsRes.ok) throw new Error(settings.error || '加载转人工设置失败');
+    const agentsData = await agentsRes.json().catch(() => ({ agents: [] }));
+
+    const select = document.getElementById('handoff-ai-agent-select');
+    const agents = agentsData.agents || [];
+    select.innerHTML = '<option value="">（请选择营养咨询 AI）</option>' + agents.map(item => {
+      const hasBot = !!(item.bot_id || '').trim();
+      return `<option value="${esc(item.agent_id)}" ${hasBot ? '' : 'disabled'}>${esc(item.name || item.agent_id)}${hasBot ? '' : '（未配置Bot）'}</option>`;
+    }).join('');
+
+    document.getElementById('handoff-enabled-input').checked = !!settings.enabled;
+    if (settings.ai_agent_id) select.value = settings.ai_agent_id;
+    document.getElementById('handoff-button-label-input').value = settings.button_label || '';
+    document.getElementById('handoff-queue-msg-input').value = settings.queue_msg || '';
+    document.getElementById('handoff-offline-msg-input').value = settings.offline_msg || '';
+    document.getElementById('handoff-welcome-msg-input').value = settings.welcome_msg || '';
+    document.getElementById('handoff-avg-handle-input').value = settings.avg_handle_sec || 180;
+    document.getElementById('handoff-live-wait-input').value = settings.live_wait_sec || 600;
+  } catch (err) {
+    showToast(err.message || '加载转人工设置失败', 'error');
+  }
+}
+
+async function saveHandoffSettings() {
+  const payload = {
+    enabled: document.getElementById('handoff-enabled-input').checked,
+    ai_agent_id: document.getElementById('handoff-ai-agent-select').value,
+    button_label: document.getElementById('handoff-button-label-input').value.trim(),
+    queue_msg: document.getElementById('handoff-queue-msg-input').value.trim(),
+    offline_msg: document.getElementById('handoff-offline-msg-input').value.trim(),
+    welcome_msg: document.getElementById('handoff-welcome-msg-input').value.trim(),
+    avg_handle_sec: Number(document.getElementById('handoff-avg-handle-input').value) || 180,
+    live_wait_sec: Number(document.getElementById('handoff-live-wait-input').value) || 600,
+  };
+  try {
+    const res = await fetch(apiUrl('/api/admin/settings/handoff'), {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${getToken()}` },
+      body: JSON.stringify(payload),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error || '保存失败');
+    showToast('转人工设置已保存', 'success');
+    loadHandoffSettings();
+  } catch (err) {
+    showToast(err.message || '保存失败', 'error');
+  }
+}
+
+async function loadCsAgents() {
+  const list = document.getElementById('cs-agent-list');
+  if (!list) return;
+  list.innerHTML = '<div class="loading"><i class="ph ph-spinner"></i> 加载中...</div>';
+  try {
+    const res = await fetch(apiUrl('/api/admin/handoff/agents'), { headers: { Authorization: `Bearer ${getToken()}` } });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || '加载坐席名单失败');
+    renderCsAgents(data.agents || []);
+  } catch (err) {
+    list.innerHTML = `<div class="empty-state">${esc(err.message || '加载失败')}</div>`;
+  }
+}
+
+function renderCsAgents(agents) {
+  const list = document.getElementById('cs-agent-list');
+  if (!agents.length) { list.innerHTML = '<div class="empty-state">暂无坐席，请先添加</div>'; return; }
+  list.innerHTML = agents.map(item => `
+    <div class="admin-card" style="margin:10px 0;border:1px solid var(--slate-200)">
+      <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap">
+        <div>
+          <strong>${esc(item.display_name || item.user_id)}</strong>
+          <span style="font-size:12px;color:var(--slate-400);margin-left:6px">${esc(item.username || item.user_id)}</span>
+          <span style="font-size:12px;margin-left:8px;color:${item.online ? 'var(--emerald)' : 'var(--slate-400)'}">${item.online ? '● 在线' : '○ 离线'}</span>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <label style="font-size:12px;color:var(--slate-500)">并发上限</label>
+          <input type="number" min="1" max="10" value="${item.max_concurrent || 3}" style="width:64px" onchange="updateCsAgentMax('${esc(item.user_id)}', this.value)">
+          <button class="btn btn-secondary btn-sm" onclick="removeCsAgent('${esc(item.user_id)}', '${esc(item.display_name || item.user_id)}')"><i class="ph ph-trash"></i> 移除</button>
+        </div>
+      </div>
+      <div style="font-size:12px;color:var(--slate-500);margin-top:6px">当前接待 ${item.current_load || 0} / ${item.max_concurrent || 3} · 最后心跳：${esc(item.last_seen_at || '从未上线')}</div>
+    </div>`).join('');
+}
+
+async function updateCsAgentMax(userId, value) {
+  const max = Math.max(1, Math.min(10, Number(value) || 3));
+  try {
+    const res = await fetch(apiUrl(`/api/admin/handoff/agents/${encodeURIComponent(userId)}`), {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${getToken()}` },
+      body: JSON.stringify({ max_concurrent: max }),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error || '更新失败');
+    showToast('坐席并发上限已更新', 'success');
+  } catch (err) {
+    showToast(err.message || '更新失败', 'error');
+    loadCsAgents();
+  }
+}
+
+async function addCsAgent() {
+  const username = document.getElementById('cs-agent-username-input').value.trim();
+  const display_name = document.getElementById('cs-agent-display-input').value.trim();
+  const max_concurrent = Number(document.getElementById('cs-agent-max-input').value) || 3;
+  if (!username) return showToast('请填写管理员用户名', 'error');
+  try {
+    const res = await fetch(apiUrl('/api/admin/handoff/agents'), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${getToken()}` },
+      body: JSON.stringify({ username, display_name, max_concurrent }),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error || '添加失败');
+    showToast('坐席已添加，对方可在工作台上线', 'success');
+    document.getElementById('cs-agent-username-input').value = '';
+    document.getElementById('cs-agent-display-input').value = '';
+    loadCsAgents();
+  } catch (err) {
+    showToast(err.message || '添加失败', 'error');
+  }
+}
+
+async function removeCsAgent(userId, displayName) {
+  if (!confirm(`确定移除坐席「${displayName}」？其排队中的会话会释放回队列。`)) return;
+  try {
+    const res = await fetch(apiUrl(`/api/admin/handoff/agents/${encodeURIComponent(userId)}`), {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${getToken()}` },
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error || '移除失败');
+    showToast(data.released_sessions ? `坐席已移除，${data.released_sessions} 个排队会话已释放` : '坐席已移除', 'success');
+    loadCsAgents();
+  } catch (err) {
+    showToast(err.message || '移除失败', 'error');
+  }
+}
+
+let quickRepliesCache = [];
+let editingQuickReplyId = null;
+
+async function loadQuickReplies() {
+  const list = document.getElementById('quick-reply-list');
+  if (!list) return;
+  list.innerHTML = '<div class="loading"><i class="ph ph-spinner"></i> 加载中...</div>';
+  try {
+    const res = await fetch(apiUrl('/api/admin/handoff/quick-replies'), { headers: { Authorization: `Bearer ${getToken()}` } });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || '加载话术库失败');
+    renderQuickReplies(data.quick_replies || []);
+  } catch (err) {
+    list.innerHTML = `<div class="empty-state">${esc(err.message || '加载失败')}</div>`;
+  }
+}
+
+function renderQuickReplies(items) {
+  quickRepliesCache = items || [];
+  const list = document.getElementById('quick-reply-list');
+  if (!items.length) { list.innerHTML = '<div class="empty-state">暂无话术，请先添加</div>'; return; }
+  list.innerHTML = items.map(item => `
+    <div class="admin-card" style="margin:10px 0;border:1px solid var(--slate-200)">
+      <div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start;flex-wrap:wrap">
+        <div style="flex:1;min-width:220px">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <strong>${esc(item.title)}</strong>
+            <span style="font-size:12px;color:${item.enabled ? 'var(--emerald)' : 'var(--slate-400)'}">${item.enabled ? '启用中' : '已禁用'}</span>
+            <span style="font-size:12px;color:var(--slate-400)">排序 ${item.sort_order}</span>
+          </div>
+          <div style="font-size:13px;color:var(--slate-600);margin-top:6px;white-space:pre-wrap;line-height:1.5">${esc(item.content)}</div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;flex-shrink:0">
+          <button class="btn btn-secondary btn-sm" onclick="editQuickReply(${item.id})"><i class="ph ph-pencil"></i> 编辑</button>
+          <button class="btn btn-secondary btn-sm" onclick="toggleQuickReply(${item.id}, ${item.enabled ? 0 : 1})">${item.enabled ? '禁用' : '启用'}</button>
+          <button class="btn btn-secondary btn-sm" onclick="deleteQuickReply(${item.id}, '${esc(item.title)}')"><i class="ph ph-trash"></i> 删除</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+async function addQuickReply() {
+  const title = document.getElementById('quick-reply-title-input').value.trim();
+  const content = document.getElementById('quick-reply-content-input').value.trim();
+  const sort_order = Number(document.getElementById('quick-reply-sort-input').value) || 0;
+  const enabled = document.getElementById('quick-reply-enabled-input').checked;
+  if (!title) return showToast('请填写话术标题', 'error');
+  if (!content) return showToast('请填写话术内容', 'error');
+  const url = editingQuickReplyId
+    ? apiUrl(`/api/admin/handoff/quick-replies/${editingQuickReplyId}`)
+    : apiUrl('/api/admin/handoff/quick-replies');
+  const method = editingQuickReplyId ? 'PUT' : 'POST';
+  try {
+    const res = await fetch(url, {
+      method,
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${getToken()}` },
+      body: JSON.stringify({ title, content, sort_order, enabled }),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error || '保存失败');
+    showToast(editingQuickReplyId ? '话术已更新' : '话术已添加', 'success');
+    cancelQuickReplyEdit();
+    loadQuickReplies();
+  } catch (err) {
+    showToast(err.message || '保存失败', 'error');
+  }
+}
+
+function editQuickReply(id) {
+  const item = quickRepliesCache.find((entry) => entry.id === id);
+  if (!item) return;
+  editingQuickReplyId = id;
+  document.getElementById('quick-reply-title-input').value = item.title;
+  document.getElementById('quick-reply-content-input').value = item.content;
+  document.getElementById('quick-reply-sort-input').value = item.sort_order;
+  document.getElementById('quick-reply-enabled-input').checked = !!item.enabled;
+  document.getElementById('quick-reply-submit-text').textContent = '保存修改';
+  document.getElementById('quick-reply-cancel-edit').hidden = false;
+  document.getElementById('quick-reply-title-input').focus();
+}
+
+function cancelQuickReplyEdit() {
+  editingQuickReplyId = null;
+  document.getElementById('quick-reply-title-input').value = '';
+  document.getElementById('quick-reply-content-input').value = '';
+  document.getElementById('quick-reply-sort-input').value = '0';
+  document.getElementById('quick-reply-enabled-input').checked = true;
+  document.getElementById('quick-reply-submit-text').textContent = '添加话术';
+  document.getElementById('quick-reply-cancel-edit').hidden = true;
+}
+
+async function toggleQuickReply(id, enabled) {
+  try {
+    const res = await fetch(apiUrl(`/api/admin/handoff/quick-replies/${id}`), {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${getToken()}` },
+      body: JSON.stringify({ enabled: !!enabled }),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error || '操作失败');
+    showToast(enabled ? '话术已启用' : '话术已禁用', 'success');
+    loadQuickReplies();
+  } catch (err) {
+    showToast(err.message || '操作失败', 'error');
+  }
+}
+
+async function deleteQuickReply(id, title) {
+  if (!confirm(`确定删除话术「${title}」？`)) return;
+  try {
+    const res = await fetch(apiUrl(`/api/admin/handoff/quick-replies/${id}`), {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${getToken()}` },
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error || '删除失败');
+    showToast('话术已删除', 'success');
+    if (editingQuickReplyId === id) cancelQuickReplyEdit();
+    loadQuickReplies();
+  } catch (err) {
+    showToast(err.message || '删除失败', 'error');
+  }
 }
 
 function showToast(msg, type) {

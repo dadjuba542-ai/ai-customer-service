@@ -36,6 +36,8 @@ class Config:
     HANDOFF_CLAIM_TIMEOUT_SEC = max(30, int(os.environ.get('HANDOFF_CLAIM_TIMEOUT_SEC', '60')))
     HANDOFF_LIVE_WAIT_SEC = max(30, int(os.environ.get('HANDOFF_LIVE_WAIT_SEC', '600')))
     HANDOFF_RECONCILE_INTERVAL_SECONDS = max(2, int(os.environ.get('HANDOFF_RECONCILE_INTERVAL_SECONDS', '5')))
+    # 留言模式空闲自动归档阈值（秒）：留言会话在最后一次消息后超过该时长无新消息即自动关闭
+    HANDOFF_MESSAGE_IDLE_SEC = max(60, int(os.environ.get('HANDOFF_MESSAGE_IDLE_SEC', str(24 * 3600))))
 
     # 聊天记录保留与启动清理
     CLEANUP_ON_STARTUP = os.environ.get('CLEANUP_ON_STARTUP', 'false').lower() == 'true'
