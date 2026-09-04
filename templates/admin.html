@@ -6,6 +6,7 @@
   <title>AI宝儿 · 管理后台</title>
   <link rel="stylesheet" href="/icon-fallback.css?v=20260714-admin-icons" data-page-node-id="wVSQAXqpJsDspYqM8fA6f7">
   <link rel="stylesheet" href="/css/admin.css?v=20260902-editorimg1" data-page-node-id="YgX9ukhM2eftjt5Z1gfe3J">
+  <link rel="stylesheet" href="/css/rich-text.css?v=20260904-richtext1">
 </head>
 <body data-page-node-id="iHP7hfTWdAOYNwDf9SQ2my">
 
@@ -171,10 +172,14 @@
             </div>
           </div>
           <div class="table-card" data-page-node-id="5TGwN4AliZ0pn6REUIOLIF">
-            <div class="table-title" data-page-node-id="P0FwApUNTjaNc7dZBbXhKH"><span data-page-node-id="7YAn4T4TEXM5jjcRMqTax5"><i class="ph ph-chat-circle-text" data-page-node-id="kXyucAmWuBpCbyS3LngVVz"></i>首页「不知道怎么问」</span></div>
-            <p style="font-size:12px;color:var(--slate-500);margin:0 0 10px" data-page-node-id="YIQ8mzVhhiw7qzcSOQc4ye">每行一条，最多6条；保存后刷新首页即可生效。</p>
-            <textarea id="example-questions-input" rows="6" placeholder="每行输入一个问题" style="width:100%;padding:10px 12px;font-size:13px;font-family:inherit;border:1.5px solid var(--slate-200);border-radius:8px;outline:none;resize:vertical"></textarea>
-            <button class="btn btn-primary btn-sm" onclick="saveExampleQuestions()" style="margin-top:8px" data-page-node-id="3BHGmXOwfQjuFyXAfrcocp"><i class="ph ph-check" data-page-node-id="3AUqpYr0SrVaaOnHqP2dWs"></i> 保存示例问题</button>
+            <div class="table-title" data-page-node-id="P0FwApUNTjaNc7dZBbXhKH"><span data-page-node-id="7YAn4T4TEXM5jjcRMqTax5"><i class="ph ph-chat-circle-text" data-page-node-id="kXyucAmWuBpCbyS3LngVVz"></i>首页「不知道怎么问」</span><span class="count-badge" id="example-count">0</span></div>
+            <p style="font-size:12px;color:var(--slate-500);margin:0 0 10px">每条问题绑定固定智能体，访客点击后直接由该智能体回答；单条不超过 80 字，最多 8 条。</p>
+            <div id="example-question-rows" style="display:flex;flex-direction:column;gap:8px;margin-bottom:10px"></div>
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+              <button class="btn btn-secondary btn-sm" onclick="addExampleQuestionRow()" data-page-node-id="ExQAddBtn"><i class="ph ph-plus"></i> 添加一条</button>
+              <button class="btn btn-primary btn-sm" onclick="saveExampleQuestions()" data-page-node-id="3BHGmXOwfQjuFyXAfrcocp"><i class="ph ph-check" data-page-node-id="3AUqpYr0SrVaaOnHqP2dWs"></i> 保存示例问题</button>
+              <span style="font-size:12px;color:var(--slate-400)" id="example-hint">保存后刷新首页生效</span>
+            </div>
           </div>
         </div>
       </div>
@@ -191,7 +196,7 @@
             <div class="field" data-page-node-id="PCwkTdIFxVVN8btzEyx9Zx"><label data-page-node-id="iMokocfsPxV82hvprlWF2d">摘要</label><textarea id="news-summary" rows="2" placeholder="简短摘要"></textarea></div>
           </div>
           <div class="admin-row" data-page-node-id="I5JnVQ7HITGShMJ9OqKvbr">
-            <div class="field" data-page-node-id="eKVrW6JR2h3PNAzltUIsXq"><label data-page-node-id="QXKQgIjA8H05hZJPlfJcw9">正文内容</label><div id="news-editor" style="height:280px;border:1.5px solid var(--slate-200);border-radius:8px" data-page-node-id="D7CqUfZ8uHDoOHtCxP4PIB"></div></div>
+            <div class="field" data-page-node-id="eKVrW6JR2h3PNAzltUIsXq"><label data-page-node-id="QXKQgIjA8H05hZJPlfJcw9">正文内容</label><div id="news-editor" style="height:340px;border:1.5px solid var(--slate-200);border-radius:8px" data-page-node-id="D7CqUfZ8uHDoOHtCxP4PIB"></div></div>
           </div>
           <div class="admin-row" data-page-node-id="xYXHmwPFEZhsUovHBbJ0Pf">
             <div class="field" data-page-node-id="fhxphy04idCvLtOK7FipUU">
@@ -251,7 +256,7 @@
             </div>
           </div>
           <div class="admin-row" data-page-node-id="OBg4k7NDPOkudAA1b5nh4l">
-            <div class="field" data-page-node-id="dAvFnvRvvpnNqltjZDIzgk"><label data-page-node-id="e2bEVwhpRoQst5rb9bBmVd">详情</label><div id="prod-editor" style="height:220px;border:1.5px solid var(--slate-200);border-radius:8px" data-page-node-id="W3Iq60JhJUfIOPy6ItYG0H"></div></div>
+            <div class="field" data-page-node-id="dAvFnvRvvpnNqltjZDIzgk"><label data-page-node-id="e2bEVwhpRoQst5rb9bBmVd">详情</label><div id="prod-editor" style="height:300px;border:1.5px solid var(--slate-200);border-radius:8px" data-page-node-id="W3Iq60JhJUfIOPy6ItYG0H"></div></div>
           </div>
           <div style="display:flex;gap:8px;margin-top:8px" data-page-node-id="LdtozJmhqNFj3RMzq95NyN">
             <button class="btn btn-secondary" onclick="hideProdForm()" data-page-node-id="NqkhhtzAwQwA6DLryFwHo1">取消</button>
@@ -782,7 +787,7 @@
 
 <div class="toast" id="toast" data-page-node-id="8Ztsru779Gl5WfFgBlEIOZ"></div>
 
-<script src="/js/admin.js?v=20260903-handoff2"></script>
+<script src="/js/admin.js?v=20260904-richtext1"></script>
 <script src="/admin/cases.js?v=20260902-casebatch1"></script>
 </body>
 </html>

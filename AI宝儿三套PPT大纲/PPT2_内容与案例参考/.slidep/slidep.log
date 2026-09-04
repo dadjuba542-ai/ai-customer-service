@@ -1,0 +1,626 @@
+=== boot pid=16942 ts=2026-08-31 16:21:31.383 cwd=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考 argv=/Users/test/.workbuddy/binaries/node/versions/22.22.2/bin/slidep-start --project PPT2_内容与案例参考 --filename AI宝儿_第2套_内容与案例参考.pptx --__daemon-child ===
+[2026-08-31 16:21:31.382] [INFO ] [pid=16942] [start] invoked pid=16942 cwd=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考 daemonChild=yes dev=no argv=[--project PPT2_内容与案例参考 --filename AI宝儿_第2套_内容与案例参考.pptx --__daemon-child]
+[2026-08-31 16:21:31.383] [INFO ] [pid=16942] [start] daemon child runWorker ppid=16940
+[2026-08-31 16:21:31.383] [INFO ] [pid=16942] [worker] start projectDir=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/PPT2_内容与案例参考 filename=AI宝儿_第2套_内容与案例参考.pptx version=5.4.4
+[2026-08-31 16:21:31.384] [INFO ] [pid=16942] [worker] init ok dirs=ready
+[2026-08-31 16:21:31.384] [INFO ] [pid=16942] [server-url] env TENCENT_DOCS_LOCAL_MCP = <unset>
+[2026-08-31 16:21:31.384] [INFO ] [pid=16942] [worker] openFile start
+[2026-08-31 16:21:31.384] [INFO ] [pid=16942] [open-file] copy blank.pptx start src=/Users/test/.workbuddy/binaries/node/versions/22.22.2/lib/node_modules/@tencent/slidep/dist/resources/pptx/blank.pptx dest=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/PPT2_内容与案例参考/AI宝儿_第2套_内容与案例参考.pptx
+[2026-08-31 16:21:31.385] [INFO ] [pid=16942] [open-file] copy blank.pptx ok dest=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/PPT2_内容与案例参考/AI宝儿_第2套_内容与案例参考.pptx ms=1
+[2026-08-31 16:21:31.405] [ERROR] [pid=16942] [http] editorStatus http 404 url=http://localhost:39099/api/editor/status body={"code":-1,"message":"no editor open for file_path=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/PPT2_内容与案例参考/AI宝儿_第2套_内容与案例参考.pptx"} ms=20
+[2026-08-31 16:21:31.405] [INFO ] [pid=16942] [open-file] open send url=http://localhost:39099/localapi/open filePath=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/PPT2_内容与案例参考/AI宝儿_第2套_内容与案例参考.pptx
+[2026-08-31 16:21:31.407] [INFO ] [pid=16942] [open-file] open ok fileId=DAE503D6 fileType=slide filePath=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/PPT2_内容与案例参考/AI宝儿_第2套_内容与案例参考.pptx ms=2
+[2026-08-31 16:21:31.408] [INFO ] [pid=16942] [worker] openFile ok fileId=DAE503D6 filePath=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/PPT2_内容与案例参考/AI宝儿_第2套_内容与案例参考.pptx
+[2026-08-31 16:21:31.408] [INFO ] [pid=16942] [worker] previewUrl=http://localhost:39099/static/slide/pc.html?local_edit=1&client=sdk_local&localFilePath=%2FUsers%2Ftest%2FDownloads%2Fai-customer-service%2FAI%E5%AE%9D%E5%84%BF%E4%B8%89%E5%A5%97PPT%E5%A4%A7%E7%BA%B2%2FPPT2_%E5%86%85%E5%AE%B9%E4%B8%8E%E6%A1%88%E4%BE%8B%E5%8F%82%E8%80%83%2FPPT2_%E5%86%85%E5%AE%B9%E4%B8%8E%E6%A1%88%E4%BE%8B%E5%8F%82%E8%80%83%2FAI%E5%AE%9D%E5%84%BF_%E7%AC%AC2%E5%A5%97_%E5%86%85%E5%AE%B9%E4%B8%8E%E6%A1%88%E4%BE%8B%E5%8F%82%E8%80%83.pptx
+[2026-08-31 16:21:31.408] [INFO ] [pid=16942] [state] state.json not found, creating path=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/PPT2_内容与案例参考/.slidep/state.json filePath=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/PPT2_内容与案例参考/AI宝儿_第2套_内容与案例参考.pptx
+[2026-08-31 16:21:31.408] [INFO ] [pid=16942] [worker] commitEndpoint=http://localhost:39099/localapi/commitrevision
+[2026-08-31 16:21:31.410] [INFO ] [pid=16942] [mcp] mcp:slide_get_info send url=http://localhost:39099/mcp args={"file_id":"DAE503D6-EDBC-49D0-BE8B-64971F4A9A90"}
+[2026-08-31 16:21:31.413] [INFO ] [pid=16942] [mcp] mcp:slide_get_info ok ms=1
+[2026-08-31 16:21:31.413] [INFO ] [pid=16942] [purge] purge start backendSlideCount=0
+[2026-08-31 16:21:31.413] [INFO ] [pid=16942] [purge] purge ok removed=0 ms=5
+[2026-08-31 16:21:31.413] [INFO ] [pid=16942] [worker] initial sync submitted pages=0
+[2026-08-31 16:21:31.413] [INFO ] [pid=16942] [sync] submit nextRound=1 dirty=<none> pendingDirtySize=0 merged=no
+[2026-08-31 16:21:31.413] [INFO ] [pid=16942] [sync] drain start round=1 pendingDirtySize=0
+[2026-08-31 16:21:31.413] [INFO ] [pid=16942] [sync] aligned round=1 attempt=1 size=0 desired=0 pendingDirtySize=0
+[2026-08-31 16:21:31.414] [INFO ] [pid=16942] [worker] ready fileId=DAE503D6 backendUrl=http://localhost:39099 initialPages=0 ms=31
+[2026-08-31 16:21:31.414] [INFO ] [pid=16942] [sync] reconcile ok round=1 attempt=1 ms=1
+[2026-08-31 16:21:31.414] [INFO ] [pid=16942] [sync] drain end round=1 reconciles=1 mergedSubmits=1 pendingDirtySize=0 ms=1
+[2026-08-31 16:21:31.415] [INFO ] [pid=16942] [watcher] ready dir=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/PPT2_内容与案例参考/slides
+[2026-08-31 16:23:03.425] [INFO ] [pid=16942] [worker] shutdown received sig=SIGTERM
+[2026-08-31 16:23:03.427] [INFO ] [pid=16942] [worker] shutdown ok sig=SIGTERM ms=2
+=== boot pid=16999 ts=2026-08-31 16:23:04.553 cwd=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考 argv=/Users/test/.workbuddy/binaries/node/versions/22.22.2/bin/slidep-start --project PPT2_内容与案例参考 --filename AI宝儿_第2套_内容与案例参考.pptx --__daemon-child ===
+[2026-08-31 16:23:04.553] [INFO ] [pid=16999] [start] invoked pid=16999 cwd=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考 daemonChild=yes dev=no argv=[--project PPT2_内容与案例参考 --filename AI宝儿_第2套_内容与案例参考.pptx --__daemon-child]
+[2026-08-31 16:23:04.554] [INFO ] [pid=16999] [start] daemon child runWorker ppid=16995
+[2026-08-31 16:23:04.554] [INFO ] [pid=16999] [worker] start projectDir=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/PPT2_内容与案例参考 filename=AI宝儿_第2套_内容与案例参考.pptx version=5.4.4
+[2026-08-31 16:23:04.554] [INFO ] [pid=16999] [worker] init ok dirs=ready
+[2026-08-31 16:23:04.554] [INFO ] [pid=16999] [server-url] env TENCENT_DOCS_LOCAL_MCP = <unset>
+[2026-08-31 16:23:04.554] [INFO ] [pid=16999] [worker] openFile start
+[2026-08-31 16:23:04.556] [INFO ] [pid=16999] [open-file] backup (copy) existing pptx dest=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/PPT2_内容与案例参考/.slidep/bak/AI宝儿_第2套_内容与案例参考.bak-20260831-162304.pptx
+[2026-08-31 16:23:04.556] [INFO ] [pid=16999] [open-file] reopen existing pptx (preserve birthtime) filePath=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/PPT2_内容与案例参考/AI宝儿_第2套_内容与案例参考.pptx
+[2026-08-31 16:23:04.576] [INFO ] [pid=16999] [open-file] open skip (already in pool) fileId=DAE503D6 filePath=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/PPT2_内容与案例参考/AI宝儿_第2套_内容与案例参考.pptx
+[2026-08-31 16:23:04.576] [INFO ] [pid=16999] [worker] openFile ok fileId=DAE503D6 filePath=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/PPT2_内容与案例参考/AI宝儿_第2套_内容与案例参考.pptx
+[2026-08-31 16:23:04.576] [INFO ] [pid=16999] [worker] previewUrl=http://localhost:39099/static/slide/pc.html?local_edit=1&client=sdk_local&localFilePath=%2FUsers%2Ftest%2FDownloads%2Fai-customer-service%2FAI%E5%AE%9D%E5%84%BF%E4%B8%89%E5%A5%97PPT%E5%A4%A7%E7%BA%B2%2FPPT2_%E5%86%85%E5%AE%B9%E4%B8%8E%E6%A1%88%E4%BE%8B%E5%8F%82%E8%80%83%2FPPT2_%E5%86%85%E5%AE%B9%E4%B8%8E%E6%A1%88%E4%BE%8B%E5%8F%82%E8%80%83%2FAI%E5%AE%9D%E5%84%BF_%E7%AC%AC2%E5%A5%97_%E5%86%85%E5%AE%B9%E4%B8%8E%E6%A1%88%E4%BE%8B%E5%8F%82%E8%80%83.pptx
+[2026-08-31 16:23:04.577] [INFO ] [pid=16999] [worker] commitEndpoint=http://localhost:39099/localapi/commitrevision
+[2026-08-31 16:23:04.579] [INFO ] [pid=16999] [mcp] mcp:slide_get_info send url=http://localhost:39099/mcp args={"file_id":"DAE503D6-EDBC-49D0-BE8B-64971F4A9A90"}
+[2026-08-31 16:23:04.580] [INFO ] [pid=16999] [mcp] mcp:slide_get_info ok ms=1
+[2026-08-31 16:23:04.580] [INFO ] [pid=16999] [purge] purge start backendSlideCount=0
+[2026-08-31 16:23:04.580] [INFO ] [pid=16999] [purge] purge ok removed=0 ms=3
+[2026-08-31 16:23:04.580] [INFO ] [pid=16999] [worker] initial sync submitted pages=0
+[2026-08-31 16:23:04.580] [INFO ] [pid=16999] [sync] submit nextRound=1 dirty=<none> pendingDirtySize=0 merged=no
+[2026-08-31 16:23:04.580] [INFO ] [pid=16999] [sync] drain start round=1 pendingDirtySize=0
+[2026-08-31 16:23:04.581] [INFO ] [pid=16999] [sync] aligned round=1 attempt=1 size=0 desired=0 pendingDirtySize=0
+[2026-08-31 16:23:04.581] [INFO ] [pid=16999] [worker] ready fileId=DAE503D6 backendUrl=http://localhost:39099 initialPages=0 ms=27
+[2026-08-31 16:23:04.581] [INFO ] [pid=16999] [sync] reconcile ok round=1 attempt=1 ms=1
+[2026-08-31 16:23:04.582] [INFO ] [pid=16999] [sync] drain end round=1 reconciles=1 mergedSubmits=1 pendingDirtySize=0 ms=2
+[2026-08-31 16:23:04.583] [INFO ] [pid=16999] [watcher] ready dir=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/PPT2_内容与案例参考/slides
+[2026-08-31 16:35:30.130] [INFO ] [pid=16999] [watcher] event=add file=slides/01.slide
+[2026-08-31 16:35:30.131] [INFO ] [pid=16999] [watcher] event=add file=slides/02.slide
+[2026-08-31 16:35:30.131] [INFO ] [pid=16999] [watcher] event=add file=slides/03.slide
+[2026-08-31 16:35:30.131] [INFO ] [pid=16999] [watcher] event=add file=slides/05.slide
+[2026-08-31 16:35:30.131] [INFO ] [pid=16999] [watcher] event=add file=slides/04.slide
+[2026-08-31 16:35:30.131] [INFO ] [pid=16999] [watcher] event=add file=slides/06.slide
+[2026-08-31 16:35:30.131] [INFO ] [pid=16999] [watcher] event=add file=slides/07.slide
+[2026-08-31 16:35:30.131] [INFO ] [pid=16999] [watcher] event=add file=slides/08.slide
+[2026-08-31 16:35:30.131] [INFO ] [pid=16999] [watcher] event=add file=slides/09.slide
+[2026-08-31 16:35:30.131] [INFO ] [pid=16999] [watcher] event=add file=slides/10.slide
+[2026-08-31 16:35:30.131] [INFO ] [pid=16999] [watcher] event=add file=slides/11.slide
+[2026-08-31 16:35:30.131] [INFO ] [pid=16999] [watcher] event=add file=slides/12.slide
+[2026-08-31 16:35:30.131] [INFO ] [pid=16999] [watcher] event=add file=slides/13.slide
+[2026-08-31 16:35:30.632] [INFO ] [pid=16999] [watcher] flush batch dirty=[01,02,03,05,04,06,07,08,09,10,11,12,13] size=13
+[2026-08-31 16:35:30.632] [INFO ] [pid=16999] [sync] submit nextRound=2 dirty=01,02,03,05,04,06,07,08,09,10,11,12,13 pendingDirtySize=13 merged=no
+[2026-08-31 16:35:30.632] [INFO ] [pid=16999] [sync] drain start round=2 pendingDirtySize=13
+[2026-08-31 16:35:30.632] [INFO ] [pid=16999] [sync] step=add round=2 attempt=1 pageId=01 index=0
+[2026-08-31 16:35:30.633] [INFO ] [pid=16999] [backend-ops] addSlideAt start pageId=01 index=0
+[2026-08-31 16:35:30.633] [INFO ] [pid=16999] [render] start pageId=01 file=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/PPT2_内容与案例参考/slides/01.slide
+[2026-08-31 16:35:30.987] [INFO ] [pid=16999] [render] ok pageId=01 slides=1 ms=354
+[2026-08-31 16:35:30.988] [INFO ] [pid=16999] [render] renderSlideData result.resources={
+  images: {
+    'rel:0193e8ar': {
+      id: 'rel:0193e8ar',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/.cache/media/images/c0b91a881aeff9660b798395f6820cde.svg'
+    },
+    'rel:017nk0h8': {
+      id: 'rel:017nk0h8',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/.cache/media/images/72476d89657bd76716b344bdab67a9e2.svg'
+    },
+    'rel:019bt6ih': {
+      id: 'rel:019bt6ih',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/.cache/media/images/416dd231ed1b13f76a1c4b1296f50962.svg'
+    }
+  },
+  videos: {},
+  audios: {},
+  fonts: {}
+}
+[2026-08-31 16:35:30.998] [INFO ] [pid=16999] [commit] commit send pageId=75f4be targetIndex=0 version=1 baseVersion=0 revisionBytes=17344
+[2026-08-31 16:35:31.010] [INFO ] [pid=16999] [commit] commit ok pageId=75f4be revisionId=813a72dc ms=11
+[2026-08-31 16:35:31.010] [ERROR] [pid=16999] [state] persist FAIL path=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/PPT2_内容与案例参考/.slidep/state.json commits=1 Error: ENOENT: no such file or directory, open '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/PPT2_内容与案例参考/.slidep/state.json.tmp'
+    at Object.openSync (node:fs:560:18)
+    at Object.writeFileSync (node:fs:2444:35)
+    at Object.L0e (/Users/test/.workbuddy/binaries/node/versions/22.22.2/lib/node_modules/@tencent/slidep/dist/slidep.js:57:1158)
+    at CC.persist (/Users/test/.workbuddy/binaries/node/versions/22.22.2/lib/node_modules/@tencent/slidep/dist/slidep.js:5974:5223)
+    at CC.recordCommit (/Users/test/.workbuddy/binaries/node/versions/22.22.2/lib/node_modules/@tencent/slidep/dist/slidep.js:5974:5609)
+    at mh.addSlideAt (/Users/test/.workbuddy/binaries/node/versions/22.22.2/lib/node_modules/@tencent/slidep/dist/slidep.js:5993:18803)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async L.reconcile (/Users/test/.workbuddy/binaries/node/versions/22.22.2/lib/node_modules/@tencent/slidep/dist/slidep.js:5993:24356)
+    at async L.drain (/Users/test/.workbuddy/binaries/node/versions/22.22.2/lib/node_modules/@tencent/slidep/dist/slidep.js:5993:21217)
+[2026-08-31 16:35:31.080] [WARN ] [pid=16999] [worker] reconcile failed (Error: ENOENT: no such file or directory, open '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/PPT2_内容与案例参考/.slidep/state.json.tmp'); trying soft recovery (purge backend + sync version, no editor restart)
+[2026-08-31 16:35:31.082] [INFO ] [pid=16999] [mcp] mcp:slide_get_info send url=http://localhost:39099/mcp args={"file_id":"DAE503D6-EDBC-49D0-BE8B-64971F4A9A90"}
+[2026-08-31 16:35:31.084] [INFO ] [pid=16999] [mcp] mcp:slide_get_info ok ms=1
+[2026-08-31 16:35:31.084] [INFO ] [pid=16999] [purge] purge start backendSlideCount=1
+[2026-08-31 16:35:31.086] [INFO ] [pid=16999] [mcp] mcp:slide_remove_slide send url=http://localhost:39099/mcp args={"file_id":"DAE503D6-EDBC-49D0-BE8B-64971F4A9A90","page_index":0}
+[2026-08-31 16:35:31.088] [INFO ] [pid=16999] [mcp] mcp:slide_remove_slide ok ms=2
+[2026-08-31 16:35:31.088] [INFO ] [pid=16999] [purge] purge ok removed=1 ms=8
+[2026-08-31 16:35:31.091] [INFO ] [pid=16999] [mcp] mcp:slide_get_info send url=http://localhost:39099/mcp args={"file_id":"DAE503D6-EDBC-49D0-BE8B-64971F4A9A90"}
+[2026-08-31 16:35:31.092] [INFO ] [pid=16999] [mcp] mcp:slide_get_info ok ms=1
+[2026-08-31 16:35:31.092] [INFO ] [pid=16999] [backend-ops] seedServerVersion from=1 to=2
+[2026-08-31 16:35:31.092] [INFO ] [pid=16999] [worker] recovery (soft) ok: purged=1 backendNow=0page(s) version=2, view reset; reconcile will redo full sync
+[2026-08-31 16:35:31.092] [INFO ] [pid=16999] [sync] reconcile FAIL but recovered via onReconcileFailure round=2 attempt=1 (recovery 1/2) ms=460; re-running reconcile
+[2026-08-31 16:35:31.092] [INFO ] [pid=16999] [sync] step=add round=2 attempt=2 pageId=01 index=0
+[2026-08-31 16:35:31.092] [INFO ] [pid=16999] [backend-ops] addSlideAt start pageId=01 index=0
+[2026-08-31 16:35:31.092] [INFO ] [pid=16999] [render] start pageId=01 file=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/PPT2_内容与案例参考/slides/01.slide
+[2026-08-31 16:35:31.136] [INFO ] [pid=16999] [render] ok pageId=01 slides=1 ms=44
+[2026-08-31 16:35:31.136] [INFO ] [pid=16999] [render] renderSlideData result.resources={
+  images: {
+    'rel:0193e8ar': {
+      id: 'rel:0193e8ar',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/.cache/media/images/c0b91a881aeff9660b798395f6820cde.svg'
+    },
+    'rel:017nk0h8': {
+      id: 'rel:017nk0h8',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/.cache/media/images/72476d89657bd76716b344bdab67a9e2.svg'
+    },
+    'rel:019bt6ih': {
+      id: 'rel:019bt6ih',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/.cache/media/images/416dd231ed1b13f76a1c4b1296f50962.svg'
+    }
+  },
+  videos: {},
+  audios: {},
+  fonts: {}
+}
+[2026-08-31 16:35:31.141] [INFO ] [pid=16999] [commit] commit send pageId=3bed1d targetIndex=0 version=2 baseVersion=2 revisionBytes=17340
+[2026-08-31 16:35:31.145] [INFO ] [pid=16999] [commit] commit ok pageId=3bed1d revisionId=7692230d ms=4
+[2026-08-31 16:35:31.145] [ERROR] [pid=16999] [state] persist FAIL path=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/PPT2_内容与案例参考/.slidep/state.json commits=1 Error: ENOENT: no such file or directory, open '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/PPT2_内容与案例参考/.slidep/state.json.tmp'
+    at Object.openSync (node:fs:560:18)
+    at Object.writeFileSync (node:fs:2444:35)
+    at Object.L0e (/Users/test/.workbuddy/binaries/node/versions/22.22.2/lib/node_modules/@tencent/slidep/dist/slidep.js:57:1158)
+    at CC.persist (/Users/test/.workbuddy/binaries/node/versions/22.22.2/lib/node_modules/@tencent/slidep/dist/slidep.js:5974:5223)
+    at CC.recordCommit (/Users/test/.workbuddy/binaries/node/versions/22.22.2/lib/node_modules/@tencent/slidep/dist/slidep.js:5974:5609)
+    at mh.addSlideAt (/Users/test/.workbuddy/binaries/node/versions/22.22.2/lib/node_modules/@tencent/slidep/dist/slidep.js:5993:18803)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async L.reconcile (/Users/test/.workbuddy/binaries/node/versions/22.22.2/lib/node_modules/@tencent/slidep/dist/slidep.js:5993:24356)
+    at async L.drain (/Users/test/.workbuddy/binaries/node/versions/22.22.2/lib/node_modules/@tencent/slidep/dist/slidep.js:5993:21217)
+[2026-08-31 16:35:31.145] [WARN ] [pid=16999] [worker] reconcile failed (Error: ENOENT: no such file or directory, open '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/PPT2_内容与案例参考/.slidep/state.json.tmp'); trying soft recovery (purge backend + sync version, no editor restart)
+[2026-08-31 16:35:31.146] [INFO ] [pid=16999] [mcp] mcp:slide_get_info send url=http://localhost:39099/mcp args={"file_id":"DAE503D6-EDBC-49D0-BE8B-64971F4A9A90"}
+[2026-08-31 16:35:31.147] [INFO ] [pid=16999] [mcp] mcp:slide_get_info ok ms=1
+[2026-08-31 16:35:31.147] [INFO ] [pid=16999] [purge] purge start backendSlideCount=1
+[2026-08-31 16:35:31.148] [INFO ] [pid=16999] [mcp] mcp:slide_remove_slide send url=http://localhost:39099/mcp args={"file_id":"DAE503D6-EDBC-49D0-BE8B-64971F4A9A90","page_index":0}
+[2026-08-31 16:35:31.149] [INFO ] [pid=16999] [mcp] mcp:slide_remove_slide ok ms=1
+[2026-08-31 16:35:31.149] [INFO ] [pid=16999] [purge] purge ok removed=1 ms=4
+[2026-08-31 16:35:31.150] [INFO ] [pid=16999] [mcp] mcp:slide_get_info send url=http://localhost:39099/mcp args={"file_id":"DAE503D6-EDBC-49D0-BE8B-64971F4A9A90"}
+[2026-08-31 16:35:31.150] [INFO ] [pid=16999] [mcp] mcp:slide_get_info ok ms=0
+[2026-08-31 16:35:31.151] [INFO ] [pid=16999] [backend-ops] seedServerVersion from=3 to=4
+[2026-08-31 16:35:31.151] [INFO ] [pid=16999] [worker] recovery (soft) ok: purged=1 backendNow=0page(s) version=4, view reset; reconcile will redo full sync
+[2026-08-31 16:35:31.151] [INFO ] [pid=16999] [sync] reconcile FAIL but recovered via onReconcileFailure round=2 attempt=2 (recovery 2/2) ms=59; re-running reconcile
+[2026-08-31 16:35:31.151] [INFO ] [pid=16999] [sync] step=add round=2 attempt=3 pageId=01 index=0
+[2026-08-31 16:35:31.151] [INFO ] [pid=16999] [backend-ops] addSlideAt start pageId=01 index=0
+[2026-08-31 16:35:31.151] [INFO ] [pid=16999] [render] start pageId=01 file=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/PPT2_内容与案例参考/slides/01.slide
+[2026-08-31 16:35:31.187] [INFO ] [pid=16999] [render] ok pageId=01 slides=1 ms=36
+[2026-08-31 16:35:31.187] [INFO ] [pid=16999] [render] renderSlideData result.resources={
+  images: {
+    'rel:0193e8ar': {
+      id: 'rel:0193e8ar',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/.cache/media/images/c0b91a881aeff9660b798395f6820cde.svg'
+    },
+    'rel:017nk0h8': {
+      id: 'rel:017nk0h8',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/.cache/media/images/72476d89657bd76716b344bdab67a9e2.svg'
+    },
+    'rel:019bt6ih': {
+      id: 'rel:019bt6ih',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/.cache/media/images/416dd231ed1b13f76a1c4b1296f50962.svg'
+    }
+  },
+  videos: {},
+  audios: {},
+  fonts: {}
+}
+[2026-08-31 16:35:31.191] [INFO ] [pid=16999] [commit] commit send pageId=139c04 targetIndex=0 version=3 baseVersion=4 revisionBytes=17336
+[2026-08-31 16:35:31.194] [INFO ] [pid=16999] [commit] commit ok pageId=139c04 revisionId=0a8550e6 ms=3
+[2026-08-31 16:35:31.194] [ERROR] [pid=16999] [state] persist FAIL path=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/PPT2_内容与案例参考/.slidep/state.json commits=1 Error: ENOENT: no such file or directory, open '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/PPT2_内容与案例参考/.slidep/state.json.tmp'
+    at Object.openSync (node:fs:560:18)
+    at Object.writeFileSync (node:fs:2444:35)
+    at Object.L0e (/Users/test/.workbuddy/binaries/node/versions/22.22.2/lib/node_modules/@tencent/slidep/dist/slidep.js:57:1158)
+    at CC.persist (/Users/test/.workbuddy/binaries/node/versions/22.22.2/lib/node_modules/@tencent/slidep/dist/slidep.js:5974:5223)
+    at CC.recordCommit (/Users/test/.workbuddy/binaries/node/versions/22.22.2/lib/node_modules/@tencent/slidep/dist/slidep.js:5974:5609)
+    at mh.addSlideAt (/Users/test/.workbuddy/binaries/node/versions/22.22.2/lib/node_modules/@tencent/slidep/dist/slidep.js:5993:18803)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async L.reconcile (/Users/test/.workbuddy/binaries/node/versions/22.22.2/lib/node_modules/@tencent/slidep/dist/slidep.js:5993:24356)
+    at async L.drain (/Users/test/.workbuddy/binaries/node/versions/22.22.2/lib/node_modules/@tencent/slidep/dist/slidep.js:5993:21217)
+[2026-08-31 16:35:31.194] [WARN ] [pid=16999] [sync] recovery budget exhausted round=2 (2/2); falling back to failure throttle
+[2026-08-31 16:35:31.194] [ERROR] [pid=16999] [sync] reconcile FAIL round=2 attempt=3 (1/5) ms=43 Error: ENOENT: no such file or directory, open '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/PPT2_内容与案例参考/.slidep/state.json.tmp'
+    at Object.openSync (node:fs:560:18)
+    at Object.writeFileSync (node:fs:2444:35)
+    at Object.L0e (/Users/test/.workbuddy/binaries/node/versions/22.22.2/lib/node_modules/@tencent/slidep/dist/slidep.js:57:1158)
+    at CC.persist (/Users/test/.workbuddy/binaries/node/versions/22.22.2/lib/node_modules/@tencent/slidep/dist/slidep.js:5974:5223)
+    at CC.recordCommit (/Users/test/.workbuddy/binaries/node/versions/22.22.2/lib/node_modules/@tencent/slidep/dist/slidep.js:5974:5609)
+    at mh.addSlideAt (/Users/test/.workbuddy/binaries/node/versions/22.22.2/lib/node_modules/@tencent/slidep/dist/slidep.js:5993:18803)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async L.reconcile (/Users/test/.workbuddy/binaries/node/versions/22.22.2/lib/node_modules/@tencent/slidep/dist/slidep.js:5993:24356)
+    at async L.drain (/Users/test/.workbuddy/binaries/node/versions/22.22.2/lib/node_modules/@tencent/slidep/dist/slidep.js:5993:21217)
+[2026-08-31 16:35:31.194] [INFO ] [pid=16999] [sync] backoff round=2 5000ms before next reconcile retry
+[2026-08-31 16:35:31.462] [INFO ] [pid=16999] [worker] shutdown received sig=SIGTERM
+[2026-08-31 16:35:31.463] [INFO ] [pid=16999] [worker] shutdown ok sig=SIGTERM ms=1
+=== boot pid=17534 ts=2026-08-31 16:35:32.478 cwd=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考 argv=/Users/test/.workbuddy/binaries/node/versions/22.22.2/bin/slidep-start --project PPT2_内容与案例参考 --filename AI宝儿_第2套_内容与案例参考.pptx --__daemon-child ===
+[2026-08-31 16:35:32.477] [INFO ] [pid=17534] [start] invoked pid=17534 cwd=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考 daemonChild=yes dev=no argv=[--project PPT2_内容与案例参考 --filename AI宝儿_第2套_内容与案例参考.pptx --__daemon-child]
+[2026-08-31 16:35:32.478] [INFO ] [pid=17534] [start] daemon child runWorker ppid=17529
+[2026-08-31 16:35:32.478] [INFO ] [pid=17534] [worker] start projectDir=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/PPT2_内容与案例参考 filename=AI宝儿_第2套_内容与案例参考.pptx version=5.4.4
+[2026-08-31 16:35:32.478] [INFO ] [pid=17534] [worker] init ok dirs=ready
+[2026-08-31 16:35:32.478] [INFO ] [pid=17534] [server-url] env TENCENT_DOCS_LOCAL_MCP = <unset>
+[2026-08-31 16:35:32.478] [INFO ] [pid=17534] [worker] openFile start
+[2026-08-31 16:35:32.479] [INFO ] [pid=17534] [open-file] copy blank.pptx start src=/Users/test/.workbuddy/binaries/node/versions/22.22.2/lib/node_modules/@tencent/slidep/dist/resources/pptx/blank.pptx dest=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/PPT2_内容与案例参考/AI宝儿_第2套_内容与案例参考.pptx
+[2026-08-31 16:35:32.480] [INFO ] [pid=17534] [open-file] copy blank.pptx ok dest=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/PPT2_内容与案例参考/AI宝儿_第2套_内容与案例参考.pptx ms=1
+[2026-08-31 16:35:32.500] [INFO ] [pid=17534] [open-file] open skip (already in pool) fileId=DAE503D6 filePath=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/PPT2_内容与案例参考/AI宝儿_第2套_内容与案例参考.pptx
+[2026-08-31 16:35:32.500] [INFO ] [pid=17534] [worker] openFile ok fileId=DAE503D6 filePath=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/PPT2_内容与案例参考/AI宝儿_第2套_内容与案例参考.pptx
+[2026-08-31 16:35:32.500] [INFO ] [pid=17534] [worker] previewUrl=http://localhost:39099/static/slide/pc.html?local_edit=1&client=sdk_local&localFilePath=%2FUsers%2Ftest%2FDownloads%2Fai-customer-service%2FAI%E5%AE%9D%E5%84%BF%E4%B8%89%E5%A5%97PPT%E5%A4%A7%E7%BA%B2%2FPPT2_%E5%86%85%E5%AE%B9%E4%B8%8E%E6%A1%88%E4%BE%8B%E5%8F%82%E8%80%83%2FPPT2_%E5%86%85%E5%AE%B9%E4%B8%8E%E6%A1%88%E4%BE%8B%E5%8F%82%E8%80%83%2FAI%E5%AE%9D%E5%84%BF_%E7%AC%AC2%E5%A5%97_%E5%86%85%E5%AE%B9%E4%B8%8E%E6%A1%88%E4%BE%8B%E5%8F%82%E8%80%83.pptx
+[2026-08-31 16:35:32.500] [INFO ] [pid=17534] [state] state.json not found, creating path=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/PPT2_内容与案例参考/.slidep/state.json filePath=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/PPT2_内容与案例参考/AI宝儿_第2套_内容与案例参考.pptx
+[2026-08-31 16:35:32.501] [INFO ] [pid=17534] [worker] commitEndpoint=http://localhost:39099/localapi/commitrevision
+[2026-08-31 16:35:32.503] [INFO ] [pid=17534] [mcp] mcp:slide_get_info send url=http://localhost:39099/mcp args={"file_id":"DAE503D6-EDBC-49D0-BE8B-64971F4A9A90"}
+[2026-08-31 16:35:32.505] [INFO ] [pid=17534] [mcp] mcp:slide_get_info ok ms=1
+[2026-08-31 16:35:32.505] [INFO ] [pid=17534] [purge] purge start backendSlideCount=1
+[2026-08-31 16:35:32.506] [INFO ] [pid=17534] [mcp] mcp:slide_remove_slide send url=http://localhost:39099/mcp args={"file_id":"DAE503D6-EDBC-49D0-BE8B-64971F4A9A90","page_index":0}
+[2026-08-31 16:35:32.508] [INFO ] [pid=17534] [mcp] mcp:slide_remove_slide ok ms=2
+[2026-08-31 16:35:32.508] [INFO ] [pid=17534] [purge] purge ok removed=1 ms=7
+[2026-08-31 16:35:32.509] [INFO ] [pid=17534] [worker] initial sync submitted pages=13
+[2026-08-31 16:35:32.509] [INFO ] [pid=17534] [sync] submit nextRound=1 dirty=<none> pendingDirtySize=0 merged=no
+[2026-08-31 16:35:32.509] [INFO ] [pid=17534] [sync] drain start round=1 pendingDirtySize=0
+[2026-08-31 16:35:32.509] [INFO ] [pid=17534] [sync] step=add round=1 attempt=1 pageId=01 index=0
+[2026-08-31 16:35:32.509] [INFO ] [pid=17534] [backend-ops] addSlideAt start pageId=01 index=0
+[2026-08-31 16:35:32.509] [INFO ] [pid=17534] [render] start pageId=01 file=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/PPT2_内容与案例参考/slides/01.slide
+[2026-08-31 16:35:32.514] [INFO ] [pid=17534] [worker] ready fileId=DAE503D6 backendUrl=http://localhost:39099 initialPages=13 ms=36
+[2026-08-31 16:35:32.701] [INFO ] [pid=17534] [watcher] ready dir=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/PPT2_内容与案例参考/slides
+[2026-08-31 16:35:32.756] [INFO ] [pid=17534] [render] ok pageId=01 slides=1 ms=247
+[2026-08-31 16:35:32.756] [INFO ] [pid=17534] [render] renderSlideData result.resources={
+  images: {
+    'rel:0193e8ar': {
+      id: 'rel:0193e8ar',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/.cache/media/images/c0b91a881aeff9660b798395f6820cde.svg'
+    },
+    'rel:017nk0h8': {
+      id: 'rel:017nk0h8',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/.cache/media/images/72476d89657bd76716b344bdab67a9e2.svg'
+    },
+    'rel:019bt6ih': {
+      id: 'rel:019bt6ih',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/.cache/media/images/416dd231ed1b13f76a1c4b1296f50962.svg'
+    }
+  },
+  videos: {},
+  audios: {},
+  fonts: {}
+}
+[2026-08-31 16:35:32.765] [INFO ] [pid=17534] [commit] commit send pageId=57ffaa targetIndex=0 version=1 baseVersion=0 revisionBytes=17344
+[2026-08-31 16:35:32.775] [ERROR] [pid=17534] [http] commit http 500 url=http://localhost:39099/localapi/commitrevision body={"error":"CommitRevision failed: [13006][13006]msg:page index out of range, mut_info:mutation info: type:3, page_id:57ffaa, page_type:1, index:3, shape_tree:d8dc97, related_layout_id:000008, related_master_id:, slide_master_theme_id:, notes_master_theme_id:,notes_slide_id: , other_msg:","ok":false} ms=10
+[2026-08-31 16:35:32.775] [ERROR] [pid=17534] [backend-ops] addSlideAt commit FAIL pageId=01 slideId=57ffaa index=0 version=1 baseVersion=0 ms=266
+[2026-08-31 16:35:32.775] [WARN ] [pid=17534] [worker] reconcile failed (H3: commit bad response: HTTP 500 body={"error":"CommitRevision failed: [13006][13006]msg:page index out of range, mut_info:mutation info: type:3, page_id:57ffaa, page_type:1, index:3, shape_tree:d8dc97, related_layout_id:000008, related_master_id:, slide_master_theme_id:, notes_master_theme_id:,notes_slide_id: , other_msg:","ok":false}); trying soft recovery (purge backend + sync version, no editor restart)
+[2026-08-31 16:35:32.776] [INFO ] [pid=17534] [mcp] mcp:slide_get_info send url=http://localhost:39099/mcp args={"file_id":"DAE503D6-EDBC-49D0-BE8B-64971F4A9A90"}
+[2026-08-31 16:35:32.778] [INFO ] [pid=17534] [mcp] mcp:slide_get_info ok ms=2
+[2026-08-31 16:35:32.778] [INFO ] [pid=17534] [purge] purge start backendSlideCount=0
+[2026-08-31 16:35:32.778] [INFO ] [pid=17534] [purge] purge ok removed=0 ms=3
+[2026-08-31 16:35:32.780] [INFO ] [pid=17534] [mcp] mcp:slide_get_info send url=http://localhost:39099/mcp args={"file_id":"DAE503D6-EDBC-49D0-BE8B-64971F4A9A90"}
+[2026-08-31 16:35:32.782] [INFO ] [pid=17534] [mcp] mcp:slide_get_info ok ms=1
+[2026-08-31 16:35:32.782] [INFO ] [pid=17534] [backend-ops] seedServerVersion from=0 to=6
+[2026-08-31 16:35:32.782] [INFO ] [pid=17534] [worker] recovery (soft) ok: purged=0 backendNow=0page(s) version=6, view reset; reconcile will redo full sync
+[2026-08-31 16:35:32.782] [INFO ] [pid=17534] [sync] reconcile FAIL but recovered via onReconcileFailure round=1 attempt=1 (recovery 1/2) ms=273; re-running reconcile
+[2026-08-31 16:35:32.782] [INFO ] [pid=17534] [sync] step=add round=1 attempt=2 pageId=01 index=0
+[2026-08-31 16:35:32.782] [INFO ] [pid=17534] [backend-ops] addSlideAt start pageId=01 index=0
+[2026-08-31 16:35:32.782] [INFO ] [pid=17534] [render] start pageId=01 file=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/PPT2_内容与案例参考/slides/01.slide
+[2026-08-31 16:35:32.818] [INFO ] [pid=17534] [render] ok pageId=01 slides=1 ms=36
+[2026-08-31 16:35:32.818] [INFO ] [pid=17534] [render] renderSlideData result.resources={
+  images: {
+    'rel:0193e8ar': {
+      id: 'rel:0193e8ar',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/.cache/media/images/c0b91a881aeff9660b798395f6820cde.svg'
+    },
+    'rel:017nk0h8': {
+      id: 'rel:017nk0h8',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/.cache/media/images/72476d89657bd76716b344bdab67a9e2.svg'
+    },
+    'rel:019bt6ih': {
+      id: 'rel:019bt6ih',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/.cache/media/images/416dd231ed1b13f76a1c4b1296f50962.svg'
+    }
+  },
+  videos: {},
+  audios: {},
+  fonts: {}
+}
+[2026-08-31 16:35:32.823] [INFO ] [pid=17534] [commit] commit send pageId=dba6d2 targetIndex=0 version=1 baseVersion=6 revisionBytes=17340
+[2026-08-31 16:35:32.826] [INFO ] [pid=17534] [commit] commit ok pageId=dba6d2 revisionId=d5d119d5 ms=2
+[2026-08-31 16:35:32.826] [INFO ] [pid=17534] [backend-ops] addSlideAt ok pageId=01 slideId=dba6d2 index=0 version=1 baseVersion=6 revisionId=d5d119d5 code=0 images=[local=3 remote=0 cached=0 failed=0] ms=44
+[2026-08-31 16:35:32.826] [INFO ] [pid=17534] [sync] step=add round=1 attempt=2 pageId=02 index=1
+[2026-08-31 16:35:32.826] [INFO ] [pid=17534] [backend-ops] addSlideAt start pageId=02 index=1
+[2026-08-31 16:35:32.826] [INFO ] [pid=17534] [render] start pageId=02 file=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/PPT2_内容与案例参考/slides/02.slide
+[2026-08-31 16:35:32.895] [INFO ] [pid=17534] [render] ok pageId=02 slides=1 ms=69
+[2026-08-31 16:35:32.895] [INFO ] [pid=17534] [render] renderSlideData result.resources={
+  images: {
+    'rel:01qpj2yk': {
+      id: 'rel:01qpj2yk',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/.cache/media/images/afa6b818e5925097fdfc2e2c70ab758b.svg'
+    },
+    'rel:0196wzih': {
+      id: 'rel:0196wzih',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/.cache/media/images/661e00349da05cf6ccc1111ace069481.svg'
+    },
+    'rel:00q7kpzw': {
+      id: 'rel:00q7kpzw',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/.cache/media/images/526226c269563ebcd708f4e452f543b6.svg'
+    }
+  },
+  videos: {},
+  audios: {},
+  fonts: {}
+}
+[2026-08-31 16:35:32.900] [INFO ] [pid=17534] [commit] commit send pageId=081f85 targetIndex=1 version=2 baseVersion=7 revisionBytes=21104
+[2026-08-31 16:35:32.904] [INFO ] [pid=17534] [commit] commit ok pageId=081f85 revisionId=499c9f2c ms=4
+[2026-08-31 16:35:32.904] [INFO ] [pid=17534] [backend-ops] addSlideAt ok pageId=02 slideId=081f85 index=1 version=2 baseVersion=7 revisionId=499c9f2c code=0 images=[local=3 remote=0 cached=0 failed=0] ms=78
+[2026-08-31 16:35:32.904] [INFO ] [pid=17534] [sync] step=add round=1 attempt=2 pageId=03 index=2
+[2026-08-31 16:35:32.904] [INFO ] [pid=17534] [backend-ops] addSlideAt start pageId=03 index=2
+[2026-08-31 16:35:32.904] [INFO ] [pid=17534] [render] start pageId=03 file=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/PPT2_内容与案例参考/slides/03.slide
+[2026-08-31 16:35:32.963] [INFO ] [pid=17534] [render] ok pageId=03 slides=1 ms=59
+[2026-08-31 16:35:32.963] [INFO ] [pid=17534] [render] renderSlideData result.resources={
+  images: {
+    'rel:015l6mrv': {
+      id: 'rel:015l6mrv',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/.cache/media/images/45349019a05c93e69f89d6549258b7f6.svg'
+    },
+    'rel:00qpg9in': {
+      id: 'rel:00qpg9in',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/.cache/media/images/d112f56cf5610c375cbc0d608012c054.svg'
+    },
+    'rel:011f8y1i': {
+      id: 'rel:011f8y1i',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/.cache/media/images/03d3ff7f4ba8fbd02931dd454abd31f9.svg'
+    },
+    'rel:00k8iynx': {
+      id: 'rel:00k8iynx',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/.cache/media/images/109a223101fa8d9e4ef2df29c3f0dcbe.svg'
+    },
+    'rel:00q7kpzw': {
+      id: 'rel:00q7kpzw',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/.cache/media/images/526226c269563ebcd708f4e452f543b6.svg'
+    }
+  },
+  videos: {},
+  audios: {},
+  fonts: {}
+}
+[2026-08-31 16:35:32.966] [INFO ] [pid=17534] [commit] commit send pageId=4fd4f3 targetIndex=2 version=3 baseVersion=8 revisionBytes=28756
+[2026-08-31 16:35:32.969] [INFO ] [pid=17534] [commit] commit ok pageId=4fd4f3 revisionId=69d61503 ms=3
+[2026-08-31 16:35:32.970] [INFO ] [pid=17534] [backend-ops] addSlideAt ok pageId=03 slideId=4fd4f3 index=2 version=3 baseVersion=8 revisionId=69d61503 code=0 images=[local=5 remote=0 cached=0 failed=0] ms=66
+[2026-08-31 16:35:32.970] [INFO ] [pid=17534] [sync] step=add round=1 attempt=2 pageId=04 index=3
+[2026-08-31 16:35:32.970] [INFO ] [pid=17534] [backend-ops] addSlideAt start pageId=04 index=3
+[2026-08-31 16:35:32.970] [INFO ] [pid=17534] [render] start pageId=04 file=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/PPT2_内容与案例参考/slides/04.slide
+[2026-08-31 16:35:33.010] [INFO ] [pid=17534] [render] ok pageId=04 slides=1 ms=40
+[2026-08-31 16:35:33.010] [INFO ] [pid=17534] [render] renderSlideData result.resources={
+  images: {
+    'rel:01rg7hki': {
+      id: 'rel:01rg7hki',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/.cache/media/images/be38896f66592e4d9e3b8a7111dddeb3.svg'
+    },
+    'rel:00q7kpzw': {
+      id: 'rel:00q7kpzw',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/.cache/media/images/526226c269563ebcd708f4e452f543b6.svg'
+    }
+  },
+  videos: {},
+  audios: {},
+  fonts: {}
+}
+[2026-08-31 16:35:33.013] [INFO ] [pid=17534] [commit] commit send pageId=14aab9 targetIndex=3 version=4 baseVersion=9 revisionBytes=26676
+[2026-08-31 16:35:33.016] [INFO ] [pid=17534] [commit] commit ok pageId=14aab9 revisionId=83c0ff2d ms=3
+[2026-08-31 16:35:33.016] [INFO ] [pid=17534] [backend-ops] addSlideAt ok pageId=04 slideId=14aab9 index=3 version=4 baseVersion=9 revisionId=83c0ff2d code=0 images=[local=2 remote=0 cached=0 failed=0] ms=46
+[2026-08-31 16:35:33.016] [INFO ] [pid=17534] [sync] step=add round=1 attempt=2 pageId=05 index=4
+[2026-08-31 16:35:33.016] [INFO ] [pid=17534] [backend-ops] addSlideAt start pageId=05 index=4
+[2026-08-31 16:35:33.016] [INFO ] [pid=17534] [render] start pageId=05 file=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/PPT2_内容与案例参考/slides/05.slide
+[2026-08-31 16:35:33.110] [INFO ] [pid=17534] [render] ok pageId=05 slides=1 ms=94
+[2026-08-31 16:35:33.110] [INFO ] [pid=17534] [render] renderSlideData result.resources={
+  images: {
+    'rel:0004zq8e': {
+      id: 'rel:0004zq8e',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/.cache/media/images/2e6c4b3c8cc78a7291c97411e2a94b8e.svg'
+    },
+    'rel:01ygi45b': {
+      id: 'rel:01ygi45b',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/.cache/media/images/9f1204f3b634ec52da222d4da3ce9dd4.svg'
+    },
+    'rel:00y4b5k2': {
+      id: 'rel:00y4b5k2',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/.cache/media/images/551a9a7181ab0aa425c2b334c2cdfb33.svg'
+    },
+    'rel:019sc4cf': {
+      id: 'rel:019sc4cf',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/.cache/media/images/0082438543176dd82cf16a3ef49e653a.svg'
+    },
+    'rel:00q7kpzw': {
+      id: 'rel:00q7kpzw',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/.cache/media/images/526226c269563ebcd708f4e452f543b6.svg'
+    }
+  },
+  videos: {},
+  audios: {},
+  fonts: {}
+}
+[2026-08-31 16:35:33.113] [INFO ] [pid=17534] [commit] commit send pageId=4287b1 targetIndex=4 version=5 baseVersion=10 revisionBytes=35764
+[2026-08-31 16:35:33.117] [INFO ] [pid=17534] [commit] commit ok pageId=4287b1 revisionId=4239948c ms=3
+[2026-08-31 16:35:33.118] [INFO ] [pid=17534] [backend-ops] addSlideAt ok pageId=05 slideId=4287b1 index=4 version=5 baseVersion=10 revisionId=4239948c code=0 images=[local=5 remote=0 cached=0 failed=0] ms=102
+[2026-08-31 16:35:33.118] [INFO ] [pid=17534] [sync] step=add round=1 attempt=2 pageId=06 index=5
+[2026-08-31 16:35:33.118] [INFO ] [pid=17534] [backend-ops] addSlideAt start pageId=06 index=5
+[2026-08-31 16:35:33.118] [INFO ] [pid=17534] [render] start pageId=06 file=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/PPT2_内容与案例参考/slides/06.slide
+[2026-08-31 16:35:33.173] [INFO ] [pid=17534] [render] ok pageId=06 slides=1 ms=55
+[2026-08-31 16:35:33.173] [INFO ] [pid=17534] [render] renderSlideData result.resources={
+  images: {
+    'rel:00q7kpzw': {
+      id: 'rel:00q7kpzw',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/.cache/media/images/526226c269563ebcd708f4e452f543b6.svg'
+    }
+  },
+  videos: {},
+  audios: {},
+  fonts: {}
+}
+[2026-08-31 16:35:33.178] [INFO ] [pid=17534] [commit] commit send pageId=0d15e9 targetIndex=5 version=6 baseVersion=11 revisionBytes=29428
+[2026-08-31 16:35:33.182] [INFO ] [pid=17534] [commit] commit ok pageId=0d15e9 revisionId=a8978aec ms=4
+[2026-08-31 16:35:33.182] [INFO ] [pid=17534] [backend-ops] addSlideAt ok pageId=06 slideId=0d15e9 index=5 version=6 baseVersion=11 revisionId=a8978aec code=0 images=[local=1 remote=0 cached=0 failed=0] ms=64
+[2026-08-31 16:35:33.183] [INFO ] [pid=17534] [sync] step=add round=1 attempt=2 pageId=07 index=6
+[2026-08-31 16:35:33.183] [INFO ] [pid=17534] [backend-ops] addSlideAt start pageId=07 index=6
+[2026-08-31 16:35:33.183] [INFO ] [pid=17534] [render] start pageId=07 file=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/PPT2_内容与案例参考/slides/07.slide
+[2026-08-31 16:35:33.227] [INFO ] [pid=17534] [render] ok pageId=07 slides=1 ms=44
+[2026-08-31 16:35:33.227] [INFO ] [pid=17534] [render] renderSlideData result.resources={
+  images: {
+    'rel:00aylmtf': {
+      id: 'rel:00aylmtf',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/.cache/media/images/b3f5ec015389ea9b06cd72b42cd63307.svg'
+    },
+    'rel:01ygi45b': {
+      id: 'rel:01ygi45b',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/.cache/media/images/9f1204f3b634ec52da222d4da3ce9dd4.svg'
+    },
+    'rel:00q7kpzw': {
+      id: 'rel:00q7kpzw',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/.cache/media/images/526226c269563ebcd708f4e452f543b6.svg'
+    }
+  },
+  videos: {},
+  audios: {},
+  fonts: {}
+}
+[2026-08-31 16:35:33.230] [INFO ] [pid=17534] [commit] commit send pageId=9418d9 targetIndex=6 version=7 baseVersion=12 revisionBytes=26764
+[2026-08-31 16:35:33.234] [INFO ] [pid=17534] [commit] commit ok pageId=9418d9 revisionId=ad3c97b8 ms=4
+[2026-08-31 16:35:33.234] [INFO ] [pid=17534] [backend-ops] addSlideAt ok pageId=07 slideId=9418d9 index=6 version=7 baseVersion=12 revisionId=ad3c97b8 code=0 images=[local=3 remote=0 cached=0 failed=0] ms=51
+[2026-08-31 16:35:33.234] [INFO ] [pid=17534] [sync] step=add round=1 attempt=2 pageId=08 index=7
+[2026-08-31 16:35:33.234] [INFO ] [pid=17534] [backend-ops] addSlideAt start pageId=08 index=7
+[2026-08-31 16:35:33.234] [INFO ] [pid=17534] [render] start pageId=08 file=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/PPT2_内容与案例参考/slides/08.slide
+[2026-08-31 16:35:33.281] [INFO ] [pid=17534] [render] ok pageId=08 slides=1 ms=47
+[2026-08-31 16:35:33.281] [INFO ] [pid=17534] [render] renderSlideData result.resources={
+  images: {
+    'rel:01fx18u1': {
+      id: 'rel:01fx18u1',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/.cache/media/images/c4e32273116d43528efe958357dd58f0.svg'
+    },
+    'rel:01ygi45b': {
+      id: 'rel:01ygi45b',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/.cache/media/images/9f1204f3b634ec52da222d4da3ce9dd4.svg'
+    },
+    'rel:00q7kpzw': {
+      id: 'rel:00q7kpzw',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/.cache/media/images/526226c269563ebcd708f4e452f543b6.svg'
+    }
+  },
+  videos: {},
+  audios: {},
+  fonts: {}
+}
+[2026-08-31 16:35:33.284] [INFO ] [pid=17534] [commit] commit send pageId=13cc3d targetIndex=7 version=8 baseVersion=13 revisionBytes=24852
+[2026-08-31 16:35:33.287] [INFO ] [pid=17534] [commit] commit ok pageId=13cc3d revisionId=a7ab0a7b ms=3
+[2026-08-31 16:35:33.288] [INFO ] [pid=17534] [backend-ops] addSlideAt ok pageId=08 slideId=13cc3d index=7 version=8 baseVersion=13 revisionId=a7ab0a7b code=0 images=[local=3 remote=0 cached=0 failed=0] ms=54
+[2026-08-31 16:35:33.288] [INFO ] [pid=17534] [sync] step=add round=1 attempt=2 pageId=09 index=8
+[2026-08-31 16:35:33.288] [INFO ] [pid=17534] [backend-ops] addSlideAt start pageId=09 index=8
+[2026-08-31 16:35:33.288] [INFO ] [pid=17534] [render] start pageId=09 file=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/PPT2_内容与案例参考/slides/09.slide
+[2026-08-31 16:35:33.347] [INFO ] [pid=17534] [render] ok pageId=09 slides=1 ms=59
+[2026-08-31 16:35:33.347] [INFO ] [pid=17534] [render] renderSlideData result.resources={
+  images: {
+    'rel:00a9vnxh': {
+      id: 'rel:00a9vnxh',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/.cache/media/images/c53a4a7bb778f72441d7e0530d77690b.svg'
+    },
+    'rel:01n0652z': {
+      id: 'rel:01n0652z',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/.cache/media/images/89a1bb2686ad49e2542d3bf7823ba525.svg'
+    },
+    'rel:012tls66': {
+      id: 'rel:012tls66',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/.cache/media/images/08036235a4d3d7ef3f65500801ab93d0.svg'
+    },
+    'rel:0133t8zb': {
+      id: 'rel:0133t8zb',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/.cache/media/images/86ccbaea15aef9b14be6357f85395147.svg'
+    },
+    'rel:00he6wq1': {
+      id: 'rel:00he6wq1',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/.cache/media/images/db3eb79332beda5f0993054ca29f9b93.svg'
+    },
+    'rel:00q7kpzw': {
+      id: 'rel:00q7kpzw',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/.cache/media/images/526226c269563ebcd708f4e452f543b6.svg'
+    }
+  },
+  videos: {},
+  audios: {},
+  fonts: {}
+}
+[2026-08-31 16:35:33.350] [INFO ] [pid=17534] [commit] commit send pageId=f4241a targetIndex=8 version=9 baseVersion=14 revisionBytes=37536
+[2026-08-31 16:35:33.355] [INFO ] [pid=17534] [commit] commit ok pageId=f4241a revisionId=a25b949f ms=5
+[2026-08-31 16:35:33.355] [INFO ] [pid=17534] [backend-ops] addSlideAt ok pageId=09 slideId=f4241a index=8 version=9 baseVersion=14 revisionId=a25b949f code=0 images=[local=6 remote=0 cached=0 failed=0] ms=67
+[2026-08-31 16:35:33.355] [INFO ] [pid=17534] [sync] step=add round=1 attempt=2 pageId=10 index=9
+[2026-08-31 16:35:33.356] [INFO ] [pid=17534] [backend-ops] addSlideAt start pageId=10 index=9
+[2026-08-31 16:35:33.356] [INFO ] [pid=17534] [render] start pageId=10 file=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/PPT2_内容与案例参考/slides/10.slide
+[2026-08-31 16:35:33.401] [INFO ] [pid=17534] [render] ok pageId=10 slides=1 ms=45
+[2026-08-31 16:35:33.401] [INFO ] [pid=17534] [render] renderSlideData result.resources={
+  images: {
+    'rel:00q7kpzw': {
+      id: 'rel:00q7kpzw',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/.cache/media/images/526226c269563ebcd708f4e452f543b6.svg'
+    }
+  },
+  videos: {},
+  audios: {},
+  fonts: {}
+}
+[2026-08-31 16:35:33.404] [INFO ] [pid=17534] [commit] commit send pageId=b6465a targetIndex=9 version=10 baseVersion=15 revisionBytes=25452
+[2026-08-31 16:35:33.407] [INFO ] [pid=17534] [commit] commit ok pageId=b6465a revisionId=f1474977 ms=3
+[2026-08-31 16:35:33.408] [INFO ] [pid=17534] [backend-ops] addSlideAt ok pageId=10 slideId=b6465a index=9 version=10 baseVersion=15 revisionId=f1474977 code=0 images=[local=1 remote=0 cached=0 failed=0] ms=52
+[2026-08-31 16:35:33.408] [INFO ] [pid=17534] [sync] step=add round=1 attempt=2 pageId=11 index=10
+[2026-08-31 16:35:33.408] [INFO ] [pid=17534] [backend-ops] addSlideAt start pageId=11 index=10
+[2026-08-31 16:35:33.408] [INFO ] [pid=17534] [render] start pageId=11 file=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/PPT2_内容与案例参考/slides/11.slide
+[2026-08-31 16:35:33.463] [INFO ] [pid=17534] [render] ok pageId=11 slides=1 ms=55
+[2026-08-31 16:35:33.463] [INFO ] [pid=17534] [render] renderSlideData result.resources={
+  images: {
+    'rel:00cq3b80': {
+      id: 'rel:00cq3b80',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/.cache/media/images/81a945806808e13592e416c448ccfef1.svg'
+    },
+    'rel:00q7kpzw': {
+      id: 'rel:00q7kpzw',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/.cache/media/images/526226c269563ebcd708f4e452f543b6.svg'
+    }
+  },
+  videos: {},
+  audios: {},
+  fonts: {}
+}
+[2026-08-31 16:35:33.468] [INFO ] [pid=17534] [commit] commit send pageId=5e8854 targetIndex=10 version=11 baseVersion=16 revisionBytes=25280
+[2026-08-31 16:35:33.474] [INFO ] [pid=17534] [commit] commit ok pageId=5e8854 revisionId=1250577b ms=4
+[2026-08-31 16:35:33.474] [INFO ] [pid=17534] [backend-ops] addSlideAt ok pageId=11 slideId=5e8854 index=10 version=11 baseVersion=16 revisionId=1250577b code=0 images=[local=2 remote=0 cached=0 failed=0] ms=66
+[2026-08-31 16:35:33.474] [INFO ] [pid=17534] [sync] step=add round=1 attempt=2 pageId=12 index=11
+[2026-08-31 16:35:33.474] [INFO ] [pid=17534] [backend-ops] addSlideAt start pageId=12 index=11
+[2026-08-31 16:35:33.474] [INFO ] [pid=17534] [render] start pageId=12 file=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/PPT2_内容与案例参考/slides/12.slide
+[2026-08-31 16:35:33.513] [INFO ] [pid=17534] [render] ok pageId=12 slides=1 ms=39
+[2026-08-31 16:35:33.513] [INFO ] [pid=17534] [render] renderSlideData result.resources={
+  images: {
+    'rel:009d7v13': {
+      id: 'rel:009d7v13',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/.cache/media/images/8c7415fed064064ac1ee83c8a862b18e.svg'
+    },
+    'rel:01k7uaan': {
+      id: 'rel:01k7uaan',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/.cache/media/images/27a4b7f8c4c5375af256423303fa39fb.svg'
+    },
+    'rel:00q7kpzw': {
+      id: 'rel:00q7kpzw',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/.cache/media/images/526226c269563ebcd708f4e452f543b6.svg'
+    }
+  },
+  videos: {},
+  audios: {},
+  fonts: {}
+}
+[2026-08-31 16:35:33.516] [INFO ] [pid=17534] [commit] commit send pageId=be5d7a targetIndex=11 version=12 baseVersion=17 revisionBytes=25616
+[2026-08-31 16:35:33.520] [INFO ] [pid=17534] [commit] commit ok pageId=be5d7a revisionId=69b4a8b4 ms=3
+[2026-08-31 16:35:33.520] [INFO ] [pid=17534] [backend-ops] addSlideAt ok pageId=12 slideId=be5d7a index=11 version=12 baseVersion=17 revisionId=69b4a8b4 code=0 images=[local=3 remote=0 cached=0 failed=0] ms=46
+[2026-08-31 16:35:33.520] [INFO ] [pid=17534] [sync] step=add round=1 attempt=2 pageId=13 index=12
+[2026-08-31 16:35:33.520] [INFO ] [pid=17534] [backend-ops] addSlideAt start pageId=13 index=12
+[2026-08-31 16:35:33.521] [INFO ] [pid=17534] [render] start pageId=13 file=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/PPT2_内容与案例参考/slides/13.slide
+[2026-08-31 16:35:33.573] [INFO ] [pid=17534] [render] ok pageId=13 slides=1 ms=52
+[2026-08-31 16:35:33.573] [INFO ] [pid=17534] [render] renderSlideData result.resources={
+  images: {
+    'rel:01hytqmf': {
+      id: 'rel:01hytqmf',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/.cache/media/images/93ba98e6725659df20e8b7cb227953b7.svg'
+    },
+    'rel:00rh5qy4': {
+      id: 'rel:00rh5qy4',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/.cache/media/images/71feebcf10882054f68dd4ded4d23607.svg'
+    },
+    'rel:00q7kpzw': {
+      id: 'rel:00q7kpzw',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/.cache/media/images/526226c269563ebcd708f4e452f543b6.svg'
+    }
+  },
+  videos: {},
+  audios: {},
+  fonts: {}
+}
+[2026-08-31 16:35:33.576] [INFO ] [pid=17534] [commit] commit send pageId=f6a531 targetIndex=12 version=13 baseVersion=18 revisionBytes=26440
+[2026-08-31 16:35:33.580] [INFO ] [pid=17534] [commit] commit ok pageId=f6a531 revisionId=fd9c56aa ms=4
+[2026-08-31 16:35:33.581] [INFO ] [pid=17534] [backend-ops] addSlideAt ok pageId=13 slideId=f6a531 index=12 version=13 baseVersion=18 revisionId=fd9c56aa code=0 images=[local=3 remote=0 cached=0 failed=0] ms=61
+[2026-08-31 16:35:33.581] [INFO ] [pid=17534] [sync] aligned round=1 attempt=2 size=13 desired=13 pendingDirtySize=0
+[2026-08-31 16:35:33.581] [INFO ] [pid=17534] [sync] reconcile ok round=1 attempt=2 ms=799
+[2026-08-31 16:35:33.581] [INFO ] [pid=17534] [backend-ops] save start file=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/PPT2_内容与案例参考/AI宝儿_第2套_内容与案例参考.pptx
+[2026-08-31 16:35:33.581] [INFO ] [pid=17534] [commit] save send filePath=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/PPT2_内容与案例参考/AI宝儿_第2套_内容与案例参考.pptx
+[2026-08-31 16:35:33.618] [INFO ] [pid=17534] [commit] save ok file_path=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/PPT2_内容与案例参考/AI宝儿_第2套_内容与案例参考.pptx ms=37
+[2026-08-31 16:35:33.618] [INFO ] [pid=17534] [backend-ops] save ok file_path=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/PPT2_内容与案例参考/AI宝儿_第2套_内容与案例参考.pptx ms=37
+[2026-08-31 16:35:33.618] [INFO ] [pid=17534] [sync] drain end round=1 reconciles=2 mergedSubmits=1 pendingDirtySize=0 ms=1109
+[2026-08-31 17:00:05.768] [INFO ] [pid=17534] [worker] shutdown received sig=SIGTERM
+[2026-08-31 17:00:05.788] [INFO ] [pid=17534] [worker] shutdown ok sig=SIGTERM ms=21

@@ -15,6 +15,7 @@ from models import (
     update_case_tag,
 )
 from routes.auth import admin_required
+from services.content_security import redact_customer_profile
 from services.case_recognition_service import (
     CaseRecognitionError,
     recognize_case_from_link,
@@ -22,6 +23,23 @@ from services.case_recognition_service import (
 )
 
 cases_bp = Blueprint('cases', __name__)
+
+
+def _redact_case_payload(payload):
+    """Strip identifying details before a case leaves the public API.
+
+    Admin routes return raw rows on purpose; this only guards the anonymous
+    list / detail / search endpoints.
+    """
+    if not payload:
+        return payload
+    items = [payload]
+    if isinstance(payload, dict) and isinstance(payload.get('items'), list):
+        items = payload['items']
+    for item in items:
+        if isinstance(item, dict) and 'customer_profile' in item:
+            item['customer_profile'] = redact_customer_profile(item['customer_profile'])
+    return payload
 
 
 @cases_bp.route('/cases', methods=['GET'])
@@ -32,7 +50,7 @@ def list_public_cases():
         tag_type=(request.args.get('tag_type') or '').strip(),
         tag=(request.args.get('tag') or '').strip(),
     )
-    return jsonify(data)
+    return jsonify(_redact_case_payload(data))
 
 
 @cases_bp.route('/cases/<int:case_id>', methods=['GET'])
@@ -40,7 +58,7 @@ def get_public_case(case_id):
     item = get_case_document_by_id(case_id, public_only=True)
     if not item:
         return jsonify({'error': 'Case not found'}), 404
-    return jsonify(item)
+    return jsonify(_redact_case_payload(item))
 
 
 @cases_bp.route('/cases/search', methods=['GET'])
@@ -50,7 +68,7 @@ def search_public_cases():
         page=request.args.get('page', 1, type=int),
         limit=request.args.get('limit', 10, type=int),
     )
-    return jsonify(data)
+    return jsonify(_redact_case_payload(data))
 
 
 @cases_bp.route('/admin/cases', methods=['GET'])

@@ -1,0 +1,88 @@
+<Slide style={{
+    background: '#F7FAF6',
+    paddingTop: 20, paddingBottom: 20, paddingLeft: 72, paddingRight: 72,
+}}>
+    <Box style={{ height: 100, justifyContent: 'center' }}>
+        <Text style={{ fontSize: 36, fontWeight: 'bold', color: '#1E3A32' }}>怎么看一个案例</Text>
+        <Box style={{ width: 56, height: 4, borderRadius: 2, background: '#1F7A5C', marginTop: 8 }} />
+    </Box>
+
+    <Box style={{ height: 528, flexDirection: 'row', gap: 28 }}>
+        <Box style={{ width: 310, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 180, fontWeight: 'bold', color: '#E08A3C', lineHeight: 1, letterSpacing: -4 }}>3</Text>
+            <Text style={{ fontSize: 30, fontWeight: 'bold', color: '#1E3A32', marginTop: 14 }}>个问题</Text>
+            <Text style={{ fontSize: 30, fontWeight: 'bold', color: '#1E3A32' }}>决定值不值得看</Text>
+            <Box style={{ width: 72, height: 5, borderRadius: 3, background: '#1F7A5C', marginTop: 20 }} />
+            <Text style={{ fontSize: 20, color: '#6B7C75', lineHeight: 1.6, marginTop: 18 }}>
+                三问有一问不过，<br />就别在这条上花五分钟
+            </Text>
+        </Box>
+
+        <Box style={{ flex: 1, gap: 16 }}>
+            <Box style={{
+                flexDirection: 'row', gap: 18, background: '#FFFFFF', borderRadius: 14, padding: 20,
+                height: 165, boxShadow: '0 4px 20px rgba(30,58,50,0.08)',
+            }}>
+                <Box style={{ width: 56, height: 56, borderRadius: 28, background: '#1F7A5C', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#FFFFFF' }}>1</Text>
+                </Box>
+                <Box style={{ flex: 1 }}>
+                    <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#1E3A32' }}>像不像我？</Text>
+                    <Text style={{ fontSize: 20, color: '#6B7C75', lineHeight: 1.55, marginTop: 8 }}>
+                        先看客户画像：年龄、身体状态、主要困扰，跟你要服务的客户是不是一类人。差得太远就直接跳过，硬套只会带偏。
+                    </Text>
+                    <Box style={{ marginTop: 'auto', background: 'rgba(31,122,92,0.08)', borderRadius: 12, padding: 11 }}>
+                        <Text style={{ fontSize: 18, color: '#1F7A5C' }}>判断标准：至少两条关键情况对得上</Text>
+                    </Box>
+                </Box>
+            </Box>
+
+            <Box style={{
+                flexDirection: 'row', gap: 18, background: '#FFFFFF', borderRadius: 14, padding: 20,
+                height: 165, boxShadow: '0 4px 20px rgba(30,58,50,0.08)',
+            }}>
+                <Box style={{ width: 56, height: 56, borderRadius: 28, background: '#1F7A5C', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#FFFFFF' }}>2</Text>
+                </Box>
+                <Box style={{ flex: 1 }}>
+                    <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#1E3A32' }}>场景对不对？</Text>
+                    <Text style={{ fontSize: 20, color: '#6B7C75', lineHeight: 1.55, marginTop: 8 }}>
+                        再看使用场景：他是长期调理还是短期突击？是自用还是给家人买？场景不同，同样的产品结论可以完全相反。
+                    </Text>
+                    <Box style={{ marginTop: 'auto', background: 'rgba(31,122,92,0.08)', borderRadius: 12, padding: 11 }}>
+                        <Text style={{ fontSize: 18, color: '#1F7A5C' }}>判断标准：他遇到的事，你客户也会遇到</Text>
+                    </Box>
+                </Box>
+            </Box>
+
+            <Box style={{
+                flexDirection: 'row', gap: 18, background: 'rgba(224,138,60,0.14)', borderRadius: 14, padding: 20,
+                height: 165,
+            }}>
+                <Box style={{ width: 56, height: 56, borderRadius: 28, background: '#E08A3C', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#FFFFFF' }}>3</Text>
+                </Box>
+                <Box style={{ flex: 1 }}>
+                    <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#1E3A32' }}>我最该抄哪一点？</Text>
+                    <Text style={{ fontSize: 20, color: '#6B7C75', lineHeight: 1.55, marginTop: 8 }}>
+                        最后只取一样：是抄他的沟通话术，还是抄方案的节奏安排，还是抄处理异议的说法？一次学一样，比通篇照搬有用。
+                    </Text>
+                    <Box style={{ marginTop: 'auto', background: '#FFFFFF', borderRadius: 12, padding: 11 }}>
+                        <Text style={{ fontSize: 18, color: '#C9742B' }}>判断标准：能用一句话说出你学到了什么</Text>
+                    </Box>
+                </Box>
+            </Box>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            <svg width="20" height="20" viewBox="0 0 24 24">
+                <path d="M12 21C12 21 4 17 4 10C4 6 7 3 12 3C17 3 20 6 20 10C20 17 12 21 12 21Z" fill="#1F7A5C" opacity="0.75" />
+                <path d="M12 21V6" stroke="#FFFFFF" strokeWidth="1.6" fill="none" />
+            </svg>
+            <Text style={{ fontSize: 14, color: '#6B7C75' }}>AI宝儿 · 五期上手课</Text>
+        </Box>
+        <Text style={{ fontSize: 14, color: '#6B7C75' }}>24 / 33</Text>
+    </Box>
+</Slide>

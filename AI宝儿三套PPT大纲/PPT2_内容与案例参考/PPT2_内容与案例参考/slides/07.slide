@@ -1,0 +1,99 @@
+<Slide style={{
+    background: '#F7FAF6',
+    paddingTop: 20, paddingBottom: 20, paddingLeft: 72, paddingRight: 72,
+}}>
+    <Box style={{ height: 100, justifyContent: 'center' }}>
+        <Text style={{ fontSize: 36, fontWeight: 'bold', color: '#1E3A32' }}>历史记录与热门问题</Text>
+        <Box style={{ width: 56, height: 4, borderRadius: 2, background: '#1F7A5C', marginTop: 8 }} />
+    </Box>
+
+    <Box style={{ height: 528, flexDirection: 'row', gap: 28 }}>
+        <Box style={{ width: 710 }}>
+            <Text style={{ fontSize: 26, fontWeight: 'bold', color: '#1F7A5C', lineHeight: 1.4 }}>
+                你问过的每一句，都还在这儿
+            </Text>
+
+            <Box style={{ marginTop: 18, background: '#FFFFFF', borderRadius: 14, padding: 20, boxShadow: '0 4px 20px rgba(30,58,50,0.08)' }}>
+                <svg width="670" height="200" viewBox="0 0 670 200">
+                    <path d="M28 24 V176" stroke="#A8D5BA" strokeWidth="4" />
+                    <circle cx="28" cy="38" r="12" fill="#1F7A5C" />
+                    <circle cx="28" cy="100" r="12" fill="#1F7A5C" />
+                    <circle cx="28" cy="162" r="12" fill="#E08A3C" />
+
+                    <rect x="60" y="14" width="600" height="48" rx="12" fill="rgba(168,213,186,0.32)" />
+                    <text x="80" y="44" fontSize="19" fill="#1E3A32" fontFamily="PingFang SC">今天 10:24　这个产品适合什么人？</text>
+
+                    <rect x="60" y="76" width="600" height="48" rx="12" fill="rgba(168,213,186,0.32)" />
+                    <text x="80" y="106" fontSize="19" fill="#1E3A32" fontFamily="PingFang SC">今天 14:02　连续吃多久算一个周期？</text>
+
+                    <rect x="60" y="138" width="600" height="48" rx="12" fill="rgba(224,138,60,0.16)" />
+                    <text x="80" y="168" fontSize="19" fill="#1E3A32" fontFamily="PingFang SC">昨天 16:40　有没有和我情况差不多的案例？</text>
+                </svg>
+            </Box>
+
+            <Box style={{ marginTop: 20, gap: 12 }}>
+                <Box style={{ flexDirection: 'row', gap: 12, alignItems: 'flex-start' }}>
+                    <FAIcon name='check-circle' style={{ fill: '#1F7A5C', width: 24, height: 24 }} />
+                    <Text style={{ fontSize: 20, color: '#1E3A32', lineHeight: 1.55, flex: 1 }}>
+                        历史按会话一组一组保存，点开就能接着上次的话题继续问，不用重新讲一遍背景。
+                    </Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', gap: 12, alignItems: 'flex-start' }}>
+                    <FAIcon name='check-circle' style={{ fill: '#1F7A5C', width: 24, height: 24 }} />
+                    <Text style={{ fontSize: 20, color: '#1E3A32', lineHeight: 1.55, flex: 1 }}>
+                        不想留的记录可以勾选后批量删除——删掉的是你这台设备上的显示，不会删掉别人的。
+                    </Text>
+                </Box>
+            </Box>
+        </Box>
+
+        <Box style={{ flex: 1 }}>
+            <Text style={{ fontSize: 26, fontWeight: 'bold', color: '#1F7A5C', lineHeight: 1.45 }}>
+                不知道问什么？<br />先看看别人在问什么
+            </Text>
+            <Text style={{ fontSize: 19, color: '#6B7C75', lineHeight: 1.6, marginTop: 16 }}>
+                热门问题来自真实的提问统计，是现成的选题库和话题库。
+            </Text>
+
+            <Box style={{ marginTop: 18, flexDirection: 'row', flexWrap: 'wrap', gap: 12 }}>
+                <Box style={{ background: '#FFFFFF', borderRadius: 16, padding: 12, boxShadow: '0 4px 20px rgba(30,58,50,0.08)' }}>
+                    <Text style={{ fontSize: 19, color: '#1E3A32' }}>适合什么人</Text>
+                </Box>
+                <Box style={{ background: '#FFFFFF', borderRadius: 16, padding: 12, boxShadow: '0 4px 20px rgba(30,58,50,0.08)' }}>
+                    <Text style={{ fontSize: 19, color: '#1E3A32' }}>多久见效</Text>
+                </Box>
+                <Box style={{ background: '#FFFFFF', borderRadius: 16, padding: 12, boxShadow: '0 4px 20px rgba(30,58,50,0.08)' }}>
+                    <Text style={{ fontSize: 19, color: '#1E3A32' }}>能不能长期吃</Text>
+                </Box>
+                <Box style={{ background: '#FFFFFF', borderRadius: 16, padding: 12, boxShadow: '0 4px 20px rgba(30,58,50,0.08)' }}>
+                    <Text style={{ fontSize: 19, color: '#1E3A32' }}>和别的怎么搭</Text>
+                </Box>
+                <Box style={{ background: 'rgba(224,138,60,0.16)', borderRadius: 16, padding: 12 }}>
+                    <Text style={{ fontSize: 19, color: '#C9742B' }}>空腹可以吗</Text>
+                </Box>
+                <Box style={{ background: 'rgba(224,138,60,0.16)', borderRadius: 16, padding: 12 }}>
+                    <Text style={{ fontSize: 19, color: '#C9742B' }}>出差怎么带</Text>
+                </Box>
+            </Box>
+
+            <Box style={{
+                marginTop: 'auto', background: 'rgba(31,122,92,0.08)', borderRadius: 14, padding: 18,
+            }}>
+                <Text style={{ fontSize: 20, color: '#1E3A32', lineHeight: 1.55, fontWeight: 'bold' }}>
+                    抄一句热门问题回来问，是新人最快熟悉产品的办法。
+                </Text>
+            </Box>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            <svg width="20" height="20" viewBox="0 0 24 24">
+                <path d="M12 21C12 21 4 17 4 10C4 6 7 3 12 3C17 3 20 6 20 10C20 17 12 21 12 21Z" fill="#1F7A5C" opacity="0.75" />
+                <path d="M12 21V6" stroke="#FFFFFF" strokeWidth="1.6" fill="none" />
+            </svg>
+            <Text style={{ fontSize: 14, color: '#6B7C75' }}>AI宝儿 · 内容与案例参考</Text>
+        </Box>
+        <Text style={{ fontSize: 14, color: '#6B7C75' }}>07 / 13</Text>
+    </Box>
+</Slide>

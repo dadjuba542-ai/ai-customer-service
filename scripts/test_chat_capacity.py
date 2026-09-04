@@ -39,6 +39,7 @@ def main():
 
         set_setting('default_team_names', '["测试团队"]')
         client = app.test_client()
+        client.environ_base["HTTP_USER_AGENT"] = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
         session = client.post('/api/auth/session', json={'team_name': '测试团队', 'member_name': '测试用户'})
         assert_true(session.status_code == 200, session.get_data(as_text=True))
         headers = {'Authorization': f"Bearer {session.get_json()['token']}"}

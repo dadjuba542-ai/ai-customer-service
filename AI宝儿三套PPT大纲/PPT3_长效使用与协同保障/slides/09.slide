@@ -1,0 +1,39 @@
+<Slide style={{
+    background: 'linear-gradient(135deg, #F2F8F4 0%, #DCEDE3 100%)',
+    padding: 0,
+}}>
+    <Box style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', height: 320 }}>
+        <svg width="1280" height="320" viewBox="0 0 1280 320">
+            <circle cx="640" cy="150" r="150" fill="#E08A3C" opacity="0.14" />
+            <path d="M0 210 C220 150 400 236 640 190 C880 144 1060 220 1280 176 L1280 320 L0 320 Z" fill="#A8D5BA" opacity="0.45" />
+            <path d="M0 258 C240 210 420 282 660 244 C900 206 1080 268 1280 236 L1280 320 L0 320 Z" fill="#1F7A5C" opacity="0.3" />
+            <path d="M0 296 C260 266 440 308 680 288 C920 268 1100 300 1280 286 L1280 320 L0 320 Z" fill="#1F7A5C" opacity="0.42" />
+        </svg>
+    </Box>
+
+    <Box style={{ width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center', paddingLeft: 72, paddingRight: 72 }}>
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 46, height: 46, borderRadius: 23, background: '#1F7A5C', justifyContent: 'center', alignItems: 'center' }}>
+                <svg width="26" height="26" viewBox="0 0 24 24">
+                    <path d="M12 21C12 21 4 17 4 10C4 6 7 3 12 3C17 3 20 6 20 10C20 17 12 21 12 21Z" fill="#FFFFFF" />
+                    <path d="M12 21V6" stroke="#1F7A5C" strokeWidth="1.8" fill="none" />
+                </svg>
+            </Box>
+            <Text style={{ fontSize: 22, color: '#1F7A5C', fontWeight: 'bold', letterSpacing: 1 }}>AI宝儿智能体</Text>
+        </Box>
+
+        <Text style={{ fontSize: 54, fontWeight: 'bold', color: '#1E3A32', lineHeight: 1.3, textAlign: 'center', marginTop: 40 }}>
+            先点进去，先问一句，<br />再继续追问。
+        </Text>
+
+        <Box style={{ width: 96, height: 5, borderRadius: 3, background: '#E08A3C', marginTop: 30 }} />
+
+        <Text style={{ fontSize: 26, color: '#1E3A32', lineHeight: 1.55, textAlign: 'center', marginTop: 28 }}>
+            AI宝儿不是让你学技术，<br />是帮你把想问的说清楚、把想说的写明白
+        </Text>
+
+        <Text style={{ fontSize: 20, color: '#6B7C75', lineHeight: 1.5, textAlign: 'center', marginTop: 26 }}>
+            不会没关系，慢慢问，就会越来越熟
+        </Text>
+    </Box>
+</Slide>

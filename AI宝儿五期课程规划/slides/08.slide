@@ -1,0 +1,85 @@
+<Slide style={{
+    background: '#F7FAF6',
+    paddingTop: 20, paddingBottom: 20, paddingLeft: 72, paddingRight: 72,
+}}>
+    <Box style={{ height: 100, justifyContent: 'center' }}>
+        <Text style={{ fontSize: 36, fontWeight: 'bold', color: '#1E3A32' }}>第 1 期实操：三个动作，二十分钟</Text>
+        <Box style={{ width: 56, height: 4, borderRadius: 2, background: '#1F7A5C', marginTop: 8 }} />
+    </Box>
+
+    <Box style={{ height: 528, flexDirection: 'row', gap: 20 }}>
+        <Box style={{
+            flex: 1, background: '#FFFFFF', borderRadius: 14, padding: 24,
+            boxShadow: '0 4px 20px rgba(30,58,50,0.08)',
+        }}>
+            <svg width="90" height="90" viewBox="0 0 90 90">
+                <rect x="8" y="18" width="74" height="54" rx="12" fill="#1F7A5C" />
+                <circle cx="30" cy="41" r="11" fill="#FFFFFF" opacity="0.9" />
+                <rect x="46" y="34" width="28" height="6" rx="3" fill="#FFFFFF" opacity="0.85" />
+                <rect x="46" y="46" width="20" height="6" rx="3" fill="#FFFFFF" opacity="0.55" />
+                <circle cx="66" cy="62" r="15" fill="#E08A3C" />
+                <path d="M59 62 L64 67 L73 57" stroke="#FFFFFF" strokeWidth="4" fill="none" strokeLinecap="round" />
+            </svg>
+            <Text style={{ fontSize: 26, fontWeight: 'bold', color: '#1E3A32', marginTop: 16 }}>动作一：填好身份</Text>
+            <Text style={{ fontSize: 19, color: '#6B7C75', lineHeight: 1.6, marginTop: 12 }}>
+                打开首页，从下拉列表里选你所在的团队，填上固定的名字，点确认进入。团队名单是公司统一配的，列表里没有就找管理员加，千万别随便选一个凑合——你问过的每一句都会记到这个团队名下，选错了统计数据就全乱了。填完之后顺手确认一下名字显示对不对。
+            </Text>
+            <Box style={{ marginTop: 'auto', background: 'rgba(224,138,60,0.14)', borderRadius: 12, padding: 14 }}>
+                <Text style={{ fontSize: 18, color: '#C9742B', fontWeight: 'bold' }}>验收：能说清自己属于哪个团队</Text>
+            </Box>
+        </Box>
+
+        <Box style={{
+            flex: 1, background: '#FFFFFF', borderRadius: 14, padding: 24,
+            boxShadow: '0 4px 20px rgba(30,58,50,0.08)',
+        }}>
+            <svg width="90" height="90" viewBox="0 0 90 90">
+                <rect x="6" y="10" width="34" height="34" rx="10" fill="rgba(168,213,186,0.5)" />
+                <rect x="50" y="10" width="34" height="34" rx="10" fill="rgba(168,213,186,0.5)" />
+                <rect x="6" y="48" width="34" height="34" rx="10" fill="#1F7A5C" />
+                <rect x="50" y="48" width="34" height="34" rx="10" fill="rgba(168,213,186,0.5)" />
+                <path d="M62 62 L62 40" stroke="#E08A3C" strokeWidth="5" strokeLinecap="round" />
+                <path d="M56 46 L62 38 L68 46" stroke="#E08A3C" strokeWidth="5" fill="none" strokeLinecap="round" />
+            </svg>
+            <Text style={{ fontSize: 26, fontWeight: 'bold', color: '#1E3A32', marginTop: 16 }}>动作二：点一次快捷入口</Text>
+            <Text style={{ fontSize: 19, color: '#6B7C75', lineHeight: 1.6, marginTop: 12 }}>
+                在首页找到「快捷功能」那四个按钮，挑一个和你今天工作最相关的点进去。想了解产品就点"产品资料查询"，想问用法就点"产品使用答疑"。进去之后先别急着关，看一眼输入框里有没有自动带出提示语——那是这一类问题的常用开头，照着改比从零想快得多。
+            </Text>
+            <Box style={{ marginTop: 'auto', background: 'rgba(224,138,60,0.14)', borderRadius: 12, padding: 14 }}>
+                <Text style={{ fontSize: 18, color: '#C9742B', fontWeight: 'bold' }}>验收：能说出四个入口各自的用处</Text>
+            </Box>
+        </Box>
+
+        <Box style={{
+            flex: 1, background: '#FFFFFF', borderRadius: 14, padding: 24,
+            boxShadow: '0 4px 20px rgba(30,58,50,0.08)',
+        }}>
+            <svg width="90" height="90" viewBox="0 0 90 90">
+                <path d="M10 16 H64 A10 10 0 0 1 74 26 V52 A10 10 0 0 1 64 62 H34 L18 76 V62 H10 Z" fill="#1F7A5C" />
+                <rect x="20" y="30" width="42" height="6" rx="3" fill="#FFFFFF" opacity="0.9" />
+                <rect x="20" y="44" width="28" height="6" rx="3" fill="#FFFFFF" opacity="0.55" />
+                <circle cx="66" cy="72" r="14" fill="#E08A3C" />
+                <path d="M60 72 L72 72" stroke="#FFFFFF" strokeWidth="4" strokeLinecap="round" />
+                <path d="M66 66 L66 78" stroke="#FFFFFF" strokeWidth="4" strokeLinecap="round" />
+            </svg>
+            <Text style={{ fontSize: 26, fontWeight: 'bold', color: '#1E3A32', marginTop: 16 }}>动作三：发出第一句话</Text>
+            <Text style={{ fontSize: 19, color: '#6B7C75', lineHeight: 1.6, marginTop: 12 }}>
+                在输入框里打一句最简单的话，比如"这个产品适合什么人"，然后发送。别追求一次问对，这次的目标只是观察：回答长什么样、分了几段、下面有没有冒出相关案例卡片。把这一句真正发出去，第 1 期就算过关了——剩下的都是熟练度问题。
+            </Text>
+            <Box style={{ marginTop: 'auto', background: 'rgba(224,138,60,0.14)', borderRadius: 12, padding: 14 }}>
+                <Text style={{ fontSize: 18, color: '#C9742B', fontWeight: 'bold' }}>验收：聊天区出现了一条完整回答</Text>
+            </Box>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            <svg width="20" height="20" viewBox="0 0 24 24">
+                <path d="M12 21C12 21 4 17 4 10C4 6 7 3 12 3C17 3 20 6 20 10C20 17 12 21 12 21Z" fill="#1F7A5C" opacity="0.75" />
+                <path d="M12 21V6" stroke="#FFFFFF" strokeWidth="1.6" fill="none" />
+            </svg>
+            <Text style={{ fontSize: 14, color: '#6B7C75' }}>AI宝儿 · 五期上手课</Text>
+        </Box>
+        <Text style={{ fontSize: 14, color: '#6B7C75' }}>08 / 33</Text>
+    </Box>
+</Slide>

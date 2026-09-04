@@ -121,3 +121,16 @@
 .example-question-list { display: flex; flex-wrap: wrap; gap: 8px; }
 .example-question-list button { border: 1px solid var(--slate-200); background: #fff; color: var(--slate-600); padding: 8px 11px; border-radius: 999px; font: inherit; font-size: 12px; cursor: pointer; }
 
+
+/* 默认问题绑定的智能体标识色点 */
+.example-question-list button { display: inline-flex; align-items: center; gap: 5px; }
+.preset-agent-dot {
+  display: inline-block;
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  flex: none;
+  opacity: .85;
+}
+.example-question-list button:hover .preset-agent-dot,
+.hot-tag:hover .preset-agent-dot { opacity: 1; box-shadow: 0 0 0 2px rgba(255,255,255,.6); }
+

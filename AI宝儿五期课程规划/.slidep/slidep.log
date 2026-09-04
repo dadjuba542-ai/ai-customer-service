@@ -1,0 +1,1434 @@
+=== boot pid=35774 ts=2026-08-31 13:17:02.723 cwd=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划 argv=/Users/test/.workbuddy/binaries/node/versions/22.22.2/bin/slidep-start --project /Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划 --filename AI宝儿五期上手课.pptx ===
+[2026-08-31 13:17:02.721] [INFO ] [pid=35774] [start] invoked pid=35774 cwd=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划 daemonChild=no dev=no argv=[--project /Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划 --filename AI宝儿五期上手课.pptx]
+[2026-08-31 13:17:02.723] [INFO ] [pid=35774] [start] spawning daemon projectDir=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划 filename=AI宝儿五期上手课.pptx
+[2026-08-31 13:17:02.726] [INFO ] [pid=35774] [start] daemon spawned childPid=35780; waiting started ipc
+=== boot pid=35780 ts=2026-08-31 13:17:03.628 cwd=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划 argv=/Users/test/.workbuddy/binaries/node/versions/22.22.2/bin/slidep-start --project /Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划 --filename AI宝儿五期上手课.pptx --__daemon-child ===
+[2026-08-31 13:17:03.627] [INFO ] [pid=35780] [start] invoked pid=35780 cwd=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划 daemonChild=yes dev=no argv=[--project /Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划 --filename AI宝儿五期上手课.pptx --__daemon-child]
+[2026-08-31 13:17:03.628] [INFO ] [pid=35780] [start] daemon child runWorker ppid=35774
+[2026-08-31 13:17:03.629] [INFO ] [pid=35780] [worker] start projectDir=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划 filename=AI宝儿五期上手课.pptx version=5.4.4
+[2026-08-31 13:17:03.629] [INFO ] [pid=35780] [worker] init ok dirs=ready
+[2026-08-31 13:17:03.629] [INFO ] [pid=35780] [server-url] env TENCENT_DOCS_LOCAL_MCP = http://127.0.0.1:39099/mcp
+[2026-08-31 13:17:03.629] [INFO ] [pid=35780] [worker] openFile start
+[2026-08-31 13:17:03.629] [INFO ] [pid=35780] [open-file] copy blank.pptx start src=/Users/test/.workbuddy/binaries/node/versions/22.22.2/lib/node_modules/@tencent/slidep/dist/resources/pptx/blank.pptx dest=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx
+[2026-08-31 13:17:03.630] [INFO ] [pid=35780] [open-file] copy blank.pptx ok dest=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx ms=1
+[2026-08-31 13:17:03.668] [ERROR] [pid=35780] [http] editorStatus http 404 url=http://127.0.0.1:39099/api/editor/status body={"code":-1,"message":"no editor open for file_path=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx"} ms=37
+[2026-08-31 13:17:03.668] [INFO ] [pid=35780] [open-file] open send url=http://127.0.0.1:39099/localapi/open filePath=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx
+[2026-08-31 13:17:03.675] [INFO ] [pid=35780] [open-file] open ok fileId=7AF1078A fileType=slide filePath=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx ms=7
+[2026-08-31 13:17:03.675] [INFO ] [pid=35780] [worker] openFile ok fileId=7AF1078A filePath=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx
+[2026-08-31 13:17:03.676] [INFO ] [pid=35780] [worker] previewUrl=http://127.0.0.1:39099/static/slide/pc.html?local_edit=1&client=sdk_local&localFilePath=%2FUsers%2Ftest%2FDownloads%2Fai-customer-service%2FAI%E5%AE%9D%E5%84%BF%E4%BA%94%E6%9C%9F%E8%AF%BE%E7%A8%8B%E8%A7%84%E5%88%92%2FAI%E5%AE%9D%E5%84%BF%E4%BA%94%E6%9C%9F%E4%B8%8A%E6%89%8B%E8%AF%BE.pptx
+[2026-08-31 13:17:03.676] [INFO ] [pid=35780] [state] state.json not found, creating path=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.slidep/state.json filePath=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx
+[2026-08-31 13:17:03.676] [INFO ] [pid=35780] [worker] commitEndpoint=http://127.0.0.1:39099/localapi/commitrevision
+[2026-08-31 13:17:03.678] [INFO ] [pid=35780] [mcp] mcp:slide_get_info send url=http://127.0.0.1:39099/mcp args={"file_id":"7AF1078A-5A26-4753-9B1A-56163B73DF1A"}
+[2026-08-31 13:17:03.682] [INFO ] [pid=35780] [mcp] mcp:slide_get_info ok ms=4
+[2026-08-31 13:17:03.682] [INFO ] [pid=35780] [purge] purge start backendSlideCount=0
+[2026-08-31 13:17:03.682] [INFO ] [pid=35780] [purge] purge ok removed=0 ms=6
+[2026-08-31 13:17:03.683] [INFO ] [pid=35780] [worker] initial sync submitted pages=0
+[2026-08-31 13:17:03.683] [INFO ] [pid=35780] [sync] submit nextRound=1 dirty=<none> pendingDirtySize=0 merged=no
+[2026-08-31 13:17:03.683] [INFO ] [pid=35780] [sync] drain start round=1 pendingDirtySize=0
+[2026-08-31 13:17:03.683] [INFO ] [pid=35780] [sync] aligned round=1 attempt=1 size=0 desired=0 pendingDirtySize=0
+[2026-08-31 13:17:03.684] [INFO ] [pid=35780] [worker] ready fileId=7AF1078A backendUrl=http://127.0.0.1:39099 initialPages=0 ms=55
+[2026-08-31 13:17:03.684] [INFO ] [pid=35780] [sync] reconcile ok round=1 attempt=1 ms=1
+[2026-08-31 13:17:03.684] [INFO ] [pid=35780] [sync] drain end round=1 reconciles=1 mergedSubmits=1 pendingDirtySize=0 ms=1
+[2026-08-31 13:17:03.684] [INFO ] [pid=35774] [start] daemon started childPid=35780 ms=961
+[2026-08-31 13:17:03.685] [INFO ] [pid=35780] [watcher] ready dir=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/slides
+[2026-08-31 13:18:52.255] [INFO ] [pid=35780] [watcher] event=add file=slides/01.slide
+[2026-08-31 13:18:52.758] [INFO ] [pid=35780] [watcher] flush batch dirty=[01] size=1
+[2026-08-31 13:18:52.758] [INFO ] [pid=35780] [sync] submit nextRound=2 dirty=01 pendingDirtySize=1 merged=no
+[2026-08-31 13:18:52.758] [INFO ] [pid=35780] [sync] drain start round=2 pendingDirtySize=1
+[2026-08-31 13:18:52.758] [INFO ] [pid=35780] [sync] step=add round=2 attempt=1 pageId=01 index=0
+[2026-08-31 13:18:52.758] [INFO ] [pid=35780] [backend-ops] addSlideAt start pageId=01 index=0
+[2026-08-31 13:18:52.759] [INFO ] [pid=35780] [render] start pageId=01 file=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/slides/01.slide
+[2026-08-31 13:18:53.216] [INFO ] [pid=35780] [render] ok pageId=01 slides=1 ms=457
+[2026-08-31 13:18:53.217] [INFO ] [pid=35780] [render] renderSlideData result.resources={
+  images: {
+    'rel:00xl3ihk': {
+      id: 'rel:00xl3ihk',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/c0b91a881aeff9660b798395f6820cde.svg'
+    },
+    'rel:01gg1afa': {
+      id: 'rel:01gg1afa',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/94a4c60ce74ccff930ff60a501fb9a1e.svg'
+    },
+    'rel:00xtigpa': {
+      id: 'rel:00xtigpa',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/416dd231ed1b13f76a1c4b1296f50962.svg'
+    }
+  },
+  videos: {},
+  audios: {},
+  fonts: {}
+}
+[2026-08-31 13:18:53.227] [INFO ] [pid=35780] [commit] commit send pageId=2bbbf9 targetIndex=0 version=1 baseVersion=0 revisionBytes=14156
+[2026-08-31 13:18:53.266] [INFO ] [pid=35780] [commit] commit ok pageId=2bbbf9 revisionId=744aecdb ms=38
+[2026-08-31 13:18:53.267] [INFO ] [pid=35780] [backend-ops] addSlideAt ok pageId=01 slideId=2bbbf9 index=0 version=1 baseVersion=0 revisionId=744aecdb code=0 images=[local=3 remote=0 cached=0 failed=0] ms=509
+[2026-08-31 13:18:53.268] [INFO ] [pid=35780] [sync] aligned round=2 attempt=1 size=1 desired=1 pendingDirtySize=0
+[2026-08-31 13:18:53.268] [INFO ] [pid=35780] [sync] reconcile ok round=2 attempt=1 ms=510
+[2026-08-31 13:18:53.268] [INFO ] [pid=35780] [backend-ops] save start file=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx
+[2026-08-31 13:18:53.269] [INFO ] [pid=35780] [commit] save send filePath=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx
+[2026-08-31 13:18:53.309] [INFO ] [pid=35780] [commit] save ok file_path=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx ms=39
+[2026-08-31 13:18:53.309] [INFO ] [pid=35780] [backend-ops] save ok file_path=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx ms=41
+[2026-08-31 13:18:53.309] [INFO ] [pid=35780] [sync] drain end round=2 reconciles=1 mergedSubmits=1 pendingDirtySize=0 ms=551
+[2026-08-31 13:19:21.355] [INFO ] [pid=35780] [watcher] event=add file=slides/02.slide
+[2026-08-31 13:19:21.858] [INFO ] [pid=35780] [watcher] flush batch dirty=[02] size=1
+[2026-08-31 13:19:21.859] [INFO ] [pid=35780] [sync] submit nextRound=3 dirty=02 pendingDirtySize=1 merged=no
+[2026-08-31 13:19:21.859] [INFO ] [pid=35780] [sync] drain start round=3 pendingDirtySize=1
+[2026-08-31 13:19:21.866] [INFO ] [pid=35780] [sync] step=add round=3 attempt=1 pageId=02 index=1
+[2026-08-31 13:19:21.866] [INFO ] [pid=35780] [backend-ops] addSlideAt start pageId=02 index=1
+[2026-08-31 13:19:21.867] [INFO ] [pid=35780] [render] start pageId=02 file=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/slides/02.slide
+[2026-08-31 13:19:22.050] [INFO ] [pid=35780] [render] ok pageId=02 slides=1 ms=183
+[2026-08-31 13:19:22.050] [INFO ] [pid=35780] [render] renderSlideData result.resources={
+  images: {
+    'rel:00epa06p': {
+      id: 'rel:00epa06p',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/526226c269563ebcd708f4e452f543b6.svg'
+    }
+  },
+  videos: {},
+  audios: {},
+  fonts: {}
+}
+[2026-08-31 13:19:22.059] [INFO ] [pid=35780] [commit] commit send pageId=41c207 targetIndex=1 version=2 baseVersion=1 revisionBytes=26756
+[2026-08-31 13:19:22.095] [INFO ] [pid=35780] [commit] commit ok pageId=41c207 revisionId=e3b0d974 ms=35
+[2026-08-31 13:19:22.095] [INFO ] [pid=35780] [backend-ops] addSlideAt ok pageId=02 slideId=41c207 index=1 version=2 baseVersion=1 revisionId=e3b0d974 code=0 images=[local=1 remote=0 cached=0 failed=0] ms=229
+[2026-08-31 13:19:22.095] [INFO ] [pid=35780] [sync] aligned round=3 attempt=1 size=2 desired=2 pendingDirtySize=0
+[2026-08-31 13:19:22.095] [INFO ] [pid=35780] [sync] reconcile ok round=3 attempt=1 ms=236
+[2026-08-31 13:19:22.095] [INFO ] [pid=35780] [backend-ops] save start file=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx
+[2026-08-31 13:19:22.095] [INFO ] [pid=35780] [commit] save send filePath=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx
+[2026-08-31 13:19:22.138] [INFO ] [pid=35780] [commit] save ok file_path=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx ms=42
+[2026-08-31 13:19:22.138] [INFO ] [pid=35780] [backend-ops] save ok file_path=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx ms=43
+[2026-08-31 13:19:22.138] [INFO ] [pid=35780] [sync] drain end round=3 reconciles=1 mergedSubmits=1 pendingDirtySize=0 ms=279
+[2026-08-31 13:19:37.306] [INFO ] [pid=35780] [watcher] event=add file=slides/03.slide
+[2026-08-31 13:19:37.807] [INFO ] [pid=35780] [watcher] flush batch dirty=[03] size=1
+[2026-08-31 13:19:37.808] [INFO ] [pid=35780] [sync] submit nextRound=4 dirty=03 pendingDirtySize=1 merged=no
+[2026-08-31 13:19:37.809] [INFO ] [pid=35780] [sync] drain start round=4 pendingDirtySize=1
+[2026-08-31 13:19:37.809] [INFO ] [pid=35780] [sync] step=add round=4 attempt=1 pageId=03 index=2
+[2026-08-31 13:19:37.809] [INFO ] [pid=35780] [backend-ops] addSlideAt start pageId=03 index=2
+[2026-08-31 13:19:37.810] [INFO ] [pid=35780] [render] start pageId=03 file=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/slides/03.slide
+[2026-08-31 13:19:37.884] [INFO ] [pid=35780] [render] ok pageId=03 slides=1 ms=74
+[2026-08-31 13:19:37.884] [INFO ] [pid=35780] [render] renderSlideData result.resources={
+  images: {
+    'rel:00v5lj3d': {
+      id: 'rel:00v5lj3d',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/95c52d4cb68508ea219036ff7b56b380.svg'
+    }
+  },
+  videos: {},
+  audios: {},
+  fonts: {}
+}
+[2026-08-31 13:19:37.889] [INFO ] [pid=35780] [commit] commit send pageId=e61fe6 targetIndex=2 version=3 baseVersion=2 revisionBytes=7364
+[2026-08-31 13:19:37.896] [INFO ] [pid=35780] [commit] commit ok pageId=e61fe6 revisionId=998756a5 ms=7
+[2026-08-31 13:19:37.897] [INFO ] [pid=35780] [backend-ops] addSlideAt ok pageId=03 slideId=e61fe6 index=2 version=3 baseVersion=2 revisionId=998756a5 code=0 images=[local=1 remote=0 cached=0 failed=0] ms=88
+[2026-08-31 13:19:37.897] [INFO ] [pid=35780] [sync] aligned round=4 attempt=1 size=3 desired=3 pendingDirtySize=0
+[2026-08-31 13:19:37.897] [INFO ] [pid=35780] [sync] reconcile ok round=4 attempt=1 ms=88
+[2026-08-31 13:19:37.897] [INFO ] [pid=35780] [backend-ops] save start file=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx
+[2026-08-31 13:19:37.897] [INFO ] [pid=35780] [commit] save send filePath=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx
+[2026-08-31 13:19:37.916] [INFO ] [pid=35780] [commit] save ok file_path=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx ms=19
+[2026-08-31 13:19:37.916] [INFO ] [pid=35780] [backend-ops] save ok file_path=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx ms=19
+[2026-08-31 13:19:37.916] [INFO ] [pid=35780] [sync] drain end round=4 reconciles=1 mergedSubmits=1 pendingDirtySize=0 ms=107
+[2026-08-31 13:20:15.553] [INFO ] [pid=35780] [watcher] event=add file=slides/04.slide
+[2026-08-31 13:20:16.056] [INFO ] [pid=35780] [watcher] flush batch dirty=[04] size=1
+[2026-08-31 13:20:16.057] [INFO ] [pid=35780] [sync] submit nextRound=5 dirty=04 pendingDirtySize=1 merged=no
+[2026-08-31 13:20:16.057] [INFO ] [pid=35780] [sync] drain start round=5 pendingDirtySize=1
+[2026-08-31 13:20:16.058] [INFO ] [pid=35780] [sync] step=add round=5 attempt=1 pageId=04 index=3
+[2026-08-31 13:20:16.058] [INFO ] [pid=35780] [backend-ops] addSlideAt start pageId=04 index=3
+[2026-08-31 13:20:16.059] [INFO ] [pid=35780] [render] start pageId=04 file=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/slides/04.slide
+[2026-08-31 13:20:16.166] [INFO ] [pid=35780] [render] ok pageId=04 slides=1 ms=107
+[2026-08-31 13:20:16.166] [INFO ] [pid=35780] [render] renderSlideData result.resources={
+  images: {
+    'rel:01mg5shc': {
+      id: 'rel:01mg5shc',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/c8c480d1c5afdbbb07e1db198e38aab0.svg'
+    },
+    'rel:00m9mrm1': {
+      id: 'rel:00m9mrm1',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/3acd78213a0012818a25495373e2be11.svg'
+    },
+    'rel:01f78d5d': {
+      id: 'rel:01f78d5d',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/afa6b818e5925097fdfc2e2c70ab758b.svg'
+    },
+    'rel:01hkfbbd': {
+      id: 'rel:01hkfbbd',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/b5da375bfbd10108e6b32276e9ec7d32.svg'
+    },
+    'rel:00epa06p': {
+      id: 'rel:00epa06p',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/526226c269563ebcd708f4e452f543b6.svg'
+    }
+  },
+  videos: {},
+  audios: {},
+  fonts: {}
+}
+[2026-08-31 13:20:16.172] [INFO ] [pid=35780] [commit] commit send pageId=9b99a8 targetIndex=3 version=4 baseVersion=3 revisionBytes=26944
+[2026-08-31 13:20:16.186] [INFO ] [pid=35780] [commit] commit ok pageId=9b99a8 revisionId=e984171f ms=14
+[2026-08-31 13:20:16.186] [INFO ] [pid=35780] [backend-ops] addSlideAt ok pageId=04 slideId=9b99a8 index=3 version=4 baseVersion=3 revisionId=e984171f code=0 images=[local=5 remote=0 cached=0 failed=0] ms=128
+[2026-08-31 13:20:16.186] [INFO ] [pid=35780] [sync] aligned round=5 attempt=1 size=4 desired=4 pendingDirtySize=0
+[2026-08-31 13:20:16.187] [INFO ] [pid=35780] [sync] reconcile ok round=5 attempt=1 ms=130
+[2026-08-31 13:20:16.187] [INFO ] [pid=35780] [backend-ops] save start file=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx
+[2026-08-31 13:20:16.187] [INFO ] [pid=35780] [commit] save send filePath=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx
+[2026-08-31 13:20:16.207] [INFO ] [pid=35780] [commit] save ok file_path=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx ms=19
+[2026-08-31 13:20:16.207] [INFO ] [pid=35780] [backend-ops] save ok file_path=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx ms=20
+[2026-08-31 13:20:16.207] [INFO ] [pid=35780] [sync] drain end round=5 reconciles=1 mergedSubmits=1 pendingDirtySize=0 ms=150
+=== boot pid=35921 ts=2026-08-31 13:20:25.073 cwd=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划 argv=/Users/test/.workbuddy/binaries/node/versions/22.22.2/bin/slidep-validate --all --project /Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划 ===
+[2026-08-31 13:20:25.070] [INFO ] [pid=35921] [validate] --all mode: found 4 files in /Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/slides
+[2026-08-31 13:20:25.073] [INFO ] [pid=35921] [validate] batch start files=4 checkOverflow=true
+[2026-08-31 13:20:25.572] [INFO ] [pid=35921] [validate] batch done total=4 passed=4 failed=0 ms=502
+[2026-08-31 13:21:24.702] [INFO ] [pid=35780] [watcher] event=add file=slides/05.slide
+[2026-08-31 13:21:25.204] [INFO ] [pid=35780] [watcher] flush batch dirty=[05] size=1
+[2026-08-31 13:21:25.205] [INFO ] [pid=35780] [sync] submit nextRound=6 dirty=05 pendingDirtySize=1 merged=no
+[2026-08-31 13:21:25.205] [INFO ] [pid=35780] [sync] drain start round=6 pendingDirtySize=1
+[2026-08-31 13:21:25.206] [INFO ] [pid=35780] [sync] step=add round=6 attempt=1 pageId=05 index=4
+[2026-08-31 13:21:25.206] [INFO ] [pid=35780] [backend-ops] addSlideAt start pageId=05 index=4
+[2026-08-31 13:21:25.206] [INFO ] [pid=35780] [render] start pageId=05 file=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/slides/05.slide
+[2026-08-31 13:21:25.306] [INFO ] [pid=35780] [render] ok pageId=05 slides=1 ms=100
+[2026-08-31 13:21:25.306] [INFO ] [pid=35780] [render] renderSlideData result.resources={
+  images: {
+    'rel:00gj9h5v': {
+      id: 'rel:00gj9h5v',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/5a50579217343813c6c9191fcfedb8ec.svg'
+    },
+    'rel:00j4tbnb': {
+      id: 'rel:00j4tbnb',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/0c6382236cead6fd176217bd2d4c2b89.svg'
+    },
+    'rel:00epa06p': {
+      id: 'rel:00epa06p',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/526226c269563ebcd708f4e452f543b6.svg'
+    }
+  },
+  videos: {},
+  audios: {},
+  fonts: {}
+}
+[2026-08-31 13:21:25.311] [INFO ] [pid=35780] [commit] commit send pageId=0bec41 targetIndex=4 version=5 baseVersion=4 revisionBytes=24296
+[2026-08-31 13:21:25.320] [INFO ] [pid=35780] [commit] commit ok pageId=0bec41 revisionId=71cbc3ba ms=9
+[2026-08-31 13:21:25.321] [INFO ] [pid=35780] [backend-ops] addSlideAt ok pageId=05 slideId=0bec41 index=4 version=5 baseVersion=4 revisionId=71cbc3ba code=0 images=[local=3 remote=0 cached=0 failed=0] ms=115
+[2026-08-31 13:21:25.321] [INFO ] [pid=35780] [sync] aligned round=6 attempt=1 size=5 desired=5 pendingDirtySize=0
+[2026-08-31 13:21:25.321] [INFO ] [pid=35780] [sync] reconcile ok round=6 attempt=1 ms=116
+[2026-08-31 13:21:25.321] [INFO ] [pid=35780] [backend-ops] save start file=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx
+[2026-08-31 13:21:25.321] [INFO ] [pid=35780] [commit] save send filePath=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx
+[2026-08-31 13:21:25.344] [INFO ] [pid=35780] [commit] save ok file_path=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx ms=23
+[2026-08-31 13:21:25.344] [INFO ] [pid=35780] [backend-ops] save ok file_path=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx ms=23
+[2026-08-31 13:21:25.344] [INFO ] [pid=35780] [sync] drain end round=6 reconciles=1 mergedSubmits=1 pendingDirtySize=0 ms=139
+[2026-08-31 13:21:56.309] [INFO ] [pid=35780] [watcher] event=add file=slides/06.slide
+[2026-08-31 13:21:56.811] [INFO ] [pid=35780] [watcher] flush batch dirty=[06] size=1
+[2026-08-31 13:21:56.811] [INFO ] [pid=35780] [sync] submit nextRound=7 dirty=06 pendingDirtySize=1 merged=no
+[2026-08-31 13:21:56.812] [INFO ] [pid=35780] [sync] drain start round=7 pendingDirtySize=1
+[2026-08-31 13:21:56.812] [INFO ] [pid=35780] [sync] step=add round=7 attempt=1 pageId=06 index=5
+[2026-08-31 13:21:56.812] [INFO ] [pid=35780] [backend-ops] addSlideAt start pageId=06 index=5
+[2026-08-31 13:21:56.812] [INFO ] [pid=35780] [render] start pageId=06 file=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/slides/06.slide
+[2026-08-31 13:21:56.925] [INFO ] [pid=35780] [render] ok pageId=06 slides=1 ms=113
+[2026-08-31 13:21:56.925] [INFO ] [pid=35780] [render] renderSlideData result.resources={
+  images: {
+    'rel:00u2vwyo': {
+      id: 'rel:00u2vwyo',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/45349019a05c93e69f89d6549258b7f6.svg'
+    },
+    'rel:007k8qxm': {
+      id: 'rel:007k8qxm',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/7c2e4fa94ceaf3f6a9688c22492df408.svg'
+    },
+    'rel:01nccumu': {
+      id: 'rel:01nccumu',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/bea7baaa31eb6dced743625a14435984.svg'
+    },
+    'rel:00pcikms': {
+      id: 'rel:00pcikms',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/192ff97fc4f844448f782c1f34cd3ba7.svg'
+    },
+    'rel:00epa06p': {
+      id: 'rel:00epa06p',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/526226c269563ebcd708f4e452f543b6.svg'
+    }
+  },
+  videos: {},
+  audios: {},
+  fonts: {}
+}
+[2026-08-31 13:21:56.928] [INFO ] [pid=35780] [commit] commit send pageId=d99ad6 targetIndex=5 version=6 baseVersion=5 revisionBytes=31976
+[2026-08-31 13:21:56.933] [INFO ] [pid=35780] [commit] commit ok pageId=d99ad6 revisionId=4ef0a112 ms=5
+[2026-08-31 13:21:56.933] [INFO ] [pid=35780] [backend-ops] addSlideAt ok pageId=06 slideId=d99ad6 index=5 version=6 baseVersion=5 revisionId=4ef0a112 code=0 images=[local=5 remote=0 cached=0 failed=0] ms=121
+[2026-08-31 13:21:56.933] [INFO ] [pid=35780] [sync] aligned round=7 attempt=1 size=6 desired=6 pendingDirtySize=0
+[2026-08-31 13:21:56.933] [INFO ] [pid=35780] [sync] reconcile ok round=7 attempt=1 ms=121
+[2026-08-31 13:21:56.934] [INFO ] [pid=35780] [backend-ops] save start file=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx
+[2026-08-31 13:21:56.934] [INFO ] [pid=35780] [commit] save send filePath=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx
+[2026-08-31 13:21:56.959] [INFO ] [pid=35780] [commit] save ok file_path=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx ms=24
+[2026-08-31 13:21:56.959] [INFO ] [pid=35780] [backend-ops] save ok file_path=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx ms=25
+[2026-08-31 13:21:56.959] [INFO ] [pid=35780] [sync] drain end round=7 reconciles=1 mergedSubmits=1 pendingDirtySize=0 ms=147
+[2026-08-31 13:22:30.212] [INFO ] [pid=35780] [watcher] event=add file=slides/07.slide
+[2026-08-31 13:22:30.713] [INFO ] [pid=35780] [watcher] flush batch dirty=[07] size=1
+[2026-08-31 13:22:30.714] [INFO ] [pid=35780] [sync] submit nextRound=8 dirty=07 pendingDirtySize=1 merged=no
+[2026-08-31 13:22:30.715] [INFO ] [pid=35780] [sync] drain start round=8 pendingDirtySize=1
+[2026-08-31 13:22:30.715] [INFO ] [pid=35780] [sync] step=add round=8 attempt=1 pageId=07 index=6
+[2026-08-31 13:22:30.715] [INFO ] [pid=35780] [backend-ops] addSlideAt start pageId=07 index=6
+[2026-08-31 13:22:30.715] [INFO ] [pid=35780] [render] start pageId=07 file=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/slides/07.slide
+[2026-08-31 13:22:30.828] [INFO ] [pid=35780] [render] ok pageId=07 slides=1 ms=113
+[2026-08-31 13:22:30.828] [INFO ] [pid=35780] [render] renderSlideData result.resources={
+  images: {
+    'rel:01nreegc': {
+      id: 'rel:01nreegc',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/3ea9e308046a035fbb7e6a8b17d8b436.svg'
+    },
+    'rel:016qla40': {
+      id: 'rel:016qla40',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/f5bd171a4daaafeb2c84edc8902e16f6.svg'
+    },
+    'rel:00n3oy4z': {
+      id: 'rel:00n3oy4z',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/d46740912123823f3250cd88439e1ef6.svg'
+    },
+    'rel:014wy3bo': {
+      id: 'rel:014wy3bo',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/f0476c8485c42bd566cb92d50f469e7b.svg'
+    },
+    'rel:00epa06p': {
+      id: 'rel:00epa06p',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/526226c269563ebcd708f4e452f543b6.svg'
+    }
+  },
+  videos: {},
+  audios: {},
+  fonts: {}
+}
+[2026-08-31 13:22:30.835] [INFO ] [pid=35780] [commit] commit send pageId=8a6390 targetIndex=6 version=7 baseVersion=6 revisionBytes=34608
+[2026-08-31 13:22:30.840] [INFO ] [pid=35780] [commit] commit ok pageId=8a6390 revisionId=3e923025 ms=4
+[2026-08-31 13:22:30.840] [INFO ] [pid=35780] [backend-ops] addSlideAt ok pageId=07 slideId=8a6390 index=6 version=7 baseVersion=6 revisionId=3e923025 code=0 images=[local=5 remote=0 cached=0 failed=0] ms=125
+[2026-08-31 13:22:30.840] [INFO ] [pid=35780] [sync] aligned round=8 attempt=1 size=7 desired=7 pendingDirtySize=0
+[2026-08-31 13:22:30.841] [INFO ] [pid=35780] [sync] reconcile ok round=8 attempt=1 ms=126
+[2026-08-31 13:22:30.841] [INFO ] [pid=35780] [backend-ops] save start file=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx
+[2026-08-31 13:22:30.841] [INFO ] [pid=35780] [commit] save send filePath=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx
+[2026-08-31 13:22:30.873] [INFO ] [pid=35780] [commit] save ok file_path=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx ms=31
+[2026-08-31 13:22:30.873] [INFO ] [pid=35780] [backend-ops] save ok file_path=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx ms=32
+[2026-08-31 13:22:30.874] [INFO ] [pid=35780] [sync] drain end round=8 reconciles=1 mergedSubmits=1 pendingDirtySize=0 ms=159
+[2026-08-31 13:23:07.606] [INFO ] [pid=35780] [watcher] event=add file=slides/08.slide
+[2026-08-31 13:23:08.107] [INFO ] [pid=35780] [watcher] flush batch dirty=[08] size=1
+[2026-08-31 13:23:08.108] [INFO ] [pid=35780] [sync] submit nextRound=9 dirty=08 pendingDirtySize=1 merged=no
+[2026-08-31 13:23:08.109] [INFO ] [pid=35780] [sync] drain start round=9 pendingDirtySize=1
+[2026-08-31 13:23:08.109] [INFO ] [pid=35780] [sync] step=add round=9 attempt=1 pageId=08 index=7
+[2026-08-31 13:23:08.109] [INFO ] [pid=35780] [backend-ops] addSlideAt start pageId=08 index=7
+[2026-08-31 13:23:08.110] [INFO ] [pid=35780] [render] start pageId=08 file=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/slides/08.slide
+[2026-08-31 13:23:08.202] [INFO ] [pid=35780] [render] ok pageId=08 slides=1 ms=93
+[2026-08-31 13:23:08.202] [INFO ] [pid=35780] [render] renderSlideData result.resources={
+  images: {
+    'rel:00in1pfx': {
+      id: 'rel:00in1pfx',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/0131cdcc4bcb709ccd704b347c29504c.svg'
+    },
+    'rel:00xanra1': {
+      id: 'rel:00xanra1',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/f79586aa56743179775e9dd148c02343.svg'
+    },
+    'rel:01frg2sf': {
+      id: 'rel:01frg2sf',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/aac01ed2c02fb611ffc5c15e134e4588.svg'
+    },
+    'rel:00epa06p': {
+      id: 'rel:00epa06p',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/526226c269563ebcd708f4e452f543b6.svg'
+    }
+  },
+  videos: {},
+  audios: {},
+  fonts: {}
+}
+[2026-08-31 13:23:08.210] [INFO ] [pid=35780] [commit] commit send pageId=c21353 targetIndex=7 version=8 baseVersion=7 revisionBytes=27328
+[2026-08-31 13:23:08.214] [INFO ] [pid=35780] [commit] commit ok pageId=c21353 revisionId=300636f3 ms=4
+[2026-08-31 13:23:08.215] [INFO ] [pid=35780] [backend-ops] addSlideAt ok pageId=08 slideId=c21353 index=7 version=8 baseVersion=7 revisionId=300636f3 code=0 images=[local=4 remote=0 cached=0 failed=0] ms=106
+[2026-08-31 13:23:08.215] [INFO ] [pid=35780] [sync] aligned round=9 attempt=1 size=8 desired=8 pendingDirtySize=0
+[2026-08-31 13:23:08.215] [INFO ] [pid=35780] [sync] reconcile ok round=9 attempt=1 ms=106
+[2026-08-31 13:23:08.215] [INFO ] [pid=35780] [backend-ops] save start file=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx
+[2026-08-31 13:23:08.215] [INFO ] [pid=35780] [commit] save send filePath=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx
+[2026-08-31 13:23:08.246] [INFO ] [pid=35780] [commit] save ok file_path=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx ms=31
+[2026-08-31 13:23:08.247] [INFO ] [pid=35780] [backend-ops] save ok file_path=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx ms=32
+[2026-08-31 13:23:08.247] [INFO ] [pid=35780] [sync] drain end round=9 reconciles=1 mergedSubmits=1 pendingDirtySize=0 ms=138
+[2026-08-31 13:23:24.869] [INFO ] [pid=35780] [watcher] event=add file=slides/09.slide
+[2026-08-31 13:23:25.370] [INFO ] [pid=35780] [watcher] flush batch dirty=[09] size=1
+[2026-08-31 13:23:25.371] [INFO ] [pid=35780] [sync] submit nextRound=10 dirty=09 pendingDirtySize=1 merged=no
+[2026-08-31 13:23:25.371] [INFO ] [pid=35780] [sync] drain start round=10 pendingDirtySize=1
+[2026-08-31 13:23:25.372] [INFO ] [pid=35780] [sync] step=add round=10 attempt=1 pageId=09 index=8
+[2026-08-31 13:23:25.372] [INFO ] [pid=35780] [backend-ops] addSlideAt start pageId=09 index=8
+[2026-08-31 13:23:25.372] [INFO ] [pid=35780] [render] start pageId=09 file=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/slides/09.slide
+[2026-08-31 13:23:25.407] [INFO ] [pid=35780] [render] ok pageId=09 slides=1 ms=35
+[2026-08-31 13:23:25.407] [INFO ] [pid=35780] [render] renderSlideData result.resources={
+  images: {
+    'rel:00e96djh': {
+      id: 'rel:00e96djh',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/68662c765e4e1c900bac5bb6228a72de.svg'
+    }
+  },
+  videos: {},
+  audios: {},
+  fonts: {}
+}
+[2026-08-31 13:23:25.412] [INFO ] [pid=35780] [commit] commit send pageId=bb579d targetIndex=8 version=9 baseVersion=8 revisionBytes=9248
+[2026-08-31 13:23:25.415] [INFO ] [pid=35780] [commit] commit ok pageId=bb579d revisionId=a4181e1f ms=3
+[2026-08-31 13:23:25.415] [INFO ] [pid=35780] [backend-ops] addSlideAt ok pageId=09 slideId=bb579d index=8 version=9 baseVersion=8 revisionId=a4181e1f code=0 images=[local=1 remote=0 cached=0 failed=0] ms=43
+[2026-08-31 13:23:25.415] [INFO ] [pid=35780] [sync] aligned round=10 attempt=1 size=9 desired=9 pendingDirtySize=0
+[2026-08-31 13:23:25.416] [INFO ] [pid=35780] [sync] reconcile ok round=10 attempt=1 ms=45
+[2026-08-31 13:23:25.416] [INFO ] [pid=35780] [backend-ops] save start file=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx
+[2026-08-31 13:23:25.416] [INFO ] [pid=35780] [commit] save send filePath=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx
+[2026-08-31 13:23:25.453] [INFO ] [pid=35780] [commit] save ok file_path=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx ms=37
+[2026-08-31 13:23:25.453] [INFO ] [pid=35780] [backend-ops] save ok file_path=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx ms=37
+[2026-08-31 13:23:25.454] [INFO ] [pid=35780] [sync] drain end round=10 reconciles=1 mergedSubmits=1 pendingDirtySize=0 ms=83
+[2026-08-31 13:24:03.583] [INFO ] [pid=35780] [watcher] event=add file=slides/10.slide
+[2026-08-31 13:24:04.087] [INFO ] [pid=35780] [watcher] flush batch dirty=[10] size=1
+[2026-08-31 13:24:04.087] [INFO ] [pid=35780] [sync] submit nextRound=11 dirty=10 pendingDirtySize=1 merged=no
+[2026-08-31 13:24:04.087] [INFO ] [pid=35780] [sync] drain start round=11 pendingDirtySize=1
+[2026-08-31 13:24:04.088] [INFO ] [pid=35780] [sync] step=add round=11 attempt=1 pageId=10 index=9
+[2026-08-31 13:24:04.088] [INFO ] [pid=35780] [backend-ops] addSlideAt start pageId=10 index=9
+[2026-08-31 13:24:04.088] [INFO ] [pid=35780] [render] start pageId=10 file=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/slides/10.slide
+[2026-08-31 13:24:04.153] [INFO ] [pid=35780] [render] ok pageId=10 slides=1 ms=65
+[2026-08-31 13:24:04.153] [INFO ] [pid=35780] [render] renderSlideData result.resources={
+  images: {
+    'rel:01v9ptyz': {
+      id: 'rel:01v9ptyz',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/45c6cf73dae34a90715576993cb50996.svg'
+    },
+    'rel:00pnylww': {
+      id: 'rel:00pnylww',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/95eb56df5c69055e359f5b025b68ad18.svg'
+    },
+    'rel:00epa06p': {
+      id: 'rel:00epa06p',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/526226c269563ebcd708f4e452f543b6.svg'
+    }
+  },
+  videos: {},
+  audios: {},
+  fonts: {}
+}
+[2026-08-31 13:24:04.157] [INFO ] [pid=35780] [commit] commit send pageId=cd9e75 targetIndex=9 version=10 baseVersion=9 revisionBytes=24640
+[2026-08-31 13:24:04.161] [INFO ] [pid=35780] [commit] commit ok pageId=cd9e75 revisionId=40f6c6c3 ms=4
+[2026-08-31 13:24:04.161] [INFO ] [pid=35780] [backend-ops] addSlideAt ok pageId=10 slideId=cd9e75 index=9 version=10 baseVersion=9 revisionId=40f6c6c3 code=0 images=[local=3 remote=0 cached=0 failed=0] ms=73
+[2026-08-31 13:24:04.162] [INFO ] [pid=35780] [sync] aligned round=11 attempt=1 size=10 desired=10 pendingDirtySize=0
+[2026-08-31 13:24:04.162] [INFO ] [pid=35780] [sync] reconcile ok round=11 attempt=1 ms=75
+[2026-08-31 13:24:04.162] [INFO ] [pid=35780] [backend-ops] save start file=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx
+[2026-08-31 13:24:04.162] [INFO ] [pid=35780] [commit] save send filePath=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx
+[2026-08-31 13:24:04.197] [INFO ] [pid=35780] [commit] save ok file_path=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx ms=35
+[2026-08-31 13:24:04.197] [INFO ] [pid=35780] [backend-ops] save ok file_path=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx ms=35
+[2026-08-31 13:24:04.197] [INFO ] [pid=35780] [sync] drain end round=11 reconciles=1 mergedSubmits=1 pendingDirtySize=0 ms=110
+[2026-08-31 13:24:34.714] [INFO ] [pid=35780] [watcher] event=add file=slides/11.slide
+[2026-08-31 13:24:35.215] [INFO ] [pid=35780] [watcher] flush batch dirty=[11] size=1
+[2026-08-31 13:24:35.216] [INFO ] [pid=35780] [sync] submit nextRound=12 dirty=11 pendingDirtySize=1 merged=no
+[2026-08-31 13:24:35.216] [INFO ] [pid=35780] [sync] drain start round=12 pendingDirtySize=1
+[2026-08-31 13:24:35.217] [INFO ] [pid=35780] [sync] step=add round=12 attempt=1 pageId=11 index=10
+[2026-08-31 13:24:35.217] [INFO ] [pid=35780] [backend-ops] addSlideAt start pageId=11 index=10
+[2026-08-31 13:24:35.217] [INFO ] [pid=35780] [render] start pageId=11 file=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/slides/11.slide
+[2026-08-31 13:24:35.314] [INFO ] [pid=35780] [render] ok pageId=11 slides=1 ms=97
+[2026-08-31 13:24:35.314] [INFO ] [pid=35780] [render] renderSlideData result.resources={
+  images: {
+    'rel:00epa06p': {
+      id: 'rel:00epa06p',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/526226c269563ebcd708f4e452f543b6.svg'
+    }
+  },
+  videos: {},
+  audios: {},
+  fonts: {}
+}
+[2026-08-31 13:24:35.319] [INFO ] [pid=35780] [commit] commit send pageId=61ef82 targetIndex=10 version=11 baseVersion=10 revisionBytes=29988
+[2026-08-31 13:24:35.327] [INFO ] [pid=35780] [commit] commit ok pageId=61ef82 revisionId=264f395a ms=7
+[2026-08-31 13:24:35.328] [INFO ] [pid=35780] [backend-ops] addSlideAt ok pageId=11 slideId=61ef82 index=10 version=11 baseVersion=10 revisionId=264f395a code=0 images=[local=1 remote=0 cached=0 failed=0] ms=110
+[2026-08-31 13:24:35.328] [INFO ] [pid=35780] [sync] aligned round=12 attempt=1 size=11 desired=11 pendingDirtySize=0
+[2026-08-31 13:24:35.328] [INFO ] [pid=35780] [sync] reconcile ok round=12 attempt=1 ms=112
+[2026-08-31 13:24:35.328] [INFO ] [pid=35780] [backend-ops] save start file=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx
+[2026-08-31 13:24:35.328] [INFO ] [pid=35780] [commit] save send filePath=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx
+[2026-08-31 13:24:35.363] [INFO ] [pid=35780] [commit] save ok file_path=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx ms=35
+[2026-08-31 13:24:35.363] [INFO ] [pid=35780] [backend-ops] save ok file_path=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx ms=35
+[2026-08-31 13:24:35.363] [INFO ] [pid=35780] [sync] drain end round=12 reconciles=1 mergedSubmits=1 pendingDirtySize=0 ms=147
+[2026-08-31 13:25:03.609] [INFO ] [pid=35780] [watcher] event=add file=slides/12.slide
+[2026-08-31 13:25:04.110] [INFO ] [pid=35780] [watcher] flush batch dirty=[12] size=1
+[2026-08-31 13:25:04.111] [INFO ] [pid=35780] [sync] submit nextRound=13 dirty=12 pendingDirtySize=1 merged=no
+[2026-08-31 13:25:04.111] [INFO ] [pid=35780] [sync] drain start round=13 pendingDirtySize=1
+[2026-08-31 13:25:04.111] [INFO ] [pid=35780] [sync] step=add round=13 attempt=1 pageId=12 index=11
+[2026-08-31 13:25:04.111] [INFO ] [pid=35780] [backend-ops] addSlideAt start pageId=12 index=11
+[2026-08-31 13:25:04.112] [INFO ] [pid=35780] [render] start pageId=12 file=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/slides/12.slide
+[2026-08-31 13:25:04.208] [INFO ] [pid=35780] [render] ok pageId=12 slides=1 ms=96
+[2026-08-31 13:25:04.209] [INFO ] [pid=35780] [render] renderSlideData result.resources={
+  images: {
+    'rel:00epa06p': {
+      id: 'rel:00epa06p',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/526226c269563ebcd708f4e452f543b6.svg'
+    }
+  },
+  videos: {},
+  audios: {},
+  fonts: {}
+}
+[2026-08-31 13:25:04.216] [INFO ] [pid=35780] [commit] commit send pageId=1f7789 targetIndex=11 version=12 baseVersion=11 revisionBytes=24304
+[2026-08-31 13:25:04.220] [INFO ] [pid=35780] [commit] commit ok pageId=1f7789 revisionId=f7dc1bdf ms=3
+[2026-08-31 13:25:04.220] [INFO ] [pid=35780] [backend-ops] addSlideAt ok pageId=12 slideId=1f7789 index=11 version=12 baseVersion=11 revisionId=f7dc1bdf code=0 images=[local=1 remote=0 cached=0 failed=0] ms=109
+[2026-08-31 13:25:04.220] [INFO ] [pid=35780] [sync] aligned round=13 attempt=1 size=12 desired=12 pendingDirtySize=0
+[2026-08-31 13:25:04.220] [INFO ] [pid=35780] [sync] reconcile ok round=13 attempt=1 ms=109
+[2026-08-31 13:25:04.220] [INFO ] [pid=35780] [backend-ops] save start file=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx
+[2026-08-31 13:25:04.220] [INFO ] [pid=35780] [commit] save send filePath=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx
+[2026-08-31 13:25:04.265] [INFO ] [pid=35780] [commit] save ok file_path=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx ms=45
+[2026-08-31 13:25:04.265] [INFO ] [pid=35780] [backend-ops] save ok file_path=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx ms=45
+[2026-08-31 13:25:04.265] [INFO ] [pid=35780] [sync] drain end round=13 reconciles=1 mergedSubmits=1 pendingDirtySize=0 ms=154
+[2026-08-31 13:25:40.662] [INFO ] [pid=35780] [watcher] event=add file=slides/13.slide
+[2026-08-31 13:25:41.164] [INFO ] [pid=35780] [watcher] flush batch dirty=[13] size=1
+[2026-08-31 13:25:41.165] [INFO ] [pid=35780] [sync] submit nextRound=14 dirty=13 pendingDirtySize=1 merged=no
+[2026-08-31 13:25:41.165] [INFO ] [pid=35780] [sync] drain start round=14 pendingDirtySize=1
+[2026-08-31 13:25:41.166] [INFO ] [pid=35780] [sync] step=add round=14 attempt=1 pageId=13 index=12
+[2026-08-31 13:25:41.166] [INFO ] [pid=35780] [backend-ops] addSlideAt start pageId=13 index=12
+[2026-08-31 13:25:41.166] [INFO ] [pid=35780] [render] start pageId=13 file=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/slides/13.slide
+[2026-08-31 13:25:41.268] [INFO ] [pid=35780] [render] ok pageId=13 slides=1 ms=102
+[2026-08-31 13:25:41.269] [INFO ] [pid=35780] [render] renderSlideData result.resources={
+  images: {
+    'rel:00epa06p': {
+      id: 'rel:00epa06p',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/526226c269563ebcd708f4e452f543b6.svg'
+    }
+  },
+  videos: {},
+  audios: {},
+  fonts: {}
+}
+[2026-08-31 13:25:41.274] [INFO ] [pid=35780] [commit] commit send pageId=3f2026 targetIndex=12 version=13 baseVersion=12 revisionBytes=33672
+[2026-08-31 13:25:41.280] [INFO ] [pid=35780] [commit] commit ok pageId=3f2026 revisionId=66eb9c59 ms=6
+[2026-08-31 13:25:41.281] [INFO ] [pid=35780] [backend-ops] addSlideAt ok pageId=13 slideId=3f2026 index=12 version=13 baseVersion=12 revisionId=66eb9c59 code=0 images=[local=1 remote=0 cached=0 failed=0] ms=115
+[2026-08-31 13:25:41.281] [INFO ] [pid=35780] [sync] aligned round=14 attempt=1 size=13 desired=13 pendingDirtySize=0
+[2026-08-31 13:25:41.281] [INFO ] [pid=35780] [sync] reconcile ok round=14 attempt=1 ms=116
+[2026-08-31 13:25:41.281] [INFO ] [pid=35780] [backend-ops] save start file=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx
+[2026-08-31 13:25:41.281] [INFO ] [pid=35780] [commit] save send filePath=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx
+[2026-08-31 13:25:41.329] [INFO ] [pid=35780] [commit] save ok file_path=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx ms=48
+[2026-08-31 13:25:41.329] [INFO ] [pid=35780] [backend-ops] save ok file_path=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx ms=48
+[2026-08-31 13:25:41.329] [INFO ] [pid=35780] [sync] drain end round=14 reconciles=1 mergedSubmits=1 pendingDirtySize=0 ms=164
+[2026-08-31 13:26:23.483] [INFO ] [pid=35780] [watcher] event=add file=slides/14.slide
+[2026-08-31 13:26:23.986] [INFO ] [pid=35780] [watcher] flush batch dirty=[14] size=1
+[2026-08-31 13:26:23.986] [INFO ] [pid=35780] [sync] submit nextRound=15 dirty=14 pendingDirtySize=1 merged=no
+[2026-08-31 13:26:23.987] [INFO ] [pid=35780] [sync] drain start round=15 pendingDirtySize=1
+[2026-08-31 13:26:23.987] [INFO ] [pid=35780] [sync] step=add round=15 attempt=1 pageId=14 index=13
+[2026-08-31 13:26:23.988] [INFO ] [pid=35780] [backend-ops] addSlideAt start pageId=14 index=13
+[2026-08-31 13:26:23.989] [INFO ] [pid=35780] [render] start pageId=14 file=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/slides/14.slide
+[2026-08-31 13:26:24.073] [INFO ] [pid=35780] [render] ok pageId=14 slides=1 ms=84
+[2026-08-31 13:26:24.073] [INFO ] [pid=35780] [render] renderSlideData result.resources={
+  images: {
+    'rel:00c7nkea': {
+      id: 'rel:00c7nkea',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/74e36ed3de4f0d5aad1ec4a1e896ff29.svg'
+    },
+    'rel:003jyld9': {
+      id: 'rel:003jyld9',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/8d8acd3c2c66c9e0131ce15cbbaa9290.svg'
+    },
+    'rel:00rl2rbd': {
+      id: 'rel:00rl2rbd',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/df9ac2f734a5285637a49714eab12f0e.svg'
+    },
+    'rel:005jxsu7': {
+      id: 'rel:005jxsu7',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/3133e8cc232cc449206c83ba761877ae.svg'
+    },
+    'rel:01berfxk': {
+      id: 'rel:01berfxk',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/fecd7fa4e912486e3903e74eef6afad8.svg'
+    },
+    'rel:00epa06p': {
+      id: 'rel:00epa06p',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/526226c269563ebcd708f4e452f543b6.svg'
+    }
+  },
+  videos: {},
+  audios: {},
+  fonts: {}
+}
+[2026-08-31 13:26:24.077] [INFO ] [pid=35780] [commit] commit send pageId=3c9af6 targetIndex=13 version=14 baseVersion=13 revisionBytes=31516
+[2026-08-31 13:26:24.080] [INFO ] [pid=35780] [commit] commit ok pageId=3c9af6 revisionId=df1c2d49 ms=3
+[2026-08-31 13:26:24.081] [INFO ] [pid=35780] [backend-ops] addSlideAt ok pageId=14 slideId=3c9af6 index=13 version=14 baseVersion=13 revisionId=df1c2d49 code=0 images=[local=6 remote=0 cached=0 failed=0] ms=93
+[2026-08-31 13:26:24.081] [INFO ] [pid=35780] [sync] aligned round=15 attempt=1 size=14 desired=14 pendingDirtySize=0
+[2026-08-31 13:26:24.081] [INFO ] [pid=35780] [sync] reconcile ok round=15 attempt=1 ms=94
+[2026-08-31 13:26:24.081] [INFO ] [pid=35780] [backend-ops] save start file=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx
+[2026-08-31 13:26:24.081] [INFO ] [pid=35780] [commit] save send filePath=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx
+[2026-08-31 13:26:24.125] [INFO ] [pid=35780] [commit] save ok file_path=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx ms=44
+[2026-08-31 13:26:24.125] [INFO ] [pid=35780] [backend-ops] save ok file_path=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx ms=44
+[2026-08-31 13:26:24.125] [INFO ] [pid=35780] [sync] drain end round=15 reconciles=1 mergedSubmits=1 pendingDirtySize=0 ms=138
+[2026-08-31 13:26:58.321] [INFO ] [pid=35780] [watcher] event=add file=slides/15.slide
+[2026-08-31 13:26:58.821] [INFO ] [pid=35780] [watcher] flush batch dirty=[15] size=1
+[2026-08-31 13:26:58.821] [INFO ] [pid=35780] [sync] submit nextRound=16 dirty=15 pendingDirtySize=1 merged=no
+[2026-08-31 13:26:58.822] [INFO ] [pid=35780] [sync] drain start round=16 pendingDirtySize=1
+[2026-08-31 13:26:58.822] [INFO ] [pid=35780] [sync] step=add round=16 attempt=1 pageId=15 index=14
+[2026-08-31 13:26:58.822] [INFO ] [pid=35780] [backend-ops] addSlideAt start pageId=15 index=14
+[2026-08-31 13:26:58.822] [INFO ] [pid=35780] [render] start pageId=15 file=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/slides/15.slide
+[2026-08-31 13:26:58.884] [INFO ] [pid=35780] [render] ok pageId=15 slides=1 ms=62
+[2026-08-31 13:26:58.884] [INFO ] [pid=35780] [render] renderSlideData result.resources={
+  images: {
+    'rel:00m438ie': {
+      id: 'rel:00m438ie',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/a0b26ae95e29d75a8384947a22b37ee5.svg'
+    },
+    'rel:00tesx8m': {
+      id: 'rel:00tesx8m',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/3ec86fdc9e7ccca3a9cf01a9f370db90.svg'
+    },
+    'rel:01y0y7wc': {
+      id: 'rel:01y0y7wc',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/3e87a7a5e27d1596dac62168b7e1e0d6.svg'
+    },
+    'rel:00epa06p': {
+      id: 'rel:00epa06p',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/526226c269563ebcd708f4e452f543b6.svg'
+    }
+  },
+  videos: {},
+  audios: {},
+  fonts: {}
+}
+[2026-08-31 13:26:58.887] [INFO ] [pid=35780] [commit] commit send pageId=8bffc0 targetIndex=14 version=15 baseVersion=14 revisionBytes=26164
+[2026-08-31 13:26:58.892] [INFO ] [pid=35780] [commit] commit ok pageId=8bffc0 revisionId=e727edd6 ms=4
+[2026-08-31 13:26:58.892] [INFO ] [pid=35780] [backend-ops] addSlideAt ok pageId=15 slideId=8bffc0 index=14 version=15 baseVersion=14 revisionId=e727edd6 code=0 images=[local=4 remote=0 cached=0 failed=0] ms=70
+[2026-08-31 13:26:58.892] [INFO ] [pid=35780] [sync] aligned round=16 attempt=1 size=15 desired=15 pendingDirtySize=0
+[2026-08-31 13:26:58.892] [INFO ] [pid=35780] [sync] reconcile ok round=16 attempt=1 ms=70
+[2026-08-31 13:26:58.892] [INFO ] [pid=35780] [backend-ops] save start file=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx
+[2026-08-31 13:26:58.892] [INFO ] [pid=35780] [commit] save send filePath=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx
+[2026-08-31 13:26:58.983] [INFO ] [pid=35780] [commit] save ok file_path=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx ms=91
+[2026-08-31 13:26:58.983] [INFO ] [pid=35780] [backend-ops] save ok file_path=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx ms=91
+[2026-08-31 13:26:58.984] [INFO ] [pid=35780] [sync] drain end round=16 reconciles=1 mergedSubmits=1 pendingDirtySize=0 ms=161
+[2026-08-31 13:27:09.516] [INFO ] [pid=35780] [watcher] event=change file=slides/04.slide
+[2026-08-31 13:27:10.018] [INFO ] [pid=35780] [watcher] flush batch dirty=[04] size=1
+[2026-08-31 13:27:10.019] [INFO ] [pid=35780] [sync] submit nextRound=17 dirty=04 pendingDirtySize=1 merged=no
+[2026-08-31 13:27:10.019] [INFO ] [pid=35780] [sync] drain start round=17 pendingDirtySize=1
+[2026-08-31 13:27:10.019] [INFO ] [pid=35780] [sync] step=remove-dirty round=17 attempt=1 pageId=04 index=3
+[2026-08-31 13:27:10.020] [INFO ] [pid=35780] [backend-ops] removeSlideAt start index=3
+[2026-08-31 13:27:10.024] [INFO ] [pid=35780] [mcp] mcp:slide_remove_slide send url=http://127.0.0.1:39099/mcp args={"file_id":"sid_mtgsdvhn_lwlsy7hb","page_index":3}
+[2026-08-31 13:27:10.035] [INFO ] [pid=35780] [mcp] mcp:slide_remove_slide ok ms=10
+[2026-08-31 13:27:10.035] [INFO ] [pid=35780] [backend-ops] removeSlideAt ok index=3 serverVersion=16 ms=15
+[2026-08-31 13:27:10.036] [INFO ] [pid=35780] [sync] step=add round=17 attempt=1 pageId=04 index=3
+[2026-08-31 13:27:10.036] [INFO ] [pid=35780] [backend-ops] addSlideAt start pageId=04 index=3
+[2026-08-31 13:27:10.036] [INFO ] [pid=35780] [render] start pageId=04 file=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/slides/04.slide
+[2026-08-31 13:27:10.088] [INFO ] [pid=35780] [render] ok pageId=04 slides=1 ms=52
+[2026-08-31 13:27:10.088] [INFO ] [pid=35780] [render] renderSlideData result.resources={
+  images: {
+    'rel:01mg5shc': {
+      id: 'rel:01mg5shc',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/c8c480d1c5afdbbb07e1db198e38aab0.svg'
+    },
+    'rel:00m9mrm1': {
+      id: 'rel:00m9mrm1',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/3acd78213a0012818a25495373e2be11.svg'
+    },
+    'rel:01f78d5d': {
+      id: 'rel:01f78d5d',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/afa6b818e5925097fdfc2e2c70ab758b.svg'
+    },
+    'rel:01wc2lp2': {
+      id: 'rel:01wc2lp2',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/4a2c702432a4f394cd5ef80f3ff6aff1.svg'
+    },
+    'rel:00epa06p': {
+      id: 'rel:00epa06p',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/526226c269563ebcd708f4e452f543b6.svg'
+    }
+  },
+  videos: {},
+  audios: {},
+  fonts: {}
+}
+[2026-08-31 13:27:10.092] [INFO ] [pid=35780] [commit] commit send pageId=516196 targetIndex=3 version=16 baseVersion=16 revisionBytes=26860
+[2026-08-31 13:27:10.096] [INFO ] [pid=35780] [commit] commit ok pageId=516196 revisionId=05c2e643 ms=3
+[2026-08-31 13:27:10.096] [INFO ] [pid=35780] [backend-ops] addSlideAt ok pageId=04 slideId=516196 index=3 version=16 baseVersion=16 revisionId=05c2e643 code=0 images=[local=5 remote=0 cached=0 failed=0] ms=60
+[2026-08-31 13:27:10.097] [INFO ] [pid=35780] [sync] aligned round=17 attempt=1 size=15 desired=15 pendingDirtySize=0
+[2026-08-31 13:27:10.097] [INFO ] [pid=35780] [sync] reconcile ok round=17 attempt=1 ms=78
+[2026-08-31 13:27:10.097] [INFO ] [pid=35780] [backend-ops] save start file=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx
+[2026-08-31 13:27:10.097] [INFO ] [pid=35780] [commit] save send filePath=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx
+[2026-08-31 13:27:10.143] [INFO ] [pid=35780] [commit] save ok file_path=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx ms=46
+[2026-08-31 13:27:10.143] [INFO ] [pid=35780] [backend-ops] save ok file_path=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx ms=46
+[2026-08-31 13:27:10.143] [INFO ] [pid=35780] [sync] drain end round=17 reconciles=1 mergedSubmits=1 pendingDirtySize=0 ms=124
+[2026-08-31 13:27:30.326] [INFO ] [pid=35780] [watcher] event=add file=slides/16.slide
+[2026-08-31 13:27:30.829] [INFO ] [pid=35780] [watcher] flush batch dirty=[16] size=1
+[2026-08-31 13:27:30.829] [INFO ] [pid=35780] [sync] submit nextRound=18 dirty=16 pendingDirtySize=1 merged=no
+[2026-08-31 13:27:30.830] [INFO ] [pid=35780] [sync] drain start round=18 pendingDirtySize=1
+[2026-08-31 13:27:30.830] [INFO ] [pid=35780] [sync] step=add round=18 attempt=1 pageId=16 index=15
+[2026-08-31 13:27:30.830] [INFO ] [pid=35780] [backend-ops] addSlideAt start pageId=16 index=15
+[2026-08-31 13:27:30.831] [INFO ] [pid=35780] [render] start pageId=16 file=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/slides/16.slide
+[2026-08-31 13:27:30.871] [INFO ] [pid=35780] [render] ok pageId=16 slides=1 ms=40
+[2026-08-31 13:27:30.872] [INFO ] [pid=35780] [render] renderSlideData result.resources={
+  images: {
+    'rel:00lh6o78': {
+      id: 'rel:00lh6o78',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/481eae9a2f9eb0a210e88647617ed2ff.svg'
+    }
+  },
+  videos: {},
+  audios: {},
+  fonts: {}
+}
+[2026-08-31 13:27:30.875] [INFO ] [pid=35780] [commit] commit send pageId=22b404 targetIndex=15 version=17 baseVersion=17 revisionBytes=10496
+[2026-08-31 13:27:30.880] [INFO ] [pid=35780] [commit] commit ok pageId=22b404 revisionId=bd4417db ms=5
+[2026-08-31 13:27:30.880] [INFO ] [pid=35780] [backend-ops] addSlideAt ok pageId=16 slideId=22b404 index=15 version=17 baseVersion=17 revisionId=bd4417db code=0 images=[local=1 remote=0 cached=0 failed=0] ms=50
+[2026-08-31 13:27:30.881] [INFO ] [pid=35780] [sync] aligned round=18 attempt=1 size=16 desired=16 pendingDirtySize=0
+[2026-08-31 13:27:30.881] [INFO ] [pid=35780] [sync] reconcile ok round=18 attempt=1 ms=51
+[2026-08-31 13:27:30.881] [INFO ] [pid=35780] [backend-ops] save start file=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx
+[2026-08-31 13:27:30.881] [INFO ] [pid=35780] [commit] save send filePath=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx
+[2026-08-31 13:27:30.944] [INFO ] [pid=35780] [commit] save ok file_path=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx ms=63
+[2026-08-31 13:27:30.944] [INFO ] [pid=35780] [backend-ops] save ok file_path=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx ms=63
+[2026-08-31 13:27:30.944] [INFO ] [pid=35780] [sync] drain end round=18 reconciles=1 mergedSubmits=1 pendingDirtySize=0 ms=114
+[2026-08-31 13:28:12.399] [INFO ] [pid=35780] [watcher] event=add file=slides/17.slide
+[2026-08-31 13:28:12.900] [INFO ] [pid=35780] [watcher] flush batch dirty=[17] size=1
+[2026-08-31 13:28:12.901] [INFO ] [pid=35780] [sync] submit nextRound=19 dirty=17 pendingDirtySize=1 merged=no
+[2026-08-31 13:28:12.901] [INFO ] [pid=35780] [sync] drain start round=19 pendingDirtySize=1
+[2026-08-31 13:28:12.901] [INFO ] [pid=35780] [sync] step=add round=19 attempt=1 pageId=17 index=16
+[2026-08-31 13:28:12.902] [INFO ] [pid=35780] [backend-ops] addSlideAt start pageId=17 index=16
+[2026-08-31 13:28:12.902] [INFO ] [pid=35780] [render] start pageId=17 file=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/slides/17.slide
+[2026-08-31 13:28:12.977] [INFO ] [pid=35780] [render] ok pageId=17 slides=1 ms=75
+[2026-08-31 13:28:12.977] [INFO ] [pid=35780] [render] renderSlideData result.resources={
+  images: {
+    'rel:01fxwrrb': {
+      id: 'rel:01fxwrrb',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/be38896f66592e4d9e3b8a7111dddeb3.svg'
+    },
+    'rel:00epa06p': {
+      id: 'rel:00epa06p',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/526226c269563ebcd708f4e452f543b6.svg'
+    }
+  },
+  videos: {},
+  audios: {},
+  fonts: {}
+}
+[2026-08-31 13:28:12.983] [INFO ] [pid=35780] [commit] commit send pageId=46afbd targetIndex=16 version=18 baseVersion=18 revisionBytes=26644
+[2026-08-31 13:28:12.994] [INFO ] [pid=35780] [commit] commit ok pageId=46afbd revisionId=77a01bfb ms=10
+[2026-08-31 13:28:12.994] [INFO ] [pid=35780] [backend-ops] addSlideAt ok pageId=17 slideId=46afbd index=16 version=18 baseVersion=18 revisionId=77a01bfb code=0 images=[local=2 remote=0 cached=0 failed=0] ms=92
+[2026-08-31 13:28:12.994] [INFO ] [pid=35780] [sync] aligned round=19 attempt=1 size=17 desired=17 pendingDirtySize=0
+[2026-08-31 13:28:12.994] [INFO ] [pid=35780] [sync] reconcile ok round=19 attempt=1 ms=93
+[2026-08-31 13:28:12.995] [INFO ] [pid=35780] [backend-ops] save start file=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx
+[2026-08-31 13:28:12.995] [INFO ] [pid=35780] [commit] save send filePath=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx
+[2026-08-31 13:28:13.069] [INFO ] [pid=35780] [commit] save ok file_path=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx ms=74
+[2026-08-31 13:28:13.069] [INFO ] [pid=35780] [backend-ops] save ok file_path=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx ms=74
+[2026-08-31 13:28:13.069] [INFO ] [pid=35780] [sync] drain end round=19 reconciles=1 mergedSubmits=1 pendingDirtySize=0 ms=168
+[2026-08-31 13:28:50.980] [INFO ] [pid=35780] [watcher] event=add file=slides/18.slide
+[2026-08-31 13:28:51.482] [INFO ] [pid=35780] [watcher] flush batch dirty=[18] size=1
+[2026-08-31 13:28:51.483] [INFO ] [pid=35780] [sync] submit nextRound=20 dirty=18 pendingDirtySize=1 merged=no
+[2026-08-31 13:28:51.483] [INFO ] [pid=35780] [sync] drain start round=20 pendingDirtySize=1
+[2026-08-31 13:28:51.483] [INFO ] [pid=35780] [sync] step=add round=20 attempt=1 pageId=18 index=17
+[2026-08-31 13:28:51.483] [INFO ] [pid=35780] [backend-ops] addSlideAt start pageId=18 index=17
+[2026-08-31 13:28:51.483] [INFO ] [pid=35780] [render] start pageId=18 file=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/slides/18.slide
+[2026-08-31 13:28:51.626] [INFO ] [pid=35780] [render] ok pageId=18 slides=1 ms=143
+[2026-08-31 13:28:51.627] [INFO ] [pid=35780] [render] renderSlideData result.resources={
+  images: {
+    'rel:01nnt2eb': {
+      id: 'rel:01nnt2eb',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/2e6c4b3c8cc78a7291c97411e2a94b8e.svg'
+    },
+    'rel:01my7ec4': {
+      id: 'rel:01my7ec4',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/9f1204f3b634ec52da222d4da3ce9dd4.svg'
+    },
+    'rel:00mm0fqv': {
+      id: 'rel:00mm0fqv',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/551a9a7181ab0aa425c2b334c2cdfb33.svg'
+    },
+    'rel:00ya1ej8': {
+      id: 'rel:00ya1ej8',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/0082438543176dd82cf16a3ef49e653a.svg'
+    },
+    'rel:00epa06p': {
+      id: 'rel:00epa06p',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/526226c269563ebcd708f4e452f543b6.svg'
+    }
+  },
+  videos: {},
+  audios: {},
+  fonts: {}
+}
+[2026-08-31 13:28:51.635] [INFO ] [pid=35780] [commit] commit send pageId=1aefcc targetIndex=17 version=19 baseVersion=19 revisionBytes=35780
+[2026-08-31 13:28:51.647] [INFO ] [pid=35780] [commit] commit ok pageId=1aefcc revisionId=1a53d414 ms=11
+[2026-08-31 13:28:51.648] [INFO ] [pid=35780] [backend-ops] addSlideAt ok pageId=18 slideId=1aefcc index=17 version=19 baseVersion=19 revisionId=1a53d414 code=0 images=[local=5 remote=0 cached=0 failed=0] ms=165
+[2026-08-31 13:28:51.649] [INFO ] [pid=35780] [sync] aligned round=20 attempt=1 size=18 desired=18 pendingDirtySize=0
+[2026-08-31 13:28:51.649] [INFO ] [pid=35780] [sync] reconcile ok round=20 attempt=1 ms=166
+[2026-08-31 13:28:51.649] [INFO ] [pid=35780] [backend-ops] save start file=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx
+[2026-08-31 13:28:51.649] [INFO ] [pid=35780] [commit] save send filePath=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx
+[2026-08-31 13:28:51.804] [INFO ] [pid=35780] [commit] save ok file_path=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx ms=155
+[2026-08-31 13:28:51.804] [INFO ] [pid=35780] [backend-ops] save ok file_path=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx ms=155
+[2026-08-31 13:28:51.804] [INFO ] [pid=35780] [sync] drain end round=20 reconciles=1 mergedSubmits=1 pendingDirtySize=0 ms=321
+[2026-08-31 13:29:21.771] [INFO ] [pid=35780] [watcher] event=add file=slides/19.slide
+[2026-08-31 13:29:22.272] [INFO ] [pid=35780] [watcher] flush batch dirty=[19] size=1
+[2026-08-31 13:29:22.272] [INFO ] [pid=35780] [sync] submit nextRound=21 dirty=19 pendingDirtySize=1 merged=no
+[2026-08-31 13:29:22.272] [INFO ] [pid=35780] [sync] drain start round=21 pendingDirtySize=1
+[2026-08-31 13:29:22.274] [INFO ] [pid=35780] [sync] step=add round=21 attempt=1 pageId=19 index=18
+[2026-08-31 13:29:22.275] [INFO ] [pid=35780] [backend-ops] addSlideAt start pageId=19 index=18
+[2026-08-31 13:29:22.275] [INFO ] [pid=35780] [render] start pageId=19 file=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/slides/19.slide
+[2026-08-31 13:29:22.379] [INFO ] [pid=35780] [render] ok pageId=19 slides=1 ms=104
+[2026-08-31 13:29:22.379] [INFO ] [pid=35780] [render] renderSlideData result.resources={
+  images: {
+    'rel:00epa06p': {
+      id: 'rel:00epa06p',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/526226c269563ebcd708f4e452f543b6.svg'
+    }
+  },
+  videos: {},
+  audios: {},
+  fonts: {}
+}
+[2026-08-31 13:29:22.385] [INFO ] [pid=35780] [commit] commit send pageId=15728c targetIndex=18 version=20 baseVersion=20 revisionBytes=29396
+[2026-08-31 13:29:22.396] [INFO ] [pid=35780] [commit] commit ok pageId=15728c revisionId=cb0f0ffa ms=11
+[2026-08-31 13:29:22.397] [INFO ] [pid=35780] [backend-ops] addSlideAt ok pageId=19 slideId=15728c index=18 version=20 baseVersion=20 revisionId=cb0f0ffa code=0 images=[local=1 remote=0 cached=0 failed=0] ms=122
+[2026-08-31 13:29:22.397] [INFO ] [pid=35780] [sync] aligned round=21 attempt=1 size=19 desired=19 pendingDirtySize=0
+[2026-08-31 13:29:22.397] [INFO ] [pid=35780] [sync] reconcile ok round=21 attempt=1 ms=124
+[2026-08-31 13:29:22.397] [INFO ] [pid=35780] [backend-ops] save start file=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx
+[2026-08-31 13:29:22.397] [INFO ] [pid=35780] [commit] save send filePath=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx
+[2026-08-31 13:29:22.493] [INFO ] [pid=35780] [commit] save ok file_path=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx ms=95
+[2026-08-31 13:29:22.493] [INFO ] [pid=35780] [backend-ops] save ok file_path=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx ms=96
+[2026-08-31 13:29:22.493] [INFO ] [pid=35780] [sync] drain end round=21 reconciles=1 mergedSubmits=1 pendingDirtySize=0 ms=221
+[2026-08-31 13:29:53.772] [INFO ] [pid=35780] [watcher] event=add file=slides/20.slide
+[2026-08-31 13:29:54.274] [INFO ] [pid=35780] [watcher] flush batch dirty=[20] size=1
+[2026-08-31 13:29:54.275] [INFO ] [pid=35780] [sync] submit nextRound=22 dirty=20 pendingDirtySize=1 merged=no
+[2026-08-31 13:29:54.275] [INFO ] [pid=35780] [sync] drain start round=22 pendingDirtySize=1
+[2026-08-31 13:29:54.276] [INFO ] [pid=35780] [sync] step=add round=22 attempt=1 pageId=20 index=19
+[2026-08-31 13:29:54.276] [INFO ] [pid=35780] [backend-ops] addSlideAt start pageId=20 index=19
+[2026-08-31 13:29:54.277] [INFO ] [pid=35780] [render] start pageId=20 file=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/slides/20.slide
+[2026-08-31 13:29:54.351] [INFO ] [pid=35780] [render] ok pageId=20 slides=1 ms=74
+[2026-08-31 13:29:54.351] [INFO ] [pid=35780] [render] renderSlideData result.resources={
+  images: {
+    'rel:01yheyzc': {
+      id: 'rel:01yheyzc',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/b3f5ec015389ea9b06cd72b42cd63307.svg'
+    },
+    'rel:01my7ec4': {
+      id: 'rel:01my7ec4',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/9f1204f3b634ec52da222d4da3ce9dd4.svg'
+    },
+    'rel:00epa06p': {
+      id: 'rel:00epa06p',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/526226c269563ebcd708f4e452f543b6.svg'
+    }
+  },
+  videos: {},
+  audios: {},
+  fonts: {}
+}
+[2026-08-31 13:29:54.356] [INFO ] [pid=35780] [commit] commit send pageId=b252ca targetIndex=19 version=21 baseVersion=21 revisionBytes=26760
+[2026-08-31 13:29:54.361] [INFO ] [pid=35780] [commit] commit ok pageId=b252ca revisionId=fc4ccc6e ms=5
+[2026-08-31 13:29:54.361] [INFO ] [pid=35780] [backend-ops] addSlideAt ok pageId=20 slideId=b252ca index=19 version=21 baseVersion=21 revisionId=fc4ccc6e code=0 images=[local=3 remote=0 cached=0 failed=0] ms=85
+[2026-08-31 13:29:54.362] [INFO ] [pid=35780] [sync] aligned round=22 attempt=1 size=20 desired=20 pendingDirtySize=0
+[2026-08-31 13:29:54.362] [INFO ] [pid=35780] [sync] reconcile ok round=22 attempt=1 ms=86
+[2026-08-31 13:29:54.362] [INFO ] [pid=35780] [backend-ops] save start file=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx
+[2026-08-31 13:29:54.362] [INFO ] [pid=35780] [commit] save send filePath=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx
+[2026-08-31 13:29:54.464] [INFO ] [pid=35780] [commit] save ok file_path=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx ms=102
+[2026-08-31 13:29:54.464] [INFO ] [pid=35780] [backend-ops] save ok file_path=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx ms=102
+[2026-08-31 13:29:54.464] [INFO ] [pid=35780] [sync] drain end round=22 reconciles=1 mergedSubmits=1 pendingDirtySize=0 ms=189
+=== boot pid=36084 ts=2026-08-31 13:29:58.196 cwd=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划 argv=/Users/test/.workbuddy/binaries/node/versions/22.22.2/bin/slidep-validate --all --project /Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划 ===
+[2026-08-31 13:29:58.193] [INFO ] [pid=36084] [validate] --all mode: found 20 files in /Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/slides
+[2026-08-31 13:29:58.196] [INFO ] [pid=36084] [validate] batch start files=20 checkOverflow=true
+[2026-08-31 13:29:59.488] [INFO ] [pid=36084] [validate] batch done total=20 passed=20 failed=0 ms=1296
+[2026-08-31 13:30:19.569] [INFO ] [pid=35780] [watcher] event=add file=slides/21.slide
+[2026-08-31 13:30:20.070] [INFO ] [pid=35780] [watcher] flush batch dirty=[21] size=1
+[2026-08-31 13:30:20.071] [INFO ] [pid=35780] [sync] submit nextRound=23 dirty=21 pendingDirtySize=1 merged=no
+[2026-08-31 13:30:20.071] [INFO ] [pid=35780] [sync] drain start round=23 pendingDirtySize=1
+[2026-08-31 13:30:20.071] [INFO ] [pid=35780] [sync] step=add round=23 attempt=1 pageId=21 index=20
+[2026-08-31 13:30:20.071] [INFO ] [pid=35780] [backend-ops] addSlideAt start pageId=21 index=20
+[2026-08-31 13:30:20.071] [INFO ] [pid=35780] [render] start pageId=21 file=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/slides/21.slide
+[2026-08-31 13:30:20.101] [INFO ] [pid=35780] [render] ok pageId=21 slides=1 ms=30
+[2026-08-31 13:30:20.101] [INFO ] [pid=35780] [render] renderSlideData result.resources={
+  images: {
+    'rel:00g21hds': {
+      id: 'rel:00g21hds',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/6d16b89048624934c092069c5dfcd1d8.svg'
+    }
+  },
+  videos: {},
+  audios: {},
+  fonts: {}
+}
+[2026-08-31 13:30:20.104] [INFO ] [pid=35780] [commit] commit send pageId=932603 targetIndex=20 version=22 baseVersion=22 revisionBytes=9848
+[2026-08-31 13:30:20.108] [INFO ] [pid=35780] [commit] commit ok pageId=932603 revisionId=db50971a ms=4
+[2026-08-31 13:30:20.109] [INFO ] [pid=35780] [backend-ops] addSlideAt ok pageId=21 slideId=932603 index=20 version=22 baseVersion=22 revisionId=db50971a code=0 images=[local=1 remote=0 cached=0 failed=0] ms=38
+[2026-08-31 13:30:20.109] [INFO ] [pid=35780] [sync] aligned round=23 attempt=1 size=21 desired=21 pendingDirtySize=0
+[2026-08-31 13:30:20.109] [INFO ] [pid=35780] [sync] reconcile ok round=23 attempt=1 ms=38
+[2026-08-31 13:30:20.109] [INFO ] [pid=35780] [backend-ops] save start file=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx
+[2026-08-31 13:30:20.109] [INFO ] [pid=35780] [commit] save send filePath=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx
+[2026-08-31 13:30:20.179] [INFO ] [pid=35780] [commit] save ok file_path=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx ms=70
+[2026-08-31 13:30:20.180] [INFO ] [pid=35780] [backend-ops] save ok file_path=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx ms=71
+[2026-08-31 13:30:20.180] [INFO ] [pid=35780] [sync] drain end round=23 reconciles=1 mergedSubmits=1 pendingDirtySize=0 ms=109
+[2026-08-31 13:30:57.670] [INFO ] [pid=35780] [watcher] event=add file=slides/22.slide
+[2026-08-31 13:30:58.172] [INFO ] [pid=35780] [watcher] flush batch dirty=[22] size=1
+[2026-08-31 13:30:58.172] [INFO ] [pid=35780] [sync] submit nextRound=24 dirty=22 pendingDirtySize=1 merged=no
+[2026-08-31 13:30:58.173] [INFO ] [pid=35780] [sync] drain start round=24 pendingDirtySize=1
+[2026-08-31 13:30:58.174] [INFO ] [pid=35780] [sync] step=add round=24 attempt=1 pageId=22 index=21
+[2026-08-31 13:30:58.174] [INFO ] [pid=35780] [backend-ops] addSlideAt start pageId=22 index=21
+[2026-08-31 13:30:58.175] [INFO ] [pid=35780] [render] start pageId=22 file=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/slides/22.slide
+[2026-08-31 13:30:58.247] [INFO ] [pid=35780] [render] ok pageId=22 slides=1 ms=73
+[2026-08-31 13:30:58.247] [INFO ] [pid=35780] [render] renderSlideData result.resources={
+  images: {
+    'rel:014eqj0u': {
+      id: 'rel:014eqj0u',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/c4e32273116d43528efe958357dd58f0.svg'
+    },
+    'rel:01my7ec4': {
+      id: 'rel:01my7ec4',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/9f1204f3b634ec52da222d4da3ce9dd4.svg'
+    },
+    'rel:00epa06p': {
+      id: 'rel:00epa06p',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/526226c269563ebcd708f4e452f543b6.svg'
+    }
+  },
+  videos: {},
+  audios: {},
+  fonts: {}
+}
+[2026-08-31 13:30:58.251] [INFO ] [pid=35780] [commit] commit send pageId=54a75b targetIndex=21 version=23 baseVersion=23 revisionBytes=24844
+[2026-08-31 13:30:58.256] [INFO ] [pid=35780] [commit] commit ok pageId=54a75b revisionId=4711fc23 ms=5
+[2026-08-31 13:30:58.256] [INFO ] [pid=35780] [backend-ops] addSlideAt ok pageId=22 slideId=54a75b index=21 version=23 baseVersion=23 revisionId=4711fc23 code=0 images=[local=3 remote=0 cached=0 failed=0] ms=82
+[2026-08-31 13:30:58.256] [INFO ] [pid=35780] [sync] aligned round=24 attempt=1 size=22 desired=22 pendingDirtySize=0
+[2026-08-31 13:30:58.256] [INFO ] [pid=35780] [sync] reconcile ok round=24 attempt=1 ms=83
+[2026-08-31 13:30:58.256] [INFO ] [pid=35780] [backend-ops] save start file=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx
+[2026-08-31 13:30:58.256] [INFO ] [pid=35780] [commit] save send filePath=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx
+[2026-08-31 13:30:58.318] [INFO ] [pid=35780] [commit] save ok file_path=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx ms=62
+[2026-08-31 13:30:58.319] [INFO ] [pid=35780] [backend-ops] save ok file_path=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx ms=63
+[2026-08-31 13:30:58.319] [INFO ] [pid=35780] [sync] drain end round=24 reconciles=1 mergedSubmits=1 pendingDirtySize=0 ms=146
+[2026-08-31 13:31:34.272] [INFO ] [pid=35780] [watcher] event=add file=slides/23.slide
+[2026-08-31 13:31:34.775] [INFO ] [pid=35780] [watcher] flush batch dirty=[23] size=1
+[2026-08-31 13:31:34.776] [INFO ] [pid=35780] [sync] submit nextRound=25 dirty=23 pendingDirtySize=1 merged=no
+[2026-08-31 13:31:34.776] [INFO ] [pid=35780] [sync] drain start round=25 pendingDirtySize=1
+[2026-08-31 13:31:34.776] [INFO ] [pid=35780] [sync] step=add round=25 attempt=1 pageId=23 index=22
+[2026-08-31 13:31:34.777] [INFO ] [pid=35780] [backend-ops] addSlideAt start pageId=23 index=22
+[2026-08-31 13:31:34.777] [INFO ] [pid=35780] [render] start pageId=23 file=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/slides/23.slide
+[2026-08-31 13:31:34.878] [INFO ] [pid=35780] [render] ok pageId=23 slides=1 ms=101
+[2026-08-31 13:31:34.878] [INFO ] [pid=35780] [render] renderSlideData result.resources={
+  images: {
+    'rel:01xsp03e': {
+      id: 'rel:01xsp03e',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/c53a4a7bb778f72441d7e0530d77690b.svg'
+    },
+    'rel:01bhvf9s': {
+      id: 'rel:01bhvf9s',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/89a1bb2686ad49e2542d3bf7823ba525.svg'
+    },
+    'rel:00rbb2cz': {
+      id: 'rel:00rbb2cz',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/08036235a4d3d7ef3f65500801ab93d0.svg'
+    },
+    'rel:00rlij64': {
+      id: 'rel:00rlij64',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/86ccbaea15aef9b14be6357f85395147.svg'
+    },
+    'rel:005vw6wu': {
+      id: 'rel:005vw6wu',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/db3eb79332beda5f0993054ca29f9b93.svg'
+    },
+    'rel:00epa06p': {
+      id: 'rel:00epa06p',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/526226c269563ebcd708f4e452f543b6.svg'
+    }
+  },
+  videos: {},
+  audios: {},
+  fonts: {}
+}
+[2026-08-31 13:31:34.883] [INFO ] [pid=35780] [commit] commit send pageId=66e9c6 targetIndex=22 version=24 baseVersion=24 revisionBytes=37520
+[2026-08-31 13:31:34.888] [INFO ] [pid=35780] [commit] commit ok pageId=66e9c6 revisionId=a648c5a3 ms=5
+[2026-08-31 13:31:34.888] [INFO ] [pid=35780] [backend-ops] addSlideAt ok pageId=23 slideId=66e9c6 index=22 version=24 baseVersion=24 revisionId=a648c5a3 code=0 images=[local=6 remote=0 cached=0 failed=0] ms=111
+[2026-08-31 13:31:34.888] [INFO ] [pid=35780] [sync] aligned round=25 attempt=1 size=23 desired=23 pendingDirtySize=0
+[2026-08-31 13:31:34.888] [INFO ] [pid=35780] [sync] reconcile ok round=25 attempt=1 ms=112
+[2026-08-31 13:31:34.888] [INFO ] [pid=35780] [backend-ops] save start file=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx
+[2026-08-31 13:31:34.888] [INFO ] [pid=35780] [commit] save send filePath=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx
+[2026-08-31 13:31:34.947] [INFO ] [pid=35780] [commit] save ok file_path=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx ms=59
+[2026-08-31 13:31:34.947] [INFO ] [pid=35780] [backend-ops] save ok file_path=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx ms=59
+[2026-08-31 13:31:34.947] [INFO ] [pid=35780] [sync] drain end round=25 reconciles=1 mergedSubmits=1 pendingDirtySize=0 ms=171
+[2026-08-31 13:32:03.891] [INFO ] [pid=35780] [watcher] event=add file=slides/24.slide
+[2026-08-31 13:32:04.393] [INFO ] [pid=35780] [watcher] flush batch dirty=[24] size=1
+[2026-08-31 13:32:04.393] [INFO ] [pid=35780] [sync] submit nextRound=26 dirty=24 pendingDirtySize=1 merged=no
+[2026-08-31 13:32:04.394] [INFO ] [pid=35780] [sync] drain start round=26 pendingDirtySize=1
+[2026-08-31 13:32:04.395] [INFO ] [pid=35780] [sync] step=add round=26 attempt=1 pageId=24 index=23
+[2026-08-31 13:32:04.395] [INFO ] [pid=35780] [backend-ops] addSlideAt start pageId=24 index=23
+[2026-08-31 13:32:04.395] [INFO ] [pid=35780] [render] start pageId=24 file=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/slides/24.slide
+[2026-08-31 13:32:04.491] [INFO ] [pid=35780] [render] ok pageId=24 slides=1 ms=96
+[2026-08-31 13:32:04.491] [INFO ] [pid=35780] [render] renderSlideData result.resources={
+  images: {
+    'rel:00epa06p': {
+      id: 'rel:00epa06p',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/526226c269563ebcd708f4e452f543b6.svg'
+    }
+  },
+  videos: {},
+  audios: {},
+  fonts: {}
+}
+[2026-08-31 13:32:04.497] [INFO ] [pid=35780] [commit] commit send pageId=ceceaa targetIndex=23 version=25 baseVersion=25 revisionBytes=25448
+[2026-08-31 13:32:04.501] [INFO ] [pid=35780] [commit] commit ok pageId=ceceaa revisionId=7becd7c4 ms=4
+[2026-08-31 13:32:04.501] [INFO ] [pid=35780] [backend-ops] addSlideAt ok pageId=24 slideId=ceceaa index=23 version=25 baseVersion=25 revisionId=7becd7c4 code=0 images=[local=1 remote=0 cached=0 failed=0] ms=106
+[2026-08-31 13:32:04.501] [INFO ] [pid=35780] [sync] aligned round=26 attempt=1 size=24 desired=24 pendingDirtySize=0
+[2026-08-31 13:32:04.501] [INFO ] [pid=35780] [sync] reconcile ok round=26 attempt=1 ms=107
+[2026-08-31 13:32:04.501] [INFO ] [pid=35780] [backend-ops] save start file=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx
+[2026-08-31 13:32:04.501] [INFO ] [pid=35780] [commit] save send filePath=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx
+[2026-08-31 13:32:04.562] [INFO ] [pid=35780] [commit] save ok file_path=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx ms=61
+[2026-08-31 13:32:04.563] [INFO ] [pid=35780] [backend-ops] save ok file_path=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx ms=62
+[2026-08-31 13:32:04.563] [INFO ] [pid=35780] [sync] drain end round=26 reconciles=1 mergedSubmits=1 pendingDirtySize=0 ms=169
+[2026-08-31 13:32:37.732] [INFO ] [pid=35780] [watcher] event=add file=slides/25.slide
+[2026-08-31 13:32:38.234] [INFO ] [pid=35780] [watcher] flush batch dirty=[25] size=1
+[2026-08-31 13:32:38.234] [INFO ] [pid=35780] [sync] submit nextRound=27 dirty=25 pendingDirtySize=1 merged=no
+[2026-08-31 13:32:38.235] [INFO ] [pid=35780] [sync] drain start round=27 pendingDirtySize=1
+[2026-08-31 13:32:38.236] [INFO ] [pid=35780] [sync] step=add round=27 attempt=1 pageId=25 index=24
+[2026-08-31 13:32:38.236] [INFO ] [pid=35780] [backend-ops] addSlideAt start pageId=25 index=24
+[2026-08-31 13:32:38.236] [INFO ] [pid=35780] [render] start pageId=25 file=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/slides/25.slide
+[2026-08-31 13:32:38.305] [INFO ] [pid=35780] [render] ok pageId=25 slides=1 ms=69
+[2026-08-31 13:32:38.305] [INFO ] [pid=35780] [render] renderSlideData result.resources={
+  images: {
+    'rel:0017slet': {
+      id: 'rel:0017slet',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/81a945806808e13592e416c448ccfef1.svg'
+    },
+    'rel:00epa06p': {
+      id: 'rel:00epa06p',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/526226c269563ebcd708f4e452f543b6.svg'
+    }
+  },
+  videos: {},
+  audios: {},
+  fonts: {}
+}
+[2026-08-31 13:32:38.308] [INFO ] [pid=35780] [commit] commit send pageId=fb022e targetIndex=24 version=26 baseVersion=26 revisionBytes=25280
+[2026-08-31 13:32:38.313] [INFO ] [pid=35780] [commit] commit ok pageId=fb022e revisionId=704ac1c3 ms=5
+[2026-08-31 13:32:38.313] [INFO ] [pid=35780] [backend-ops] addSlideAt ok pageId=25 slideId=fb022e index=24 version=26 baseVersion=26 revisionId=704ac1c3 code=0 images=[local=2 remote=0 cached=0 failed=0] ms=77
+[2026-08-31 13:32:38.313] [INFO ] [pid=35780] [sync] aligned round=27 attempt=1 size=25 desired=25 pendingDirtySize=0
+[2026-08-31 13:32:38.313] [INFO ] [pid=35780] [sync] reconcile ok round=27 attempt=1 ms=78
+[2026-08-31 13:32:38.313] [INFO ] [pid=35780] [backend-ops] save start file=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx
+[2026-08-31 13:32:38.313] [INFO ] [pid=35780] [commit] save send filePath=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx
+[2026-08-31 13:32:38.384] [INFO ] [pid=35780] [commit] save ok file_path=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx ms=71
+[2026-08-31 13:32:38.384] [INFO ] [pid=35780] [backend-ops] save ok file_path=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx ms=71
+[2026-08-31 13:32:38.384] [INFO ] [pid=35780] [sync] drain end round=27 reconciles=1 mergedSubmits=1 pendingDirtySize=0 ms=149
+[2026-08-31 13:33:11.837] [INFO ] [pid=35780] [watcher] event=add file=slides/26.slide
+[2026-08-31 13:33:12.339] [INFO ] [pid=35780] [watcher] flush batch dirty=[26] size=1
+[2026-08-31 13:33:12.339] [INFO ] [pid=35780] [sync] submit nextRound=28 dirty=26 pendingDirtySize=1 merged=no
+[2026-08-31 13:33:12.339] [INFO ] [pid=35780] [sync] drain start round=28 pendingDirtySize=1
+[2026-08-31 13:33:12.340] [INFO ] [pid=35780] [sync] step=add round=28 attempt=1 pageId=26 index=25
+[2026-08-31 13:33:12.340] [INFO ] [pid=35780] [backend-ops] addSlideAt start pageId=26 index=25
+[2026-08-31 13:33:12.340] [INFO ] [pid=35780] [render] start pageId=26 file=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/slides/26.slide
+[2026-08-31 13:33:12.419] [INFO ] [pid=35780] [render] ok pageId=26 slides=1 ms=79
+[2026-08-31 13:33:12.419] [INFO ] [pid=35780] [render] renderSlideData result.resources={
+  images: {
+    'rel:01ww1770': {
+      id: 'rel:01ww1770',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/8c7415fed064064ac1ee83c8a862b18e.svg'
+    },
+    'rel:018pjkhg': {
+      id: 'rel:018pjkhg',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/27a4b7f8c4c5375af256423303fa39fb.svg'
+    },
+    'rel:00epa06p': {
+      id: 'rel:00epa06p',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/526226c269563ebcd708f4e452f543b6.svg'
+    }
+  },
+  videos: {},
+  audios: {},
+  fonts: {}
+}
+[2026-08-31 13:33:12.426] [INFO ] [pid=35780] [commit] commit send pageId=1c64be targetIndex=25 version=27 baseVersion=27 revisionBytes=25592
+[2026-08-31 13:33:12.433] [INFO ] [pid=35780] [commit] commit ok pageId=1c64be revisionId=bd4c4fe4 ms=6
+[2026-08-31 13:33:12.434] [INFO ] [pid=35780] [backend-ops] addSlideAt ok pageId=26 slideId=1c64be index=25 version=27 baseVersion=27 revisionId=bd4c4fe4 code=0 images=[local=3 remote=0 cached=0 failed=0] ms=94
+[2026-08-31 13:33:12.434] [INFO ] [pid=35780] [sync] aligned round=28 attempt=1 size=26 desired=26 pendingDirtySize=0
+[2026-08-31 13:33:12.434] [INFO ] [pid=35780] [sync] reconcile ok round=28 attempt=1 ms=95
+[2026-08-31 13:33:12.434] [INFO ] [pid=35780] [backend-ops] save start file=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx
+[2026-08-31 13:33:12.434] [INFO ] [pid=35780] [commit] save send filePath=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx
+[2026-08-31 13:33:12.515] [INFO ] [pid=35780] [commit] save ok file_path=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx ms=81
+[2026-08-31 13:33:12.515] [INFO ] [pid=35780] [backend-ops] save ok file_path=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx ms=81
+[2026-08-31 13:33:12.515] [INFO ] [pid=35780] [sync] drain end round=28 reconciles=1 mergedSubmits=1 pendingDirtySize=0 ms=176
+[2026-08-31 13:33:27.125] [INFO ] [pid=35780] [watcher] event=add file=slides/27.slide
+[2026-08-31 13:33:27.626] [INFO ] [pid=35780] [watcher] flush batch dirty=[27] size=1
+[2026-08-31 13:33:27.627] [INFO ] [pid=35780] [sync] submit nextRound=29 dirty=27 pendingDirtySize=1 merged=no
+[2026-08-31 13:33:27.627] [INFO ] [pid=35780] [sync] drain start round=29 pendingDirtySize=1
+[2026-08-31 13:33:27.628] [INFO ] [pid=35780] [sync] step=add round=29 attempt=1 pageId=27 index=26
+[2026-08-31 13:33:27.628] [INFO ] [pid=35780] [backend-ops] addSlideAt start pageId=27 index=26
+[2026-08-31 13:33:27.628] [INFO ] [pid=35780] [render] start pageId=27 file=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/slides/27.slide
+[2026-08-31 13:33:27.658] [INFO ] [pid=35780] [render] ok pageId=27 slides=1 ms=30
+[2026-08-31 13:33:27.658] [INFO ] [pid=35780] [render] renderSlideData result.resources={
+  images: {
+    'rel:01ak8441': {
+      id: 'rel:01ak8441',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/d7039cef5e15d90ecc4f0a7651012185.svg'
+    }
+  },
+  videos: {},
+  audios: {},
+  fonts: {}
+}
+[2026-08-31 13:33:27.662] [INFO ] [pid=35780] [commit] commit send pageId=322029 targetIndex=26 version=28 baseVersion=28 revisionBytes=8712
+[2026-08-31 13:33:27.665] [INFO ] [pid=35780] [commit] commit ok pageId=322029 revisionId=562ba19c ms=3
+[2026-08-31 13:33:27.666] [INFO ] [pid=35780] [backend-ops] addSlideAt ok pageId=27 slideId=322029 index=26 version=28 baseVersion=28 revisionId=562ba19c code=0 images=[local=1 remote=0 cached=0 failed=0] ms=38
+[2026-08-31 13:33:27.666] [INFO ] [pid=35780] [sync] aligned round=29 attempt=1 size=27 desired=27 pendingDirtySize=0
+[2026-08-31 13:33:27.666] [INFO ] [pid=35780] [sync] reconcile ok round=29 attempt=1 ms=38
+[2026-08-31 13:33:27.666] [INFO ] [pid=35780] [backend-ops] save start file=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx
+[2026-08-31 13:33:27.666] [INFO ] [pid=35780] [commit] save send filePath=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx
+[2026-08-31 13:33:27.750] [INFO ] [pid=35780] [commit] save ok file_path=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx ms=84
+[2026-08-31 13:33:27.750] [INFO ] [pid=35780] [backend-ops] save ok file_path=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx ms=84
+[2026-08-31 13:33:27.750] [INFO ] [pid=35780] [sync] drain end round=29 reconciles=1 mergedSubmits=1 pendingDirtySize=0 ms=123
+[2026-08-31 13:34:08.235] [INFO ] [pid=35780] [watcher] event=add file=slides/28.slide
+[2026-08-31 13:34:08.737] [INFO ] [pid=35780] [watcher] flush batch dirty=[28] size=1
+[2026-08-31 13:34:08.738] [INFO ] [pid=35780] [sync] submit nextRound=30 dirty=28 pendingDirtySize=1 merged=no
+[2026-08-31 13:34:08.738] [INFO ] [pid=35780] [sync] drain start round=30 pendingDirtySize=1
+[2026-08-31 13:34:08.739] [INFO ] [pid=35780] [sync] step=add round=30 attempt=1 pageId=28 index=27
+[2026-08-31 13:34:08.739] [INFO ] [pid=35780] [backend-ops] addSlideAt start pageId=28 index=27
+[2026-08-31 13:34:08.739] [INFO ] [pid=35780] [render] start pageId=28 file=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/slides/28.slide
+[2026-08-31 13:34:08.817] [INFO ] [pid=35780] [render] ok pageId=28 slides=1 ms=78
+[2026-08-31 13:34:08.817] [INFO ] [pid=35780] [render] renderSlideData result.resources={
+  images: {
+    'rel:00d3qbcy': {
+      id: 'rel:00d3qbcy',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/a5c830de93e615b4157c77504af3f3e6.svg'
+    },
+    'rel:01gn4jro': {
+      id: 'rel:01gn4jro',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/bcc75bbb1c72dc78b1d4a3b182dac08b.svg'
+    },
+    'rel:00j7082i': {
+      id: 'rel:00j7082i',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/fa105a5565ebe6763b8fe84ae8e40d75.svg'
+    },
+    'rel:000nysso': {
+      id: 'rel:000nysso',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/d473d665c8aa5bbd6870d6aaf4142dcc.svg'
+    },
+    'rel:015mxsoe': {
+      id: 'rel:015mxsoe',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/50a2e05fcd11c3eed893fa26b6535103.svg'
+    },
+    'rel:0087gqau': {
+      id: 'rel:0087gqau',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/e0c5dd0efcdaf8d2c0f8a27d7a3452ec.svg'
+    },
+    'rel:00epa06p': {
+      id: 'rel:00epa06p',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/526226c269563ebcd708f4e452f543b6.svg'
+    }
+  },
+  videos: {},
+  audios: {},
+  fonts: {}
+}
+[2026-08-31 13:34:08.821] [INFO ] [pid=35780] [commit] commit send pageId=52b8f7 targetIndex=27 version=29 baseVersion=29 revisionBytes=34696
+[2026-08-31 13:34:08.825] [INFO ] [pid=35780] [commit] commit ok pageId=52b8f7 revisionId=6c91f86c ms=4
+[2026-08-31 13:34:08.826] [INFO ] [pid=35780] [backend-ops] addSlideAt ok pageId=28 slideId=52b8f7 index=27 version=29 baseVersion=29 revisionId=6c91f86c code=0 images=[local=7 remote=0 cached=0 failed=0] ms=87
+[2026-08-31 13:34:08.826] [INFO ] [pid=35780] [sync] aligned round=30 attempt=1 size=28 desired=28 pendingDirtySize=0
+[2026-08-31 13:34:08.827] [INFO ] [pid=35780] [sync] reconcile ok round=30 attempt=1 ms=89
+[2026-08-31 13:34:08.827] [INFO ] [pid=35780] [backend-ops] save start file=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx
+[2026-08-31 13:34:08.827] [INFO ] [pid=35780] [commit] save send filePath=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx
+[2026-08-31 13:34:08.903] [INFO ] [pid=35780] [commit] save ok file_path=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx ms=76
+[2026-08-31 13:34:08.903] [INFO ] [pid=35780] [backend-ops] save ok file_path=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx ms=76
+[2026-08-31 13:34:08.903] [INFO ] [pid=35780] [sync] drain end round=30 reconciles=1 mergedSubmits=1 pendingDirtySize=0 ms=165
+[2026-08-31 13:34:57.518] [INFO ] [pid=35780] [watcher] event=add file=slides/29.slide
+[2026-08-31 13:34:58.019] [INFO ] [pid=35780] [watcher] flush batch dirty=[29] size=1
+[2026-08-31 13:34:58.019] [INFO ] [pid=35780] [sync] submit nextRound=31 dirty=29 pendingDirtySize=1 merged=no
+[2026-08-31 13:34:58.019] [INFO ] [pid=35780] [sync] drain start round=31 pendingDirtySize=1
+[2026-08-31 13:34:58.020] [INFO ] [pid=35780] [sync] step=add round=31 attempt=1 pageId=29 index=28
+[2026-08-31 13:34:58.020] [INFO ] [pid=35780] [backend-ops] addSlideAt start pageId=29 index=28
+[2026-08-31 13:34:58.020] [INFO ] [pid=35780] [render] start pageId=29 file=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/slides/29.slide
+[2026-08-31 13:34:58.076] [INFO ] [pid=35780] [render] ok pageId=29 slides=1 ms=56
+[2026-08-31 13:34:58.076] [INFO ] [pid=35780] [render] renderSlideData result.resources={
+  images: {
+    'rel:00epa06p': {
+      id: 'rel:00epa06p',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/526226c269563ebcd708f4e452f543b6.svg'
+    }
+  },
+  videos: {},
+  audios: {},
+  fonts: {}
+}
+[2026-08-31 13:34:58.080] [INFO ] [pid=35780] [commit] commit send pageId=29aef1 targetIndex=28 version=30 baseVersion=30 revisionBytes=33272
+[2026-08-31 13:34:58.085] [INFO ] [pid=35780] [commit] commit ok pageId=29aef1 revisionId=6dcb6dfd ms=5
+[2026-08-31 13:34:58.087] [INFO ] [pid=35780] [backend-ops] addSlideAt ok pageId=29 slideId=29aef1 index=28 version=30 baseVersion=30 revisionId=6dcb6dfd code=0 images=[local=1 remote=0 cached=0 failed=0] ms=67
+[2026-08-31 13:34:58.087] [INFO ] [pid=35780] [sync] aligned round=31 attempt=1 size=29 desired=29 pendingDirtySize=0
+[2026-08-31 13:34:58.087] [INFO ] [pid=35780] [sync] reconcile ok round=31 attempt=1 ms=68
+[2026-08-31 13:34:58.087] [INFO ] [pid=35780] [backend-ops] save start file=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx
+[2026-08-31 13:34:58.087] [INFO ] [pid=35780] [commit] save send filePath=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx
+[2026-08-31 13:34:58.213] [INFO ] [pid=35780] [commit] save ok file_path=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx ms=126
+[2026-08-31 13:34:58.213] [INFO ] [pid=35780] [backend-ops] save ok file_path=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx ms=126
+[2026-08-31 13:34:58.213] [INFO ] [pid=35780] [sync] drain end round=31 reconciles=1 mergedSubmits=1 pendingDirtySize=0 ms=194
+[2026-08-31 13:35:39.068] [INFO ] [pid=35780] [watcher] event=add file=slides/30.slide
+[2026-08-31 13:35:39.569] [INFO ] [pid=35780] [watcher] flush batch dirty=[30] size=1
+[2026-08-31 13:35:39.570] [INFO ] [pid=35780] [sync] submit nextRound=32 dirty=30 pendingDirtySize=1 merged=no
+[2026-08-31 13:35:39.570] [INFO ] [pid=35780] [sync] drain start round=32 pendingDirtySize=1
+[2026-08-31 13:35:39.570] [INFO ] [pid=35780] [sync] step=add round=32 attempt=1 pageId=30 index=29
+[2026-08-31 13:35:39.571] [INFO ] [pid=35780] [backend-ops] addSlideAt start pageId=30 index=29
+[2026-08-31 13:35:39.571] [INFO ] [pid=35780] [render] start pageId=30 file=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/slides/30.slide
+[2026-08-31 13:35:39.633] [INFO ] [pid=35780] [render] ok pageId=30 slides=1 ms=62
+[2026-08-31 13:35:39.633] [INFO ] [pid=35780] [render] renderSlideData result.resources={
+  images: {
+    'rel:00epa06p': {
+      id: 'rel:00epa06p',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/526226c269563ebcd708f4e452f543b6.svg'
+    }
+  },
+  videos: {},
+  audios: {},
+  fonts: {}
+}
+[2026-08-31 13:35:39.639] [INFO ] [pid=35780] [commit] commit send pageId=1dfd35 targetIndex=29 version=31 baseVersion=31 revisionBytes=28396
+[2026-08-31 13:35:39.643] [INFO ] [pid=35780] [commit] commit ok pageId=1dfd35 revisionId=c0fc875f ms=4
+[2026-08-31 13:35:39.644] [INFO ] [pid=35780] [backend-ops] addSlideAt ok pageId=30 slideId=1dfd35 index=29 version=31 baseVersion=31 revisionId=c0fc875f code=0 images=[local=1 remote=0 cached=0 failed=0] ms=73
+[2026-08-31 13:35:39.644] [INFO ] [pid=35780] [sync] aligned round=32 attempt=1 size=30 desired=30 pendingDirtySize=0
+[2026-08-31 13:35:39.644] [INFO ] [pid=35780] [sync] reconcile ok round=32 attempt=1 ms=74
+[2026-08-31 13:35:39.644] [INFO ] [pid=35780] [backend-ops] save start file=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx
+[2026-08-31 13:35:39.644] [INFO ] [pid=35780] [commit] save send filePath=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx
+[2026-08-31 13:35:39.733] [INFO ] [pid=35780] [commit] save ok file_path=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx ms=89
+[2026-08-31 13:35:39.734] [INFO ] [pid=35780] [backend-ops] save ok file_path=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx ms=90
+[2026-08-31 13:35:39.734] [INFO ] [pid=35780] [sync] drain end round=32 reconciles=1 mergedSubmits=1 pendingDirtySize=0 ms=164
+[2026-08-31 13:36:21.445] [INFO ] [pid=35780] [watcher] event=add file=slides/31.slide
+[2026-08-31 13:36:21.946] [INFO ] [pid=35780] [watcher] flush batch dirty=[31] size=1
+[2026-08-31 13:36:21.947] [INFO ] [pid=35780] [sync] submit nextRound=33 dirty=31 pendingDirtySize=1 merged=no
+[2026-08-31 13:36:21.947] [INFO ] [pid=35780] [sync] drain start round=33 pendingDirtySize=1
+[2026-08-31 13:36:21.947] [INFO ] [pid=35780] [sync] step=add round=33 attempt=1 pageId=31 index=30
+[2026-08-31 13:36:21.948] [INFO ] [pid=35780] [backend-ops] addSlideAt start pageId=31 index=30
+[2026-08-31 13:36:21.948] [INFO ] [pid=35780] [render] start pageId=31 file=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/slides/31.slide
+[2026-08-31 13:36:22.025] [INFO ] [pid=35780] [render] ok pageId=31 slides=1 ms=77
+[2026-08-31 13:36:22.025] [INFO ] [pid=35780] [render] renderSlideData result.resources={
+  images: {
+    'rel:00zlfubx': {
+      id: 'rel:00zlfubx',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/2d80d00e427dd137be39f1c1041f043c.svg'
+    },
+    'rel:00dmvyze': {
+      id: 'rel:00dmvyze',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/a140c3a2e03083b63ae215c8f5e70db8.svg'
+    },
+    'rel:00epa06p': {
+      id: 'rel:00epa06p',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/526226c269563ebcd708f4e452f543b6.svg'
+    }
+  },
+  videos: {},
+  audios: {},
+  fonts: {}
+}
+[2026-08-31 13:36:22.028] [INFO ] [pid=35780] [commit] commit send pageId=98a1f6 targetIndex=30 version=32 baseVersion=32 revisionBytes=24888
+[2026-08-31 13:36:22.032] [INFO ] [pid=35780] [commit] commit ok pageId=98a1f6 revisionId=cf2152b0 ms=4
+[2026-08-31 13:36:22.033] [INFO ] [pid=35780] [backend-ops] addSlideAt ok pageId=31 slideId=98a1f6 index=30 version=32 baseVersion=32 revisionId=cf2152b0 code=0 images=[local=3 remote=0 cached=0 failed=0] ms=85
+[2026-08-31 13:36:22.033] [INFO ] [pid=35780] [sync] aligned round=33 attempt=1 size=31 desired=31 pendingDirtySize=0
+[2026-08-31 13:36:22.033] [INFO ] [pid=35780] [sync] reconcile ok round=33 attempt=1 ms=86
+[2026-08-31 13:36:22.033] [INFO ] [pid=35780] [backend-ops] save start file=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx
+[2026-08-31 13:36:22.033] [INFO ] [pid=35780] [commit] save send filePath=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx
+[2026-08-31 13:36:22.121] [INFO ] [pid=35780] [commit] save ok file_path=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx ms=88
+[2026-08-31 13:36:22.121] [INFO ] [pid=35780] [backend-ops] save ok file_path=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx ms=88
+[2026-08-31 13:36:22.121] [INFO ] [pid=35780] [sync] drain end round=33 reconciles=1 mergedSubmits=1 pendingDirtySize=0 ms=174
+[2026-08-31 13:37:19.728] [INFO ] [pid=35780] [watcher] event=add file=slides/32.slide
+[2026-08-31 13:37:20.229] [INFO ] [pid=35780] [watcher] flush batch dirty=[32] size=1
+[2026-08-31 13:37:20.230] [INFO ] [pid=35780] [sync] submit nextRound=34 dirty=32 pendingDirtySize=1 merged=no
+[2026-08-31 13:37:20.230] [INFO ] [pid=35780] [sync] drain start round=34 pendingDirtySize=1
+[2026-08-31 13:37:20.231] [INFO ] [pid=35780] [sync] step=add round=34 attempt=1 pageId=32 index=31
+[2026-08-31 13:37:20.231] [INFO ] [pid=35780] [backend-ops] addSlideAt start pageId=32 index=31
+[2026-08-31 13:37:20.231] [INFO ] [pid=35780] [render] start pageId=32 file=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/slides/32.slide
+[2026-08-31 13:37:20.295] [INFO ] [pid=35780] [render] ok pageId=32 slides=1 ms=64
+[2026-08-31 13:37:20.296] [INFO ] [pid=35780] [render] renderSlideData result.resources={
+  images: {
+    'rel:00f5mzdp': {
+      id: 'rel:00f5mzdp',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/246e3f743b9f8ed930dc8d8937c22fa8.svg'
+    },
+    'rel:00epa06p': {
+      id: 'rel:00epa06p',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/526226c269563ebcd708f4e452f543b6.svg'
+    }
+  },
+  videos: {},
+  audios: {},
+  fonts: {}
+}
+[2026-08-31 13:37:20.303] [INFO ] [pid=35780] [commit] commit send pageId=e75586 targetIndex=31 version=33 baseVersion=33 revisionBytes=26684
+[2026-08-31 13:37:20.309] [INFO ] [pid=35780] [commit] commit ok pageId=e75586 revisionId=be079129 ms=6
+[2026-08-31 13:37:20.310] [INFO ] [pid=35780] [backend-ops] addSlideAt ok pageId=32 slideId=e75586 index=31 version=33 baseVersion=33 revisionId=be079129 code=0 images=[local=2 remote=0 cached=0 failed=0] ms=79
+[2026-08-31 13:37:20.311] [INFO ] [pid=35780] [sync] aligned round=34 attempt=1 size=32 desired=32 pendingDirtySize=0
+[2026-08-31 13:37:20.311] [INFO ] [pid=35780] [sync] reconcile ok round=34 attempt=1 ms=80
+[2026-08-31 13:37:20.311] [INFO ] [pid=35780] [backend-ops] save start file=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx
+[2026-08-31 13:37:20.311] [INFO ] [pid=35780] [commit] save send filePath=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx
+[2026-08-31 13:37:20.406] [INFO ] [pid=35780] [commit] save ok file_path=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx ms=95
+[2026-08-31 13:37:20.406] [INFO ] [pid=35780] [backend-ops] save ok file_path=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx ms=95
+[2026-08-31 13:37:20.406] [INFO ] [pid=35780] [sync] drain end round=34 reconciles=1 mergedSubmits=1 pendingDirtySize=0 ms=176
+[2026-08-31 13:37:38.298] [INFO ] [pid=35780] [watcher] event=add file=slides/33.slide
+[2026-08-31 13:37:38.799] [INFO ] [pid=35780] [watcher] flush batch dirty=[33] size=1
+[2026-08-31 13:37:38.800] [INFO ] [pid=35780] [sync] submit nextRound=35 dirty=33 pendingDirtySize=1 merged=no
+[2026-08-31 13:37:38.800] [INFO ] [pid=35780] [sync] drain start round=35 pendingDirtySize=1
+[2026-08-31 13:37:38.801] [INFO ] [pid=35780] [sync] step=add round=35 attempt=1 pageId=33 index=32
+[2026-08-31 13:37:38.801] [INFO ] [pid=35780] [backend-ops] addSlideAt start pageId=33 index=32
+[2026-08-31 13:37:38.801] [INFO ] [pid=35780] [render] start pageId=33 file=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/slides/33.slide
+[2026-08-31 13:37:38.852] [INFO ] [pid=35780] [render] ok pageId=33 slides=1 ms=51
+[2026-08-31 13:37:38.852] [INFO ] [pid=35780] [render] renderSlideData result.resources={
+  images: {
+    'rel:00xl3ihk': {
+      id: 'rel:00xl3ihk',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/c0b91a881aeff9660b798395f6820cde.svg'
+    },
+    'rel:017tkssi': {
+      id: 'rel:017tkssi',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/62bf82e67642eba0ad7b307e655cd973.svg'
+    }
+  },
+  videos: {},
+  audios: {},
+  fonts: {}
+}
+[2026-08-31 13:37:38.858] [INFO ] [pid=35780] [commit] commit send pageId=c125ed targetIndex=32 version=34 baseVersion=34 revisionBytes=9572
+[2026-08-31 13:37:38.861] [INFO ] [pid=35780] [commit] commit ok pageId=c125ed revisionId=02864a63 ms=3
+[2026-08-31 13:37:38.862] [INFO ] [pid=35780] [backend-ops] addSlideAt ok pageId=33 slideId=c125ed index=32 version=34 baseVersion=34 revisionId=02864a63 code=0 images=[local=2 remote=0 cached=0 failed=0] ms=61
+[2026-08-31 13:37:38.862] [INFO ] [pid=35780] [sync] aligned round=35 attempt=1 size=33 desired=33 pendingDirtySize=0
+[2026-08-31 13:37:38.862] [INFO ] [pid=35780] [sync] reconcile ok round=35 attempt=1 ms=61
+[2026-08-31 13:37:38.862] [INFO ] [pid=35780] [backend-ops] save start file=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx
+[2026-08-31 13:37:38.862] [INFO ] [pid=35780] [commit] save send filePath=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx
+[2026-08-31 13:37:38.953] [INFO ] [pid=35780] [commit] save ok file_path=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx ms=91
+[2026-08-31 13:37:38.954] [INFO ] [pid=35780] [backend-ops] save ok file_path=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx ms=92
+[2026-08-31 13:37:38.954] [INFO ] [pid=35780] [sync] drain end round=35 reconciles=1 mergedSubmits=1 pendingDirtySize=0 ms=154
+=== boot pid=36174 ts=2026-08-31 13:37:42.401 cwd=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划 argv=/Users/test/.workbuddy/binaries/node/versions/22.22.2/bin/slidep-validate --all --project /Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划 ===
+[2026-08-31 13:37:42.400] [INFO ] [pid=36174] [validate] --all mode: found 33 files in /Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/slides
+[2026-08-31 13:37:42.401] [INFO ] [pid=36174] [validate] batch start files=33 checkOverflow=true
+[2026-08-31 13:37:44.099] [INFO ] [pid=36174] [validate] batch done total=33 passed=32 failed=1 ms=1699
+[2026-08-31 13:37:57.750] [INFO ] [pid=35780] [watcher] event=change file=slides/32.slide
+[2026-08-31 13:37:58.251] [INFO ] [pid=35780] [watcher] flush batch dirty=[32] size=1
+[2026-08-31 13:37:58.252] [INFO ] [pid=35780] [sync] submit nextRound=36 dirty=32 pendingDirtySize=1 merged=no
+[2026-08-31 13:37:58.252] [INFO ] [pid=35780] [sync] drain start round=36 pendingDirtySize=1
+[2026-08-31 13:37:58.253] [INFO ] [pid=35780] [sync] step=remove-dirty round=36 attempt=1 pageId=32 index=31
+[2026-08-31 13:37:58.253] [INFO ] [pid=35780] [backend-ops] removeSlideAt start index=31
+[2026-08-31 13:37:58.258] [INFO ] [pid=35780] [mcp] mcp:slide_remove_slide send url=http://127.0.0.1:39099/mcp args={"file_id":"sid_mtgsdvhn_lwlsy7hb","page_index":31}
+[2026-08-31 13:37:58.268] [INFO ] [pid=35780] [mcp] mcp:slide_remove_slide ok ms=9
+[2026-08-31 13:37:58.268] [INFO ] [pid=35780] [backend-ops] removeSlideAt ok index=31 serverVersion=36 ms=15
+[2026-08-31 13:37:58.268] [INFO ] [pid=35780] [sync] step=add round=36 attempt=1 pageId=32 index=31
+[2026-08-31 13:37:58.269] [INFO ] [pid=35780] [backend-ops] addSlideAt start pageId=32 index=31
+[2026-08-31 13:37:58.269] [INFO ] [pid=35780] [render] start pageId=32 file=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/slides/32.slide
+[2026-08-31 13:37:58.336] [INFO ] [pid=35780] [render] ok pageId=32 slides=1 ms=67
+[2026-08-31 13:37:58.336] [INFO ] [pid=35780] [render] renderSlideData result.resources={
+  images: {
+    'rel:00f5mzdp': {
+      id: 'rel:00f5mzdp',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/246e3f743b9f8ed930dc8d8937c22fa8.svg'
+    },
+    'rel:00epa06p': {
+      id: 'rel:00epa06p',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/526226c269563ebcd708f4e452f543b6.svg'
+    }
+  },
+  videos: {},
+  audios: {},
+  fonts: {}
+}
+[2026-08-31 13:37:58.340] [INFO ] [pid=35780] [commit] commit send pageId=4bad38 targetIndex=31 version=35 baseVersion=36 revisionBytes=26692
+[2026-08-31 13:37:58.343] [INFO ] [pid=35780] [commit] commit ok pageId=4bad38 revisionId=1970f99f ms=3
+[2026-08-31 13:37:58.344] [INFO ] [pid=35780] [backend-ops] addSlideAt ok pageId=32 slideId=4bad38 index=31 version=35 baseVersion=36 revisionId=1970f99f code=0 images=[local=2 remote=0 cached=0 failed=0] ms=75
+[2026-08-31 13:37:58.344] [INFO ] [pid=35780] [sync] aligned round=36 attempt=1 size=33 desired=33 pendingDirtySize=0
+[2026-08-31 13:37:58.344] [INFO ] [pid=35780] [sync] reconcile ok round=36 attempt=1 ms=92
+[2026-08-31 13:37:58.344] [INFO ] [pid=35780] [backend-ops] save start file=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx
+[2026-08-31 13:37:58.344] [INFO ] [pid=35780] [commit] save send filePath=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx
+[2026-08-31 13:37:58.425] [INFO ] [pid=35780] [commit] save ok file_path=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx ms=81
+[2026-08-31 13:37:58.425] [INFO ] [pid=35780] [backend-ops] save ok file_path=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx ms=81
+[2026-08-31 13:37:58.425] [INFO ] [pid=35780] [sync] drain end round=36 reconciles=1 mergedSubmits=1 pendingDirtySize=0 ms=173
+[2026-08-31 13:38:30.361] [INFO ] [pid=35780] [watcher] event=change file=slides/32.slide
+[2026-08-31 13:38:30.863] [INFO ] [pid=35780] [watcher] flush batch dirty=[32] size=1
+[2026-08-31 13:38:30.864] [INFO ] [pid=35780] [sync] submit nextRound=37 dirty=32 pendingDirtySize=1 merged=no
+[2026-08-31 13:38:30.864] [INFO ] [pid=35780] [sync] drain start round=37 pendingDirtySize=1
+[2026-08-31 13:38:30.867] [INFO ] [pid=35780] [sync] step=remove-dirty round=37 attempt=1 pageId=32 index=31
+[2026-08-31 13:38:30.868] [INFO ] [pid=35780] [backend-ops] removeSlideAt start index=31
+[2026-08-31 13:38:30.876] [INFO ] [pid=35780] [mcp] mcp:slide_remove_slide send url=http://127.0.0.1:39099/mcp args={"file_id":"sid_mtgsdvhn_lwlsy7hb","page_index":31}
+[2026-08-31 13:38:30.884] [INFO ] [pid=35780] [mcp] mcp:slide_remove_slide ok ms=8
+[2026-08-31 13:38:30.884] [INFO ] [pid=35780] [backend-ops] removeSlideAt ok index=31 serverVersion=38 ms=16
+[2026-08-31 13:38:30.885] [INFO ] [pid=35780] [sync] step=add round=37 attempt=1 pageId=32 index=31
+[2026-08-31 13:38:30.885] [INFO ] [pid=35780] [backend-ops] addSlideAt start pageId=32 index=31
+[2026-08-31 13:38:30.885] [INFO ] [pid=35780] [render] start pageId=32 file=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/slides/32.slide
+[2026-08-31 13:38:30.958] [INFO ] [pid=35780] [render] ok pageId=32 slides=1 ms=73
+[2026-08-31 13:38:30.959] [INFO ] [pid=35780] [render] renderSlideData result.resources={
+  images: {
+    'rel:00f5mzdp': {
+      id: 'rel:00f5mzdp',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/246e3f743b9f8ed930dc8d8937c22fa8.svg'
+    },
+    'rel:00epa06p': {
+      id: 'rel:00epa06p',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/526226c269563ebcd708f4e452f543b6.svg'
+    }
+  },
+  videos: {},
+  audios: {},
+  fonts: {}
+}
+[2026-08-31 13:38:30.963] [INFO ] [pid=35780] [commit] commit send pageId=dfc5d2 targetIndex=31 version=36 baseVersion=38 revisionBytes=26692
+[2026-08-31 13:38:30.968] [INFO ] [pid=35780] [commit] commit ok pageId=dfc5d2 revisionId=e4f850fa ms=5
+[2026-08-31 13:38:30.968] [INFO ] [pid=35780] [backend-ops] addSlideAt ok pageId=32 slideId=dfc5d2 index=31 version=36 baseVersion=38 revisionId=e4f850fa code=0 images=[local=2 remote=0 cached=0 failed=0] ms=83
+[2026-08-31 13:38:30.968] [INFO ] [pid=35780] [sync] aligned round=37 attempt=1 size=33 desired=33 pendingDirtySize=0
+[2026-08-31 13:38:30.969] [INFO ] [pid=35780] [sync] reconcile ok round=37 attempt=1 ms=104
+[2026-08-31 13:38:30.969] [INFO ] [pid=35780] [backend-ops] save start file=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx
+[2026-08-31 13:38:30.969] [INFO ] [pid=35780] [commit] save send filePath=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx
+[2026-08-31 13:38:31.068] [INFO ] [pid=35780] [commit] save ok file_path=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx ms=99
+[2026-08-31 13:38:31.068] [INFO ] [pid=35780] [backend-ops] save ok file_path=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx ms=99
+[2026-08-31 13:38:31.068] [INFO ] [pid=35780] [sync] drain end round=37 reconciles=1 mergedSubmits=1 pendingDirtySize=0 ms=204
+[2026-08-31 13:38:37.729] [INFO ] [pid=35780] [watcher] event=change file=slides/32.slide
+[2026-08-31 13:38:38.230] [INFO ] [pid=35780] [watcher] flush batch dirty=[32] size=1
+[2026-08-31 13:38:38.230] [INFO ] [pid=35780] [sync] submit nextRound=38 dirty=32 pendingDirtySize=1 merged=no
+[2026-08-31 13:38:38.230] [INFO ] [pid=35780] [sync] drain start round=38 pendingDirtySize=1
+[2026-08-31 13:38:38.231] [INFO ] [pid=35780] [sync] step=remove-dirty round=38 attempt=1 pageId=32 index=31
+[2026-08-31 13:38:38.231] [INFO ] [pid=35780] [backend-ops] removeSlideAt start index=31
+[2026-08-31 13:38:38.237] [INFO ] [pid=35780] [mcp] mcp:slide_remove_slide send url=http://127.0.0.1:39099/mcp args={"file_id":"sid_mtgsdvhn_lwlsy7hb","page_index":31}
+[2026-08-31 13:38:38.245] [INFO ] [pid=35780] [mcp] mcp:slide_remove_slide ok ms=6
+[2026-08-31 13:38:38.245] [INFO ] [pid=35780] [backend-ops] removeSlideAt ok index=31 serverVersion=40 ms=14
+[2026-08-31 13:38:38.245] [INFO ] [pid=35780] [sync] step=add round=38 attempt=1 pageId=32 index=31
+[2026-08-31 13:38:38.245] [INFO ] [pid=35780] [backend-ops] addSlideAt start pageId=32 index=31
+[2026-08-31 13:38:38.246] [INFO ] [pid=35780] [render] start pageId=32 file=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/slides/32.slide
+[2026-08-31 13:38:38.306] [INFO ] [pid=35780] [render] ok pageId=32 slides=1 ms=60
+[2026-08-31 13:38:38.306] [INFO ] [pid=35780] [render] renderSlideData result.resources={
+  images: {
+    'rel:00f5mzdp': {
+      id: 'rel:00f5mzdp',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/246e3f743b9f8ed930dc8d8937c22fa8.svg'
+    },
+    'rel:00epa06p': {
+      id: 'rel:00epa06p',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/526226c269563ebcd708f4e452f543b6.svg'
+    }
+  },
+  videos: {},
+  audios: {},
+  fonts: {}
+}
+[2026-08-31 13:38:38.309] [INFO ] [pid=35780] [commit] commit send pageId=bb2bc8 targetIndex=31 version=37 baseVersion=40 revisionBytes=26676
+[2026-08-31 13:38:38.316] [INFO ] [pid=35780] [commit] commit ok pageId=bb2bc8 revisionId=7e95e5ae ms=5
+[2026-08-31 13:38:38.317] [INFO ] [pid=35780] [backend-ops] addSlideAt ok pageId=32 slideId=bb2bc8 index=31 version=37 baseVersion=40 revisionId=7e95e5ae code=0 images=[local=2 remote=0 cached=0 failed=0] ms=72
+[2026-08-31 13:38:38.317] [INFO ] [pid=35780] [sync] aligned round=38 attempt=1 size=33 desired=33 pendingDirtySize=0
+[2026-08-31 13:38:38.317] [INFO ] [pid=35780] [sync] reconcile ok round=38 attempt=1 ms=87
+[2026-08-31 13:38:38.317] [INFO ] [pid=35780] [backend-ops] save start file=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx
+[2026-08-31 13:38:38.317] [INFO ] [pid=35780] [commit] save send filePath=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx
+[2026-08-31 13:38:38.457] [INFO ] [pid=35780] [commit] save ok file_path=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx ms=140
+[2026-08-31 13:38:38.457] [INFO ] [pid=35780] [backend-ops] save ok file_path=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx ms=140
+[2026-08-31 13:38:38.457] [INFO ] [pid=35780] [sync] drain end round=38 reconciles=1 mergedSubmits=1 pendingDirtySize=0 ms=227
+[2026-08-31 13:38:43.203] [INFO ] [pid=35780] [watcher] event=change file=slides/32.slide
+[2026-08-31 13:38:43.705] [INFO ] [pid=35780] [watcher] flush batch dirty=[32] size=1
+[2026-08-31 13:38:43.706] [INFO ] [pid=35780] [sync] submit nextRound=39 dirty=32 pendingDirtySize=1 merged=no
+[2026-08-31 13:38:43.706] [INFO ] [pid=35780] [sync] drain start round=39 pendingDirtySize=1
+[2026-08-31 13:38:43.706] [INFO ] [pid=35780] [sync] step=remove-dirty round=39 attempt=1 pageId=32 index=31
+[2026-08-31 13:38:43.706] [INFO ] [pid=35780] [backend-ops] removeSlideAt start index=31
+[2026-08-31 13:38:43.712] [INFO ] [pid=35780] [mcp] mcp:slide_remove_slide send url=http://127.0.0.1:39099/mcp args={"file_id":"sid_mtgsdvhn_lwlsy7hb","page_index":31}
+[2026-08-31 13:38:43.715] [INFO ] [pid=35780] [mcp] mcp:slide_remove_slide ok ms=2
+[2026-08-31 13:38:43.715] [INFO ] [pid=35780] [backend-ops] removeSlideAt ok index=31 serverVersion=42 ms=9
+[2026-08-31 13:38:43.715] [INFO ] [pid=35780] [sync] step=add round=39 attempt=1 pageId=32 index=31
+[2026-08-31 13:38:43.715] [INFO ] [pid=35780] [backend-ops] addSlideAt start pageId=32 index=31
+[2026-08-31 13:38:43.715] [INFO ] [pid=35780] [render] start pageId=32 file=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/slides/32.slide
+[2026-08-31 13:38:43.777] [INFO ] [pid=35780] [render] ok pageId=32 slides=1 ms=62
+[2026-08-31 13:38:43.778] [INFO ] [pid=35780] [render] renderSlideData result.resources={
+  images: {
+    'rel:00f5mzdp': {
+      id: 'rel:00f5mzdp',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/246e3f743b9f8ed930dc8d8937c22fa8.svg'
+    },
+    'rel:00epa06p': {
+      id: 'rel:00epa06p',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/.cache/media/images/526226c269563ebcd708f4e452f543b6.svg'
+    }
+  },
+  videos: {},
+  audios: {},
+  fonts: {}
+}
+[2026-08-31 13:38:43.782] [INFO ] [pid=35780] [commit] commit send pageId=0018f6 targetIndex=31 version=38 baseVersion=42 revisionBytes=26628
+[2026-08-31 13:38:43.787] [INFO ] [pid=35780] [commit] commit ok pageId=0018f6 revisionId=df8094ad ms=4
+[2026-08-31 13:38:43.787] [INFO ] [pid=35780] [backend-ops] addSlideAt ok pageId=32 slideId=0018f6 index=31 version=38 baseVersion=42 revisionId=df8094ad code=0 images=[local=2 remote=0 cached=0 failed=0] ms=72
+[2026-08-31 13:38:43.788] [INFO ] [pid=35780] [sync] aligned round=39 attempt=1 size=33 desired=33 pendingDirtySize=0
+[2026-08-31 13:38:43.788] [INFO ] [pid=35780] [sync] reconcile ok round=39 attempt=1 ms=82
+[2026-08-31 13:38:43.788] [INFO ] [pid=35780] [backend-ops] save start file=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx
+[2026-08-31 13:38:43.788] [INFO ] [pid=35780] [commit] save send filePath=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx
+[2026-08-31 13:38:43.884] [INFO ] [pid=35780] [commit] save ok file_path=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx ms=96
+[2026-08-31 13:38:43.884] [INFO ] [pid=35780] [backend-ops] save ok file_path=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/AI宝儿五期上手课.pptx ms=96
+[2026-08-31 13:38:43.884] [INFO ] [pid=35780] [sync] drain end round=39 reconciles=1 mergedSubmits=1 pendingDirtySize=0 ms=178
+=== boot pid=36254 ts=2026-08-31 13:38:47.534 cwd=/Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划 argv=/Users/test/.workbuddy/binaries/node/versions/22.22.2/bin/slidep-validate --all --project /Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划 ===
+[2026-08-31 13:38:47.533] [INFO ] [pid=36254] [validate] --all mode: found 33 files in /Users/test/Downloads/ai-customer-service/AI宝儿五期课程规划/slides
+[2026-08-31 13:38:47.534] [INFO ] [pid=36254] [validate] batch start files=33 checkOverflow=true
+[2026-08-31 13:38:49.230] [INFO ] [pid=36254] [validate] batch done total=33 passed=33 failed=0 ms=1698
+[2026-08-31 13:56:14.407] [INFO ] [pid=35780] [worker] shutdown received sig=SIGTERM
+[2026-08-31 13:56:14.893] [INFO ] [pid=35780] [worker] shutdown ok sig=SIGTERM ms=489

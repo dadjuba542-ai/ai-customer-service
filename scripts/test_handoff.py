@@ -29,6 +29,7 @@ def main():
         from services.chat_service import build_chat_context
 
         client = app.test_client()
+        client.environ_base["HTTP_USER_AGENT"] = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
         admin_id = create_user('nutritionist', hash_password('very-secure-password'), is_admin=1)
         assert_true(admin_id, 'admin creation failed')
         login = client.post('/api/auth/login', json={'username': 'nutritionist', 'password': 'very-secure-password'})

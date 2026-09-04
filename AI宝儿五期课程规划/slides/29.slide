@@ -1,0 +1,123 @@
+<Slide style={{
+    background: '#F7FAF6',
+    paddingTop: 20, paddingBottom: 20, paddingLeft: 72, paddingRight: 72,
+}}>
+    <Box style={{ height: 100, justifyContent: 'center' }}>
+        <Text style={{ fontSize: 36, fontWeight: 'bold', color: '#1E3A32' }}>深度调理答疑与真人营养师</Text>
+        <Box style={{ width: 56, height: 4, borderRadius: 2, background: '#1F7A5C', marginTop: 8 }} />
+    </Box>
+
+    <Box style={{ height: 528, flexDirection: 'row', gap: 28 }}>
+        <Box style={{ width: 310 }}>
+            <Text style={{ fontSize: 26, fontWeight: 'bold', color: '#1F7A5C', lineHeight: 1.45 }}>
+                只有你明确说要找人，<br />才会真的转人工
+            </Text>
+            <Text style={{ fontSize: 20, color: '#6B7C75', lineHeight: 1.6, marginTop: 20 }}>
+                系统只在"深度调理答疑"这类对话里识别明确的转人工意图。聊天时随口提一句"你们有没有营养师"，不会被误判成要排队。
+            </Text>
+            <Box style={{
+                marginTop: 20, background: 'rgba(31,122,92,0.08)', borderRadius: 14, padding: 16,
+            }}>
+                <Text style={{ fontSize: 19, color: '#1E3A32', lineHeight: 1.55 }}>
+                    转人工之前你问过的有效问题，会一并带给营养师，不用从头再讲一遍。
+                </Text>
+            </Box>
+            <Box style={{
+                marginTop: 16, background: '#FFFFFF', borderRadius: 14, padding: 16,
+                boxShadow: '0 4px 20px rgba(30,58,50,0.08)',
+            }}>
+                <Text style={{ fontSize: 19, color: '#6B7C75', lineHeight: 1.55 }}>
+                    转人工期间如果觉得不需要了，可以主动挂起，AI 会立刻接回来。
+                </Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flex: 1, gap: 12 }}>
+            <Box style={{
+                flexDirection: 'row', gap: 18, background: '#FFFFFF', borderRadius: 14, padding: 16,
+                height: 96, boxShadow: '0 4px 20px rgba(30,58,50,0.08)', alignItems: 'center',
+            }}>
+                <Box style={{ width: 46, height: 46, borderRadius: 23, background: '#1F7A5C', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#FFFFFF' }}>1</Text>
+                </Box>
+                <Box style={{ flex: 1 }}>
+                    <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#1E3A32' }}>怎么触发</Text>
+                    <Text style={{ fontSize: 19, color: '#6B7C75', lineHeight: 1.45, marginTop: 3 }}>
+                        在深度调理答疑里明确说"我想找营养师"，系统才会启动转人工流程
+                    </Text>
+                </Box>
+            </Box>
+
+            <Box style={{
+                flexDirection: 'row', gap: 18, background: '#FFFFFF', borderRadius: 14, padding: 16,
+                height: 96, boxShadow: '0 4px 20px rgba(30,58,50,0.08)', alignItems: 'center',
+            }}>
+                <Box style={{ width: 46, height: 46, borderRadius: 23, background: '#1F7A5C', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#FFFFFF' }}>2</Text>
+                </Box>
+                <Box style={{ flex: 1 }}>
+                    <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#1E3A32' }}>先过一遍专用 AI</Text>
+                    <Text style={{ fontSize: 19, color: '#6B7C75', lineHeight: 1.45, marginTop: 3 }}>
+                        营养咨询有专门的 AI 接住你，很多问题在这一步就解决了，根本不用排队
+                    </Text>
+                </Box>
+            </Box>
+
+            <Box style={{
+                flexDirection: 'row', gap: 18, background: '#FFFFFF', borderRadius: 14, padding: 16,
+                height: 96, boxShadow: '0 4px 20px rgba(30,58,50,0.08)', alignItems: 'center',
+            }}>
+                <Box style={{ width: 46, height: 46, borderRadius: 23, background: '#1F7A5C', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#FFFFFF' }}>3</Text>
+                </Box>
+                <Box style={{ flex: 1 }}>
+                    <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#1E3A32' }}>进入排队等待</Text>
+                    <Text style={{ fontSize: 19, color: '#6B7C75', lineHeight: 1.45, marginTop: 3 }}>
+                        确认要找真人后进入排队，页面会提示你前面还有几位，请别关掉页面
+                    </Text>
+                </Box>
+            </Box>
+
+            <Box style={{
+                flexDirection: 'row', gap: 18, background: 'rgba(224,138,60,0.14)', borderRadius: 14, padding: 16,
+                height: 96, alignItems: 'center',
+            }}>
+                <Box style={{ width: 46, height: 46, borderRadius: 23, background: '#E08A3C', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#FFFFFF' }}>4</Text>
+                </Box>
+                <Box style={{ flex: 1 }}>
+                    <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#1E3A32' }}>等满 120 秒自动转留言</Text>
+                    <Text style={{ fontSize: 19, color: '#6B7C75', lineHeight: 1.45, marginTop: 3 }}>
+                        没人接就自动变留言，同时恢复 AI 回答——不耽误你继续问别的，营养师回完再单独通知你
+                    </Text>
+                </Box>
+            </Box>
+
+            <Box style={{
+                flexDirection: 'row', gap: 18, background: '#FFFFFF', borderRadius: 14, padding: 16,
+                height: 96, boxShadow: '0 4px 20px rgba(30,58,50,0.08)', alignItems: 'center',
+            }}>
+                <Box style={{ width: 46, height: 46, borderRadius: 23, background: '#1F7A5C', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#FFFFFF' }}>5</Text>
+                </Box>
+                <Box style={{ flex: 1 }}>
+                    <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#1E3A32' }}>回复单独展示</Text>
+                    <Text style={{ fontSize: 19, color: '#6B7C75', lineHeight: 1.45, marginTop: 3 }}>
+                        营养师的回答会单独出现在你的对话里，不会和之前的 AI 回答混在一起
+                    </Text>
+                </Box>
+            </Box>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            <svg width="20" height="20" viewBox="0 0 24 24">
+                <path d="M12 21C12 21 4 17 4 10C4 6 7 3 12 3C17 3 20 6 20 10C20 17 12 21 12 21Z" fill="#1F7A5C" opacity="0.75" />
+                <path d="M12 21V6" stroke="#FFFFFF" strokeWidth="1.6" fill="none" />
+            </svg>
+            <Text style={{ fontSize: 14, color: '#6B7C75' }}>AI宝儿 · 五期上手课</Text>
+        </Box>
+        <Text style={{ fontSize: 14, color: '#6B7C75' }}>29 / 33</Text>
+    </Box>
+</Slide>

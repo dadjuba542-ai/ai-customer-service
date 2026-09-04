@@ -1,0 +1,93 @@
+<Slide style={{
+    background: '#F7FAF6',
+    paddingTop: 20, paddingBottom: 20, paddingLeft: 72, paddingRight: 72,
+}}>
+    <Box style={{ height: 100, justifyContent: 'center' }}>
+        <Text style={{ fontSize: 36, fontWeight: 'bold', color: '#1E3A32' }}>第 4 期实操：从提问到读完三条案例</Text>
+        <Box style={{ width: 56, height: 4, borderRadius: 2, background: '#1F7A5C', marginTop: 8 }} />
+    </Box>
+
+    <Box style={{ height: 528 }}>
+        <Box style={{ height: 238, background: '#FFFFFF', borderRadius: 14, padding: 16, boxShadow: '0 4px 20px rgba(30,58,50,0.08)' }}>
+            <svg width="1104" height="206" viewBox="0 0 1104 206">
+                <rect x="16" y="34" width="306" height="106" rx="16" fill="#1F7A5C" />
+                <text x="169" y="78" textAnchor="middle" fontSize="26" fontWeight="bold" fill="#FFFFFF" fontFamily="PingFang SC">1  提一个带背景的问题</text>
+                <text x="169" y="112" textAnchor="middle" fontSize="19" fill="#FFFFFF" opacity="0.85" fontFamily="PingFang SC">把人群、状态、困扰写进问句</text>
+
+                <path d="M330 87 L392 87" stroke="#A8D5BA" strokeWidth="5" />
+                <path d="M380 75 L398 87 L380 99 Z" fill="#A8D5BA" />
+
+                <rect x="400" y="34" width="306" height="106" rx="16" fill="rgba(168,213,186,0.5)" />
+                <text x="553" y="78" textAnchor="middle" fontSize="26" fontWeight="bold" fill="#1E3A32" fontFamily="PingFang SC">2  读完三条案例卡</text>
+                <text x="553" y="112" textAnchor="middle" fontSize="19" fill="#1E3A32" opacity="0.75" fontFamily="PingFang SC">重点看画像和场景，不看热闹</text>
+
+                <path d="M714 87 L776 87" stroke="#A8D5BA" strokeWidth="5" />
+                <path d="M764 75 L782 87 L764 99 Z" fill="#A8D5BA" />
+
+                <rect x="784" y="34" width="306" height="106" rx="16" fill="#E08A3C" />
+                <text x="937" y="78" textAnchor="middle" fontSize="26" fontWeight="bold" fill="#FFFFFF" fontFamily="PingFang SC">3  选出最像的一条</text>
+                <text x="937" y="112" textAnchor="middle" fontSize="19" fill="#FFFFFF" opacity="0.9" fontFamily="PingFang SC">并说得出为什么像、学到哪一点</text>
+
+                <text x="169" y="186" textAnchor="middle" fontSize="18" fill="#6B7C75" fontFamily="PingFang SC">问得越具体，案例越准</text>
+                <text x="553" y="186" textAnchor="middle" fontSize="18" fill="#6B7C75" fontFamily="PingFang SC">三问过滤，不合适就跳过</text>
+                <text x="937" y="186" textAnchor="middle" fontSize="18" fill="#6B7C75" fontFamily="PingFang SC">一次只学一样</text>
+            </svg>
+        </Box>
+
+        <Box style={{
+            height: 276, marginTop: 14, flexDirection: 'row', gap: 20,
+            background: 'rgba(31,122,92,0.08)', borderRadius: 14, padding: 24,
+        }}>
+            <Box style={{ flex: 1, gap: 11 }}>
+                <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#1F7A5C' }}>做完之后，逐条自检</Text>
+
+                <Box style={{ flexDirection: 'row', gap: 12, alignItems: 'flex-start' }}>
+                    <FAIcon name='check-square' style={{ fill: '#1F7A5C', width: 22, height: 22 }} />
+                    <Text style={{ fontSize: 19, color: '#1E3A32', lineHeight: 1.5, flex: 1 }}>
+                        我这一个问题下面出现了几条相关案例？一条都没有，说明问得太泛，改具体再来一次
+                    </Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', gap: 12, alignItems: 'flex-start' }}>
+                    <FAIcon name='check-square' style={{ fill: '#1F7A5C', width: 22, height: 22 }} />
+                    <Text style={{ fontSize: 19, color: '#1E3A32', lineHeight: 1.5, flex: 1 }}>
+                        我点开了其中至少两条，并且把客户画像和使用场景都看完了
+                    </Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', gap: 12, alignItems: 'flex-start' }}>
+                    <FAIcon name='check-square' style={{ fill: '#1F7A5C', width: 22, height: 22 }} />
+                    <Text style={{ fontSize: 19, color: '#1E3A32', lineHeight: 1.5, flex: 1 }}>
+                        我能说出哪一条最像我（或我的客户），并且讲得出"像"在哪里
+                    </Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', gap: 12, alignItems: 'flex-start' }}>
+                    <FAIcon name='check-square' style={{ fill: '#1F7A5C', width: 22, height: 22 }} />
+                    <Text style={{ fontSize: 19, color: '#1E3A32', lineHeight: 1.5, flex: 1 }}>
+                        我把学到的那一点，用一句话写在了笔记本或工作群里
+                    </Text>
+                </Box>
+            </Box>
+
+            <Box style={{
+                width: 320, background: '#FFFFFF', borderRadius: 14, padding: 18, justifyContent: 'center',
+            }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#1E3A32', lineHeight: 1.5 }}>
+                    看完不总结，<br />等于没看
+                </Text>
+                <Text style={{ fontSize: 19, color: '#6B7C75', lineHeight: 1.55, marginTop: 12 }}>
+                    案例的价值不在"读了多少条"，而在你能不能把其中一条用出来。一期三条，比一天三十条有用。
+                </Text>
+            </Box>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            <svg width="20" height="20" viewBox="0 0 24 24">
+                <path d="M12 21C12 21 4 17 4 10C4 6 7 3 12 3C17 3 20 6 20 10C20 17 12 21 12 21Z" fill="#1F7A5C" opacity="0.75" />
+                <path d="M12 21V6" stroke="#FFFFFF" strokeWidth="1.6" fill="none" />
+            </svg>
+            <Text style={{ fontSize: 14, color: '#6B7C75' }}>AI宝儿 · 内容与案例参考</Text>
+        </Box>
+        <Text style={{ fontSize: 14, color: '#6B7C75' }}>12 / 13</Text>
+    </Box>
+</Slide>

@@ -1,0 +1,77 @@
+<Slide style={{
+    background: '#F7FAF6',
+    paddingTop: 20, paddingBottom: 20, paddingLeft: 72, paddingRight: 72,
+}}>
+    <Box style={{ height: 100, justifyContent: 'center' }}>
+        <Text style={{ fontSize: 36, fontWeight: 'bold', color: '#1E3A32' }}>本讲小结</Text>
+        <Box style={{ width: 56, height: 4, borderRadius: 2, background: '#1F7A5C', marginTop: 8 }} />
+    </Box>
+
+    <Box style={{ height: 528, flexDirection: 'row', gap: 28 }}>
+        <Box style={{ width: 600, height: 528 }}>
+            <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#1F7A5C', lineHeight: 1.4 }}>
+                这一讲，你已掌握
+            </Text>
+            <Box style={{ marginTop: 18, gap: 13 }}>
+                <Box style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>
+                    <FAIcon name='check' style={{ fill: '#1F7A5C', width: 24, height: 24 }} />
+                    <Text style={{ fontSize: 20, color: '#1E3A32', lineHeight: 1.4 }}>先读后问：内容喂出更好的问题</Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>
+                    <FAIcon name='check' style={{ fill: '#1F7A5C', width: 24, height: 24 }} />
+                    <Text style={{ fontSize: 20, color: '#1E3A32', lineHeight: 1.4 }}>资讯 / 产品怎么读、怎么问</Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>
+                    <FAIcon name='check' style={{ fill: '#1F7A5C', width: 24, height: 24 }} />
+                    <Text style={{ fontSize: 20, color: '#1E3A32', lineHeight: 1.4 }}>历史记录回看 + 热门问题破冰</Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>
+                    <FAIcon name='check' style={{ fill: '#1F7A5C', width: 24, height: 24 }} />
+                    <Text style={{ fontSize: 20, color: '#1E3A32', lineHeight: 1.4 }}>案例机制：回答后自动推荐 3 条</Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>
+                    <FAIcon name='check' style={{ fill: '#1F7A5C', width: 24, height: 24 }} />
+                    <Text style={{ fontSize: 20, color: '#1E3A32', lineHeight: 1.4 }}>案例三问过滤噪音 + 抽屉不叠层</Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>
+                    <FAIcon name='check' style={{ fill: '#1F7A5C', width: 24, height: 24 }} />
+                    <Text style={{ fontSize: 20, color: '#1E3A32', lineHeight: 1.4 }}>「查看更多」与完整案例库 H5</Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>
+                    <FAIcon name='check' style={{ fill: '#1F7A5C', width: 24, height: 24 }} />
+                    <Text style={{ fontSize: 20, color: '#1E3A32', lineHeight: 1.4 }}>四步自检：带背景 / 读完 3 条 / 三问 / 说清</Text>
+                </Box>
+            </Box>
+        </Box>
+
+        <Box style={{ flex: 1, height: 528, justifyContent: 'center' }}>
+            <Box style={{ background: 'linear-gradient(135deg, #1F7A5C 0%, #2E9B77 100%)', borderRadius: 18, padding: 28 }}>
+                <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#FFFFFF' }}>下一步去哪</Text>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12, marginTop: 18 }}>
+                    <FAIcon name='arrow-right' style={{ fill: '#FFFFFF', width: 30, height: 30 }} />
+                    <Text style={{ fontSize: 22, color: '#FFFFFF', lineHeight: 1.5, flex: 1 }}>第 3 套《长效使用与协同保障》</Text>
+                </Box>
+                <Text style={{ fontSize: 20, color: '#FFFFFF', opacity: 0.9, lineHeight: 1.55, marginTop: 12 }}>
+                    学社区问答、转人工营养师、五个好习惯与避坑清单，把「会用」变成「用得久」。
+                </Text>
+            </Box>
+            <Box style={{ marginTop: 22, gap: 14 }}>
+                <Text style={{ fontSize: 20, color: '#1E3A32', lineHeight: 1.5 }}>记住一句话：</Text>
+                <Text style={{ fontSize: 22, color: '#C9742B', fontWeight: 'bold', lineHeight: 1.5 }}>
+                    案例不是答案，是你能抄的那一步。
+                </Text>
+            </Box>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            <svg width="20" height="20" viewBox="0 0 24 24">
+                <path d="M12 21C12 21 4 17 4 10C4 6 7 3 12 3C17 3 20 6 20 10C20 17 12 21 12 21Z" fill="#1F7A5C" opacity="0.75" />
+                <path d="M12 21V6" stroke="#FFFFFF" strokeWidth="1.6" fill="none" />
+            </svg>
+            <Text style={{ fontSize: 14, color: '#6B7C75' }}>AI宝儿 · 内容与案例参考</Text>
+        </Box>
+        <Text style={{ fontSize: 14, color: '#6B7C75' }}>13 / 13</Text>
+    </Box>
+</Slide>

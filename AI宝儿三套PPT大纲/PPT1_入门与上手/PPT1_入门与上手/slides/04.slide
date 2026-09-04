@@ -1,0 +1,99 @@
+<Slide style={{
+    background: '#F7FAF6',
+    paddingTop: 20, paddingBottom: 20, paddingLeft: 72, paddingRight: 72,
+}}>
+    <Box style={{ height: 100, justifyContent: 'center' }}>
+        <Text style={{ fontSize: 36, fontWeight: 'bold', color: '#1E3A32' }}>第一次使用：两步进门</Text>
+        <Box style={{ width: 56, height: 4, borderRadius: 2, background: '#1F7A5C', marginTop: 8 }} />
+    </Box>
+
+    <Box style={{ height: 528, flexDirection: 'row', gap: 28 }}>
+        <Box style={{ width: 660 }}>
+            <Text style={{ fontSize: 26, fontWeight: 'bold', color: '#1F7A5C', lineHeight: 1.4 }}>
+                先选团队，再填姓名，两步就进去了
+            </Text>
+
+            <Box style={{ marginTop: 24, gap: 20 }}>
+                <Box style={{
+                    flexDirection: 'row', gap: 18, background: '#FFFFFF', borderRadius: 14,
+                    padding: 20, boxShadow: '0 4px 20px rgba(30,58,50,0.08)',
+                }}>
+                    <Box style={{
+                        width: 44, height: 44, borderRadius: 22, background: '#1F7A5C',
+                        justifyContent: 'center', alignItems: 'center',
+                    }}>
+                        <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#FFFFFF' }}>1</Text>
+                    </Box>
+                    <Box style={{ flex: 1 }}>
+                        <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#1E3A32' }}>选择你所在的团队</Text>
+                        <Text style={{ fontSize: 20, color: '#6B7C75', lineHeight: 1.55, marginTop: 8 }}>
+                            团队名单由公司统一配置，只能从下拉列表里选。列表里没有你的团队时，找管理员加，不要随便选一个——你问过的内容会归到团队名下，选错就统计错了。
+                        </Text>
+                    </Box>
+                </Box>
+
+                <Box style={{
+                    flexDirection: 'row', gap: 18, background: '#FFFFFF', borderRadius: 14,
+                    padding: 20, boxShadow: '0 4px 20px rgba(30,58,50,0.08)',
+                }}>
+                    <Box style={{
+                        width: 44, height: 44, borderRadius: 22, background: '#1F7A5C',
+                        justifyContent: 'center', alignItems: 'center',
+                    }}>
+                        <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#FFFFFF' }}>2</Text>
+                    </Box>
+                    <Box style={{ flex: 1 }}>
+                        <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#1E3A32' }}>填写你的姓名</Text>
+                        <Text style={{ fontSize: 20, color: '#6B7C75', lineHeight: 1.55, marginTop: 8 }}>
+                            填常用的名字就行，不用真名全称，但要固定——今天叫"小王"，明天别叫"王某某"，否则系统认不出是同一个人，历史记录会断成两截。
+                        </Text>
+                    </Box>
+                </Box>
+            </Box>
+
+            <Box style={{
+                marginTop: 'auto', background: 'rgba(31,122,92,0.08)', borderRadius: 14, padding: 18,
+                flexDirection: 'row', gap: 14, alignItems: 'center',
+            }}>
+                <FAIcon name='info-circle' style={{ fill: '#1F7A5C', width: 26, height: 26 }} />
+                <Text style={{ fontSize: 20, color: '#1E3A32', lineHeight: 1.5, flex: 1 }}>
+                    身份存在这台设备的浏览器里，换手机、换浏览器或清了缓存，需要重新填一次。
+                </Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flex: 1 }}>
+            <svg width="448" height="528" viewBox="0 0 448 528">
+                <rect x="74" y="56" width="300" height="76" rx="16" fill="#1F7A5C" />
+                <text x="118" y="102" fontSize="26" fontWeight="bold" fill="#FFFFFF" fontFamily="PingFang SC">1  选择你的团队</text>
+
+                <path d="M224 148 L224 188" stroke="#A8D5BA" strokeWidth="4" />
+                <path d="M214 180 L224 196 L234 180 Z" fill="#A8D5BA" />
+
+                <rect x="74" y="196" width="300" height="76" rx="16" fill="#1F7A5C" opacity="0.8" />
+                <text x="118" y="242" fontSize="26" fontWeight="bold" fill="#FFFFFF" fontFamily="PingFang SC">2  填写你的姓名</text>
+
+                <path d="M224 288 L224 328" stroke="#A8D5BA" strokeWidth="4" />
+                <path d="M214 320 L224 336 L234 320 Z" fill="#A8D5BA" />
+
+                <rect x="74" y="336" width="300" height="76" rx="16" fill="#E08A3C" />
+                <text x="118" y="382" fontSize="26" fontWeight="bold" fill="#FFFFFF" fontFamily="PingFang SC">3  进入首页开始提问</text>
+
+                <rect x="74" y="440" width="300" height="72" rx="14" fill="rgba(31,122,92,0.1)" />
+                <text x="224" y="470" textAnchor="middle" fontSize="19" fill="#1E3A32" fontFamily="PingFang SC">身份保存在本机浏览器</text>
+                <text x="224" y="496" textAnchor="middle" fontSize="19" fill="#6B7C75" fontFamily="PingFang SC">换设备后需要重填</text>
+            </svg>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            <svg width="20" height="20" viewBox="0 0 24 24">
+                <path d="M12 21C12 21 4 17 4 10C4 6 7 3 12 3C17 3 20 6 20 10C20 17 12 21 12 21Z" fill="#1F7A5C" opacity="0.75" />
+                <path d="M12 21V6" stroke="#FFFFFF" strokeWidth="1.6" fill="none" />
+            </svg>
+            <Text style={{ fontSize: 14, color: '#6B7C75' }}>AI宝儿 · 入门与上手</Text>
+        </Box>
+        <Text style={{ fontSize: 14, color: '#6B7C75' }}>04 / 14</Text>
+    </Box>
+</Slide>

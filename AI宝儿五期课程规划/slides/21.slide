@@ -1,0 +1,42 @@
+<Slide style={{ background: '#F7FAF6', padding: 0 }}>
+    <Box style={{ flexDirection: 'row', width: '100%', height: '100%' }}>
+        <Box style={{
+            width: 742, height: '100%',
+            background: 'linear-gradient(135deg, #1F7A5C 0%, #2E9B77 100%)',
+            paddingLeft: 72, paddingRight: 48, justifyContent: 'center',
+        }}>
+            <Text style={{ fontSize: 120, fontWeight: 'bold', color: '#FFFFFF', opacity: 0.28, lineHeight: 1 }}>04</Text>
+            <Text style={{ fontSize: 68, fontWeight: 'bold', color: '#FFFFFF', lineHeight: 1.15, marginTop: 12 }}>
+                把经验变成参考
+            </Text>
+            <Box style={{ width: 96, height: 5, borderRadius: 3, background: '#E08A3C', marginTop: 26 }} />
+            <Text style={{ fontSize: 26, color: '#FFFFFF', opacity: 0.88, lineHeight: 1.55, marginTop: 24 }}>
+                客户案例档案怎么用<br />别人走过的路，能帮你少走三圈
+            </Text>
+        </Box>
+
+        <Box style={{ flex: 1, height: '100%', background: '#F7FAF6' }}>
+            <svg width="538" height="720" viewBox="0 0 538 720">
+                <path d="M40 640 C140 560 120 440 200 360 C270 290 250 200 320 130" fill="none" stroke="#A8D5BA" strokeWidth="5" strokeDasharray="14 12" />
+                <circle cx="40" cy="640" r="14" fill="#1F7A5C" />
+                <circle cx="320" cy="130" r="18" fill="#E08A3C" />
+
+                <path d="M96 236 L420 196 L456 372 L132 412 Z" fill="rgba(168,213,186,0.4)" />
+                <rect x="150" y="238" width="72" height="24" rx="12" fill="#1F7A5C" opacity="0.5" />
+                <rect x="150" y="282" width="200" height="14" rx="7" fill="#FFFFFF" opacity="0.9" />
+                <rect x="150" y="310" width="160" height="10" rx="5" fill="#FFFFFF" opacity="0.6" />
+
+                <path d="M124 320 L448 280 L484 456 L160 496 Z" fill="#FFFFFF" />
+                <path d="M124 320 L448 280 L484 456 L160 496 Z" fill="none" stroke="#DDE7E1" strokeWidth="3" />
+                <rect x="180" y="326" width="76" height="26" rx="13" fill="#1F7A5C" />
+                <rect x="270" y="326" width="60" height="26" rx="13" fill="#E08A3C" opacity="0.85" />
+                <rect x="180" y="374" width="230" height="16" rx="8" fill="#1F7A5C" opacity="0.65" />
+                <rect x="180" y="410" width="256" height="12" rx="6" fill="#A8D5BA" />
+                <rect x="180" y="436" width="220" height="12" rx="6" fill="#A8D5BA" />
+                <rect x="180" y="462" width="180" height="12" rx="6" fill="#A8D5BA" />
+
+                <path d="M0 660 Q160 620 320 660 T538 648 L538 720 L0 720 Z" fill="#1F7A5C" opacity="0.42" />
+            </svg>
+        </Box>
+    </Box>
+</Slide>

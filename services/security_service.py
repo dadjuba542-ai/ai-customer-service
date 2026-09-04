@@ -57,29 +57,9 @@ def rate_limit(scope, limit, window_seconds=60):
                 )
             subject = identity.get('user_id') or request.remote_addr or 'unknown'
             key = f'{scope}:{subject}'
-            now = time.monotonic()
-            cutoff = now - window_seconds
-
-            with _bucket_lock:
-                bucket = _request_buckets.get(key)
-                if bucket is None:
-                    if len(_request_buckets) >= _MAX_REQUEST_BUCKETS:
-                        _request_buckets.popitem(last=False)
-                    bucket = deque()
-                    _request_buckets[key] = bucket
-                while bucket and bucket[0] <= cutoff:
-                    bucket.popleft()
-                if len(bucket) >= limit:
-                    retry_after = max(1, int(window_seconds - (now - bucket[0])))
-                    response = jsonify({'error': '请求过于频繁，请稍后重试', 'retry_after': retry_after})
-                    response.status_code = 429
-                    response.headers['Retry-After'] = str(retry_after)
-                    return response
-                bucket.append(now)
-                _request_buckets.move_to_end(key)
-                if not bucket:
-                    # Keep the OrderedDict bounded even when keys become empty.
-                    _request_buckets.pop(key, None)
+            allowed, retry_after = check_request_budget(key, limit, window_seconds)
+            if not allowed:
+                return build_rate_limited_response(retry_after)
 
             return func(*args, **kwargs)
         return wrapped
@@ -89,3 +69,72 @@ def rate_limit(scope, limit, window_seconds=60):
 def reset_rate_limits_for_tests():
     with _bucket_lock:
         _request_buckets.clear()
+
+
+BOT_UA_MARKERS = (
+    'googlebot', 'bingbot', 'baiduspider', 'sogou', 'yandexbot', 'duckduckbot',
+    'applebot', 'facebookexternalhit', 'twitterbot', 'linkedinbot', 'slackbot',
+    'telegrambot', 'semrushbot', 'ahrefsbot', 'mj12bot', 'dotbot', 'petalbot',
+    'bytespider', 'amazonbot', 'claudebot', 'gptbot', 'chatgpt-user', 'ccbot',
+    'google-extended', 'ia_archiver', 'youbot',
+)
+SCRIPT_UA_MARKERS = (
+    'python-requests', 'python-urllib', 'urllib', 'curl/', 'wget/', 'scrapy',
+    'headlesschrome', 'phantomjs', 'selenium', 'httpie', 'axios/',
+    'go-http-client', 'libwww-perl', 'okhttp', 'aiohttp', 'httpx', 'node-fetch',
+)
+# WeChat renders share cards by fetching og: tags; blocking it breaks sharing.
+WECHAT_UA_MARKERS = ('micromessenger', 'wechat', 'weixin', 'mmwebid', 'xweb', 'mmwebsdk')
+
+BROWSER_UA_MARKERS = ('mozilla', 'chrome', 'safari', 'firefox', 'edg/', 'opr/')
+
+
+def classify_client(user_agent):
+    """Bucket a request into browser / wechat / crawler / script by UA string."""
+    ua = (user_agent or '').strip().lower()
+    if not ua:
+        return 'script'
+    for marker in WECHAT_UA_MARKERS:
+        if marker in ua:
+            return 'wechat'
+    for marker in BROWSER_UA_MARKERS:
+        if marker in ua:
+            for marker_bot in SCRIPT_UA_MARKERS + BOT_UA_MARKERS:
+                if marker_bot in ua:
+                    return 'script' if marker_bot in SCRIPT_UA_MARKERS else 'crawler'
+            return 'browser'
+    for marker in SCRIPT_UA_MARKERS:
+        if marker in ua:
+            return 'script'
+    for marker in BOT_UA_MARKERS:
+        if marker in ua:
+            return 'crawler'
+    return 'script'
+
+
+def check_request_budget(key, limit, window_seconds=60):
+    """Shared sliding-window counter. Returns (allowed, retry_after_seconds)."""
+    now = time.monotonic()
+    cutoff = now - window_seconds
+    with _bucket_lock:
+        bucket = _request_buckets.get(key)
+        if bucket is None:
+            if len(_request_buckets) >= _MAX_REQUEST_BUCKETS:
+                _request_buckets.popitem(last=False)
+            bucket = deque()
+            _request_buckets[key] = bucket
+        while bucket and bucket[0] <= cutoff:
+            bucket.popleft()
+        if len(bucket) >= limit:
+            retry_after = max(1, int(window_seconds - (now - bucket[0])))
+            return False, retry_after
+        bucket.append(now)
+        _request_buckets.move_to_end(key)
+    return True, 0
+
+
+def build_rate_limited_response(retry_after, message='请求过于频繁，请稍后重试'):
+    response = jsonify({'error': message, 'retry_after': retry_after})
+    response.status_code = 429
+    response.headers['Retry-After'] = str(retry_after)
+    return response

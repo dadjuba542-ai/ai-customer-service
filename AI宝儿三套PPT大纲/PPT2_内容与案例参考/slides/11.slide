@@ -1,0 +1,100 @@
+<Slide style={{
+    background: '#F7FAF6',
+    paddingTop: 20, paddingBottom: 20, paddingLeft: 72, paddingRight: 72,
+}}>
+    <Box style={{ height: 100, justifyContent: 'center' }}>
+        <Text style={{ fontSize: 36, fontWeight: 'bold', color: '#1E3A32' }}>「查看更多」与案例库，别搞混</Text>
+        <Box style={{ width: 56, height: 4, borderRadius: 2, background: '#1F7A5C', marginTop: 8 }} />
+    </Box>
+
+    <Box style={{ height: 528, flexDirection: 'row', gap: 28 }}>
+        <Box style={{ width: 660 }}>
+            <Text style={{ fontSize: 26, fontWeight: 'bold', color: '#1F7A5C', lineHeight: 1.45 }}>
+                两个入口，指向的不是同一个地方
+            </Text>
+
+            <Box style={{
+                marginTop: 20, background: '#FFFFFF', borderRadius: 14, padding: 20,
+                boxShadow: '0 4px 20px rgba(30,58,50,0.08)',
+            }}>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ background: 'rgba(31,122,92,0.12)', borderRadius: 12, paddingLeft: 12, paddingRight: 12, paddingTop: 6, paddingBottom: 6 }}>
+                        <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#1F7A5C' }}>A</Text>
+                    </Box>
+                    <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#1E3A32' }}>回答下方的「查看更多」</Text>
+                </Box>
+                <Text style={{ fontSize: 20, color: '#6B7C75', lineHeight: 1.55, marginTop: 12 }}>
+                    只给你<Text style={{ fontWeight: 'bold', color: '#1E3A32' }}>本次问题相关</Text>的更多案例。如果这一问确实没有更多相关案例，这个按钮就不会出现——不是页面卡了，是真的没有了。
+                </Text>
+            </Box>
+
+            <Box style={{
+                marginTop: 16, background: '#FFFFFF', borderRadius: 14, padding: 20,
+                boxShadow: '0 4px 20px rgba(30,58,50,0.08)',
+            }}>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ background: 'rgba(224,138,60,0.18)', borderRadius: 12, paddingLeft: 12, paddingRight: 12, paddingTop: 6, paddingBottom: 6 }}>
+                        <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#C9742B' }}>B</Text>
+                    </Box>
+                    <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#1E3A32' }}>案例详情底部的「查看更多客户案例」</Text>
+                </Box>
+                <Text style={{ fontSize: 20, color: '#6B7C75', lineHeight: 1.55, marginTop: 12 }}>
+                    通向公司对外公开的<Text style={{ fontWeight: 'bold', color: '#1E3A32' }}>完整案例库</Text>，是跳出当前页面去另一个 H5 页面。想系统地翻案例，从这里进。
+                </Text>
+            </Box>
+
+            <Box style={{
+                marginTop: 'auto', background: 'rgba(224,138,60,0.14)', borderRadius: 14, padding: 18,
+            }}>
+                <Text style={{ fontSize: 20, color: '#C9742B', lineHeight: 1.55, fontWeight: 'bold' }}>
+                    小提醒：公司还没配置案例库链接时，B 这个按钮不会出现——这不是你点错了，是还没配。
+                </Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flex: 1 }}>
+            <svg width="448" height="528" viewBox="0 0 448 528">
+                <rect x="24" y="60" width="180" height="330" rx="20" fill="#FFFFFF" />
+                <rect x="24" y="60" width="180" height="330" rx="20" fill="none" stroke="#DDE7E1" strokeWidth="3" />
+                <rect x="44" y="86" width="140" height="14" rx="7" fill="#1F7A5C" opacity="0.6" />
+                <rect x="44" y="116" width="140" height="10" rx="5" fill="#A8D5BA" />
+                <rect x="44" y="140" width="110" height="10" rx="5" fill="#A8D5BA" />
+                <rect x="44" y="176" width="140" height="48" rx="12" fill="rgba(168,213,186,0.45)" />
+                <rect x="44" y="236" width="140" height="48" rx="12" fill="rgba(168,213,186,0.45)" />
+                <rect x="44" y="296" width="140" height="48" rx="12" fill="rgba(31,122,92,0.1)" />
+                <rect x="44" y="352" width="140" height="24" rx="12" fill="#E08A3C" opacity="0.85" />
+
+                <path d="M222 226 L280 226" stroke="#A8D5BA" strokeWidth="5" strokeLinecap="round" />
+                <path d="M268 214 L286 226 L268 238 Z" fill="#A8D5BA" />
+
+                <rect x="296" y="96" width="140" height="300" rx="16" fill="#1F7A5C" />
+                <rect x="296" y="96" width="140" height="34" rx="16" fill="#FFFFFF" opacity="0.15" />
+                <circle cx="312" cy="113" r="6" fill="#FFFFFF" opacity="0.7" />
+                <circle cx="332" cy="113" r="6" fill="#FFFFFF" opacity="0.5" />
+                <rect x="314" y="152" width="104" height="14" rx="7" fill="#FFFFFF" opacity="0.85" />
+                <rect x="314" y="182" width="104" height="10" rx="5" fill="#FFFFFF" opacity="0.45" />
+                <rect x="314" y="204" width="80" height="10" rx="5" fill="#FFFFFF" opacity="0.45" />
+                <rect x="314" y="240" width="104" height="54" rx="12" fill="#FFFFFF" opacity="0.16" />
+                <rect x="314" y="306" width="104" height="54" rx="12" fill="#FFFFFF" opacity="0.16" />
+
+                <text x="366" y="432" textAnchor="middle" fontSize="20" fill="#1F7A5C" fontFamily="PingFang SC">客户案例库 H5</text>
+
+                <circle cx="114" cy="440" r="16" fill="#E08A3C" />
+                <text x="114" y="447" textAnchor="middle" fontSize="18" fontWeight="bold" fill="#FFFFFF" fontFamily="PingFang SC">A</text>
+                <text x="150" y="447" fontSize="19" fill="#6B7C75" fontFamily="PingFang SC">只看本次相关的</text>
+                <text x="114" y="486" textAnchor="middle" fontSize="19" fill="#6B7C75" fontFamily="PingFang SC">点 B 才跳出到完整案例库</text>
+            </svg>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            <svg width="20" height="20" viewBox="0 0 24 24">
+                <path d="M12 21C12 21 4 17 4 10C4 6 7 3 12 3C17 3 20 6 20 10C20 17 12 21 12 21Z" fill="#1F7A5C" opacity="0.75" />
+                <path d="M12 21V6" stroke="#FFFFFF" strokeWidth="1.6" fill="none" />
+            </svg>
+            <Text style={{ fontSize: 14, color: '#6B7C75' }}>AI宝儿 · 内容与案例参考</Text>
+        </Box>
+        <Text style={{ fontSize: 14, color: '#6B7C75' }}>11 / 13</Text>
+    </Box>
+</Slide>

@@ -159,6 +159,7 @@ def main():
         assert_true(all(item["id"] != hidden_id for item in hidden_results), f"hidden case leaked: {hidden_results}")
 
         client = app.test_client()
+        client.environ_base["HTTP_USER_AGENT"] = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
         admin_id = create_user('test-admin', hash_password('pass123456'), is_admin=1)
         auth = {"Authorization": f"Bearer {generate_token(admin_id)}"}
         with patch("services.chat_service.requests.post", side_effect=fake_post):

@@ -1,0 +1,110 @@
+<Slide style={{
+    background: '#F7FAF6',
+    paddingTop: 20, paddingBottom: 20, paddingLeft: 72, paddingRight: 72,
+}}>
+    <Box style={{ height: 100, justifyContent: 'center' }}>
+        <Text style={{ fontSize: 36, fontWeight: 'bold', color: '#1E3A32' }}>四类咨询怎么选</Text>
+        <Box style={{ width: 56, height: 4, borderRadius: 2, background: '#1F7A5C', marginTop: 8 }} />
+    </Box>
+
+    <Box style={{ height: 528, flexDirection: 'row', gap: 28 }}>
+        <Box style={{ width: 310 }}>
+            <Text style={{ fontSize: 26, fontWeight: 'bold', color: '#1F7A5C', lineHeight: 1.45 }}>
+                选错类型不会报错，<br />但答案会偏
+            </Text>
+            <Text style={{ fontSize: 20, color: '#6B7C75', lineHeight: 1.6, marginTop: 20 }}>
+                问"这个产品是什么"和问"这个产品怎么吃"，走的是两套不同的回答逻辑。选对了，第一轮就能拿到能用的答案；选错了，要多绕两三轮才能问到点上。
+            </Text>
+            <Box style={{
+                marginTop: 24, background: 'rgba(31,122,92,0.08)', borderRadius: 14, padding: 16,
+            }}>
+                <Text style={{ fontSize: 19, color: '#1E3A32', lineHeight: 1.55 }}>
+                    不确定选哪个时，直接把问题打在输入框里，系统会按内容自己判断。
+                </Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flex: 1, gap: 12 }}>
+            <Box style={{
+                flexDirection: 'row', gap: 18, background: '#FFFFFF', borderRadius: 14,
+                padding: 18, height: 120, boxShadow: '0 4px 20px rgba(30,58,50,0.08)',
+            }}>
+                <Box style={{ width: 8, borderRadius: 4, background: '#1F7A5C' }} />
+                <Box style={{ flex: 1, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#1E3A32' }}>产品资料查询 · 问"是什么"</Text>
+                    <Text style={{ fontSize: 19, color: '#6B7C75', lineHeight: 1.5, marginTop: 6 }}>
+                        想摸清底子：成分、特点、适合人群、和其他产品的区别
+                    </Text>
+                    <Text style={{ fontSize: 19, color: '#1F7A5C', lineHeight: 1.5, marginTop: 4 }}>
+                        例：这个产品主要适合什么人？和另外一款有什么区别？
+                    </Text>
+                </Box>
+            </Box>
+
+            <Box style={{
+                flexDirection: 'row', gap: 18, background: '#FFFFFF', borderRadius: 14,
+                padding: 18, height: 120, boxShadow: '0 4px 20px rgba(30,58,50,0.08)',
+            }}>
+                <Box style={{ width: 8, borderRadius: 4, background: '#1F7A5C' }} />
+                <Box style={{ flex: 1, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#1E3A32' }}>产品使用答疑 · 问"怎么用"</Text>
+                    <Text style={{ fontSize: 19, color: '#6B7C75', lineHeight: 1.5, marginTop: 6 }}>
+                        想落地执行：时间、剂量、搭配、注意事项、特殊情况
+                    </Text>
+                    <Text style={{ fontSize: 19, color: '#1F7A5C', lineHeight: 1.5, marginTop: 4 }}>
+                        例：每天什么时候吃？空腹可以吗？忘了吃要不要补？
+                    </Text>
+                </Box>
+            </Box>
+
+            <Box style={{
+                flexDirection: 'row', gap: 18, background: '#FFFFFF', borderRadius: 14,
+                padding: 18, height: 120, boxShadow: '0 4px 20px rgba(30,58,50,0.08)',
+            }}>
+                <Box style={{ width: 8, borderRadius: 4, background: '#1F7A5C' }} />
+                <Box style={{ flex: 1, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#1E3A32' }}>朋友圈帮写 · 问"帮我写"</Text>
+                    <Text style={{ fontSize: 19, color: '#6B7C75', lineHeight: 1.5, marginTop: 6 }}>
+                        要一段能直接发出去的文字，重点在语气和长度
+                    </Text>
+                    <Text style={{ fontSize: 19, color: '#1F7A5C', lineHeight: 1.5, marginTop: 4 }}>
+                        例：帮我写一条介绍这个产品的朋友圈，语气轻松一点，别太硬
+                    </Text>
+                </Box>
+            </Box>
+
+            <Box style={{
+                flexDirection: 'row', gap: 18, background: 'rgba(224,138,60,0.14)', borderRadius: 14,
+                padding: 18, height: 120,
+            }}>
+                <Box style={{ width: 8, borderRadius: 4, background: '#E08A3C' }} />
+                <Box style={{ flex: 1, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#1E3A32' }}>口播文案帮写 · 问"帮我说"</Text>
+                    <Text style={{ fontSize: 19, color: '#6B7C75', lineHeight: 1.5, marginTop: 6 }}>
+                        要一份能照着念的稿子，重点在口语化和节奏
+                    </Text>
+                    <Text style={{ fontSize: 19, color: '#C9742B', lineHeight: 1.5, marginTop: 4 }}>
+                        例：把这几个卖点整理成一分钟的口播稿，开头要抓人
+                    </Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 36, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 19, color: '#6B7C75' }}>
+                    四类入口只是帮你开个好头，进去之后照样可以随便改问题
+                </Text>
+            </Box>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            <svg width="20" height="20" viewBox="0 0 24 24">
+                <path d="M12 21C12 21 4 17 4 10C4 6 7 3 12 3C17 3 20 6 20 10C20 17 12 21 12 21Z" fill="#1F7A5C" opacity="0.75" />
+                <path d="M12 21V6" stroke="#FFFFFF" strokeWidth="1.6" fill="none" />
+            </svg>
+            <Text style={{ fontSize: 14, color: '#6B7C75' }}>AI宝儿 · 五期上手课</Text>
+        </Box>
+        <Text style={{ fontSize: 14, color: '#6B7C75' }}>11 / 33</Text>
+    </Box>
+</Slide>

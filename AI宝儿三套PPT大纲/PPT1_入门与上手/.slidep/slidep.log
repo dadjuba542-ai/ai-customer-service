@@ -1,0 +1,654 @@
+=== boot pid=16938 ts=2026-08-31 16:21:29.504 cwd=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手 argv=/Users/test/.workbuddy/binaries/node/versions/22.22.2/bin/slidep-start --project PPT1_入门与上手 --filename AI宝儿_第1套_入门与上手.pptx --__daemon-child ===
+[2026-08-31 16:21:29.504] [INFO ] [pid=16938] [start] invoked pid=16938 cwd=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手 daemonChild=yes dev=no argv=[--project PPT1_入门与上手 --filename AI宝儿_第1套_入门与上手.pptx --__daemon-child]
+[2026-08-31 16:21:29.505] [INFO ] [pid=16938] [start] daemon child runWorker ppid=16936
+[2026-08-31 16:21:29.505] [INFO ] [pid=16938] [worker] start projectDir=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/PPT1_入门与上手 filename=AI宝儿_第1套_入门与上手.pptx version=5.4.4
+[2026-08-31 16:21:29.505] [INFO ] [pid=16938] [worker] init ok dirs=ready
+[2026-08-31 16:21:29.505] [INFO ] [pid=16938] [server-url] env TENCENT_DOCS_LOCAL_MCP = <unset>
+[2026-08-31 16:21:29.505] [INFO ] [pid=16938] [worker] openFile start
+[2026-08-31 16:21:29.506] [INFO ] [pid=16938] [open-file] copy blank.pptx start src=/Users/test/.workbuddy/binaries/node/versions/22.22.2/lib/node_modules/@tencent/slidep/dist/resources/pptx/blank.pptx dest=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/PPT1_入门与上手/AI宝儿_第1套_入门与上手.pptx
+[2026-08-31 16:21:29.507] [INFO ] [pid=16938] [open-file] copy blank.pptx ok dest=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/PPT1_入门与上手/AI宝儿_第1套_入门与上手.pptx ms=1
+[2026-08-31 16:21:29.548] [ERROR] [pid=16938] [http] editorStatus http 404 url=http://localhost:39099/api/editor/status body={"code":-1,"message":"no editor open for file_path=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/PPT1_入门与上手/AI宝儿_第1套_入门与上手.pptx"} ms=40
+[2026-08-31 16:21:29.548] [INFO ] [pid=16938] [open-file] open send url=http://localhost:39099/localapi/open filePath=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/PPT1_入门与上手/AI宝儿_第1套_入门与上手.pptx
+[2026-08-31 16:21:29.555] [INFO ] [pid=16938] [open-file] open ok fileId=D99C3027 fileType=slide filePath=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/PPT1_入门与上手/AI宝儿_第1套_入门与上手.pptx ms=7
+[2026-08-31 16:21:29.555] [INFO ] [pid=16938] [worker] openFile ok fileId=D99C3027 filePath=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/PPT1_入门与上手/AI宝儿_第1套_入门与上手.pptx
+[2026-08-31 16:21:29.555] [INFO ] [pid=16938] [worker] previewUrl=http://localhost:39099/static/slide/pc.html?local_edit=1&client=sdk_local&localFilePath=%2FUsers%2Ftest%2FDownloads%2Fai-customer-service%2FAI%E5%AE%9D%E5%84%BF%E4%B8%89%E5%A5%97PPT%E5%A4%A7%E7%BA%B2%2FPPT1_%E5%85%A5%E9%97%A8%E4%B8%8E%E4%B8%8A%E6%89%8B%2FPPT1_%E5%85%A5%E9%97%A8%E4%B8%8E%E4%B8%8A%E6%89%8B%2FAI%E5%AE%9D%E5%84%BF_%E7%AC%AC1%E5%A5%97_%E5%85%A5%E9%97%A8%E4%B8%8E%E4%B8%8A%E6%89%8B.pptx
+[2026-08-31 16:21:29.555] [INFO ] [pid=16938] [state] state.json not found, creating path=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/PPT1_入门与上手/.slidep/state.json filePath=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/PPT1_入门与上手/AI宝儿_第1套_入门与上手.pptx
+[2026-08-31 16:21:29.555] [INFO ] [pid=16938] [worker] commitEndpoint=http://localhost:39099/localapi/commitrevision
+[2026-08-31 16:21:29.557] [INFO ] [pid=16938] [mcp] mcp:slide_get_info send url=http://localhost:39099/mcp args={"file_id":"D99C3027-77F4-42AE-8BAB-535EE64B38A0"}
+[2026-08-31 16:21:29.561] [INFO ] [pid=16938] [mcp] mcp:slide_get_info ok ms=4
+[2026-08-31 16:21:29.561] [INFO ] [pid=16938] [purge] purge start backendSlideCount=0
+[2026-08-31 16:21:29.561] [INFO ] [pid=16938] [purge] purge ok removed=0 ms=6
+[2026-08-31 16:21:29.561] [INFO ] [pid=16938] [worker] initial sync submitted pages=0
+[2026-08-31 16:21:29.561] [INFO ] [pid=16938] [sync] submit nextRound=1 dirty=<none> pendingDirtySize=0 merged=no
+[2026-08-31 16:21:29.562] [INFO ] [pid=16938] [sync] drain start round=1 pendingDirtySize=0
+[2026-08-31 16:21:29.562] [INFO ] [pid=16938] [sync] aligned round=1 attempt=1 size=0 desired=0 pendingDirtySize=0
+[2026-08-31 16:21:29.563] [INFO ] [pid=16938] [worker] ready fileId=D99C3027 backendUrl=http://localhost:39099 initialPages=0 ms=58
+[2026-08-31 16:21:29.563] [INFO ] [pid=16938] [sync] reconcile ok round=1 attempt=1 ms=1
+[2026-08-31 16:21:29.563] [INFO ] [pid=16938] [sync] drain end round=1 reconciles=1 mergedSubmits=1 pendingDirtySize=0 ms=1
+[2026-08-31 16:21:29.564] [INFO ] [pid=16938] [watcher] ready dir=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/PPT1_入门与上手/slides
+[2026-08-31 16:34:58.768] [INFO ] [pid=16938] [watcher] event=add file=slides/01.slide
+[2026-08-31 16:34:58.769] [INFO ] [pid=16938] [watcher] event=add file=slides/02.slide
+[2026-08-31 16:34:58.769] [INFO ] [pid=16938] [watcher] event=add file=slides/03.slide
+[2026-08-31 16:34:58.769] [INFO ] [pid=16938] [watcher] event=add file=slides/04.slide
+[2026-08-31 16:34:58.769] [INFO ] [pid=16938] [watcher] event=add file=slides/10.slide
+[2026-08-31 16:34:58.769] [INFO ] [pid=16938] [watcher] event=add file=slides/11.slide
+[2026-08-31 16:34:58.769] [INFO ] [pid=16938] [watcher] event=add file=slides/07.slide
+[2026-08-31 16:34:58.769] [INFO ] [pid=16938] [watcher] event=add file=slides/08.slide
+[2026-08-31 16:34:58.769] [INFO ] [pid=16938] [watcher] event=add file=slides/12.slide
+[2026-08-31 16:34:58.769] [INFO ] [pid=16938] [watcher] event=add file=slides/09.slide
+[2026-08-31 16:34:58.769] [INFO ] [pid=16938] [watcher] event=add file=slides/05.slide
+[2026-08-31 16:34:58.770] [INFO ] [pid=16938] [watcher] event=add file=slides/14.slide
+[2026-08-31 16:34:58.770] [INFO ] [pid=16938] [watcher] event=add file=slides/13.slide
+[2026-08-31 16:34:58.770] [INFO ] [pid=16938] [watcher] event=add file=slides/06.slide
+[2026-08-31 16:34:59.270] [INFO ] [pid=16938] [watcher] flush batch dirty=[01,02,03,04,10,11,07,08,12,09,05,14,13,06] size=14
+[2026-08-31 16:34:59.270] [INFO ] [pid=16938] [sync] submit nextRound=2 dirty=01,02,03,04,10,11,07,08,12,09,05,14,13,06 pendingDirtySize=14 merged=no
+[2026-08-31 16:34:59.270] [INFO ] [pid=16938] [sync] drain start round=2 pendingDirtySize=14
+[2026-08-31 16:34:59.271] [INFO ] [pid=16938] [sync] step=add round=2 attempt=1 pageId=01 index=0
+[2026-08-31 16:34:59.272] [INFO ] [pid=16938] [backend-ops] addSlideAt start pageId=01 index=0
+[2026-08-31 16:34:59.272] [INFO ] [pid=16938] [render] start pageId=01 file=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/PPT1_入门与上手/slides/01.slide
+[2026-08-31 16:34:59.694] [INFO ] [pid=16938] [render] ok pageId=01 slides=1 ms=422
+[2026-08-31 16:34:59.694] [INFO ] [pid=16938] [render] renderSlideData result.resources={
+  images: {
+    'rel:00f5nrfa': {
+      id: 'rel:00f5nrfa',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/.cache/media/images/c0b91a881aeff9660b798395f6820cde.svg'
+    },
+    'rel:00dptjlr': {
+      id: 'rel:00dptjlr',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/.cache/media/images/72476d89657bd76716b344bdab67a9e2.svg'
+    },
+    'rel:00fe2pn0': {
+      id: 'rel:00fe2pn0',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/.cache/media/images/416dd231ed1b13f76a1c4b1296f50962.svg'
+    }
+  },
+  videos: {},
+  audios: {},
+  fonts: {}
+}
+[2026-08-31 16:34:59.704] [INFO ] [pid=16938] [commit] commit send pageId=886ede targetIndex=0 version=1 baseVersion=0 revisionBytes=16732
+[2026-08-31 16:34:59.758] [INFO ] [pid=16938] [commit] commit ok pageId=886ede revisionId=2455f804 ms=53
+[2026-08-31 16:34:59.759] [ERROR] [pid=16938] [state] persist FAIL path=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/PPT1_入门与上手/.slidep/state.json commits=1 Error: ENOENT: no such file or directory, open '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/PPT1_入门与上手/.slidep/state.json.tmp'
+    at Object.openSync (node:fs:560:18)
+    at Object.writeFileSync (node:fs:2444:35)
+    at Object.L0e (/Users/test/.workbuddy/binaries/node/versions/22.22.2/lib/node_modules/@tencent/slidep/dist/slidep.js:57:1158)
+    at CC.persist (/Users/test/.workbuddy/binaries/node/versions/22.22.2/lib/node_modules/@tencent/slidep/dist/slidep.js:5974:5223)
+    at CC.recordCommit (/Users/test/.workbuddy/binaries/node/versions/22.22.2/lib/node_modules/@tencent/slidep/dist/slidep.js:5974:5609)
+    at mh.addSlideAt (/Users/test/.workbuddy/binaries/node/versions/22.22.2/lib/node_modules/@tencent/slidep/dist/slidep.js:5993:18803)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async L.reconcile (/Users/test/.workbuddy/binaries/node/versions/22.22.2/lib/node_modules/@tencent/slidep/dist/slidep.js:5993:24356)
+    at async L.drain (/Users/test/.workbuddy/binaries/node/versions/22.22.2/lib/node_modules/@tencent/slidep/dist/slidep.js:5993:21217)
+[2026-08-31 16:34:59.812] [WARN ] [pid=16938] [worker] reconcile failed (Error: ENOENT: no such file or directory, open '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/PPT1_入门与上手/.slidep/state.json.tmp'); trying soft recovery (purge backend + sync version, no editor restart)
+[2026-08-31 16:34:59.815] [INFO ] [pid=16938] [mcp] mcp:slide_get_info send url=http://localhost:39099/mcp args={"file_id":"sid_mtgz1tbi_gui6wr7d"}
+[2026-08-31 16:34:59.819] [INFO ] [pid=16938] [mcp] mcp:slide_get_info ok ms=4
+[2026-08-31 16:34:59.819] [INFO ] [pid=16938] [purge] purge start backendSlideCount=1
+[2026-08-31 16:34:59.821] [INFO ] [pid=16938] [mcp] mcp:slide_remove_slide send url=http://localhost:39099/mcp args={"file_id":"sid_mtgz1tbi_gui6wr7d","page_index":0}
+[2026-08-31 16:34:59.827] [INFO ] [pid=16938] [mcp] mcp:slide_remove_slide ok ms=6
+[2026-08-31 16:34:59.827] [INFO ] [pid=16938] [purge] purge ok removed=1 ms=15
+[2026-08-31 16:34:59.829] [INFO ] [pid=16938] [mcp] mcp:slide_get_info send url=http://localhost:39099/mcp args={"file_id":"sid_mtgz1tbi_gui6wr7d"}
+[2026-08-31 16:34:59.830] [INFO ] [pid=16938] [mcp] mcp:slide_get_info ok ms=1
+[2026-08-31 16:34:59.830] [INFO ] [pid=16938] [backend-ops] seedServerVersion from=1 to=2
+[2026-08-31 16:34:59.830] [INFO ] [pid=16938] [worker] recovery (soft) ok: purged=1 backendNow=0page(s) version=2, view reset; reconcile will redo full sync
+[2026-08-31 16:34:59.830] [INFO ] [pid=16938] [sync] reconcile FAIL but recovered via onReconcileFailure round=2 attempt=1 (recovery 1/2) ms=560; re-running reconcile
+[2026-08-31 16:34:59.830] [INFO ] [pid=16938] [sync] step=add round=2 attempt=2 pageId=01 index=0
+[2026-08-31 16:34:59.830] [INFO ] [pid=16938] [backend-ops] addSlideAt start pageId=01 index=0
+[2026-08-31 16:34:59.830] [INFO ] [pid=16938] [render] start pageId=01 file=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/PPT1_入门与上手/slides/01.slide
+[2026-08-31 16:34:59.884] [INFO ] [pid=16938] [render] ok pageId=01 slides=1 ms=54
+[2026-08-31 16:34:59.884] [INFO ] [pid=16938] [render] renderSlideData result.resources={
+  images: {
+    'rel:00f5nrfa': {
+      id: 'rel:00f5nrfa',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/.cache/media/images/c0b91a881aeff9660b798395f6820cde.svg'
+    },
+    'rel:00dptjlr': {
+      id: 'rel:00dptjlr',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/.cache/media/images/72476d89657bd76716b344bdab67a9e2.svg'
+    },
+    'rel:00fe2pn0': {
+      id: 'rel:00fe2pn0',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/.cache/media/images/416dd231ed1b13f76a1c4b1296f50962.svg'
+    }
+  },
+  videos: {},
+  audios: {},
+  fonts: {}
+}
+[2026-08-31 16:34:59.890] [INFO ] [pid=16938] [commit] commit send pageId=79918d targetIndex=0 version=2 baseVersion=2 revisionBytes=16728
+[2026-08-31 16:34:59.896] [INFO ] [pid=16938] [commit] commit ok pageId=79918d revisionId=79109b3e ms=6
+[2026-08-31 16:34:59.897] [ERROR] [pid=16938] [state] persist FAIL path=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/PPT1_入门与上手/.slidep/state.json commits=1 Error: ENOENT: no such file or directory, open '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/PPT1_入门与上手/.slidep/state.json.tmp'
+    at Object.openSync (node:fs:560:18)
+    at Object.writeFileSync (node:fs:2444:35)
+    at Object.L0e (/Users/test/.workbuddy/binaries/node/versions/22.22.2/lib/node_modules/@tencent/slidep/dist/slidep.js:57:1158)
+    at CC.persist (/Users/test/.workbuddy/binaries/node/versions/22.22.2/lib/node_modules/@tencent/slidep/dist/slidep.js:5974:5223)
+    at CC.recordCommit (/Users/test/.workbuddy/binaries/node/versions/22.22.2/lib/node_modules/@tencent/slidep/dist/slidep.js:5974:5609)
+    at mh.addSlideAt (/Users/test/.workbuddy/binaries/node/versions/22.22.2/lib/node_modules/@tencent/slidep/dist/slidep.js:5993:18803)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async L.reconcile (/Users/test/.workbuddy/binaries/node/versions/22.22.2/lib/node_modules/@tencent/slidep/dist/slidep.js:5993:24356)
+    at async L.drain (/Users/test/.workbuddy/binaries/node/versions/22.22.2/lib/node_modules/@tencent/slidep/dist/slidep.js:5993:21217)
+[2026-08-31 16:34:59.897] [WARN ] [pid=16938] [worker] reconcile failed (Error: ENOENT: no such file or directory, open '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/PPT1_入门与上手/.slidep/state.json.tmp'); trying soft recovery (purge backend + sync version, no editor restart)
+[2026-08-31 16:34:59.898] [INFO ] [pid=16938] [mcp] mcp:slide_get_info send url=http://localhost:39099/mcp args={"file_id":"sid_mtgz1tbi_gui6wr7d"}
+[2026-08-31 16:34:59.899] [INFO ] [pid=16938] [mcp] mcp:slide_get_info ok ms=1
+[2026-08-31 16:34:59.899] [INFO ] [pid=16938] [purge] purge start backendSlideCount=1
+[2026-08-31 16:34:59.900] [INFO ] [pid=16938] [mcp] mcp:slide_remove_slide send url=http://localhost:39099/mcp args={"file_id":"sid_mtgz1tbi_gui6wr7d","page_index":0}
+[2026-08-31 16:34:59.901] [INFO ] [pid=16938] [mcp] mcp:slide_remove_slide ok ms=1
+[2026-08-31 16:34:59.901] [INFO ] [pid=16938] [purge] purge ok removed=1 ms=4
+[2026-08-31 16:34:59.902] [INFO ] [pid=16938] [mcp] mcp:slide_get_info send url=http://localhost:39099/mcp args={"file_id":"sid_mtgz1tbi_gui6wr7d"}
+[2026-08-31 16:34:59.903] [INFO ] [pid=16938] [mcp] mcp:slide_get_info ok ms=1
+[2026-08-31 16:34:59.904] [INFO ] [pid=16938] [backend-ops] seedServerVersion from=3 to=4
+[2026-08-31 16:34:59.904] [INFO ] [pid=16938] [worker] recovery (soft) ok: purged=1 backendNow=0page(s) version=4, view reset; reconcile will redo full sync
+[2026-08-31 16:34:59.904] [INFO ] [pid=16938] [sync] reconcile FAIL but recovered via onReconcileFailure round=2 attempt=2 (recovery 2/2) ms=74; re-running reconcile
+[2026-08-31 16:34:59.904] [INFO ] [pid=16938] [sync] step=add round=2 attempt=3 pageId=01 index=0
+[2026-08-31 16:34:59.904] [INFO ] [pid=16938] [backend-ops] addSlideAt start pageId=01 index=0
+[2026-08-31 16:34:59.904] [INFO ] [pid=16938] [render] start pageId=01 file=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/PPT1_入门与上手/slides/01.slide
+[2026-08-31 16:34:59.953] [INFO ] [pid=16938] [render] ok pageId=01 slides=1 ms=49
+[2026-08-31 16:34:59.953] [INFO ] [pid=16938] [render] renderSlideData result.resources={
+  images: {
+    'rel:00f5nrfa': {
+      id: 'rel:00f5nrfa',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/.cache/media/images/c0b91a881aeff9660b798395f6820cde.svg'
+    },
+    'rel:00dptjlr': {
+      id: 'rel:00dptjlr',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/.cache/media/images/72476d89657bd76716b344bdab67a9e2.svg'
+    },
+    'rel:00fe2pn0': {
+      id: 'rel:00fe2pn0',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/.cache/media/images/416dd231ed1b13f76a1c4b1296f50962.svg'
+    }
+  },
+  videos: {},
+  audios: {},
+  fonts: {}
+}
+[2026-08-31 16:34:59.957] [INFO ] [pid=16938] [commit] commit send pageId=aebbb9 targetIndex=0 version=3 baseVersion=4 revisionBytes=16728
+[2026-08-31 16:34:59.963] [INFO ] [pid=16938] [commit] commit ok pageId=aebbb9 revisionId=d573f380 ms=5
+[2026-08-31 16:34:59.963] [ERROR] [pid=16938] [state] persist FAIL path=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/PPT1_入门与上手/.slidep/state.json commits=1 Error: ENOENT: no such file or directory, open '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/PPT1_入门与上手/.slidep/state.json.tmp'
+    at Object.openSync (node:fs:560:18)
+    at Object.writeFileSync (node:fs:2444:35)
+    at Object.L0e (/Users/test/.workbuddy/binaries/node/versions/22.22.2/lib/node_modules/@tencent/slidep/dist/slidep.js:57:1158)
+    at CC.persist (/Users/test/.workbuddy/binaries/node/versions/22.22.2/lib/node_modules/@tencent/slidep/dist/slidep.js:5974:5223)
+    at CC.recordCommit (/Users/test/.workbuddy/binaries/node/versions/22.22.2/lib/node_modules/@tencent/slidep/dist/slidep.js:5974:5609)
+    at mh.addSlideAt (/Users/test/.workbuddy/binaries/node/versions/22.22.2/lib/node_modules/@tencent/slidep/dist/slidep.js:5993:18803)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async L.reconcile (/Users/test/.workbuddy/binaries/node/versions/22.22.2/lib/node_modules/@tencent/slidep/dist/slidep.js:5993:24356)
+    at async L.drain (/Users/test/.workbuddy/binaries/node/versions/22.22.2/lib/node_modules/@tencent/slidep/dist/slidep.js:5993:21217)
+[2026-08-31 16:34:59.964] [WARN ] [pid=16938] [sync] recovery budget exhausted round=2 (2/2); falling back to failure throttle
+[2026-08-31 16:34:59.964] [ERROR] [pid=16938] [sync] reconcile FAIL round=2 attempt=3 (1/5) ms=60 Error: ENOENT: no such file or directory, open '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/PPT1_入门与上手/.slidep/state.json.tmp'
+    at Object.openSync (node:fs:560:18)
+    at Object.writeFileSync (node:fs:2444:35)
+    at Object.L0e (/Users/test/.workbuddy/binaries/node/versions/22.22.2/lib/node_modules/@tencent/slidep/dist/slidep.js:57:1158)
+    at CC.persist (/Users/test/.workbuddy/binaries/node/versions/22.22.2/lib/node_modules/@tencent/slidep/dist/slidep.js:5974:5223)
+    at CC.recordCommit (/Users/test/.workbuddy/binaries/node/versions/22.22.2/lib/node_modules/@tencent/slidep/dist/slidep.js:5974:5609)
+    at mh.addSlideAt (/Users/test/.workbuddy/binaries/node/versions/22.22.2/lib/node_modules/@tencent/slidep/dist/slidep.js:5993:18803)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async L.reconcile (/Users/test/.workbuddy/binaries/node/versions/22.22.2/lib/node_modules/@tencent/slidep/dist/slidep.js:5993:24356)
+    at async L.drain (/Users/test/.workbuddy/binaries/node/versions/22.22.2/lib/node_modules/@tencent/slidep/dist/slidep.js:5993:21217)
+[2026-08-31 16:34:59.964] [INFO ] [pid=16938] [sync] backoff round=2 5000ms before next reconcile retry
+[2026-08-31 16:35:00.210] [INFO ] [pid=16938] [worker] shutdown received sig=SIGTERM
+[2026-08-31 16:35:00.211] [INFO ] [pid=16938] [worker] shutdown ok sig=SIGTERM ms=1
+=== boot pid=17405 ts=2026-08-31 16:35:01.245 cwd=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手 argv=/Users/test/.workbuddy/binaries/node/versions/22.22.2/bin/slidep-start --project PPT1_入门与上手 --filename AI宝儿_第1套_入门与上手.pptx --__daemon-child ===
+[2026-08-31 16:35:01.244] [INFO ] [pid=17405] [start] invoked pid=17405 cwd=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手 daemonChild=yes dev=no argv=[--project PPT1_入门与上手 --filename AI宝儿_第1套_入门与上手.pptx --__daemon-child]
+[2026-08-31 16:35:01.245] [INFO ] [pid=17405] [start] daemon child runWorker ppid=17400
+[2026-08-31 16:35:01.245] [INFO ] [pid=17405] [worker] start projectDir=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/PPT1_入门与上手 filename=AI宝儿_第1套_入门与上手.pptx version=5.4.4
+[2026-08-31 16:35:01.245] [INFO ] [pid=17405] [worker] init ok dirs=ready
+[2026-08-31 16:35:01.245] [INFO ] [pid=17405] [server-url] env TENCENT_DOCS_LOCAL_MCP = <unset>
+[2026-08-31 16:35:01.245] [INFO ] [pid=17405] [worker] openFile start
+[2026-08-31 16:35:01.246] [INFO ] [pid=17405] [open-file] copy blank.pptx start src=/Users/test/.workbuddy/binaries/node/versions/22.22.2/lib/node_modules/@tencent/slidep/dist/resources/pptx/blank.pptx dest=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/PPT1_入门与上手/AI宝儿_第1套_入门与上手.pptx
+[2026-08-31 16:35:01.248] [INFO ] [pid=17405] [open-file] copy blank.pptx ok dest=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/PPT1_入门与上手/AI宝儿_第1套_入门与上手.pptx ms=2
+[2026-08-31 16:35:01.281] [INFO ] [pid=17405] [open-file] open skip (already in pool) fileId=sid_mtgz filePath=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/PPT1_入门与上手/AI宝儿_第1套_入门与上手.pptx
+[2026-08-31 16:35:01.281] [INFO ] [pid=17405] [worker] openFile ok fileId=sid_mtgz filePath=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/PPT1_入门与上手/AI宝儿_第1套_入门与上手.pptx
+[2026-08-31 16:35:01.281] [INFO ] [pid=17405] [worker] previewUrl=http://localhost:39099/static/slide/pc.html?local_edit=1&client=sdk_local&localFilePath=%2FUsers%2Ftest%2FDownloads%2Fai-customer-service%2FAI%E5%AE%9D%E5%84%BF%E4%B8%89%E5%A5%97PPT%E5%A4%A7%E7%BA%B2%2FPPT1_%E5%85%A5%E9%97%A8%E4%B8%8E%E4%B8%8A%E6%89%8B%2FPPT1_%E5%85%A5%E9%97%A8%E4%B8%8E%E4%B8%8A%E6%89%8B%2FAI%E5%AE%9D%E5%84%BF_%E7%AC%AC1%E5%A5%97_%E5%85%A5%E9%97%A8%E4%B8%8E%E4%B8%8A%E6%89%8B.pptx
+[2026-08-31 16:35:01.281] [INFO ] [pid=17405] [state] state.json not found, creating path=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/PPT1_入门与上手/.slidep/state.json filePath=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/PPT1_入门与上手/AI宝儿_第1套_入门与上手.pptx
+[2026-08-31 16:35:01.282] [INFO ] [pid=17405] [worker] commitEndpoint=http://localhost:39099/localapi/commitrevision
+[2026-08-31 16:35:01.284] [INFO ] [pid=17405] [mcp] mcp:slide_get_info send url=http://localhost:39099/mcp args={"file_id":"sid_mtgz1tbi_gui6wr7d"}
+[2026-08-31 16:35:01.286] [INFO ] [pid=17405] [mcp] mcp:slide_get_info ok ms=1
+[2026-08-31 16:35:01.286] [INFO ] [pid=17405] [purge] purge start backendSlideCount=1
+[2026-08-31 16:35:01.287] [INFO ] [pid=17405] [mcp] mcp:slide_remove_slide send url=http://localhost:39099/mcp args={"file_id":"sid_mtgz1tbi_gui6wr7d","page_index":0}
+[2026-08-31 16:35:01.289] [INFO ] [pid=17405] [mcp] mcp:slide_remove_slide ok ms=2
+[2026-08-31 16:35:01.289] [INFO ] [pid=17405] [purge] purge ok removed=1 ms=7
+[2026-08-31 16:35:01.289] [INFO ] [pid=17405] [worker] initial sync submitted pages=14
+[2026-08-31 16:35:01.289] [INFO ] [pid=17405] [sync] submit nextRound=1 dirty=<none> pendingDirtySize=0 merged=no
+[2026-08-31 16:35:01.290] [INFO ] [pid=17405] [sync] drain start round=1 pendingDirtySize=0
+[2026-08-31 16:35:01.290] [INFO ] [pid=17405] [sync] step=add round=1 attempt=1 pageId=01 index=0
+[2026-08-31 16:35:01.290] [INFO ] [pid=17405] [backend-ops] addSlideAt start pageId=01 index=0
+[2026-08-31 16:35:01.290] [INFO ] [pid=17405] [render] start pageId=01 file=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/PPT1_入门与上手/slides/01.slide
+[2026-08-31 16:35:01.295] [INFO ] [pid=17405] [worker] ready fileId=sid_mtgz backendUrl=http://localhost:39099 initialPages=14 ms=50
+[2026-08-31 16:35:01.488] [INFO ] [pid=17405] [watcher] ready dir=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/PPT1_入门与上手/slides
+[2026-08-31 16:35:01.544] [INFO ] [pid=17405] [render] ok pageId=01 slides=1 ms=254
+[2026-08-31 16:35:01.544] [INFO ] [pid=17405] [render] renderSlideData result.resources={
+  images: {
+    'rel:00f5nrfa': {
+      id: 'rel:00f5nrfa',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/.cache/media/images/c0b91a881aeff9660b798395f6820cde.svg'
+    },
+    'rel:00dptjlr': {
+      id: 'rel:00dptjlr',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/.cache/media/images/72476d89657bd76716b344bdab67a9e2.svg'
+    },
+    'rel:00fe2pn0': {
+      id: 'rel:00fe2pn0',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/.cache/media/images/416dd231ed1b13f76a1c4b1296f50962.svg'
+    }
+  },
+  videos: {},
+  audios: {},
+  fonts: {}
+}
+[2026-08-31 16:35:01.553] [INFO ] [pid=17405] [commit] commit send pageId=c5ca83 targetIndex=0 version=1 baseVersion=0 revisionBytes=16732
+[2026-08-31 16:35:01.567] [ERROR] [pid=17405] [http] commit http 500 url=http://localhost:39099/localapi/commitrevision body={"error":"CommitRevision failed: [13006][13006]msg:page index out of range, mut_info:mutation info: type:3, page_id:c5ca83, page_type:1, index:3, shape_tree:12979d, related_layout_id:000008, related_master_id:, slide_master_theme_id:, notes_master_theme_id:,notes_slide_id: , other_msg:","ok":false} ms=13
+[2026-08-31 16:35:01.567] [ERROR] [pid=17405] [backend-ops] addSlideAt commit FAIL pageId=01 slideId=c5ca83 index=0 version=1 baseVersion=0 ms=277
+[2026-08-31 16:35:01.567] [WARN ] [pid=17405] [worker] reconcile failed (H3: commit bad response: HTTP 500 body={"error":"CommitRevision failed: [13006][13006]msg:page index out of range, mut_info:mutation info: type:3, page_id:c5ca83, page_type:1, index:3, shape_tree:12979d, related_layout_id:000008, related_master_id:, slide_master_theme_id:, notes_master_theme_id:,notes_slide_id: , other_msg:","ok":false}); trying soft recovery (purge backend + sync version, no editor restart)
+[2026-08-31 16:35:01.569] [INFO ] [pid=17405] [mcp] mcp:slide_get_info send url=http://localhost:39099/mcp args={"file_id":"sid_mtgz1tbi_gui6wr7d"}
+[2026-08-31 16:35:01.570] [INFO ] [pid=17405] [mcp] mcp:slide_get_info ok ms=1
+[2026-08-31 16:35:01.570] [INFO ] [pid=17405] [purge] purge start backendSlideCount=0
+[2026-08-31 16:35:01.570] [INFO ] [pid=17405] [purge] purge ok removed=0 ms=3
+[2026-08-31 16:35:01.573] [INFO ] [pid=17405] [mcp] mcp:slide_get_info send url=http://localhost:39099/mcp args={"file_id":"sid_mtgz1tbi_gui6wr7d"}
+[2026-08-31 16:35:01.575] [INFO ] [pid=17405] [mcp] mcp:slide_get_info ok ms=1
+[2026-08-31 16:35:01.575] [INFO ] [pid=17405] [backend-ops] seedServerVersion from=0 to=6
+[2026-08-31 16:35:01.575] [INFO ] [pid=17405] [worker] recovery (soft) ok: purged=0 backendNow=0page(s) version=6, view reset; reconcile will redo full sync
+[2026-08-31 16:35:01.575] [INFO ] [pid=17405] [sync] reconcile FAIL but recovered via onReconcileFailure round=1 attempt=1 (recovery 1/2) ms=285; re-running reconcile
+[2026-08-31 16:35:01.575] [INFO ] [pid=17405] [sync] step=add round=1 attempt=2 pageId=01 index=0
+[2026-08-31 16:35:01.575] [INFO ] [pid=17405] [backend-ops] addSlideAt start pageId=01 index=0
+[2026-08-31 16:35:01.575] [INFO ] [pid=17405] [render] start pageId=01 file=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/PPT1_入门与上手/slides/01.slide
+[2026-08-31 16:35:01.609] [INFO ] [pid=17405] [render] ok pageId=01 slides=1 ms=34
+[2026-08-31 16:35:01.610] [INFO ] [pid=17405] [render] renderSlideData result.resources={
+  images: {
+    'rel:00f5nrfa': {
+      id: 'rel:00f5nrfa',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/.cache/media/images/c0b91a881aeff9660b798395f6820cde.svg'
+    },
+    'rel:00dptjlr': {
+      id: 'rel:00dptjlr',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/.cache/media/images/72476d89657bd76716b344bdab67a9e2.svg'
+    },
+    'rel:00fe2pn0': {
+      id: 'rel:00fe2pn0',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/.cache/media/images/416dd231ed1b13f76a1c4b1296f50962.svg'
+    }
+  },
+  videos: {},
+  audios: {},
+  fonts: {}
+}
+[2026-08-31 16:35:01.614] [INFO ] [pid=17405] [commit] commit send pageId=9ab2a2 targetIndex=0 version=1 baseVersion=6 revisionBytes=16728
+[2026-08-31 16:35:01.618] [INFO ] [pid=17405] [commit] commit ok pageId=9ab2a2 revisionId=9a6d0594 ms=3
+[2026-08-31 16:35:01.618] [INFO ] [pid=17405] [backend-ops] addSlideAt ok pageId=01 slideId=9ab2a2 index=0 version=1 baseVersion=6 revisionId=9a6d0594 code=0 images=[local=3 remote=0 cached=0 failed=0] ms=43
+[2026-08-31 16:35:01.619] [INFO ] [pid=17405] [sync] step=add round=1 attempt=2 pageId=02 index=1
+[2026-08-31 16:35:01.619] [INFO ] [pid=17405] [backend-ops] addSlideAt start pageId=02 index=1
+[2026-08-31 16:35:01.619] [INFO ] [pid=17405] [render] start pageId=02 file=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/PPT1_入门与上手/slides/02.slide
+[2026-08-31 16:35:01.743] [INFO ] [pid=17405] [render] ok pageId=02 slides=1 ms=124
+[2026-08-31 16:35:01.744] [INFO ] [pid=17405] [render] renderSlideData result.resources={
+  images: {
+    'rel:008wvch0': {
+      id: 'rel:008wvch0',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/.cache/media/images/f1a0f3e7cf4cb69c072865ddad29a683.svg'
+    },
+    'rel:00hr0e37': {
+      id: 'rel:00hr0e37',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/.cache/media/images/0cae6fef943dcd0bc7ba6f21a6cc0ee0.svg'
+    },
+    'rel:01rkrk27': {
+      id: 'rel:01rkrk27',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/.cache/media/images/5e44a0500f8d7be013e784529deffee5.svg'
+    },
+    'rel:01rugfwo': {
+      id: 'rel:01rugfwo',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/.cache/media/images/df3b890cdc6f3951a05367414d64df24.svg'
+    },
+    'rel:00o139qy': {
+      id: 'rel:00o139qy',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/.cache/media/images/93ba98e6725659df20e8b7cb227953b7.svg'
+    },
+    'rel:01vayb3j': {
+      id: 'rel:01vayb3j',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/.cache/media/images/526226c269563ebcd708f4e452f543b6.svg'
+    }
+  },
+  videos: {},
+  audios: {},
+  fonts: {}
+}
+[2026-08-31 16:35:01.749] [INFO ] [pid=17405] [commit] commit send pageId=d598fd targetIndex=1 version=2 baseVersion=7 revisionBytes=31696
+[2026-08-31 16:35:01.770] [INFO ] [pid=17405] [commit] commit ok pageId=d598fd revisionId=271c148e ms=21
+[2026-08-31 16:35:01.771] [INFO ] [pid=17405] [backend-ops] addSlideAt ok pageId=02 slideId=d598fd index=1 version=2 baseVersion=7 revisionId=271c148e code=0 images=[local=6 remote=0 cached=0 failed=0] ms=152
+[2026-08-31 16:35:01.771] [INFO ] [pid=17405] [sync] step=add round=1 attempt=2 pageId=03 index=2
+[2026-08-31 16:35:01.771] [INFO ] [pid=17405] [backend-ops] addSlideAt start pageId=03 index=2
+[2026-08-31 16:35:01.771] [INFO ] [pid=17405] [render] start pageId=03 file=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/PPT1_入门与上手/slides/03.slide
+[2026-08-31 16:35:01.823] [INFO ] [pid=17405] [render] ok pageId=03 slides=1 ms=52
+[2026-08-31 16:35:01.823] [INFO ] [pid=17405] [render] renderSlideData result.resources={
+  images: {
+    'rel:0140q1f2': {
+      id: 'rel:0140q1f2',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/.cache/media/images/c8c480d1c5afdbbb07e1db198e38aab0.svg'
+    },
+    'rel:003u70jr': {
+      id: 'rel:003u70jr',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/.cache/media/images/3acd78213a0012818a25495373e2be11.svg'
+    },
+    'rel:00wrsm33': {
+      id: 'rel:00wrsm33',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/.cache/media/images/afa6b818e5925097fdfc2e2c70ab758b.svg'
+    },
+    'rel:01dwmums': {
+      id: 'rel:01dwmums',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/.cache/media/images/4a2c702432a4f394cd5ef80f3ff6aff1.svg'
+    },
+    'rel:01vayb3j': {
+      id: 'rel:01vayb3j',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/.cache/media/images/526226c269563ebcd708f4e452f543b6.svg'
+    }
+  },
+  videos: {},
+  audios: {},
+  fonts: {}
+}
+[2026-08-31 16:35:01.826] [INFO ] [pid=17405] [commit] commit send pageId=0e9b0c targetIndex=2 version=3 baseVersion=8 revisionBytes=26880
+[2026-08-31 16:35:01.830] [INFO ] [pid=17405] [commit] commit ok pageId=0e9b0c revisionId=b9d6f786 ms=4
+[2026-08-31 16:35:01.830] [INFO ] [pid=17405] [backend-ops] addSlideAt ok pageId=03 slideId=0e9b0c index=2 version=3 baseVersion=8 revisionId=b9d6f786 code=0 images=[local=5 remote=0 cached=0 failed=0] ms=59
+[2026-08-31 16:35:01.830] [INFO ] [pid=17405] [sync] step=add round=1 attempt=2 pageId=04 index=3
+[2026-08-31 16:35:01.830] [INFO ] [pid=17405] [backend-ops] addSlideAt start pageId=04 index=3
+[2026-08-31 16:35:01.830] [INFO ] [pid=17405] [render] start pageId=04 file=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/PPT1_入门与上手/slides/04.slide
+[2026-08-31 16:35:01.878] [INFO ] [pid=17405] [render] ok pageId=04 slides=1 ms=48
+[2026-08-31 16:35:01.878] [INFO ] [pid=17405] [render] renderSlideData result.resources={
+  images: {
+    'rel:01x4xs2p': {
+      id: 'rel:01x4xs2p',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/.cache/media/images/5a50579217343813c6c9191fcfedb8ec.svg'
+    },
+    'rel:000pdkl1': {
+      id: 'rel:000pdkl1',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/.cache/media/images/0c6382236cead6fd176217bd2d4c2b89.svg'
+    },
+    'rel:01vayb3j': {
+      id: 'rel:01vayb3j',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/.cache/media/images/526226c269563ebcd708f4e452f543b6.svg'
+    }
+  },
+  videos: {},
+  audios: {},
+  fonts: {}
+}
+[2026-08-31 16:35:01.881] [INFO ] [pid=17405] [commit] commit send pageId=a0e28d targetIndex=3 version=4 baseVersion=9 revisionBytes=24288
+[2026-08-31 16:35:01.884] [INFO ] [pid=17405] [commit] commit ok pageId=a0e28d revisionId=4105bddb ms=3
+[2026-08-31 16:35:01.885] [INFO ] [pid=17405] [backend-ops] addSlideAt ok pageId=04 slideId=a0e28d index=3 version=4 baseVersion=9 revisionId=4105bddb code=0 images=[local=3 remote=0 cached=0 failed=0] ms=55
+[2026-08-31 16:35:01.885] [INFO ] [pid=17405] [sync] step=add round=1 attempt=2 pageId=05 index=4
+[2026-08-31 16:35:01.885] [INFO ] [pid=17405] [backend-ops] addSlideAt start pageId=05 index=4
+[2026-08-31 16:35:01.885] [INFO ] [pid=17405] [render] start pageId=05 file=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/PPT1_入门与上手/slides/05.slide
+[2026-08-31 16:35:01.959] [INFO ] [pid=17405] [render] ok pageId=05 slides=1 ms=74
+[2026-08-31 16:35:01.959] [INFO ] [pid=17405] [render] renderSlideData result.resources={
+  images: {
+    'rel:00bng5we': {
+      id: 'rel:00bng5we',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/.cache/media/images/45349019a05c93e69f89d6549258b7f6.svg'
+    },
+    'rel:01o5x1ug': {
+      id: 'rel:01o5x1ug',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/.cache/media/images/7c2e4fa94ceaf3f6a9688c22492df408.svg'
+    },
+    'rel:014wx3kk': {
+      id: 'rel:014wx3kk',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/.cache/media/images/bea7baaa31eb6dced743625a14435984.svg'
+    },
+    'rel:006x2tki': {
+      id: 'rel:006x2tki',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/.cache/media/images/192ff97fc4f844448f782c1f34cd3ba7.svg'
+    },
+    'rel:01vayb3j': {
+      id: 'rel:01vayb3j',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/.cache/media/images/526226c269563ebcd708f4e452f543b6.svg'
+    }
+  },
+  videos: {},
+  audios: {},
+  fonts: {}
+}
+[2026-08-31 16:35:01.964] [INFO ] [pid=17405] [commit] commit send pageId=a93979 targetIndex=4 version=5 baseVersion=10 revisionBytes=31968
+[2026-08-31 16:35:01.969] [INFO ] [pid=17405] [commit] commit ok pageId=a93979 revisionId=95911730 ms=5
+[2026-08-31 16:35:01.969] [INFO ] [pid=17405] [backend-ops] addSlideAt ok pageId=05 slideId=a93979 index=4 version=5 baseVersion=10 revisionId=95911730 code=0 images=[local=5 remote=0 cached=0 failed=0] ms=84
+[2026-08-31 16:35:01.969] [INFO ] [pid=17405] [sync] step=add round=1 attempt=2 pageId=06 index=5
+[2026-08-31 16:35:01.969] [INFO ] [pid=17405] [backend-ops] addSlideAt start pageId=06 index=5
+[2026-08-31 16:35:01.970] [INFO ] [pid=17405] [render] start pageId=06 file=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/PPT1_入门与上手/slides/06.slide
+[2026-08-31 16:35:02.039] [INFO ] [pid=17405] [render] ok pageId=06 slides=1 ms=69
+[2026-08-31 16:35:02.040] [INFO ] [pid=17405] [render] renderSlideData result.resources={
+  images: {
+    'rel:015byne2': {
+      id: 'rel:015byne2',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/.cache/media/images/3ea9e308046a035fbb7e6a8b17d8b436.svg'
+    },
+    'rel:00ob5j1q': {
+      id: 'rel:00ob5j1q',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/.cache/media/images/f5bd171a4daaafeb2c84edc8902e16f6.svg'
+    },
+    'rel:004o972p': {
+      id: 'rel:004o972p',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/.cache/media/images/d46740912123823f3250cd88439e1ef6.svg'
+    },
+    'rel:00mhic9e': {
+      id: 'rel:00mhic9e',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/.cache/media/images/f0476c8485c42bd566cb92d50f469e7b.svg'
+    },
+    'rel:01vayb3j': {
+      id: 'rel:01vayb3j',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/.cache/media/images/526226c269563ebcd708f4e452f543b6.svg'
+    }
+  },
+  videos: {},
+  audios: {},
+  fonts: {}
+}
+[2026-08-31 16:35:02.043] [INFO ] [pid=17405] [commit] commit send pageId=69cae4 targetIndex=5 version=6 baseVersion=11 revisionBytes=34632
+[2026-08-31 16:35:02.048] [INFO ] [pid=17405] [commit] commit ok pageId=69cae4 revisionId=97941870 ms=5
+[2026-08-31 16:35:02.048] [INFO ] [pid=17405] [backend-ops] addSlideAt ok pageId=06 slideId=69cae4 index=5 version=6 baseVersion=11 revisionId=97941870 code=0 images=[local=5 remote=0 cached=0 failed=0] ms=79
+[2026-08-31 16:35:02.048] [INFO ] [pid=17405] [sync] step=add round=1 attempt=2 pageId=07 index=6
+[2026-08-31 16:35:02.048] [INFO ] [pid=17405] [backend-ops] addSlideAt start pageId=07 index=6
+[2026-08-31 16:35:02.048] [INFO ] [pid=17405] [render] start pageId=07 file=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/PPT1_入门与上手/slides/07.slide
+[2026-08-31 16:35:02.106] [INFO ] [pid=17405] [render] ok pageId=07 slides=1 ms=58
+[2026-08-31 16:35:02.106] [INFO ] [pid=17405] [render] renderSlideData result.resources={
+  images: {
+    'rel:01cua2wp': {
+      id: 'rel:01cua2wp',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/.cache/media/images/45c6cf73dae34a90715576993cb50996.svg'
+    },
+    'rel:0078iuum': {
+      id: 'rel:0078iuum',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/.cache/media/images/95eb56df5c69055e359f5b025b68ad18.svg'
+    },
+    'rel:01vayb3j': {
+      id: 'rel:01vayb3j',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/.cache/media/images/526226c269563ebcd708f4e452f543b6.svg'
+    }
+  },
+  videos: {},
+  audios: {},
+  fonts: {}
+}
+[2026-08-31 16:35:02.108] [INFO ] [pid=17405] [commit] commit send pageId=73edd4 targetIndex=6 version=7 baseVersion=12 revisionBytes=24644
+[2026-08-31 16:35:02.112] [INFO ] [pid=17405] [commit] commit ok pageId=73edd4 revisionId=a6912545 ms=4
+[2026-08-31 16:35:02.112] [INFO ] [pid=17405] [backend-ops] addSlideAt ok pageId=07 slideId=73edd4 index=6 version=7 baseVersion=12 revisionId=a6912545 code=0 images=[local=3 remote=0 cached=0 failed=0] ms=64
+[2026-08-31 16:35:02.112] [INFO ] [pid=17405] [sync] step=add round=1 attempt=2 pageId=08 index=7
+[2026-08-31 16:35:02.113] [INFO ] [pid=17405] [backend-ops] addSlideAt start pageId=08 index=7
+[2026-08-31 16:35:02.113] [INFO ] [pid=17405] [render] start pageId=08 file=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/PPT1_入门与上手/slides/08.slide
+[2026-08-31 16:35:02.184] [INFO ] [pid=17405] [render] ok pageId=08 slides=1 ms=71
+[2026-08-31 16:35:02.184] [INFO ] [pid=17405] [render] renderSlideData result.resources={
+  images: {
+    'rel:01vayb3j': {
+      id: 'rel:01vayb3j',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/.cache/media/images/526226c269563ebcd708f4e452f543b6.svg'
+    }
+  },
+  videos: {},
+  audios: {},
+  fonts: {}
+}
+[2026-08-31 16:35:02.188] [INFO ] [pid=17405] [commit] commit send pageId=8e01bc targetIndex=7 version=8 baseVersion=13 revisionBytes=29980
+[2026-08-31 16:35:02.192] [INFO ] [pid=17405] [commit] commit ok pageId=8e01bc revisionId=3032e137 ms=4
+[2026-08-31 16:35:02.192] [INFO ] [pid=17405] [backend-ops] addSlideAt ok pageId=08 slideId=8e01bc index=7 version=8 baseVersion=13 revisionId=3032e137 code=0 images=[local=1 remote=0 cached=0 failed=0] ms=79
+[2026-08-31 16:35:02.192] [INFO ] [pid=17405] [sync] step=add round=1 attempt=2 pageId=09 index=8
+[2026-08-31 16:35:02.192] [INFO ] [pid=17405] [backend-ops] addSlideAt start pageId=09 index=8
+[2026-08-31 16:35:02.192] [INFO ] [pid=17405] [render] start pageId=09 file=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/PPT1_入门与上手/slides/09.slide
+[2026-08-31 16:35:02.245] [INFO ] [pid=17405] [render] ok pageId=09 slides=1 ms=53
+[2026-08-31 16:35:02.246] [INFO ] [pid=17405] [render] renderSlideData result.resources={
+  images: {
+    'rel:01vayb3j': {
+      id: 'rel:01vayb3j',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/.cache/media/images/526226c269563ebcd708f4e452f543b6.svg'
+    }
+  },
+  videos: {},
+  audios: {},
+  fonts: {}
+}
+[2026-08-31 16:35:02.250] [INFO ] [pid=17405] [commit] commit send pageId=df6bbe targetIndex=8 version=9 baseVersion=14 revisionBytes=24304
+[2026-08-31 16:35:02.253] [INFO ] [pid=17405] [commit] commit ok pageId=df6bbe revisionId=dbc266d7 ms=3
+[2026-08-31 16:35:02.253] [INFO ] [pid=17405] [backend-ops] addSlideAt ok pageId=09 slideId=df6bbe index=8 version=9 baseVersion=14 revisionId=dbc266d7 code=0 images=[local=1 remote=0 cached=0 failed=0] ms=61
+[2026-08-31 16:35:02.253] [INFO ] [pid=17405] [sync] step=add round=1 attempt=2 pageId=10 index=9
+[2026-08-31 16:35:02.253] [INFO ] [pid=17405] [backend-ops] addSlideAt start pageId=10 index=9
+[2026-08-31 16:35:02.254] [INFO ] [pid=17405] [render] start pageId=10 file=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/PPT1_入门与上手/slides/10.slide
+[2026-08-31 16:35:02.349] [INFO ] [pid=17405] [render] ok pageId=10 slides=1 ms=95
+[2026-08-31 16:35:02.349] [INFO ] [pid=17405] [render] renderSlideData result.resources={
+  images: {
+    'rel:01vayb3j': {
+      id: 'rel:01vayb3j',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/.cache/media/images/526226c269563ebcd708f4e452f543b6.svg'
+    }
+  },
+  videos: {},
+  audios: {},
+  fonts: {}
+}
+[2026-08-31 16:35:02.354] [INFO ] [pid=17405] [commit] commit send pageId=f11896 targetIndex=9 version=10 baseVersion=15 revisionBytes=33684
+[2026-08-31 16:35:02.358] [INFO ] [pid=17405] [commit] commit ok pageId=f11896 revisionId=7442bcc7 ms=4
+[2026-08-31 16:35:02.359] [INFO ] [pid=17405] [backend-ops] addSlideAt ok pageId=10 slideId=f11896 index=9 version=10 baseVersion=15 revisionId=7442bcc7 code=0 images=[local=1 remote=0 cached=0 failed=0] ms=106
+[2026-08-31 16:35:02.359] [INFO ] [pid=17405] [sync] step=add round=1 attempt=2 pageId=11 index=10
+[2026-08-31 16:35:02.359] [INFO ] [pid=17405] [backend-ops] addSlideAt start pageId=11 index=10
+[2026-08-31 16:35:02.359] [INFO ] [pid=17405] [render] start pageId=11 file=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/PPT1_入门与上手/slides/11.slide
+[2026-08-31 16:35:02.406] [INFO ] [pid=17405] [render] ok pageId=11 slides=1 ms=47
+[2026-08-31 16:35:02.407] [INFO ] [pid=17405] [render] renderSlideData result.resources={
+  images: {
+    'rel:01stbvb4': {
+      id: 'rel:01stbvb4',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/.cache/media/images/74e36ed3de4f0d5aad1ec4a1e896ff29.svg'
+    },
+    'rel:01k5mwa3': {
+      id: 'rel:01k5mwa3',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/.cache/media/images/8d8acd3c2c66c9e0131ce15cbbaa9290.svg'
+    },
+    'rel:0095n093': {
+      id: 'rel:0095n093',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/.cache/media/images/df9ac2f734a5285637a49714eab12f0e.svg'
+    },
+    'rel:01m5m3r1': {
+      id: 'rel:01m5m3r1',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/.cache/media/images/3133e8cc232cc449206c83ba761877ae.svg'
+    },
+    'rel:00szbova': {
+      id: 'rel:00szbova',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/.cache/media/images/fecd7fa4e912486e3903e74eef6afad8.svg'
+    },
+    'rel:01vayb3j': {
+      id: 'rel:01vayb3j',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/.cache/media/images/526226c269563ebcd708f4e452f543b6.svg'
+    }
+  },
+  videos: {},
+  audios: {},
+  fonts: {}
+}
+[2026-08-31 16:35:02.409] [INFO ] [pid=17405] [commit] commit send pageId=e221ff targetIndex=10 version=11 baseVersion=16 revisionBytes=31496
+[2026-08-31 16:35:02.412] [INFO ] [pid=17405] [commit] commit ok pageId=e221ff revisionId=794284a6 ms=3
+[2026-08-31 16:35:02.413] [INFO ] [pid=17405] [backend-ops] addSlideAt ok pageId=11 slideId=e221ff index=10 version=11 baseVersion=16 revisionId=794284a6 code=0 images=[local=6 remote=0 cached=0 failed=0] ms=54
+[2026-08-31 16:35:02.413] [INFO ] [pid=17405] [sync] step=add round=1 attempt=2 pageId=12 index=11
+[2026-08-31 16:35:02.413] [INFO ] [pid=17405] [backend-ops] addSlideAt start pageId=12 index=11
+[2026-08-31 16:35:02.413] [INFO ] [pid=17405] [render] start pageId=12 file=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/PPT1_入门与上手/slides/12.slide
+[2026-08-31 16:35:02.457] [INFO ] [pid=17405] [render] ok pageId=12 slides=1 ms=44
+[2026-08-31 16:35:02.457] [INFO ] [pid=17405] [render] renderSlideData result.resources={
+  images: {
+    'rel:0007lydn': {
+      id: 'rel:0007lydn',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/.cache/media/images/0131cdcc4bcb709ccd704b347c29504c.svg'
+    },
+    'rel:00ev807r': {
+      id: 'rel:00ev807r',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/.cache/media/images/f79586aa56743179775e9dd148c02343.svg'
+    },
+    'rel:00xc0bq5': {
+      id: 'rel:00xc0bq5',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/.cache/media/images/aac01ed2c02fb611ffc5c15e134e4588.svg'
+    },
+    'rel:01vayb3j': {
+      id: 'rel:01vayb3j',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/.cache/media/images/526226c269563ebcd708f4e452f543b6.svg'
+    }
+  },
+  videos: {},
+  audios: {},
+  fonts: {}
+}
+[2026-08-31 16:35:02.460] [INFO ] [pid=17405] [commit] commit send pageId=52f9c1 targetIndex=11 version=12 baseVersion=17 revisionBytes=27336
+[2026-08-31 16:35:02.463] [INFO ] [pid=17405] [commit] commit ok pageId=52f9c1 revisionId=41cf6b79 ms=3
+[2026-08-31 16:35:02.464] [INFO ] [pid=17405] [backend-ops] addSlideAt ok pageId=12 slideId=52f9c1 index=11 version=12 baseVersion=17 revisionId=41cf6b79 code=0 images=[local=4 remote=0 cached=0 failed=0] ms=51
+[2026-08-31 16:35:02.464] [INFO ] [pid=17405] [sync] step=add round=1 attempt=2 pageId=13 index=12
+[2026-08-31 16:35:02.464] [INFO ] [pid=17405] [backend-ops] addSlideAt start pageId=13 index=12
+[2026-08-31 16:35:02.464] [INFO ] [pid=17405] [render] start pageId=13 file=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/PPT1_入门与上手/slides/13.slide
+[2026-08-31 16:35:02.500] [INFO ] [pid=17405] [render] ok pageId=13 slides=1 ms=36
+[2026-08-31 16:35:02.500] [INFO ] [pid=17405] [render] renderSlideData result.resources={
+  images: {
+    'rel:003onhg4': {
+      id: 'rel:003onhg4',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/.cache/media/images/a0b26ae95e29d75a8384947a22b37ee5.svg'
+    },
+    'rel:00azd66c': {
+      id: 'rel:00azd66c',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/.cache/media/images/3ec86fdc9e7ccca3a9cf01a9f370db90.svg'
+    },
+    'rel:01fligu2': {
+      id: 'rel:01fligu2',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/.cache/media/images/3e87a7a5e27d1596dac62168b7e1e0d6.svg'
+    },
+    'rel:01vayb3j': {
+      id: 'rel:01vayb3j',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/.cache/media/images/526226c269563ebcd708f4e452f543b6.svg'
+    }
+  },
+  videos: {},
+  audios: {},
+  fonts: {}
+}
+[2026-08-31 16:35:02.502] [INFO ] [pid=17405] [commit] commit send pageId=b66673 targetIndex=12 version=13 baseVersion=18 revisionBytes=26172
+[2026-08-31 16:35:02.506] [INFO ] [pid=17405] [commit] commit ok pageId=b66673 revisionId=45faff5a ms=4
+[2026-08-31 16:35:02.506] [INFO ] [pid=17405] [backend-ops] addSlideAt ok pageId=13 slideId=b66673 index=12 version=13 baseVersion=18 revisionId=45faff5a code=0 images=[local=4 remote=0 cached=0 failed=0] ms=42
+[2026-08-31 16:35:02.506] [INFO ] [pid=17405] [sync] step=add round=1 attempt=2 pageId=14 index=13
+[2026-08-31 16:35:02.507] [INFO ] [pid=17405] [backend-ops] addSlideAt start pageId=14 index=13
+[2026-08-31 16:35:02.507] [INFO ] [pid=17405] [render] start pageId=14 file=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/PPT1_入门与上手/slides/14.slide
+[2026-08-31 16:35:02.565] [INFO ] [pid=17405] [render] ok pageId=14 slides=1 ms=58
+[2026-08-31 16:35:02.565] [INFO ] [pid=17405] [render] renderSlideData result.resources={
+  images: {
+    'rel:00o139qy': {
+      id: 'rel:00o139qy',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/.cache/media/images/93ba98e6725659df20e8b7cb227953b7.svg'
+    },
+    'rel:01wkjc1r': {
+      id: 'rel:01wkjc1r',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/.cache/media/images/71feebcf10882054f68dd4ded4d23607.svg'
+    },
+    'rel:01vayb3j': {
+      id: 'rel:01vayb3j',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/.cache/media/images/526226c269563ebcd708f4e452f543b6.svg'
+    }
+  },
+  videos: {},
+  audios: {},
+  fonts: {}
+}
+[2026-08-31 16:35:02.568] [INFO ] [pid=17405] [commit] commit send pageId=d4eb27 targetIndex=13 version=14 baseVersion=19 revisionBytes=26208
+[2026-08-31 16:35:02.571] [INFO ] [pid=17405] [commit] commit ok pageId=d4eb27 revisionId=e05e5e13 ms=3
+[2026-08-31 16:35:02.572] [INFO ] [pid=17405] [backend-ops] addSlideAt ok pageId=14 slideId=d4eb27 index=13 version=14 baseVersion=19 revisionId=e05e5e13 code=0 images=[local=3 remote=0 cached=0 failed=0] ms=65
+[2026-08-31 16:35:02.572] [INFO ] [pid=17405] [sync] aligned round=1 attempt=2 size=14 desired=14 pendingDirtySize=0
+[2026-08-31 16:35:02.572] [INFO ] [pid=17405] [sync] reconcile ok round=1 attempt=2 ms=997
+[2026-08-31 16:35:02.572] [INFO ] [pid=17405] [backend-ops] save start file=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/PPT1_入门与上手/AI宝儿_第1套_入门与上手.pptx
+[2026-08-31 16:35:02.572] [INFO ] [pid=17405] [commit] save send filePath=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/PPT1_入门与上手/AI宝儿_第1套_入门与上手.pptx
+[2026-08-31 16:35:02.637] [INFO ] [pid=17405] [commit] save ok file_path=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/PPT1_入门与上手/AI宝儿_第1套_入门与上手.pptx ms=65
+[2026-08-31 16:35:02.637] [INFO ] [pid=17405] [backend-ops] save ok file_path=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/PPT1_入门与上手/AI宝儿_第1套_入门与上手.pptx ms=65
+[2026-08-31 16:35:02.637] [INFO ] [pid=17405] [sync] drain end round=1 reconciles=2 mergedSubmits=1 pendingDirtySize=0 ms=1347
+[2026-08-31 17:00:05.768] [INFO ] [pid=17405] [worker] shutdown received sig=SIGTERM
+[2026-08-31 17:00:05.789] [INFO ] [pid=17405] [worker] shutdown ok sig=SIGTERM ms=22

@@ -11,7 +11,13 @@ ALLOWED_TAGS = {
 }
 VOID_TAGS = {'br', 'hr', 'img'}
 DROP_CONTENT_TAGS = {'canvas', 'iframe', 'math', 'object', 'script', 'style', 'svg', 'template'}
-CLASS_PATTERN = re.compile(r'^(?:ql-(?:align|direction|font|indent|size)-[\w-]+|ql-syntax)$')
+
+# Quill 排版样式。编辑器侧全部走 class（见 static/css/rich-text.css），不使用 style 属性，
+# 因此这里只需放行有限前缀；字体颜色是预设色板而非自由取值，枚举空间是封闭的。
+# 新增前缀必须与 static/js/admin.js 注册的 attributor keyName 和 rich-text.css 三者同步。
+CLASS_PATTERN = re.compile(
+    r'^(?:ql-(?:align|bg|color|direction|font|indent|line|para|size)-[\w-]+|ql-syntax)$'
+)
 DATA_IMAGE_PATTERN = re.compile(r'^data:image/(?:png|jpeg|jpg|gif|webp);base64,', re.I)
 
 
@@ -24,6 +30,44 @@ def sanitize_rich_html(value, max_length=200_000):
 
 def sanitize_media_url(value):
     return _safe_url(str(value or '').strip(), image=True)
+
+
+_AGE_PATTERN = re.compile(r'(\d{1,3})\s*(?:周岁|岁)')
+# 精确到具体年龄 + 职业 + 生活习惯的组合具备可识别性，对外只保留粗粒度区间。
+_AGE_BUCKETS = ((18, '未成年'), (35, '青年'), (50, '中年'), (200, '中老年'))
+
+
+def redact_customer_profile(value):
+    """Reduce a customer profile to a coarse age bucket plus gender.
+
+    Stored profiles can combine an exact age, an occupation and daily habits
+    (e.g. "45岁女性，久坐办公室，饮食不规律"), which is personal information
+    under PIPL. Public endpoints only need enough context to read the case.
+    Internal/AI retrieval paths keep calling models directly.
+    """
+    text = str(value or '').strip()
+    if not text:
+        return ''
+
+    bucket = ''
+    match = _AGE_PATTERN.search(text)
+    if match:
+        age = int(match.group(1))
+        if 0 < age < 130:
+            for upper, label in _AGE_BUCKETS:
+                if age < upper:
+                    bucket = label
+                    break
+
+    gender = ''
+    if '女性' in text or '女士' in text or '女' in text:
+        gender = '女性'
+    elif '男性' in text or '男士' in text or '男' in text:
+        gender = '男性'
+
+    if bucket and gender:
+        return f'{bucket}{gender}'
+    return bucket or gender
 
 
 def _safe_url(value, *, image=False):

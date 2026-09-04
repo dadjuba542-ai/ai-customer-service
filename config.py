@@ -43,6 +43,15 @@ class Config:
     CLEANUP_ON_STARTUP = os.environ.get('CLEANUP_ON_STARTUP', 'false').lower() == 'true'
     CHAT_RETENTION_DAYS = max(1, int(os.environ.get('CHAT_RETENTION_DAYS', '30')))
 
+    # 反爬：按客户端类型分级限流（仅作用于 /api/ 路径，静态资源不受影响）
+    CRAWL_GUARD_ENABLED = os.environ.get('CRAWL_GUARD_ENABLED', 'true').lower() == 'true'
+    CRAWL_GUARD_BROWSER_PER_MIN = int(os.environ.get('CRAWL_GUARD_BROWSER_PER_MIN', '180'))
+    CRAWL_GUARD_WECHAT_PER_MIN = int(os.environ.get('CRAWL_GUARD_WECHAT_PER_MIN', '180'))
+    CRAWL_GUARD_CRAWLER_PER_MIN = int(os.environ.get('CRAWL_GUARD_CRAWLER_PER_MIN', '20'))
+    CRAWL_GUARD_SCRIPT_PER_MIN = int(os.environ.get('CRAWL_GUARD_SCRIPT_PER_MIN', '30'))
+    # 被限流时是否直接拒绝。false = 仅记录日志观察，不改响应（灰度用）
+    CRAWL_GUARD_ENFORCE = os.environ.get('CRAWL_GUARD_ENFORCE', 'true').lower() == 'true'
+
     # 四大模块对应的机器人ID
     BOT_MAPPING = {
         '产品咨询': os.environ.get('BOT_PRODUCT', '7595022659508125738'),

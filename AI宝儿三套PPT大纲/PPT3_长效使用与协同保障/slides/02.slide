@@ -1,0 +1,75 @@
+<Slide style={{
+    background: '#F7FAF6',
+    paddingTop: 20, paddingBottom: 20, paddingLeft: 72, paddingRight: 72,
+}}>
+    <Box style={{ height: 100, justifyContent: 'center' }}>
+        <Text style={{ fontSize: 36, fontWeight: 'bold', color: '#1E3A32' }}>用得久才用得顺 · 守住两条红线</Text>
+        <Box style={{ width: 56, height: 4, borderRadius: 2, background: '#1F7A5C', marginTop: 8 }} />
+    </Box>
+
+    <Box style={{ height: 528, flexDirection: 'row', gap: 28 }}>
+        <Box style={{ width: 560, height: 528, background: '#FFFFFF', borderRadius: 14, padding: 24, boxShadow: '0 4px 20px rgba(30,58,50,0.08)' }}>
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <FAIcon name='seedling' style={{ fill: '#1F7A5C', width: 28, height: 28 }} />
+                <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#1F7A5C' }}>长期用，才会越问越准</Text>
+            </Box>
+            <Text style={{ fontSize: 20, color: '#1E3A32', lineHeight: 1.6, marginTop: 16 }}>
+                用得越久，历史记录和案例都在替你积累背景——你后来问的那句，AI 拿到的信息越来越多，答案也越来越贴你。
+            </Text>
+            <svg width="512" height="220" viewBox="0 0 512 220" style={{ marginTop: 16 }}>
+                <line x1="40" y1="180" x2="480" y2="180" stroke="#DDE7E1" strokeWidth="2" />
+                <polyline points="40,170 150,140 260,108 370,70 480,40" fill="none" stroke="#1F7A5C" strokeWidth="4" />
+                <circle cx="40" cy="170" r="6" fill="#1F7A5C" />
+                <circle cx="150" cy="140" r="6" fill="#1F7A5C" />
+                <circle cx="260" cy="108" r="6" fill="#1F7A5C" />
+                <circle cx="370" cy="70" r="6" fill="#1F7A5C" />
+                <circle cx="480" cy="40" r="6" fill="#E08A3C" />
+                <text x="40" y="206" fontSize="15" fill="#6B7C75" fontFamily="PingFang SC">第1天</text>
+                <text x="420" y="206" fontSize="15" fill="#6B7C75" fontFamily="PingFang SC">用得越久</text>
+            </svg>
+            <Box style={{ marginTop: 8, background: 'rgba(31,122,92,0.06)', borderRadius: 12, padding: 16 }}>
+                <Text style={{ fontSize: 19, color: '#1E3A32', lineHeight: 1.5 }}>
+                    所以别浅尝辄止——多用几次，背景就厚了。
+                </Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flex: 1, height: 528, gap: 20 }}>
+            <Text style={{ fontSize: 23, fontWeight: 'bold', color: '#1E3A32' }}>两条红线，先用先守</Text>
+            <Box style={{ background: 'rgba(224,138,60,0.12)', borderRadius: 14, padding: 20, borderLeft: '5px solid #E08A3C' }}>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <FAIcon name='exclamation-triangle' style={{ fill: '#C9742B', width: 26, height: 26 }} />
+                    <Text style={{ fontSize: 21, fontWeight: 'bold', color: '#C9742B' }}>红线一 · 不作诊断</Text>
+                </Box>
+                <Text style={{ fontSize: 19, color: '#1E3A32', lineHeight: 1.55, marginTop: 10 }}>
+                    AI 回答是参考，不替代真人判断，不承诺「一定有效」。
+                </Text>
+            </Box>
+            <Box style={{ background: 'rgba(224,138,60,0.12)', borderRadius: 14, padding: 20, borderLeft: '5px solid #E08A3C' }}>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <FAIcon name='exclamation-triangle' style={{ fill: '#C9742B', width: 26, height: 26 }} />
+                    <Text style={{ fontSize: 21, fontWeight: 'bold', color: '#C9742B' }}>红线二 · 不填敏感信息</Text>
+                </Box>
+                <Text style={{ fontSize: 19, color: '#1E3A32', lineHeight: 1.55, marginTop: 10 }}>
+                    不在聊天里填身份证、病历、住址等敏感信息，用化名即可。
+                </Text>
+            </Box>
+            <Box style={{ marginTop: 'auto', background: '#1F7A5C', borderRadius: 14, padding: 18 }}>
+                <Text style={{ fontSize: 19, color: '#FFFFFF', lineHeight: 1.5 }}>
+                    先立规矩再用，比用错再纠更稳。
+                </Text>
+            </Box>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            <svg width="20" height="20" viewBox="0 0 24 24">
+                <path d="M12 21C12 21 4 17 4 10C4 6 7 3 12 3C17 3 20 6 20 10C20 17 12 21 12 21Z" fill="#1F7A5C" opacity="0.75" />
+                <path d="M12 21V6" stroke="#FFFFFF" strokeWidth="1.6" fill="none" />
+            </svg>
+            <Text style={{ fontSize: 14, color: '#6B7C75' }}>AI宝儿 · 长效使用与协同保障</Text>
+        </Box>
+        <Text style={{ fontSize: 14, color: '#6B7C75' }}>02 / 9</Text>
+    </Box>
+</Slide>

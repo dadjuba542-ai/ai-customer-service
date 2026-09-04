@@ -1,0 +1,80 @@
+<Slide style={{
+    background: '#F7FAF6',
+    paddingTop: 20, paddingBottom: 20, paddingLeft: 72, paddingRight: 72,
+}}>
+    <Box style={{ height: 100, justifyContent: 'center' }}>
+        <Text style={{ fontSize: 36, fontWeight: 'bold', color: '#1E3A32' }}>五期路线图</Text>
+        <Box style={{ width: 56, height: 4, borderRadius: 2, background: '#1F7A5C', marginTop: 8 }} />
+    </Box>
+
+    <Box style={{ height: 528, flexDirection: 'row', gap: 28 }}>
+        <Box style={{ width: 300, paddingRight: 8 }}>
+            <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#1F7A5C', lineHeight: 1.45 }}>
+                每一期只解决<br />一个具体的障碍
+            </Text>
+            <Text style={{ fontSize: 20, color: '#6B7C75', lineHeight: 1.6, marginTop: 18 }}>
+                不敢用 → 不会问 → 问不准 → 不会用案例 → 用不久。五期走完，从第一次点开页面，到能自己找答案。
+            </Text>
+            <Box style={{
+                marginTop: 26, background: 'rgba(31,122,92,0.08)', borderRadius: 14, padding: 18,
+            }}>
+                <Text style={{ fontSize: 18, color: '#1E3A32', lineHeight: 1.55 }}>
+                    每期都是「讲一遍 + 练一遍」，下课之前必须自己动手做完。
+                </Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flex: 1, gap: 14 }}>
+            <Box style={{ height: 94, flexDirection: 'row', gap: 20, background: '#FFFFFF', borderRadius: 14, padding: 18, boxShadow: '0 4px 20px rgba(30,58,50,0.08)' }}>
+                <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#1F7A5C', width: 56 }}>01</Text>
+                <Box style={{ flex: 1, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 26, fontWeight: 'bold', color: '#1E3A32' }}>认识 AI宝儿</Text>
+                    <Text style={{ fontSize: 19, color: '#6B7C75', lineHeight: 1.5 }}>填好身份、认全首页四大区域、挑对快捷入口，发出第一句话</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 94, flexDirection: 'row', gap: 20, background: '#FFFFFF', borderRadius: 14, padding: 18, boxShadow: '0 4px 20px rgba(30,58,50,0.08)' }}>
+                <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#1F7A5C', width: 56 }}>02</Text>
+                <Box style={{ flex: 1, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 26, fontWeight: 'bold', color: '#1E3A32' }}>会提问才会用</Text>
+                    <Text style={{ fontSize: 19, color: '#6B7C75', lineHeight: 1.5 }}>走完一次问答的五步，记住三个提问技巧，背不下模板就照抄</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 94, flexDirection: 'row', gap: 20, background: '#FFFFFF', borderRadius: 14, padding: 18, boxShadow: '0 4px 20px rgba(30,58,50,0.08)' }}>
+                <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#1F7A5C', width: 56 }}>03</Text>
+                <Box style={{ flex: 1, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 26, fontWeight: 'bold', color: '#1E3A32' }}>先读再问</Text>
+                    <Text style={{ fontSize: 19, color: '#6B7C75', lineHeight: 1.5 }}>用资讯和产品资料喂出更好的问题，顺手回看自己的历史记录</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 94, flexDirection: 'row', gap: 20, background: '#FFFFFF', borderRadius: 14, padding: 18, boxShadow: '0 4px 20px rgba(30,58,50,0.08)' }}>
+                <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#1F7A5C', width: 56 }}>04</Text>
+                <Box style={{ flex: 1, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 26, fontWeight: 'bold', color: '#1E3A32' }}>把经验变成参考</Text>
+                    <Text style={{ fontSize: 19, color: '#6B7C75', lineHeight: 1.5 }}>看懂回答下方的案例卡，用三个问题判断这条案例值不值得看</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 94, flexDirection: 'row', gap: 20, background: '#FFFFFF', borderRadius: 14, padding: 18, boxShadow: '0 4px 20px rgba(30,58,50,0.08)' }}>
+                <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#1F7A5C', width: 56 }}>05</Text>
+                <Box style={{ flex: 1, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 26, fontWeight: 'bold', color: '#1E3A32' }}>用得久、用得顺</Text>
+                    <Text style={{ fontSize: 19, color: '#6B7C75', lineHeight: 1.5 }}>逛社区、找真人营养师、养成五个好习惯、避开四个坑</Text>
+                </Box>
+            </Box>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            <svg width="20" height="20" viewBox="0 0 24 24">
+                <path d="M12 21C12 21 4 17 4 10C4 6 7 3 12 3C17 3 20 6 20 10C20 17 12 21 12 21Z" fill="#1F7A5C" opacity="0.75" />
+                <path d="M12 21V6" stroke="#FFFFFF" strokeWidth="1.6" fill="none" />
+            </svg>
+            <Text style={{ fontSize: 14, color: '#6B7C75' }}>AI宝儿 · 五期上手课</Text>
+        </Box>
+        <Text style={{ fontSize: 14, color: '#6B7C75' }}>02 / 33</Text>
+    </Box>
+</Slide>

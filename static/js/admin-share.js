@@ -1,3 +1,22 @@
+/* ===== 分享功能开关 =====
+   见 index.html 中的 window.SHARE_ENABLED。关闭时隐藏入口并移除相关 DOM，
+   保留 copyText / openAdmin（聊天区「复制」按钮仍依赖 copyText）。       */
+function shareEnabled() {
+  return window.SHARE_ENABLED === true;
+}
+
+function removeShareDom() {
+  ['share-overlay', 'share-card'].forEach((id) => {
+    const el = document.getElementById(id);
+    if (el) el.remove();
+  });
+}
+
+if (!shareEnabled()) {
+  removeShareDom();
+  document.addEventListener('DOMContentLoaded', removeShareDom);
+}
+
 /* ===== Admin Panel ===== */
 function openAdmin() {
   window.location.href = '/admin';
@@ -98,6 +117,7 @@ async function recordShareEvent(msg, shareType = 'answer_card') {
 }
 
 async function shareAnswerCard(index) {
+  if (!shareEnabled()) return;
   const msg = state.messages[index];
   if (!msg || msg.role !== 'bot' || !msg.content) {
     showToast('没有可分享的回答', 'info');
@@ -143,6 +163,7 @@ async function shareAnswerCard(index) {
 }
 
 async function shareChat() {
+  if (!shareEnabled()) return;
   if (state.handoff.session && ['queued', 'assigned', 'active'].includes(state.handoff.session.status)) {
     showToast('人工咨询进行中暂不支持分享，请结束后再操作', 'info');
     return;

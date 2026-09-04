@@ -1,0 +1,91 @@
+<Slide style={{
+    background: '#F7FAF6',
+    paddingTop: 20, paddingBottom: 20, paddingLeft: 72, paddingRight: 72,
+}}>
+    <Box style={{ height: 100, justifyContent: 'center' }}>
+        <Text style={{ fontSize: 36, fontWeight: 'bold', color: '#1E3A32' }}>避坑清单</Text>
+        <Box style={{ width: 56, height: 4, borderRadius: 2, background: '#1F7A5C', marginTop: 8 }} />
+    </Box>
+
+    <Box style={{ height: 528, flexDirection: 'row', gap: 28 }}>
+        <Box style={{ width: 660, gap: 14 }}>
+            <Box style={{
+                background: '#FFFFFF', borderRadius: 14, padding: 18, height: 121,
+                boxShadow: '0 4px 20px rgba(30,58,50,0.08)',
+            }}>
+                <Box style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>
+                    <FAIcon name='times-circle' style={{ fill: '#C9742B', width: 26, height: 26 }} />
+                    <Text style={{ fontSize: 23, fontWeight: 'bold', color: '#C9742B' }}>不要把 AI 的回答当诊断</Text>
+                </Box>
+                <Text style={{ fontSize: 19, color: '#6B7C75', lineHeight: 1.5, marginTop: 8 }}>
+                    <span style={{ fontWeight: 'bold', color: '#1F7A5C' }}>要说：</span>这是参考信息，具体情况还请以专业人士的意见为准。对客户也要这么讲。
+                </Text>
+            </Box>
+
+            <Box style={{
+                background: '#FFFFFF', borderRadius: 14, padding: 18, height: 121,
+                boxShadow: '0 4px 20px rgba(30,58,50,0.08)',
+            }}>
+                <Box style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>
+                    <FAIcon name='times-circle' style={{ fill: '#C9742B', width: 26, height: 26 }} />
+                    <Text style={{ fontSize: 23, fontWeight: 'bold', color: '#C9742B' }}>不要在聊天里填客户敏感信息</Text>
+                </Box>
+                <Text style={{ fontSize: 19, color: '#6B7C75', lineHeight: 1.5, marginTop: 8 }}>
+                    <span style={{ fontWeight: 'bold', color: '#1F7A5C' }}>要说：</span>只描述症状、年龄区间和诉求。身份证号、病历、住址这些，一句都别填。
+                </Text>
+            </Box>
+
+            <Box style={{
+                background: '#FFFFFF', borderRadius: 14, padding: 18, height: 121,
+                boxShadow: '0 4px 20px rgba(30,58,50,0.08)',
+            }}>
+                <Box style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>
+                    <FAIcon name='times-circle' style={{ fill: '#C9742B', width: 26, height: 26 }} />
+                    <Text style={{ fontSize: 23, fontWeight: 'bold', color: '#C9742B' }}>不要一次塞进五个问题</Text>
+                </Box>
+                <Text style={{ fontSize: 19, color: '#6B7C75', lineHeight: 1.5, marginTop: 8 }}>
+                    <span style={{ fontWeight: 'bold', color: '#1F7A5C' }}>要说：</span>拆成五句，一句一句问。分开问拿到的五份答案，比一份和稀泥的更有用。
+                </Text>
+            </Box>
+
+            <Box style={{
+                background: 'rgba(224,138,60,0.14)', borderRadius: 14, padding: 18, height: 121,
+            }}>
+                <Box style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>
+                    <FAIcon name='times-circle' style={{ fill: '#C9742B', width: 26, height: 26 }} />
+                    <Text style={{ fontSize: 23, fontWeight: 'bold', color: '#C9742B' }}>不要整段复制却不说明来意</Text>
+                </Box>
+                <Text style={{ fontSize: 19, color: '#6B7C75', lineHeight: 1.5, marginTop: 8 }}>
+                    <span style={{ fontWeight: 'bold', color: '#1F7A5C' }}>要说：</span>先写一句"这段话我想让你改写成朋友圈文案"，再把内容贴上去。
+                </Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flex: 1 }}>
+            <svg width="448" height="330" viewBox="0 0 448 330">
+                <path d="M224 26 L354 74 V168 C354 244 296 300 224 322 C152 300 94 244 94 168 V74 Z" fill="#E08A3C" opacity="0.16" />
+                <path d="M224 44 L338 86 V168 C338 234 290 282 224 302 C158 282 110 234 110 168 V86 Z" fill="#E08A3C" opacity="0.85" />
+                <rect x="212" y="112" width="24" height="104" rx="12" fill="#FFFFFF" />
+                <circle cx="224" cy="248" r="16" fill="#FFFFFF" />
+            </svg>
+
+            <Text style={{ fontSize: 26, fontWeight: 'bold', color: '#1E3A32', lineHeight: 1.45, marginTop: 12 }}>
+                这四条不是限制，<br />是保护你
+            </Text>
+            <Text style={{ fontSize: 19, color: '#6B7C75', lineHeight: 1.6, marginTop: 14 }}>
+                踩过这四条里任意一条，轻则答案没法用，重则把不该留的信息留在了系统里。避开它们比学会任何技巧都重要。
+            </Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            <svg width="20" height="20" viewBox="0 0 24 24">
+                <path d="M12 21C12 21 4 17 4 10C4 6 7 3 12 3C17 3 20 6 20 10C20 17 12 21 12 21Z" fill="#1F7A5C" opacity="0.75" />
+                <path d="M12 21V6" stroke="#FFFFFF" strokeWidth="1.6" fill="none" />
+            </svg>
+            <Text style={{ fontSize: 14, color: '#6B7C75' }}>AI宝儿 · 长效使用与协同保障</Text>
+        </Box>
+        <Text style={{ fontSize: 14, color: '#6B7C75' }}>07 / 9</Text>
+    </Box>
+</Slide>

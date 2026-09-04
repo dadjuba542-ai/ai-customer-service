@@ -1,0 +1,92 @@
+<Slide style={{
+    background: '#F7FAF6',
+    paddingTop: 20, paddingBottom: 20, paddingLeft: 72, paddingRight: 72,
+}}>
+    <Box style={{ height: 100, justifyContent: 'center' }}>
+        <Text style={{ fontSize: 36, fontWeight: 'bold', color: '#1E3A32' }}>首页四大区域</Text>
+        <Box style={{ width: 56, height: 4, borderRadius: 2, background: '#1F7A5C', marginTop: 8 }} />
+    </Box>
+
+    <Box style={{ height: 528, flexDirection: 'row', gap: 28 }}>
+        <Box style={{ width: 330, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 180, fontWeight: 'bold', color: '#E08A3C', lineHeight: 1, letterSpacing: -4 }}>4</Text>
+            <Text style={{ fontSize: 30, fontWeight: 'bold', color: '#1E3A32', marginTop: 14 }}>大区域</Text>
+            <Text style={{ fontSize: 20, color: '#6B7C75', lineHeight: 1.55, marginTop: 14 }}>
+                认全这四块，<br />首页就永远不会迷路
+            </Text>
+        </Box>
+
+        <Box style={{ flex: 1, gap: 16 }}>
+            <Box style={{
+                flexDirection: 'row', gap: 18, background: '#FFFFFF', borderRadius: 14,
+                padding: 18, boxShadow: '0 4px 20px rgba(30,58,50,0.08)', height: 118,
+            }}>
+                <Box style={{ width: 46, height: 46, borderRadius: 23, background: '#1F7A5C', justifyContent: 'center', alignItems: 'center' }}>
+                    <FAIcon name='newspaper' style={{ fill: '#FFFFFF', width: 24, height: 24 }} />
+                </Box>
+                <Box style={{ flex: 1, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#1E3A32' }}>顶部轮播 · 精选资讯</Text>
+                    <Text style={{ fontSize: 19, color: '#6B7C75', lineHeight: 1.5, marginTop: 6 }}>
+                        首页最上面会自动滚动的重点内容。不用逐条点开，先扫标题，看到和手头工作相关的再进去细看。
+                    </Text>
+                </Box>
+            </Box>
+
+            <Box style={{
+                flexDirection: 'row', gap: 18, background: '#FFFFFF', borderRadius: 14,
+                padding: 18, boxShadow: '0 4px 20px rgba(30,58,50,0.08)', height: 110,
+            }}>
+                <Box style={{ width: 46, height: 46, borderRadius: 23, background: '#1F7A5C', justifyContent: 'center', alignItems: 'center' }}>
+                    <FAIcon name='th-large' style={{ fill: '#FFFFFF', width: 24, height: 24 }} />
+                </Box>
+                <Box style={{ flex: 1, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#1E3A32' }}>快捷功能四个按钮</Text>
+                    <Text style={{ fontSize: 19, color: '#6B7C75', lineHeight: 1.5, marginTop: 6 }}>
+                        四个入口对应四类常见需求。不知道从哪问起的时候，先点一个，比对着空输入框发呆强。
+                    </Text>
+                </Box>
+            </Box>
+
+            <Box style={{
+                flexDirection: 'row', gap: 18, background: '#FFFFFF', borderRadius: 14,
+                padding: 18, boxShadow: '0 4px 20px rgba(30,58,50,0.08)', height: 126,
+            }}>
+                <Box style={{ width: 46, height: 46, borderRadius: 23, background: '#1F7A5C', justifyContent: 'center', alignItems: 'center' }}>
+                    <FAIcon name='lightbulb' style={{ fill: '#FFFFFF', width: 24, height: 24 }} />
+                </Box>
+                <Box style={{ flex: 1, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#1E3A32' }}>示例问题 · 不知道怎么问？试试这些</Text>
+                    <Text style={{ fontSize: 19, color: '#6B7C75', lineHeight: 1.5, marginTop: 6 }}>
+                        系统准备好的现成问句，点一下就直接发出去。第一次用的人从这里开始最省事，问过一次就知道该怎么写。
+                    </Text>
+                </Box>
+            </Box>
+
+            <Box style={{
+                flexDirection: 'row', gap: 18, background: 'rgba(224,138,60,0.14)', borderRadius: 14,
+                padding: 18, height: 118,
+            }}>
+                <Box style={{ width: 46, height: 46, borderRadius: 23, background: '#E08A3C', justifyContent: 'center', alignItems: 'center' }}>
+                    <FAIcon name='keyboard' style={{ fill: '#FFFFFF', width: 24, height: 24 }} />
+                </Box>
+                <Box style={{ flex: 1, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#1E3A32' }}>聊天输入区</Text>
+                    <Text style={{ fontSize: 19, color: '#6B7C75', lineHeight: 1.5, marginTop: 6 }}>
+                        想问什么直接打字发送。公司开了语音功能时，右边会出现麦克风，按住说话也能变成文字。
+                    </Text>
+                </Box>
+            </Box>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            <svg width="20" height="20" viewBox="0 0 24 24">
+                <path d="M12 21C12 21 4 17 4 10C4 6 7 3 12 3C17 3 20 6 20 10C20 17 12 21 12 21Z" fill="#1F7A5C" opacity="0.75" />
+                <path d="M12 21V6" stroke="#FFFFFF" strokeWidth="1.6" fill="none" />
+            </svg>
+            <Text style={{ fontSize: 14, color: '#6B7C75' }}>AI宝儿 · 入门与上手</Text>
+        </Box>
+        <Text style={{ fontSize: 14, color: '#6B7C75' }}>05 / 14</Text>
+    </Box>
+</Slide>

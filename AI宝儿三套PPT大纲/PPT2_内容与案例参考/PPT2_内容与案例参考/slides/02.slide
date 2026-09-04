@@ -1,0 +1,62 @@
+<Slide style={{
+    background: '#F7FAF6',
+    paddingTop: 20, paddingBottom: 20, paddingLeft: 72, paddingRight: 72,
+}}>
+    <Box style={{ height: 100, justifyContent: 'center' }}>
+        <Text style={{ fontSize: 36, fontWeight: 'bold', color: '#1E3A32' }}>为什么「先读再问」</Text>
+        <Box style={{ width: 56, height: 4, borderRadius: 2, background: '#1F7A5C', marginTop: 8 }} />
+    </Box>
+
+    <Box style={{ height: 528, flexDirection: 'row', gap: 28 }}>
+        <Box style={{ flex: 1, height: 528, background: '#FFFFFF', borderRadius: 14, padding: 24, boxShadow: '0 4px 20px rgba(30,58,50,0.08)' }}>
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 40, height: 40, borderRadius: 20, background: 'rgba(168,213,186,0.4)', justifyContent: 'center', alignItems: 'center' }}>
+                    <FAIcon name='comment' style={{ fill: '#1F7A5C', width: 22, height: 22 }} />
+                </Box>
+                <Text style={{ fontSize: 23, fontWeight: 'bold', color: '#1E3A32' }}>直接问：信息少</Text>
+            </Box>
+            <Box style={{ marginTop: 18, background: 'rgba(31,122,92,0.06)', borderRadius: 12, padding: 18 }}>
+                <Text style={{ fontSize: 21, color: '#1E3A32', lineHeight: 1.55 }}>
+                    「XX 怎么用？」
+                </Text>
+            </Box>
+            <Text style={{ fontSize: 20, color: '#6B7C75', lineHeight: 1.6, marginTop: 16 }}>
+                问句里没有背景，AI 拿到的信息少，只能给通用答案，常常答非你所需。
+            </Text>
+            <Text style={{ fontSize: 20, color: '#6B7C75', lineHeight: 1.6, marginTop: 12 }}>
+                你可能还要来回追问好几轮，才把情况说清。
+            </Text>
+        </Box>
+
+        <Box style={{ flex: 1, height: 528, background: '#FFFFFF', borderRadius: 14, padding: 24, boxShadow: '0 4px 20px rgba(30,58,50,0.08)' }}>
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 40, height: 40, borderRadius: 20, background: '#1F7A5C', justifyContent: 'center', alignItems: 'center' }}>
+                    <FAIcon name='book' style={{ fill: '#FFFFFF', width: 22, height: 22 }} />
+                </Box>
+                <Text style={{ fontSize: 23, fontWeight: 'bold', color: '#1F7A5C' }}>先读后问：信息多</Text>
+            </Box>
+            <Box style={{ marginTop: 18, background: 'rgba(31,122,92,0.06)', borderRadius: 12, padding: 18 }}>
+                <Text style={{ fontSize: 21, color: '#1E3A32', lineHeight: 1.55 }}>
+                    「我看资讯说 XX 适合 A 情况，我属于 A，具体怎么用？」
+                </Text>
+            </Box>
+            <Text style={{ fontSize: 20, color: '#1E3A32', lineHeight: 1.6, marginTop: 16 }}>
+                问句自带背景词，AI 拿到的信息多，答案更贴你的情况。
+            </Text>
+            <Text style={{ fontSize: 20, color: '#1E3A32', lineHeight: 1.6, marginTop: 12 }}>
+                资讯、产品、案例都是「喂料」，不是答案本身——它们给提问提供背景。
+            </Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            <svg width="20" height="20" viewBox="0 0 24 24">
+                <path d="M12 21C12 21 4 17 4 10C4 6 7 3 12 3C17 3 20 6 20 10C20 17 12 21 12 21Z" fill="#1F7A5C" opacity="0.75" />
+                <path d="M12 21V6" stroke="#FFFFFF" strokeWidth="1.6" fill="none" />
+            </svg>
+            <Text style={{ fontSize: 14, color: '#6B7C75' }}>AI宝儿 · 内容与案例参考</Text>
+        </Box>
+        <Text style={{ fontSize: 14, color: '#6B7C75' }}>02 / 13</Text>
+    </Box>
+</Slide>

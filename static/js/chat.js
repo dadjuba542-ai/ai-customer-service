@@ -119,7 +119,7 @@ function renderMessageItem(msg, idx, existing = null) {
       <div class="msg-actions" role="group" aria-label="回复操作">
         <button class="msg-action-btn" onclick="copyText('${escapeHtml(msg.content).replace(/'/g, "\\'")}')"><i class="ph ph-copy-simple"></i> 复制</button>
         ${agent && agent.type === '产品咨询' ? '<button class="msg-action-btn" onclick="switchView(\'products\')"><i class="ph ph-shopping-bag"></i> 查看产品</button>' : ''}
-        <button class="msg-action-btn share-action" onclick="shareAnswerCard(${idx})"><i class="ph ph-share-network"></i> 生成分享图</button>
+        ${window.SHARE_ENABLED ? `<button class="msg-action-btn share-action" onclick="shareAnswerCard(${idx})"><i class="ph ph-share-network"></i> 生成分享图</button>` : ''}
         <button class="msg-action-btn" onclick="regenerateMsg(${idx})"><i class="ph ph-arrows-clockwise"></i> 重新回答</button>
         ${msg.historyId ? `
         <span class="msg-feedback-group" role="group" aria-label="回答反馈">

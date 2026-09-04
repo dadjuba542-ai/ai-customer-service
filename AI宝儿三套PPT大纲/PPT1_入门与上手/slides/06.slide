@@ -1,0 +1,106 @@
+<Slide style={{
+    background: '#F7FAF6',
+    paddingTop: 20, paddingBottom: 20, paddingLeft: 72, paddingRight: 72,
+}}>
+    <Box style={{ height: 100, justifyContent: 'center' }}>
+        <Text style={{ fontSize: 36, fontWeight: 'bold', color: '#1E3A32' }}>快捷功能怎么挑</Text>
+        <Box style={{ width: 56, height: 4, borderRadius: 2, background: '#1F7A5C', marginTop: 8 }} />
+    </Box>
+
+    <Box style={{ height: 528, flexDirection: 'row', gap: 28 }}>
+        <Box style={{ width: 310 }}>
+            <Text style={{ fontSize: 26, fontWeight: 'bold', color: '#1F7A5C', lineHeight: 1.45 }}>
+                四个按钮，<br />对应四种"我现在想干嘛"
+            </Text>
+            <Text style={{ fontSize: 20, color: '#6B7C75', lineHeight: 1.6, marginTop: 20 }}>
+                选错了不会出错，只是答案会偏一点。判断标准只有一个：你现在是想知道"是什么"，还是想知道"怎么用"，还是想"写点东西发出去"。
+            </Text>
+            <Box style={{
+                marginTop: 24, background: 'rgba(31,122,92,0.08)', borderRadius: 14, padding: 16,
+            }}>
+                <Text style={{ fontSize: 19, color: '#1E3A32', lineHeight: 1.55 }}>
+                    快捷入口只是帮你开个头，进去之后照样可以随便改问题。
+                </Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flex: 1, gap: 12 }}>
+            <Box style={{
+                flexDirection: 'row', gap: 18, alignItems: 'center', background: '#FFFFFF',
+                borderRadius: 14, padding: 18, height: 114, boxShadow: '0 4px 20px rgba(30,58,50,0.08)',
+            }}>
+                <Box style={{ width: 52, height: 52, borderRadius: 26, background: 'rgba(31,122,92,0.1)', justifyContent: 'center', alignItems: 'center' }}>
+                    <FAIcon name='box' style={{ fill: '#1F7A5C', width: 28, height: 28 }} />
+                </Box>
+                <Box style={{ flex: 1 }}>
+                    <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#1E3A32' }}>产品资料查询</Text>
+                    <Text style={{ fontSize: 19, color: '#1F7A5C', lineHeight: 1.45, marginTop: 4 }}>
+                        想知道"是什么"就点它 —— 了解产品特点、适合什么人，先把底子打清楚
+                    </Text>
+                </Box>
+            </Box>
+
+            <Box style={{
+                flexDirection: 'row', gap: 18, alignItems: 'center', background: '#FFFFFF',
+                borderRadius: 14, padding: 18, height: 114, boxShadow: '0 4px 20px rgba(30,58,50,0.08)',
+            }}>
+                <Box style={{ width: 52, height: 52, borderRadius: 26, background: 'rgba(31,122,92,0.1)', justifyContent: 'center', alignItems: 'center' }}>
+                    <FAIcon name='question-circle' style={{ fill: '#1F7A5C', width: 28, height: 28 }} />
+                </Box>
+                <Box style={{ flex: 1 }}>
+                    <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#1E3A32' }}>产品使用答疑</Text>
+                    <Text style={{ fontSize: 19, color: '#1F7A5C', lineHeight: 1.45, marginTop: 4 }}>
+                        想知道"怎么用"就点它 —— 问用法、问时间、问注意事项，这一路最顺
+                    </Text>
+                </Box>
+            </Box>
+
+            <Box style={{
+                flexDirection: 'row', gap: 18, alignItems: 'center', background: '#FFFFFF',
+                borderRadius: 14, padding: 18, height: 114, boxShadow: '0 4px 20px rgba(30,58,50,0.08)',
+            }}>
+                <Box style={{ width: 52, height: 52, borderRadius: 26, background: 'rgba(31,122,92,0.1)', justifyContent: 'center', alignItems: 'center' }}>
+                    <FAIcon name='share' style={{ fill: '#1F7A5C', width: 28, height: 28 }} />
+                </Box>
+                <Box style={{ flex: 1 }}>
+                    <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#1E3A32' }}>朋友圈帮写</Text>
+                    <Text style={{ fontSize: 19, color: '#1F7A5C', lineHeight: 1.45, marginTop: 4 }}>
+                        想发一条朋友圈就点它 —— 把卖点写成能直接发出去的一段话
+                    </Text>
+                </Box>
+            </Box>
+
+            <Box style={{
+                flexDirection: 'row', gap: 18, alignItems: 'center', background: 'rgba(224,138,60,0.14)',
+                borderRadius: 14, padding: 18, height: 114,
+            }}>
+                <Box style={{ width: 52, height: 52, borderRadius: 26, background: '#E08A3C', justifyContent: 'center', alignItems: 'center' }}>
+                    <FAIcon name='microphone' style={{ fill: '#FFFFFF', width: 28, height: 28 }} />
+                </Box>
+                <Box style={{ flex: 1 }}>
+                    <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#1E3A32' }}>口播文案帮写</Text>
+                    <Text style={{ fontSize: 19, color: '#C9742B', lineHeight: 1.45, marginTop: 4 }}>
+                        想说给别人听就点它 —— 整理成能照着念的稿子，拍视频直播都能用
+                    </Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 36, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 19, color: '#6B7C75' }}>
+                    拿不准就先点第一个 —— 试错成本是零，点错了退出重来就行
+                </Text>
+            </Box>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            <svg width="20" height="20" viewBox="0 0 24 24">
+                <path d="M12 21C12 21 4 17 4 10C4 6 7 3 12 3C17 3 20 6 20 10C20 17 12 21 12 21Z" fill="#1F7A5C" opacity="0.75" />
+                <path d="M12 21V6" stroke="#FFFFFF" strokeWidth="1.6" fill="none" />
+            </svg>
+            <Text style={{ fontSize: 14, color: '#6B7C75' }}>AI宝儿 · 入门与上手</Text>
+        </Box>
+        <Text style={{ fontSize: 14, color: '#6B7C75' }}>06 / 14</Text>
+    </Box>
+</Slide>

@@ -1,0 +1,491 @@
+=== boot pid=16947 ts=2026-08-31 16:21:33.385 cwd=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT3_长效使用与协同保障 argv=/Users/test/.workbuddy/binaries/node/versions/22.22.2/bin/slidep-start --project PPT3_长效使用与协同保障 --filename AI宝儿_第3套_长效使用与协同保障.pptx --__daemon-child ===
+[2026-08-31 16:21:33.385] [INFO ] [pid=16947] [start] invoked pid=16947 cwd=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT3_长效使用与协同保障 daemonChild=yes dev=no argv=[--project PPT3_长效使用与协同保障 --filename AI宝儿_第3套_长效使用与协同保障.pptx --__daemon-child]
+[2026-08-31 16:21:33.386] [INFO ] [pid=16947] [start] daemon child runWorker ppid=16943
+[2026-08-31 16:21:33.386] [INFO ] [pid=16947] [worker] start projectDir=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT3_长效使用与协同保障/PPT3_长效使用与协同保障 filename=AI宝儿_第3套_长效使用与协同保障.pptx version=5.4.4
+[2026-08-31 16:21:33.386] [INFO ] [pid=16947] [worker] init ok dirs=ready
+[2026-08-31 16:21:33.386] [INFO ] [pid=16947] [server-url] env TENCENT_DOCS_LOCAL_MCP = <unset>
+[2026-08-31 16:21:33.386] [INFO ] [pid=16947] [worker] openFile start
+[2026-08-31 16:21:33.387] [INFO ] [pid=16947] [open-file] copy blank.pptx start src=/Users/test/.workbuddy/binaries/node/versions/22.22.2/lib/node_modules/@tencent/slidep/dist/resources/pptx/blank.pptx dest=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT3_长效使用与协同保障/PPT3_长效使用与协同保障/AI宝儿_第3套_长效使用与协同保障.pptx
+[2026-08-31 16:21:33.388] [INFO ] [pid=16947] [open-file] copy blank.pptx ok dest=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT3_长效使用与协同保障/PPT3_长效使用与协同保障/AI宝儿_第3套_长效使用与协同保障.pptx ms=1
+[2026-08-31 16:21:33.408] [ERROR] [pid=16947] [http] editorStatus http 404 url=http://localhost:39099/api/editor/status body={"code":-1,"message":"no editor open for file_path=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT3_长效使用与协同保障/PPT3_长效使用与协同保障/AI宝儿_第3套_长效使用与协同保障.pptx"} ms=20
+[2026-08-31 16:21:33.408] [INFO ] [pid=16947] [open-file] open send url=http://localhost:39099/localapi/open filePath=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT3_长效使用与协同保障/PPT3_长效使用与协同保障/AI宝儿_第3套_长效使用与协同保障.pptx
+[2026-08-31 16:21:33.411] [INFO ] [pid=16947] [open-file] open ok fileId=FE184045 fileType=slide filePath=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT3_长效使用与协同保障/PPT3_长效使用与协同保障/AI宝儿_第3套_长效使用与协同保障.pptx ms=2
+[2026-08-31 16:21:33.411] [INFO ] [pid=16947] [worker] openFile ok fileId=FE184045 filePath=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT3_长效使用与协同保障/PPT3_长效使用与协同保障/AI宝儿_第3套_长效使用与协同保障.pptx
+[2026-08-31 16:21:33.411] [INFO ] [pid=16947] [worker] previewUrl=http://localhost:39099/static/slide/pc.html?local_edit=1&client=sdk_local&localFilePath=%2FUsers%2Ftest%2FDownloads%2Fai-customer-service%2FAI%E5%AE%9D%E5%84%BF%E4%B8%89%E5%A5%97PPT%E5%A4%A7%E7%BA%B2%2FPPT3_%E9%95%BF%E6%95%88%E4%BD%BF%E7%94%A8%E4%B8%8E%E5%8D%8F%E5%90%8C%E4%BF%9D%E9%9A%9C%2FPPT3_%E9%95%BF%E6%95%88%E4%BD%BF%E7%94%A8%E4%B8%8E%E5%8D%8F%E5%90%8C%E4%BF%9D%E9%9A%9C%2FAI%E5%AE%9D%E5%84%BF_%E7%AC%AC3%E5%A5%97_%E9%95%BF%E6%95%88%E4%BD%BF%E7%94%A8%E4%B8%8E%E5%8D%8F%E5%90%8C%E4%BF%9D%E9%9A%9C.pptx
+[2026-08-31 16:21:33.412] [INFO ] [pid=16947] [state] state.json not found, creating path=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT3_长效使用与协同保障/PPT3_长效使用与协同保障/.slidep/state.json filePath=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT3_长效使用与协同保障/PPT3_长效使用与协同保障/AI宝儿_第3套_长效使用与协同保障.pptx
+[2026-08-31 16:21:33.412] [INFO ] [pid=16947] [worker] commitEndpoint=http://localhost:39099/localapi/commitrevision
+[2026-08-31 16:21:33.414] [INFO ] [pid=16947] [mcp] mcp:slide_get_info send url=http://localhost:39099/mcp args={"file_id":"FE184045-B50E-4C4D-B6E7-79438C294770"}
+[2026-08-31 16:21:33.417] [INFO ] [pid=16947] [mcp] mcp:slide_get_info ok ms=3
+[2026-08-31 16:21:33.417] [INFO ] [pid=16947] [purge] purge start backendSlideCount=0
+[2026-08-31 16:21:33.417] [INFO ] [pid=16947] [purge] purge ok removed=0 ms=5
+[2026-08-31 16:21:33.417] [INFO ] [pid=16947] [worker] initial sync submitted pages=0
+[2026-08-31 16:21:33.417] [INFO ] [pid=16947] [sync] submit nextRound=1 dirty=<none> pendingDirtySize=0 merged=no
+[2026-08-31 16:21:33.417] [INFO ] [pid=16947] [sync] drain start round=1 pendingDirtySize=0
+[2026-08-31 16:21:33.417] [INFO ] [pid=16947] [sync] aligned round=1 attempt=1 size=0 desired=0 pendingDirtySize=0
+[2026-08-31 16:21:33.418] [INFO ] [pid=16947] [worker] ready fileId=FE184045 backendUrl=http://localhost:39099 initialPages=0 ms=32
+[2026-08-31 16:21:33.418] [INFO ] [pid=16947] [sync] reconcile ok round=1 attempt=1 ms=1
+[2026-08-31 16:21:33.418] [INFO ] [pid=16947] [sync] drain end round=1 reconciles=1 mergedSubmits=1 pendingDirtySize=0 ms=1
+[2026-08-31 16:21:33.420] [INFO ] [pid=16947] [watcher] ready dir=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT3_长效使用与协同保障/PPT3_长效使用与协同保障/slides
+[2026-08-31 16:35:51.128] [INFO ] [pid=16947] [watcher] event=add file=slides/01.slide
+[2026-08-31 16:35:51.128] [INFO ] [pid=16947] [watcher] event=add file=slides/02.slide
+[2026-08-31 16:35:51.128] [INFO ] [pid=16947] [watcher] event=add file=slides/03.slide
+[2026-08-31 16:35:51.128] [INFO ] [pid=16947] [watcher] event=add file=slides/04.slide
+[2026-08-31 16:35:51.128] [INFO ] [pid=16947] [watcher] event=add file=slides/05.slide
+[2026-08-31 16:35:51.228] [INFO ] [pid=16947] [watcher] event=add file=slides/06.slide
+[2026-08-31 16:35:51.228] [INFO ] [pid=16947] [watcher] event=add file=slides/08.slide
+[2026-08-31 16:35:51.228] [INFO ] [pid=16947] [watcher] event=add file=slides/09.slide
+[2026-08-31 16:35:51.228] [INFO ] [pid=16947] [watcher] event=add file=slides/07.slide
+[2026-08-31 16:35:51.729] [INFO ] [pid=16947] [watcher] flush batch dirty=[01,02,03,04,05,06,08,09,07] size=9
+[2026-08-31 16:35:51.730] [INFO ] [pid=16947] [sync] submit nextRound=2 dirty=01,02,03,04,05,06,08,09,07 pendingDirtySize=9 merged=no
+[2026-08-31 16:35:51.730] [INFO ] [pid=16947] [sync] drain start round=2 pendingDirtySize=9
+[2026-08-31 16:35:51.731] [INFO ] [pid=16947] [sync] step=add round=2 attempt=1 pageId=01 index=0
+[2026-08-31 16:35:51.731] [INFO ] [pid=16947] [backend-ops] addSlideAt start pageId=01 index=0
+[2026-08-31 16:35:51.731] [INFO ] [pid=16947] [render] start pageId=01 file=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT3_长效使用与协同保障/PPT3_长效使用与协同保障/slides/01.slide
+[2026-08-31 16:35:52.106] [INFO ] [pid=16947] [render] ok pageId=01 slides=1 ms=375
+[2026-08-31 16:35:52.106] [INFO ] [pid=16947] [render] renderSlideData result.resources={
+  images: {
+    'rel:01weeoug': {
+      id: 'rel:01weeoug',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT3_长效使用与协同保障/.cache/media/images/c0b91a881aeff9660b798395f6820cde.svg'
+    },
+    'rel:00nqk2mx': {
+      id: 'rel:00nqk2mx',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT3_长效使用与协同保障/.cache/media/images/d880882502a498810d2ae78794b0bf0e.svg'
+    },
+    'rel:01wmtn26': {
+      id: 'rel:01wmtn26',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT3_长效使用与协同保障/.cache/media/images/416dd231ed1b13f76a1c4b1296f50962.svg'
+    }
+  },
+  videos: {},
+  audios: {},
+  fonts: {}
+}
+[2026-08-31 16:35:52.116] [INFO ] [pid=16947] [commit] commit send pageId=444151 targetIndex=0 version=1 baseVersion=0 revisionBytes=17008
+[2026-08-31 16:35:52.123] [INFO ] [pid=16947] [commit] commit ok pageId=444151 revisionId=182e588a ms=7
+[2026-08-31 16:35:52.123] [ERROR] [pid=16947] [state] persist FAIL path=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT3_长效使用与协同保障/PPT3_长效使用与协同保障/.slidep/state.json commits=1 Error: ENOENT: no such file or directory, open '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT3_长效使用与协同保障/PPT3_长效使用与协同保障/.slidep/state.json.tmp'
+    at Object.openSync (node:fs:560:18)
+    at Object.writeFileSync (node:fs:2444:35)
+    at Object.L0e (/Users/test/.workbuddy/binaries/node/versions/22.22.2/lib/node_modules/@tencent/slidep/dist/slidep.js:57:1158)
+    at CC.persist (/Users/test/.workbuddy/binaries/node/versions/22.22.2/lib/node_modules/@tencent/slidep/dist/slidep.js:5974:5223)
+    at CC.recordCommit (/Users/test/.workbuddy/binaries/node/versions/22.22.2/lib/node_modules/@tencent/slidep/dist/slidep.js:5974:5609)
+    at mh.addSlideAt (/Users/test/.workbuddy/binaries/node/versions/22.22.2/lib/node_modules/@tencent/slidep/dist/slidep.js:5993:18803)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async L.reconcile (/Users/test/.workbuddy/binaries/node/versions/22.22.2/lib/node_modules/@tencent/slidep/dist/slidep.js:5993:24356)
+    at async L.drain (/Users/test/.workbuddy/binaries/node/versions/22.22.2/lib/node_modules/@tencent/slidep/dist/slidep.js:5993:21217)
+[2026-08-31 16:35:52.165] [WARN ] [pid=16947] [worker] reconcile failed (Error: ENOENT: no such file or directory, open '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT3_长效使用与协同保障/PPT3_长效使用与协同保障/.slidep/state.json.tmp'); trying soft recovery (purge backend + sync version, no editor restart)
+[2026-08-31 16:35:52.168] [INFO ] [pid=16947] [mcp] mcp:slide_get_info send url=http://localhost:39099/mcp args={"file_id":"FE184045-B50E-4C4D-B6E7-79438C294770"}
+[2026-08-31 16:35:52.169] [INFO ] [pid=16947] [mcp] mcp:slide_get_info ok ms=1
+[2026-08-31 16:35:52.170] [INFO ] [pid=16947] [purge] purge start backendSlideCount=1
+[2026-08-31 16:35:52.171] [INFO ] [pid=16947] [mcp] mcp:slide_remove_slide send url=http://localhost:39099/mcp args={"file_id":"FE184045-B50E-4C4D-B6E7-79438C294770","page_index":0}
+[2026-08-31 16:35:52.174] [INFO ] [pid=16947] [mcp] mcp:slide_remove_slide ok ms=3
+[2026-08-31 16:35:52.174] [INFO ] [pid=16947] [purge] purge ok removed=1 ms=9
+[2026-08-31 16:35:52.175] [INFO ] [pid=16947] [mcp] mcp:slide_get_info send url=http://localhost:39099/mcp args={"file_id":"FE184045-B50E-4C4D-B6E7-79438C294770"}
+[2026-08-31 16:35:52.176] [INFO ] [pid=16947] [mcp] mcp:slide_get_info ok ms=1
+[2026-08-31 16:35:52.176] [INFO ] [pid=16947] [backend-ops] seedServerVersion from=1 to=2
+[2026-08-31 16:35:52.176] [INFO ] [pid=16947] [worker] recovery (soft) ok: purged=1 backendNow=0page(s) version=2, view reset; reconcile will redo full sync
+[2026-08-31 16:35:52.176] [INFO ] [pid=16947] [sync] reconcile FAIL but recovered via onReconcileFailure round=2 attempt=1 (recovery 1/2) ms=446; re-running reconcile
+[2026-08-31 16:35:52.176] [INFO ] [pid=16947] [sync] step=add round=2 attempt=2 pageId=01 index=0
+[2026-08-31 16:35:52.176] [INFO ] [pid=16947] [backend-ops] addSlideAt start pageId=01 index=0
+[2026-08-31 16:35:52.176] [INFO ] [pid=16947] [render] start pageId=01 file=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT3_长效使用与协同保障/PPT3_长效使用与协同保障/slides/01.slide
+[2026-08-31 16:35:52.216] [INFO ] [pid=16947] [render] ok pageId=01 slides=1 ms=40
+[2026-08-31 16:35:52.216] [INFO ] [pid=16947] [render] renderSlideData result.resources={
+  images: {
+    'rel:01weeoug': {
+      id: 'rel:01weeoug',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT3_长效使用与协同保障/.cache/media/images/c0b91a881aeff9660b798395f6820cde.svg'
+    },
+    'rel:00nqk2mx': {
+      id: 'rel:00nqk2mx',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT3_长效使用与协同保障/.cache/media/images/d880882502a498810d2ae78794b0bf0e.svg'
+    },
+    'rel:01wmtn26': {
+      id: 'rel:01wmtn26',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT3_长效使用与协同保障/.cache/media/images/416dd231ed1b13f76a1c4b1296f50962.svg'
+    }
+  },
+  videos: {},
+  audios: {},
+  fonts: {}
+}
+[2026-08-31 16:35:52.220] [INFO ] [pid=16947] [commit] commit send pageId=d325f5 targetIndex=0 version=2 baseVersion=2 revisionBytes=17004
+[2026-08-31 16:35:52.224] [INFO ] [pid=16947] [commit] commit ok pageId=d325f5 revisionId=1c80ad92 ms=3
+[2026-08-31 16:35:52.224] [ERROR] [pid=16947] [state] persist FAIL path=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT3_长效使用与协同保障/PPT3_长效使用与协同保障/.slidep/state.json commits=1 Error: ENOENT: no such file or directory, open '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT3_长效使用与协同保障/PPT3_长效使用与协同保障/.slidep/state.json.tmp'
+    at Object.openSync (node:fs:560:18)
+    at Object.writeFileSync (node:fs:2444:35)
+    at Object.L0e (/Users/test/.workbuddy/binaries/node/versions/22.22.2/lib/node_modules/@tencent/slidep/dist/slidep.js:57:1158)
+    at CC.persist (/Users/test/.workbuddy/binaries/node/versions/22.22.2/lib/node_modules/@tencent/slidep/dist/slidep.js:5974:5223)
+    at CC.recordCommit (/Users/test/.workbuddy/binaries/node/versions/22.22.2/lib/node_modules/@tencent/slidep/dist/slidep.js:5974:5609)
+    at mh.addSlideAt (/Users/test/.workbuddy/binaries/node/versions/22.22.2/lib/node_modules/@tencent/slidep/dist/slidep.js:5993:18803)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async L.reconcile (/Users/test/.workbuddy/binaries/node/versions/22.22.2/lib/node_modules/@tencent/slidep/dist/slidep.js:5993:24356)
+    at async L.drain (/Users/test/.workbuddy/binaries/node/versions/22.22.2/lib/node_modules/@tencent/slidep/dist/slidep.js:5993:21217)
+[2026-08-31 16:35:52.224] [WARN ] [pid=16947] [worker] reconcile failed (Error: ENOENT: no such file or directory, open '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT3_长效使用与协同保障/PPT3_长效使用与协同保障/.slidep/state.json.tmp'); trying soft recovery (purge backend + sync version, no editor restart)
+[2026-08-31 16:35:52.226] [INFO ] [pid=16947] [mcp] mcp:slide_get_info send url=http://localhost:39099/mcp args={"file_id":"FE184045-B50E-4C4D-B6E7-79438C294770"}
+[2026-08-31 16:35:52.227] [INFO ] [pid=16947] [mcp] mcp:slide_get_info ok ms=1
+[2026-08-31 16:35:52.227] [INFO ] [pid=16947] [purge] purge start backendSlideCount=1
+[2026-08-31 16:35:52.227] [INFO ] [pid=16947] [mcp] mcp:slide_remove_slide send url=http://localhost:39099/mcp args={"file_id":"FE184045-B50E-4C4D-B6E7-79438C294770","page_index":0}
+[2026-08-31 16:35:52.229] [INFO ] [pid=16947] [mcp] mcp:slide_remove_slide ok ms=0
+[2026-08-31 16:35:52.229] [INFO ] [pid=16947] [purge] purge ok removed=1 ms=5
+[2026-08-31 16:35:52.229] [INFO ] [pid=16947] [mcp] mcp:slide_get_info send url=http://localhost:39099/mcp args={"file_id":"FE184045-B50E-4C4D-B6E7-79438C294770"}
+[2026-08-31 16:35:52.230] [INFO ] [pid=16947] [mcp] mcp:slide_get_info ok ms=1
+[2026-08-31 16:35:52.230] [INFO ] [pid=16947] [backend-ops] seedServerVersion from=3 to=4
+[2026-08-31 16:35:52.230] [INFO ] [pid=16947] [worker] recovery (soft) ok: purged=1 backendNow=0page(s) version=4, view reset; reconcile will redo full sync
+[2026-08-31 16:35:52.230] [INFO ] [pid=16947] [sync] reconcile FAIL but recovered via onReconcileFailure round=2 attempt=2 (recovery 2/2) ms=54; re-running reconcile
+[2026-08-31 16:35:52.230] [INFO ] [pid=16947] [sync] step=add round=2 attempt=3 pageId=01 index=0
+[2026-08-31 16:35:52.230] [INFO ] [pid=16947] [backend-ops] addSlideAt start pageId=01 index=0
+[2026-08-31 16:35:52.230] [INFO ] [pid=16947] [render] start pageId=01 file=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT3_长效使用与协同保障/PPT3_长效使用与协同保障/slides/01.slide
+[2026-08-31 16:35:52.265] [INFO ] [pid=16947] [render] ok pageId=01 slides=1 ms=35
+[2026-08-31 16:35:52.266] [INFO ] [pid=16947] [render] renderSlideData result.resources={
+  images: {
+    'rel:01weeoug': {
+      id: 'rel:01weeoug',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT3_长效使用与协同保障/.cache/media/images/c0b91a881aeff9660b798395f6820cde.svg'
+    },
+    'rel:00nqk2mx': {
+      id: 'rel:00nqk2mx',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT3_长效使用与协同保障/.cache/media/images/d880882502a498810d2ae78794b0bf0e.svg'
+    },
+    'rel:01wmtn26': {
+      id: 'rel:01wmtn26',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT3_长效使用与协同保障/.cache/media/images/416dd231ed1b13f76a1c4b1296f50962.svg'
+    }
+  },
+  videos: {},
+  audios: {},
+  fonts: {}
+}
+[2026-08-31 16:35:52.269] [INFO ] [pid=16947] [commit] commit send pageId=bd3c6c targetIndex=0 version=3 baseVersion=4 revisionBytes=17000
+[2026-08-31 16:35:52.274] [INFO ] [pid=16947] [commit] commit ok pageId=bd3c6c revisionId=179e8f51 ms=5
+[2026-08-31 16:35:52.274] [ERROR] [pid=16947] [state] persist FAIL path=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT3_长效使用与协同保障/PPT3_长效使用与协同保障/.slidep/state.json commits=1 Error: ENOENT: no such file or directory, open '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT3_长效使用与协同保障/PPT3_长效使用与协同保障/.slidep/state.json.tmp'
+    at Object.openSync (node:fs:560:18)
+    at Object.writeFileSync (node:fs:2444:35)
+    at Object.L0e (/Users/test/.workbuddy/binaries/node/versions/22.22.2/lib/node_modules/@tencent/slidep/dist/slidep.js:57:1158)
+    at CC.persist (/Users/test/.workbuddy/binaries/node/versions/22.22.2/lib/node_modules/@tencent/slidep/dist/slidep.js:5974:5223)
+    at CC.recordCommit (/Users/test/.workbuddy/binaries/node/versions/22.22.2/lib/node_modules/@tencent/slidep/dist/slidep.js:5974:5609)
+    at mh.addSlideAt (/Users/test/.workbuddy/binaries/node/versions/22.22.2/lib/node_modules/@tencent/slidep/dist/slidep.js:5993:18803)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async L.reconcile (/Users/test/.workbuddy/binaries/node/versions/22.22.2/lib/node_modules/@tencent/slidep/dist/slidep.js:5993:24356)
+    at async L.drain (/Users/test/.workbuddy/binaries/node/versions/22.22.2/lib/node_modules/@tencent/slidep/dist/slidep.js:5993:21217)
+[2026-08-31 16:35:52.274] [WARN ] [pid=16947] [sync] recovery budget exhausted round=2 (2/2); falling back to failure throttle
+[2026-08-31 16:35:52.274] [ERROR] [pid=16947] [sync] reconcile FAIL round=2 attempt=3 (1/5) ms=44 Error: ENOENT: no such file or directory, open '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT3_长效使用与协同保障/PPT3_长效使用与协同保障/.slidep/state.json.tmp'
+    at Object.openSync (node:fs:560:18)
+    at Object.writeFileSync (node:fs:2444:35)
+    at Object.L0e (/Users/test/.workbuddy/binaries/node/versions/22.22.2/lib/node_modules/@tencent/slidep/dist/slidep.js:57:1158)
+    at CC.persist (/Users/test/.workbuddy/binaries/node/versions/22.22.2/lib/node_modules/@tencent/slidep/dist/slidep.js:5974:5223)
+    at CC.recordCommit (/Users/test/.workbuddy/binaries/node/versions/22.22.2/lib/node_modules/@tencent/slidep/dist/slidep.js:5974:5609)
+    at mh.addSlideAt (/Users/test/.workbuddy/binaries/node/versions/22.22.2/lib/node_modules/@tencent/slidep/dist/slidep.js:5993:18803)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async L.reconcile (/Users/test/.workbuddy/binaries/node/versions/22.22.2/lib/node_modules/@tencent/slidep/dist/slidep.js:5993:24356)
+    at async L.drain (/Users/test/.workbuddy/binaries/node/versions/22.22.2/lib/node_modules/@tencent/slidep/dist/slidep.js:5993:21217)
+[2026-08-31 16:35:52.274] [INFO ] [pid=16947] [sync] backoff round=2 5000ms before next reconcile retry
+[2026-08-31 16:35:52.476] [INFO ] [pid=16947] [worker] shutdown received sig=SIGTERM
+[2026-08-31 16:35:52.477] [INFO ] [pid=16947] [worker] shutdown ok sig=SIGTERM ms=1
+=== boot pid=17654 ts=2026-08-31 16:35:53.506 cwd=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT3_长效使用与协同保障 argv=/Users/test/.workbuddy/binaries/node/versions/22.22.2/bin/slidep-start --project PPT3_长效使用与协同保障 --filename AI宝儿_第3套_长效使用与协同保障.pptx --__daemon-child ===
+[2026-08-31 16:35:53.505] [INFO ] [pid=17654] [start] invoked pid=17654 cwd=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT3_长效使用与协同保障 daemonChild=yes dev=no argv=[--project PPT3_长效使用与协同保障 --filename AI宝儿_第3套_长效使用与协同保障.pptx --__daemon-child]
+[2026-08-31 16:35:53.506] [INFO ] [pid=17654] [start] daemon child runWorker ppid=17650
+[2026-08-31 16:35:53.506] [INFO ] [pid=17654] [worker] start projectDir=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT3_长效使用与协同保障/PPT3_长效使用与协同保障 filename=AI宝儿_第3套_长效使用与协同保障.pptx version=5.4.4
+[2026-08-31 16:35:53.506] [INFO ] [pid=17654] [worker] init ok dirs=ready
+[2026-08-31 16:35:53.506] [INFO ] [pid=17654] [server-url] env TENCENT_DOCS_LOCAL_MCP = <unset>
+[2026-08-31 16:35:53.506] [INFO ] [pid=17654] [worker] openFile start
+[2026-08-31 16:35:53.507] [INFO ] [pid=17654] [open-file] copy blank.pptx start src=/Users/test/.workbuddy/binaries/node/versions/22.22.2/lib/node_modules/@tencent/slidep/dist/resources/pptx/blank.pptx dest=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT3_长效使用与协同保障/PPT3_长效使用与协同保障/AI宝儿_第3套_长效使用与协同保障.pptx
+[2026-08-31 16:35:53.508] [INFO ] [pid=17654] [open-file] copy blank.pptx ok dest=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT3_长效使用与协同保障/PPT3_长效使用与协同保障/AI宝儿_第3套_长效使用与协同保障.pptx ms=1
+[2026-08-31 16:35:53.528] [INFO ] [pid=17654] [open-file] open skip (already in pool) fileId=FE184045 filePath=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT3_长效使用与协同保障/PPT3_长效使用与协同保障/AI宝儿_第3套_长效使用与协同保障.pptx
+[2026-08-31 16:35:53.528] [INFO ] [pid=17654] [worker] openFile ok fileId=FE184045 filePath=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT3_长效使用与协同保障/PPT3_长效使用与协同保障/AI宝儿_第3套_长效使用与协同保障.pptx
+[2026-08-31 16:35:53.528] [INFO ] [pid=17654] [worker] previewUrl=http://localhost:39099/static/slide/pc.html?local_edit=1&client=sdk_local&localFilePath=%2FUsers%2Ftest%2FDownloads%2Fai-customer-service%2FAI%E5%AE%9D%E5%84%BF%E4%B8%89%E5%A5%97PPT%E5%A4%A7%E7%BA%B2%2FPPT3_%E9%95%BF%E6%95%88%E4%BD%BF%E7%94%A8%E4%B8%8E%E5%8D%8F%E5%90%8C%E4%BF%9D%E9%9A%9C%2FPPT3_%E9%95%BF%E6%95%88%E4%BD%BF%E7%94%A8%E4%B8%8E%E5%8D%8F%E5%90%8C%E4%BF%9D%E9%9A%9C%2FAI%E5%AE%9D%E5%84%BF_%E7%AC%AC3%E5%A5%97_%E9%95%BF%E6%95%88%E4%BD%BF%E7%94%A8%E4%B8%8E%E5%8D%8F%E5%90%8C%E4%BF%9D%E9%9A%9C.pptx
+[2026-08-31 16:35:53.528] [INFO ] [pid=17654] [state] state.json not found, creating path=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT3_长效使用与协同保障/PPT3_长效使用与协同保障/.slidep/state.json filePath=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT3_长效使用与协同保障/PPT3_长效使用与协同保障/AI宝儿_第3套_长效使用与协同保障.pptx
+[2026-08-31 16:35:53.528] [INFO ] [pid=17654] [worker] commitEndpoint=http://localhost:39099/localapi/commitrevision
+[2026-08-31 16:35:53.530] [INFO ] [pid=17654] [mcp] mcp:slide_get_info send url=http://localhost:39099/mcp args={"file_id":"FE184045-B50E-4C4D-B6E7-79438C294770"}
+[2026-08-31 16:35:53.532] [INFO ] [pid=17654] [mcp] mcp:slide_get_info ok ms=2
+[2026-08-31 16:35:53.532] [INFO ] [pid=17654] [purge] purge start backendSlideCount=1
+[2026-08-31 16:35:53.534] [INFO ] [pid=17654] [mcp] mcp:slide_remove_slide send url=http://localhost:39099/mcp args={"file_id":"FE184045-B50E-4C4D-B6E7-79438C294770","page_index":0}
+[2026-08-31 16:35:53.536] [INFO ] [pid=17654] [mcp] mcp:slide_remove_slide ok ms=1
+[2026-08-31 16:35:53.536] [INFO ] [pid=17654] [purge] purge ok removed=1 ms=8
+[2026-08-31 16:35:53.536] [INFO ] [pid=17654] [worker] initial sync submitted pages=9
+[2026-08-31 16:35:53.536] [INFO ] [pid=17654] [sync] submit nextRound=1 dirty=<none> pendingDirtySize=0 merged=no
+[2026-08-31 16:35:53.536] [INFO ] [pid=17654] [sync] drain start round=1 pendingDirtySize=0
+[2026-08-31 16:35:53.536] [INFO ] [pid=17654] [sync] step=add round=1 attempt=1 pageId=01 index=0
+[2026-08-31 16:35:53.536] [INFO ] [pid=17654] [backend-ops] addSlideAt start pageId=01 index=0
+[2026-08-31 16:35:53.536] [INFO ] [pid=17654] [render] start pageId=01 file=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT3_长效使用与协同保障/PPT3_长效使用与协同保障/slides/01.slide
+[2026-08-31 16:35:53.541] [INFO ] [pid=17654] [worker] ready fileId=FE184045 backendUrl=http://localhost:39099 initialPages=9 ms=35
+[2026-08-31 16:35:53.729] [INFO ] [pid=17654] [watcher] ready dir=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT3_长效使用与协同保障/PPT3_长效使用与协同保障/slides
+[2026-08-31 16:35:53.783] [INFO ] [pid=17654] [render] ok pageId=01 slides=1 ms=247
+[2026-08-31 16:35:53.784] [INFO ] [pid=17654] [render] renderSlideData result.resources={
+  images: {
+    'rel:01weeoug': {
+      id: 'rel:01weeoug',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT3_长效使用与协同保障/.cache/media/images/c0b91a881aeff9660b798395f6820cde.svg'
+    },
+    'rel:00nqk2mx': {
+      id: 'rel:00nqk2mx',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT3_长效使用与协同保障/.cache/media/images/d880882502a498810d2ae78794b0bf0e.svg'
+    },
+    'rel:01wmtn26': {
+      id: 'rel:01wmtn26',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT3_长效使用与协同保障/.cache/media/images/416dd231ed1b13f76a1c4b1296f50962.svg'
+    }
+  },
+  videos: {},
+  audios: {},
+  fonts: {}
+}
+[2026-08-31 16:35:53.792] [INFO ] [pid=17654] [commit] commit send pageId=8243a6 targetIndex=0 version=1 baseVersion=0 revisionBytes=17008
+[2026-08-31 16:35:53.802] [ERROR] [pid=17654] [http] commit http 500 url=http://localhost:39099/localapi/commitrevision body={"error":"CommitRevision failed: [13006][13006]msg:page index out of range, mut_info:mutation info: type:3, page_id:8243a6, page_type:1, index:3, shape_tree:6a09d9, related_layout_id:000008, related_master_id:, slide_master_theme_id:, notes_master_theme_id:,notes_slide_id: , other_msg:","ok":false} ms=9
+[2026-08-31 16:35:53.802] [ERROR] [pid=17654] [backend-ops] addSlideAt commit FAIL pageId=01 slideId=8243a6 index=0 version=1 baseVersion=0 ms=266
+[2026-08-31 16:35:53.802] [WARN ] [pid=17654] [worker] reconcile failed (H3: commit bad response: HTTP 500 body={"error":"CommitRevision failed: [13006][13006]msg:page index out of range, mut_info:mutation info: type:3, page_id:8243a6, page_type:1, index:3, shape_tree:6a09d9, related_layout_id:000008, related_master_id:, slide_master_theme_id:, notes_master_theme_id:,notes_slide_id: , other_msg:","ok":false}); trying soft recovery (purge backend + sync version, no editor restart)
+[2026-08-31 16:35:53.804] [INFO ] [pid=17654] [mcp] mcp:slide_get_info send url=http://localhost:39099/mcp args={"file_id":"FE184045-B50E-4C4D-B6E7-79438C294770"}
+[2026-08-31 16:35:53.805] [INFO ] [pid=17654] [mcp] mcp:slide_get_info ok ms=1
+[2026-08-31 16:35:53.805] [INFO ] [pid=17654] [purge] purge start backendSlideCount=0
+[2026-08-31 16:35:53.805] [INFO ] [pid=17654] [purge] purge ok removed=0 ms=3
+[2026-08-31 16:35:53.807] [INFO ] [pid=17654] [mcp] mcp:slide_get_info send url=http://localhost:39099/mcp args={"file_id":"FE184045-B50E-4C4D-B6E7-79438C294770"}
+[2026-08-31 16:35:53.809] [INFO ] [pid=17654] [mcp] mcp:slide_get_info ok ms=1
+[2026-08-31 16:35:53.809] [INFO ] [pid=17654] [backend-ops] seedServerVersion from=0 to=6
+[2026-08-31 16:35:53.809] [INFO ] [pid=17654] [worker] recovery (soft) ok: purged=0 backendNow=0page(s) version=6, view reset; reconcile will redo full sync
+[2026-08-31 16:35:53.809] [INFO ] [pid=17654] [sync] reconcile FAIL but recovered via onReconcileFailure round=1 attempt=1 (recovery 1/2) ms=273; re-running reconcile
+[2026-08-31 16:35:53.809] [INFO ] [pid=17654] [sync] step=add round=1 attempt=2 pageId=01 index=0
+[2026-08-31 16:35:53.809] [INFO ] [pid=17654] [backend-ops] addSlideAt start pageId=01 index=0
+[2026-08-31 16:35:53.809] [INFO ] [pid=17654] [render] start pageId=01 file=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT3_长效使用与协同保障/PPT3_长效使用与协同保障/slides/01.slide
+[2026-08-31 16:35:53.844] [INFO ] [pid=17654] [render] ok pageId=01 slides=1 ms=35
+[2026-08-31 16:35:53.845] [INFO ] [pid=17654] [render] renderSlideData result.resources={
+  images: {
+    'rel:01weeoug': {
+      id: 'rel:01weeoug',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT3_长效使用与协同保障/.cache/media/images/c0b91a881aeff9660b798395f6820cde.svg'
+    },
+    'rel:00nqk2mx': {
+      id: 'rel:00nqk2mx',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT3_长效使用与协同保障/.cache/media/images/d880882502a498810d2ae78794b0bf0e.svg'
+    },
+    'rel:01wmtn26': {
+      id: 'rel:01wmtn26',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT3_长效使用与协同保障/.cache/media/images/416dd231ed1b13f76a1c4b1296f50962.svg'
+    }
+  },
+  videos: {},
+  audios: {},
+  fonts: {}
+}
+[2026-08-31 16:35:53.849] [INFO ] [pid=17654] [commit] commit send pageId=3dc3d5 targetIndex=0 version=1 baseVersion=6 revisionBytes=17004
+[2026-08-31 16:35:53.853] [INFO ] [pid=17654] [commit] commit ok pageId=3dc3d5 revisionId=48849f3d ms=4
+[2026-08-31 16:35:53.853] [INFO ] [pid=17654] [backend-ops] addSlideAt ok pageId=01 slideId=3dc3d5 index=0 version=1 baseVersion=6 revisionId=48849f3d code=0 images=[local=3 remote=0 cached=0 failed=0] ms=44
+[2026-08-31 16:35:53.853] [INFO ] [pid=17654] [sync] step=add round=1 attempt=2 pageId=02 index=1
+[2026-08-31 16:35:53.853] [INFO ] [pid=17654] [backend-ops] addSlideAt start pageId=02 index=1
+[2026-08-31 16:35:53.853] [INFO ] [pid=17654] [render] start pageId=02 file=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT3_长效使用与协同保障/PPT3_长效使用与协同保障/slides/02.slide
+[2026-08-31 16:35:53.958] [INFO ] [pid=17654] [render] ok pageId=02 slides=1 ms=105
+[2026-08-31 16:35:53.958] [INFO ] [pid=17654] [render] renderSlideData result.resources={
+  images: {
+    'rel:01mo7vmn': {
+      id: 'rel:01mo7vmn',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT3_长效使用与协同保障/.cache/media/images/c3c10f59634f36edeeb23751a7d4a967.svg'
+    },
+    'rel:00rbyupa': {
+      id: 'rel:00rbyupa',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT3_长效使用与协同保障/.cache/media/images/328b2fe5a3465f8e84809755fe8e416c.svg'
+    },
+    'rel:014z883k': {
+      id: 'rel:014z883k',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT3_长效使用与协同保障/.cache/media/images/d15aa2e7f307be7b4604a6a67c8c4f46.svg'
+    },
+    'rel:01dil6jl': {
+      id: 'rel:01dil6jl',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT3_长效使用与协同保障/.cache/media/images/526226c269563ebcd708f4e452f543b6.svg'
+    }
+  },
+  videos: {},
+  audios: {},
+  fonts: {}
+}
+[2026-08-31 16:35:53.963] [INFO ] [pid=17654] [commit] commit send pageId=2907ad targetIndex=1 version=2 baseVersion=7 revisionBytes=26308
+[2026-08-31 16:35:53.967] [INFO ] [pid=17654] [commit] commit ok pageId=2907ad revisionId=0b1c8b0c ms=4
+[2026-08-31 16:35:53.968] [INFO ] [pid=17654] [backend-ops] addSlideAt ok pageId=02 slideId=2907ad index=1 version=2 baseVersion=7 revisionId=0b1c8b0c code=0 images=[local=4 remote=0 cached=0 failed=0] ms=115
+[2026-08-31 16:35:53.968] [INFO ] [pid=17654] [sync] step=add round=1 attempt=2 pageId=03 index=2
+[2026-08-31 16:35:53.968] [INFO ] [pid=17654] [backend-ops] addSlideAt start pageId=03 index=2
+[2026-08-31 16:35:53.968] [INFO ] [pid=17654] [render] start pageId=03 file=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT3_长效使用与协同保障/PPT3_长效使用与协同保障/slides/03.slide
+[2026-08-31 16:35:54.022] [INFO ] [pid=17654] [render] ok pageId=03 slides=1 ms=54
+[2026-08-31 16:35:54.023] [INFO ] [pid=17654] [render] renderSlideData result.resources={
+  images: {
+    'rel:01bx1hpu': {
+      id: 'rel:01bx1hpu',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT3_长效使用与协同保障/.cache/media/images/a5c830de93e615b4157c77504af3f3e6.svg'
+    },
+    'rel:00gfbo5g': {
+      id: 'rel:00gfbo5g',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT3_长效使用与协同保障/.cache/media/images/bcc75bbb1c72dc78b1d4a3b182dac08b.svg'
+    },
+    'rel:01i0befe': {
+      id: 'rel:01i0befe',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT3_长效使用与协同保障/.cache/media/images/fa105a5565ebe6763b8fe84ae8e40d75.svg'
+    },
+    'rel:00zh9z5k': {
+      id: 'rel:00zh9z5k',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT3_长效使用与协同保障/.cache/media/images/d473d665c8aa5bbd6870d6aaf4142dcc.svg'
+    },
+    'rel:005f4x26': {
+      id: 'rel:005f4x26',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT3_长效使用与协同保障/.cache/media/images/50a2e05fcd11c3eed893fa26b6535103.svg'
+    },
+    'rel:0170rwnq': {
+      id: 'rel:0170rwnq',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT3_长效使用与协同保障/.cache/media/images/e0c5dd0efcdaf8d2c0f8a27d7a3452ec.svg'
+    },
+    'rel:01dil6jl': {
+      id: 'rel:01dil6jl',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT3_长效使用与协同保障/.cache/media/images/526226c269563ebcd708f4e452f543b6.svg'
+    }
+  },
+  videos: {},
+  audios: {},
+  fonts: {}
+}
+[2026-08-31 16:35:54.025] [INFO ] [pid=17654] [commit] commit send pageId=b4f756 targetIndex=2 version=3 baseVersion=8 revisionBytes=34732
+[2026-08-31 16:35:54.029] [INFO ] [pid=17654] [commit] commit ok pageId=b4f756 revisionId=3c918d0f ms=4
+[2026-08-31 16:35:54.029] [INFO ] [pid=17654] [backend-ops] addSlideAt ok pageId=03 slideId=b4f756 index=2 version=3 baseVersion=8 revisionId=3c918d0f code=0 images=[local=7 remote=0 cached=0 failed=0] ms=61
+[2026-08-31 16:35:54.029] [INFO ] [pid=17654] [sync] step=add round=1 attempt=2 pageId=04 index=3
+[2026-08-31 16:35:54.029] [INFO ] [pid=17654] [backend-ops] addSlideAt start pageId=04 index=3
+[2026-08-31 16:35:54.029] [INFO ] [pid=17654] [render] start pageId=04 file=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT3_长效使用与协同保障/PPT3_长效使用与协同保障/slides/04.slide
+[2026-08-31 16:35:54.073] [INFO ] [pid=17654] [render] ok pageId=04 slides=1 ms=44
+[2026-08-31 16:35:54.073] [INFO ] [pid=17654] [render] renderSlideData result.resources={
+  images: {
+    'rel:01b3fxnd': {
+      id: 'rel:01b3fxnd',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT3_长效使用与协同保障/.cache/media/images/f032a2b39398ad052284883ae904c6b3.svg'
+    },
+    'rel:01fmh7m2': {
+      id: 'rel:01fmh7m2',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT3_长效使用与协同保障/.cache/media/images/7fb8e89e7a32f0800edcab5a53eff604.svg'
+    },
+    'rel:01syhair': {
+      id: 'rel:01syhair',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT3_长效使用与协同保障/.cache/media/images/0a90df3636cd5b7b0e622ac9f435753b.svg'
+    },
+    'rel:00zpurg5': {
+      id: 'rel:00zpurg5',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT3_长效使用与协同保障/.cache/media/images/da92b1194f2e45eecce6fc547f02d0b3.svg'
+    },
+    'rel:01dil6jl': {
+      id: 'rel:01dil6jl',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT3_长效使用与协同保障/.cache/media/images/526226c269563ebcd708f4e452f543b6.svg'
+    }
+  },
+  videos: {},
+  audios: {},
+  fonts: {}
+}
+[2026-08-31 16:35:54.075] [INFO ] [pid=17654] [commit] commit send pageId=ae7161 targetIndex=3 version=4 baseVersion=9 revisionBytes=28632
+[2026-08-31 16:35:54.078] [INFO ] [pid=17654] [commit] commit ok pageId=ae7161 revisionId=05a224ad ms=3
+[2026-08-31 16:35:54.079] [INFO ] [pid=17654] [backend-ops] addSlideAt ok pageId=04 slideId=ae7161 index=3 version=4 baseVersion=9 revisionId=05a224ad code=0 images=[local=5 remote=0 cached=0 failed=0] ms=50
+[2026-08-31 16:35:54.079] [INFO ] [pid=17654] [sync] step=add round=1 attempt=2 pageId=05 index=4
+[2026-08-31 16:35:54.079] [INFO ] [pid=17654] [backend-ops] addSlideAt start pageId=05 index=4
+[2026-08-31 16:35:54.079] [INFO ] [pid=17654] [render] start pageId=05 file=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT3_长效使用与协同保障/PPT3_长效使用与协同保障/slides/05.slide
+[2026-08-31 16:35:54.135] [INFO ] [pid=17654] [render] ok pageId=05 slides=1 ms=56
+[2026-08-31 16:35:54.135] [INFO ] [pid=17654] [render] renderSlideData result.resources={
+  images: {
+    'rel:01dil6jl': {
+      id: 'rel:01dil6jl',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT3_长效使用与协同保障/.cache/media/images/526226c269563ebcd708f4e452f543b6.svg'
+    }
+  },
+  videos: {},
+  audios: {},
+  fonts: {}
+}
+[2026-08-31 16:35:54.138] [INFO ] [pid=17654] [commit] commit send pageId=0bfd16 targetIndex=4 version=5 baseVersion=10 revisionBytes=33280
+[2026-08-31 16:35:54.142] [INFO ] [pid=17654] [commit] commit ok pageId=0bfd16 revisionId=0b8660d7 ms=4
+[2026-08-31 16:35:54.143] [INFO ] [pid=17654] [backend-ops] addSlideAt ok pageId=05 slideId=0bfd16 index=4 version=5 baseVersion=10 revisionId=0b8660d7 code=0 images=[local=1 remote=0 cached=0 failed=0] ms=64
+[2026-08-31 16:35:54.143] [INFO ] [pid=17654] [sync] step=add round=1 attempt=2 pageId=06 index=5
+[2026-08-31 16:35:54.143] [INFO ] [pid=17654] [backend-ops] addSlideAt start pageId=06 index=5
+[2026-08-31 16:35:54.143] [INFO ] [pid=17654] [render] start pageId=06 file=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT3_长效使用与协同保障/PPT3_长效使用与协同保障/slides/06.slide
+[2026-08-31 16:35:54.200] [INFO ] [pid=17654] [render] ok pageId=06 slides=1 ms=57
+[2026-08-31 16:35:54.200] [INFO ] [pid=17654] [render] renderSlideData result.resources={
+  images: {
+    'rel:01dil6jl': {
+      id: 'rel:01dil6jl',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT3_长效使用与协同保障/.cache/media/images/526226c269563ebcd708f4e452f543b6.svg'
+    }
+  },
+  videos: {},
+  audios: {},
+  fonts: {}
+}
+[2026-08-31 16:35:54.204] [INFO ] [pid=17654] [commit] commit send pageId=ac061e targetIndex=5 version=6 baseVersion=11 revisionBytes=28424
+[2026-08-31 16:35:54.207] [INFO ] [pid=17654] [commit] commit ok pageId=ac061e revisionId=e3d6f6e1 ms=3
+[2026-08-31 16:35:54.208] [INFO ] [pid=17654] [backend-ops] addSlideAt ok pageId=06 slideId=ac061e index=5 version=6 baseVersion=11 revisionId=e3d6f6e1 code=0 images=[local=1 remote=0 cached=0 failed=0] ms=65
+[2026-08-31 16:35:54.208] [INFO ] [pid=17654] [sync] step=add round=1 attempt=2 pageId=07 index=6
+[2026-08-31 16:35:54.208] [INFO ] [pid=17654] [backend-ops] addSlideAt start pageId=07 index=6
+[2026-08-31 16:35:54.208] [INFO ] [pid=17654] [render] start pageId=07 file=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT3_长效使用与协同保障/PPT3_长效使用与协同保障/slides/07.slide
+[2026-08-31 16:35:54.258] [INFO ] [pid=17654] [render] ok pageId=07 slides=1 ms=50
+[2026-08-31 16:35:54.258] [INFO ] [pid=17654] [render] renderSlideData result.resources={
+  images: {
+    'rel:01yer0ot': {
+      id: 'rel:01yer0ot',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT3_长效使用与协同保障/.cache/media/images/2d80d00e427dd137be39f1c1041f043c.svg'
+    },
+    'rel:01cg75ca': {
+      id: 'rel:01cg75ca',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT3_长效使用与协同保障/.cache/media/images/a140c3a2e03083b63ae215c8f5e70db8.svg'
+    },
+    'rel:01dil6jl': {
+      id: 'rel:01dil6jl',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT3_长效使用与协同保障/.cache/media/images/526226c269563ebcd708f4e452f543b6.svg'
+    }
+  },
+  videos: {},
+  audios: {},
+  fonts: {}
+}
+[2026-08-31 16:35:54.261] [INFO ] [pid=17654] [commit] commit send pageId=1e29a7 targetIndex=6 version=7 baseVersion=12 revisionBytes=24924
+[2026-08-31 16:35:54.265] [INFO ] [pid=17654] [commit] commit ok pageId=1e29a7 revisionId=1f5dabe8 ms=3
+[2026-08-31 16:35:54.265] [INFO ] [pid=17654] [backend-ops] addSlideAt ok pageId=07 slideId=1e29a7 index=6 version=7 baseVersion=12 revisionId=1f5dabe8 code=0 images=[local=3 remote=0 cached=0 failed=0] ms=57
+[2026-08-31 16:35:54.265] [INFO ] [pid=17654] [sync] step=add round=1 attempt=2 pageId=08 index=7
+[2026-08-31 16:35:54.265] [INFO ] [pid=17654] [backend-ops] addSlideAt start pageId=08 index=7
+[2026-08-31 16:35:54.265] [INFO ] [pid=17654] [render] start pageId=08 file=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT3_长效使用与协同保障/PPT3_长效使用与协同保障/slides/08.slide
+[2026-08-31 16:35:54.306] [INFO ] [pid=17654] [render] ok pageId=08 slides=1 ms=41
+[2026-08-31 16:35:54.307] [INFO ] [pid=17654] [render] renderSlideData result.resources={
+  images: {
+    'rel:01dyy5ql': {
+      id: 'rel:01dyy5ql',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT3_长效使用与协同保障/.cache/media/images/246e3f743b9f8ed930dc8d8937c22fa8.svg'
+    },
+    'rel:01dil6jl': {
+      id: 'rel:01dil6jl',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT3_长效使用与协同保障/.cache/media/images/526226c269563ebcd708f4e452f543b6.svg'
+    }
+  },
+  videos: {},
+  audios: {},
+  fonts: {}
+}
+[2026-08-31 16:35:54.311] [INFO ] [pid=17654] [commit] commit send pageId=8d841a targetIndex=7 version=8 baseVersion=13 revisionBytes=26656
+[2026-08-31 16:35:54.315] [INFO ] [pid=17654] [commit] commit ok pageId=8d841a revisionId=9f086105 ms=4
+[2026-08-31 16:35:54.315] [INFO ] [pid=17654] [backend-ops] addSlideAt ok pageId=08 slideId=8d841a index=7 version=8 baseVersion=13 revisionId=9f086105 code=0 images=[local=2 remote=0 cached=0 failed=0] ms=50
+[2026-08-31 16:35:54.315] [INFO ] [pid=17654] [sync] step=add round=1 attempt=2 pageId=09 index=8
+[2026-08-31 16:35:54.315] [INFO ] [pid=17654] [backend-ops] addSlideAt start pageId=09 index=8
+[2026-08-31 16:35:54.315] [INFO ] [pid=17654] [render] start pageId=09 file=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT3_长效使用与协同保障/PPT3_长效使用与协同保障/slides/09.slide
+[2026-08-31 16:35:54.333] [INFO ] [pid=17654] [render] ok pageId=09 slides=1 ms=18
+[2026-08-31 16:35:54.333] [INFO ] [pid=17654] [render] renderSlideData result.resources={
+  images: {
+    'rel:01weeoug': {
+      id: 'rel:01weeoug',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT3_长效使用与协同保障/.cache/media/images/c0b91a881aeff9660b798395f6820cde.svg'
+    },
+    'rel:007lrx6a': {
+      id: 'rel:007lrx6a',
+      src: '/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT3_长效使用与协同保障/.cache/media/images/62bf82e67642eba0ad7b307e655cd973.svg'
+    }
+  },
+  videos: {},
+  audios: {},
+  fonts: {}
+}
+[2026-08-31 16:35:54.335] [INFO ] [pid=17654] [commit] commit send pageId=3837e4 targetIndex=8 version=9 baseVersion=14 revisionBytes=9568
+[2026-08-31 16:35:54.339] [INFO ] [pid=17654] [commit] commit ok pageId=3837e4 revisionId=a3441983 ms=3
+[2026-08-31 16:35:54.339] [INFO ] [pid=17654] [backend-ops] addSlideAt ok pageId=09 slideId=3837e4 index=8 version=9 baseVersion=14 revisionId=a3441983 code=0 images=[local=2 remote=0 cached=0 failed=0] ms=24
+[2026-08-31 16:35:54.339] [INFO ] [pid=17654] [sync] aligned round=1 attempt=2 size=9 desired=9 pendingDirtySize=0
+[2026-08-31 16:35:54.339] [INFO ] [pid=17654] [sync] reconcile ok round=1 attempt=2 ms=530
+[2026-08-31 16:35:54.339] [INFO ] [pid=17654] [backend-ops] save start file=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT3_长效使用与协同保障/PPT3_长效使用与协同保障/AI宝儿_第3套_长效使用与协同保障.pptx
+[2026-08-31 16:35:54.339] [INFO ] [pid=17654] [commit] save send filePath=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT3_长效使用与协同保障/PPT3_长效使用与协同保障/AI宝儿_第3套_长效使用与协同保障.pptx
+[2026-08-31 16:35:54.368] [INFO ] [pid=17654] [commit] save ok file_path=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT3_长效使用与协同保障/PPT3_长效使用与协同保障/AI宝儿_第3套_长效使用与协同保障.pptx ms=29
+[2026-08-31 16:35:54.368] [INFO ] [pid=17654] [backend-ops] save ok file_path=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT3_长效使用与协同保障/PPT3_长效使用与协同保障/AI宝儿_第3套_长效使用与协同保障.pptx ms=29
+[2026-08-31 16:35:54.368] [INFO ] [pid=17654] [sync] drain end round=1 reconciles=2 mergedSubmits=1 pendingDirtySize=0 ms=832
+[2026-08-31 17:00:05.768] [INFO ] [pid=17654] [worker] shutdown received sig=SIGTERM
+[2026-08-31 17:00:05.788] [INFO ] [pid=17654] [worker] shutdown ok sig=SIGTERM ms=21

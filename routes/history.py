@@ -1,7 +1,6 @@
-import json
-
 from flask import Blueprint, request, jsonify
 from models import get_chat_history, get_chat_history_by_id, get_setting, get_chat_sessions, delete_chat_history_batch
+from models import resolve_question_bindings, MAX_PRESET_HOT_QUESTIONS
 from routes.auth import identity_required
 from services.security_service import rate_limit
 from services.ai_review_service import enrich_history_records
@@ -55,9 +54,7 @@ def batch_delete(identity):
 @history_bp.route('/hot-questions')
 def hot_questions():
     raw = get_setting('approved_hot_questions', '[]')
-    try:
-        questions = json.loads(raw)
-    except (TypeError, ValueError):
-        questions = []
-    result = [{'text': q, 'count': 1} for q in questions[:5]]
-    return jsonify({'questions': result})
+    questions = resolve_question_bindings(raw, limit=MAX_PRESET_HOT_QUESTIONS)
+    for index, item in enumerate(questions, start=1):
+        item['count'] = len(questions) - index + 1
+    return jsonify({'questions': questions})

@@ -11,6 +11,22 @@ const FALLBACK_AGENTS = [
 
 let AGENTS = [];
 let lastUserText = '';
+// 首页默认问题需要按绑定的智能体路由，必须等 AGENTS 就绪后再渲染
+let agentsReadyPromise = null;
+let markAgentsReady = null;
+
+function initAgentsGate() {
+  agentsReadyPromise = new Promise((resolve) => { markAgentsReady = resolve; });
+}
+
+function waitForAgents() {
+  if (!agentsReadyPromise) initAgentsGate();
+  // 兜底超时，避免智能体接口异常时首页模块一直空白
+  return Promise.race([
+    agentsReadyPromise,
+    new Promise((resolve) => setTimeout(resolve, 3000)),
+  ]);
+}
 let lastUserAgentId = '';
 let caseLibraryUrl = '';
 let bulletinTimer = null;
@@ -169,6 +185,8 @@ async function loadAgents() {
   } catch {
     AGENTS = [...FALLBACK_AGENTS];
   }
+  // AGENTS 已可用，放行等待智能体列表的模块（首页默认问题需要按绑定路由）
+  if (markAgentsReady) markAgentsReady();
   await loadDefaultTeamSetting();
   renderAgentTabs();
   renderQuickFunctions();

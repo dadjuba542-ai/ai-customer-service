@@ -61,12 +61,13 @@ def main():
         assert_true(first['status'] == 'running', 'claimed job should become running')
         assert_true(get_job(jobs[0], contexts[0].user_id)['status'] == 'running', 'owner can read running status')
 
+        # complete_job 校验 worker_token，必须带回 claim 时签发的那个。
         complete_job(jobs[0], {
             'bot_response': '测试回答',
             'history_id': 11,
             'related_cases': [],
             'related_cases_total': 0,
-        })
+        }, worker_token=first['worker_token'])
         completed = get_job(jobs[0], contexts[0].user_id)
         assert_true(completed['status'] == 'completed', 'completed job should be readable')
         assert_true(completed['bot_response'] == '测试回答', 'completed result should be returned')

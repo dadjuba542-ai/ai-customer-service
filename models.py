@@ -2,6 +2,7 @@ import sqlite3
 import uuid
 import re
 import os
+import json
 import fcntl
 from datetime import datetime
 from config import Config
@@ -1069,6 +1070,99 @@ def seed_case_documents():
         payload.setdefault('image_url', '')
         payload.setdefault('status', 1)
         create_case_document(payload)
+
+# ===== Homepage preset questions (bound to a fixed agent) =====
+# 首页默认问题（「不知道怎么问」/「热门问题」）允许绑定固定智能体，
+# 存储格式为 JSON 数组，元素形如 {"text": "...", "agent_id": "aura"}。
+# 历史格式（纯字符串数组）仍然可读，读取时自动补 agent_id=''（表示未绑定）。
+DEFAULT_PRESET_AGENT_ID = 'aura'
+MAX_PRESET_EXAMPLE_QUESTIONS = 8
+MAX_PRESET_HOT_QUESTIONS = 5
+MAX_PRESET_QUESTION_LEN = 80
+
+
+def get_agent_options():
+    """返回可绑定的智能体选项（供后台下拉与前台展示使用）。"""
+    return [
+        {'agent_id': a['agent_id'], 'name': a['name'], 'type': a.get('type', ''), 'color': a.get('color', '')}
+        for a in get_all_agent_configs()
+    ]
+
+
+def get_valid_agent_ids():
+    return {a['agent_id'] for a in get_all_agent_configs()}
+
+
+def normalize_question_bindings(raw, valid_agent_ids=None, limit=MAX_PRESET_EXAMPLE_QUESTIONS,
+                                max_len=MAX_PRESET_QUESTION_LEN):
+    """把 settings 里的原始 JSON 解析为 [{'text': str, 'agent_id': str}]。
+
+    - 兼容旧格式：["问题1", "问题2"] → agent_id 置空
+    - agent_id 不存在于 agent_configs 时置空（智能体被删除也不至于让首页崩掉）
+    - 去重（按 text）、截断长度与条数
+    """
+    try:
+        parsed = json.loads(raw) if isinstance(raw, str) else raw
+    except (TypeError, ValueError):
+        return []
+    if not isinstance(parsed, list):
+        return []
+    if valid_agent_ids is None:
+        valid_agent_ids = get_valid_agent_ids()
+
+    result = []
+    seen = set()
+    for item in parsed:
+        if isinstance(item, dict):
+            text = str(item.get('text', '')).strip()
+            agent_id = str(item.get('agent_id', '') or '').strip()
+        else:
+            text = str(item or '').strip()
+            agent_id = ''
+        if not text or text in seen:
+            continue
+        seen.add(text)
+        result.append({'text': text[:max_len], 'agent_id': agent_id if agent_id in valid_agent_ids else ''})
+        if len(result) >= limit:
+            break
+    return result
+
+
+def resolve_question_bindings(raw, fallback_agent_id=DEFAULT_PRESET_AGENT_ID, **kwargs):
+    """在 normalize_question_bindings 基础上补上 agent_name，并把未绑定的兜底到指定智能体。
+
+    用于前台接口输出，保证前端拿到的 agent_id 一定是当前存在的智能体。
+    """
+    agents = get_all_agent_configs()
+    valid_ids = {a['agent_id'] for a in agents}
+    name_map = {a['agent_id']: a['name'] for a in agents}
+    fallback = fallback_agent_id if fallback_agent_id in valid_ids else (next(iter(valid_ids), ''))
+
+    items = normalize_question_bindings(raw, valid_agent_ids=valid_ids, **kwargs)
+    resolved = []
+    for item in items:
+        agent_id = item['agent_id'] or fallback
+        resolved.append({
+            'text': item['text'],
+            'agent_id': agent_id,
+            'agent_name': name_map.get(agent_id, ''),
+            'bound': bool(item['agent_id']),
+        })
+    return resolved
+
+
+def parse_question_binding_payload(data, valid_agent_ids=None, limit=MAX_PRESET_EXAMPLE_QUESTIONS,
+                                   max_len=MAX_PRESET_QUESTION_LEN):
+    """校验后台提交的问题列表，失败抛 ValueError（错误信息可直接返回给用户）。"""
+    if valid_agent_ids is None:
+        valid_agent_ids = get_valid_agent_ids()
+    items = normalize_question_bindings(
+        data, valid_agent_ids=valid_agent_ids, limit=limit, max_len=max_len
+    )
+    if not items:
+        raise ValueError('至少保留一条问题')
+    return items
+
 
 # ===== Agent Configs =====
 def get_all_agent_configs():

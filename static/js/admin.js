@@ -699,27 +699,100 @@ async function loadRecent() {
 }
 
 async function loadHotQuestions() {
+  await loadAgentOptions();
   try {
     const res = await fetch(apiUrl('/api/admin/dashboard/hot-questions'), {
       headers: { 'Authorization': `Bearer ${getToken()}` }
     });
-    renderWordCloud((await res.json()).questions);
+    const data = await res.json();
+    if (Array.isArray(data.agents) && data.agents.length) adminAgentOptions = data.agents;
+    renderWordCloud(data.questions);
   } catch (e) { console.error('hot error:', e); }
 }
 
+/* ===== 首页示例问题（可绑定固定智能体） ===== */
+let exampleQuestionRows = [];
+let adminAgentOptions = [];
+
+async function loadAgentOptions() {
+  if (adminAgentOptions.length) return adminAgentOptions;
+  try {
+    const res = await fetch(`${API}/api/admin/settings/example-questions`, { headers: { 'Authorization': `Bearer ${getToken()}` } });
+    const data = await res.json().catch(() => ({}));
+    adminAgentOptions = Array.isArray(data.agents) ? data.agents : [];
+  } catch (e) {
+    adminAgentOptions = [];
+  }
+  return adminAgentOptions;
+}
+
+function agentOptionsHtml(selectedId) {
+  const options = ['<option value="">未绑定（默认智能体）</option>'].concat(
+    adminAgentOptions.map(a => `<option value="${esc(a.agent_id)}" ${a.agent_id === selectedId ? 'selected' : ''}>${esc(a.name)}</option>`)
+  );
+  return options.join('');
+}
+
+function agentSelectHtml(index, selectedId, extraClass) {
+  return `<select class="${extraClass}" data-example-agent="${index}" style="padding:8px 10px;font-size:13px;font-family:inherit;border:1.5px solid var(--slate-200);border-radius:8px;outline:none;background:#fff;max-width:180px">${agentOptionsHtml(selectedId)}</select>`;
+}
+
+function renderExampleQuestionRows() {
+  const wrap = document.getElementById('example-question-rows');
+  if (!wrap) return;
+  wrap.innerHTML = exampleQuestionRows.map((item, index) => `
+    <div style="display:flex;gap:8px;align-items:center">
+      <input type="text" class="example-q-input" data-example-text="${index}" value="${esc(item.text)}" maxlength="80"
+        placeholder="输入示例问题" style="flex:1;padding:8px 10px;font-size:13px;font-family:inherit;border:1.5px solid var(--slate-200);border-radius:8px;outline:none">
+      ${agentSelectHtml(index, item.agent_id, 'example-q-agent')}
+      <button class="btn btn-secondary btn-sm" onclick="removeExampleQuestionRow(${index})" title="删除" style="color:var(--rose)">✕</button>
+    </div>`).join('') || '<div style="font-size:12px;color:var(--slate-400)">暂无示例问题，点「添加一条」开始配置</div>';
+  const counter = document.getElementById('example-count');
+  if (counter) counter.textContent = exampleQuestionRows.length;
+}
+
+function addExampleQuestionRow() {
+  if (exampleQuestionRows.length >= 8) { showToast('最多 8 条示例问题', 'info'); return; }
+  exampleQuestionRows.push({ text: '', agent_id: '' });
+  renderExampleQuestionRows();
+  const inputs = document.querySelectorAll('.example-q-input');
+  if (inputs.length) inputs[inputs.length - 1].focus();
+}
+
+function removeExampleQuestionRow(index) {
+  exampleQuestionRows.splice(index, 1);
+  renderExampleQuestionRows();
+}
+
+function collectExampleQuestionRows() {
+  const list = document.getElementById('example-question-rows');
+  if (!list) return [];
+  return exampleQuestionRows.map((_, index) => {
+    const textEl = list.querySelector(`[data-example-text="${index}"]`);
+    const agentEl = list.querySelector(`[data-example-agent="${index}"]`);
+    return { text: (textEl?.value || '').trim(), agent_id: agentEl?.value || '' };
+  }).filter(item => item.text);
+}
+
 async function loadExampleQuestions() {
-  const input = document.getElementById('example-questions-input');
-  if (!input) return;
+  const wrap = document.getElementById('example-question-rows');
+  if (!wrap) return;
   try {
     const res = await fetch(`${API}/api/admin/settings/example-questions`, { headers: { 'Authorization': `Bearer ${getToken()}` } });
     const data = await res.json();
-    input.value = (data.questions || []).join('\n');
+    adminAgentOptions = Array.isArray(data.agents) ? data.agents : adminAgentOptions;
+    exampleQuestionRows = (data.questions || []).map(q => ({
+      text: typeof q === 'string' ? q : (q.text || ''),
+      agent_id: typeof q === 'string' ? '' : (q.agent_id || ''),
+    }));
+    renderExampleQuestionRows();
   } catch (e) { console.error('example questions error:', e); }
 }
 
 async function saveExampleQuestions() {
-  const input = document.getElementById('example-questions-input');
-  const questions = input.value.split('\n').map(item => item.trim()).filter(Boolean);
+  const questions = collectExampleQuestionRows();
+  if (!questions.length) { showToast('至少保留一条示例问题', 'error'); return; }
+  if (questions.some(q => q.text.length > 80)) { showToast('单条问题不能超过 80 字', 'error'); return; }
   try {
     const res = await fetch(`${API}/api/admin/settings/example-questions`, {
       method: 'PUT',
@@ -728,7 +801,8 @@ async function saveExampleQuestions() {
     });
     const data = await res.json().catch(() => ({}));
     if (!res.ok) throw new Error(data.error || '保存失败');
-    input.value = data.questions.join('\n');
+    exampleQuestionRows = (data.questions || questions).map(q => ({ text: q.text, agent_id: q.agent_id || '' }));
+    renderExampleQuestionRows();
     showToast('示例问题已更新', 'success');
   } catch (e) { showToast(e.message || '保存失败', 'error'); }
 }
@@ -789,6 +863,10 @@ function renderRecent(items) {
 
 let manualHotItems = [];
 
+function hotAgentSelectHtml(selectedId, extraClass) {
+  return `<select class="${extraClass}" style="padding:4px 6px;font-size:12px;font-family:inherit;border:1.5px solid var(--slate-200);border-radius:6px;outline:none;background:#fff;max-width:170px">${agentOptionsHtml(selectedId)}</select>`;
+}
+
 function renderWordCloud(items) {
   document.getElementById('hot-loading').style.display = 'none';
   const wrap = document.getElementById('hot-check-wrap');
@@ -796,25 +874,31 @@ function renderWordCloud(items) {
   fetch(`${API}/api/history/hot-questions`)
     .then(r => r.json())
     .then(d => {
-      const approved = (d.questions || []).map(q => q.text);
+      // 已选问题 → {text: agent_id}，兼容旧的字符串数组
+      const approvedMap = new Map();
+      (d.questions || []).forEach(q => {
+        approvedMap.set(typeof q === 'string' ? q : q.text, typeof q === 'string' ? '' : (q.agent_id || ''));
+      });
       // Deduplicate: manual items should not appear as checkboxes too
-      const manualSet = new Set(manualHotItems);
-      const autoItems = (items || []).filter(item => !manualSet.has(item.text));
+      const manualTexts = new Set(manualHotItems.map(i => i.text));
+      const autoItems = (items || []).filter(item => !manualTexts.has(item.text));
       let html = autoItems.map(item => {
-        const checked = approved.includes(item.text);
+        const checked = approvedMap.has(item.text);
         return `<label class="hot-check-item" style="display:flex;align-items:center;gap:8px;cursor:pointer;padding:6px 0">
           <input type="checkbox" class="hot-checkbox" value="${esc(item.text)}" ${checked ? 'checked' : ''} onchange="updateHotCheck()">
           <span style="font-size:13px">${esc(item.text)}</span>
           <span style="font-size:11px;color:var(--slate-400)">${item.users}人以此提问</span>
+          ${hotAgentSelectHtml(approvedMap.get(item.text) || item.agent_id || '', 'hot-agent-select')}
         </label>`;
       }).join('');
       // Manual items section
       if (manualHotItems.length) {
         html += `<div style="border-top:1px solid var(--slate-100);margin:8px 0 4px;padding-top:8px;font-size:11px;color:var(--slate-400)">手动添加</div>`;
-        html += manualHotItems.map(t => `<div class="hot-check-item" style="display:flex;align-items:center;gap:8px;padding:6px 0">
-          <input type="checkbox" class="hot-checkbox" value="${esc(t)}" checked onchange="updateHotCheck()">
-          <span style="font-size:13px">${esc(t)}</span>
-          <button class="btn btn-secondary btn-sm" onclick="removeManualHot('${esc(t)}')" style="margin-left:auto;color:var(--rose)">✕</button>
+        html += manualHotItems.map(item => `<div class="hot-check-item" style="display:flex;align-items:center;gap:8px;padding:6px 0">
+          <input type="checkbox" class="hot-checkbox" value="${esc(item.text)}" checked onchange="updateHotCheck()">
+          <span style="font-size:13px">${esc(item.text)}</span>
+          ${hotAgentSelectHtml(item.agent_id || '', 'hot-agent-select')}
+          <button class="btn btn-secondary btn-sm" onclick="removeManualHot('${esc(item.text)}')" style="margin-left:auto;color:var(--rose)">✕</button>
         </div>`).join('');
       }
       list.innerHTML = html || '<div class="empty-state" style="padding:10px"><p>暂无候选，自行输入即可</p></div>';
@@ -827,15 +911,15 @@ function addManualHot() {
   const input = document.getElementById('hot-manual-input');
   const text = input.value.trim();
   if (!text) return;
-  if (manualHotItems.includes(text)) { showToast('已存在', 'info'); return; }
-  manualHotItems.push(text);
+  if (manualHotItems.some(i => i.text === text)) { showToast('已存在', 'info'); return; }
+  manualHotItems.push({ text, agent_id: '' });
   input.value = '';
   // Reload word cloud (will use stored items)
   loadHotQuestions();
 }
 
 function removeManualHot(text) {
-  manualHotItems = manualHotItems.filter(t => t !== text);
+  manualHotItems = manualHotItems.filter(i => i.text !== text);
   loadHotQuestions();
 }
 
@@ -849,20 +933,272 @@ function updateHotCheck() {
 }
 
 async function saveHotQuestions() {
-  const checked = Array.from(document.querySelectorAll('.hot-checkbox:checked')).slice(0, 5).map(cb => cb.value);
+  // 逐行读取：同一行内的 checkbox 与 select 一一对应，避免依赖文本做 DOM 匹配
+  const questions = [];
+  document.querySelectorAll('#hot-check-list .hot-check-item').forEach(row => {
+    const cb = row.querySelector('.hot-checkbox');
+    if (!cb || !cb.checked) return;
+    questions.push({ text: cb.value, agent_id: row.querySelector('.hot-agent-select')?.value || '' });
+  });
+  const payload = questions.slice(0, 5);
   try {
     const res = await fetch(`${API}/api/admin/dashboard/hot-questions/save`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${getToken()}` },
-      body: JSON.stringify({ questions: checked }),
+      body: JSON.stringify({ questions: payload }),
     });
-    if (res.ok) showToast('热门问题已更新', 'success');
-  } catch { showToast('保存失败', 'error'); }
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error || '保存失败');
+    showToast('热门问题已更新', 'success');
+  } catch (e) { showToast(e.message || '保存失败', 'error'); }
 }
 
 function tagForType(type) {
   const map = { '产品咨询': 'tag-sky', '使用答疑': 'tag-emerald', '朋友圈帮写': 'tag-amber', '口播文案帮写': 'tag-rose' };
   return map[type] || 'tag-sky';
+}
+
+// ===== Rich Text Extensions =====
+// 排版格式一律走 class，不走 inline style：后端 sanitize_rich_html 只放行 class，style 属性会被
+// 整段丢弃 —— 这正是原先「字体颜色按钮点了能看到、保存后就没了」的根因。
+// 新增格式必须三处同步，缺一处就会出现「编辑时能看到、保存后前台没有」：
+//   1. 这里注册的 attributor（决定输出的 class 名）
+//   2. services/content_security.py 的 CLASS_PATTERN（决定能不能入库）
+//   3. static/css/rich-text.css（决定编辑器和前台显不显示）
+
+const TEXT_COLOR_PALETTE = [
+  ['', '默认'], ['dark', '深墨'], ['gray', '中灰'], ['muted', '浅灰'],
+  ['red', '朱红'], ['orange', '橙'], ['amber', '金'], ['green', '绿'],
+  ['teal', '青'], ['blue', '蓝'], ['purple', '紫'], ['pink', '粉'], ['brown', '棕'],
+];
+const TEXT_BG_PALETTE = [
+  ['', '无'], ['yellow', '黄'], ['mint', '薄荷'], ['peach', '蜜桃'],
+  ['sky', '天蓝'], ['rose', '粉'], ['silver', '银灰'],
+];
+const LINE_HEIGHT_OPTIONS = [
+  ['', '默认'], ['1', '1.0 倍'], ['125', '1.25 倍'], ['15', '1.5 倍'],
+  ['175', '1.75 倍'], ['2', '2.0 倍'], ['25', '2.5 倍'], ['3', '3.0 倍'],
+];
+const PARAGRAPH_GAP_OPTIONS = [
+  ['', '默认'], ['0', '无'], ['8', '8px'], ['12', '12px'],
+  ['20', '20px'], ['32', '32px'], ['48', '48px'],
+];
+const SIZE_OPTIONS = [['', '标准'], ['small', '小'], ['large', '大'], ['huge', '特大']];
+const ALIGN_OPTIONS = [['', '左对齐'], ['center', '居中'], ['right', '右对齐'], ['justify', '两端对齐']];
+
+const PICKER_LABELS = {
+  size: Object.fromEntries(SIZE_OPTIONS),
+  align: Object.fromEntries(ALIGN_OPTIONS),
+  textcolor: Object.fromEntries(TEXT_COLOR_PALETTE),
+  textbg: Object.fromEntries(TEXT_BG_PALETTE),
+  line: Object.fromEntries(LINE_HEIGHT_OPTIONS),
+  para: Object.fromEntries(PARAGRAPH_GAP_OPTIONS),
+};
+
+let richFormatsReady = false;
+
+function registerRichTextFormats() {
+  if (richFormatsReady || typeof Quill === 'undefined') return;
+  const Parchment = Quill.import('parchment');
+  if (!Parchment || !Parchment.ClassAttributor) return;
+  const Scope = Parchment.Scope;
+  // 空串表示「不设置该格式」，不能进 whitelist，否则会输出 ql-line- 这种残缺 class
+  const whitelistOf = options => options.map(([value]) => value).filter(Boolean);
+
+  // Quill 2 没有可直接用的 size / align 白名单，不显式注册下拉就是空的
+  Quill.register(new Parchment.ClassAttributor('size', 'ql-size', {
+    scope: Scope.INLINE, whitelist: whitelistOf(SIZE_OPTIONS),
+  }), true);
+  Quill.register(new Parchment.ClassAttributor('align', 'ql-align', {
+    scope: Scope.BLOCK, whitelist: whitelistOf(ALIGN_OPTIONS),
+  }), true);
+  // 字体颜色用预设色板而非自由取色：class 化之后枚举空间封闭，
+  // 后端不必为它开放 style 白名单，XSS 面完全不变
+  Quill.register(new Parchment.ClassAttributor('textcolor', 'ql-color', {
+    scope: Scope.INLINE, whitelist: whitelistOf(TEXT_COLOR_PALETTE),
+  }), true);
+  Quill.register(new Parchment.ClassAttributor('textbg', 'ql-bg', {
+    scope: Scope.INLINE, whitelist: whitelistOf(TEXT_BG_PALETTE),
+  }), true);
+  Quill.register(new Parchment.ClassAttributor('line', 'ql-line', {
+    scope: Scope.BLOCK, whitelist: whitelistOf(LINE_HEIGHT_OPTIONS),
+  }), true);
+  Quill.register(new Parchment.ClassAttributor('para', 'ql-para', {
+    scope: Scope.BLOCK, whitelist: whitelistOf(PARAGRAPH_GAP_OPTIONS),
+  }), true);
+  richFormatsReady = true;
+}
+
+function richTextToolbar() {
+  return [
+    [{ header: [1, 2, 3, false] }],
+    [{ size: SIZE_OPTIONS.map(([v]) => v) }],
+    ['bold', 'italic', 'underline', 'strike'],
+    [
+      { textcolor: TEXT_COLOR_PALETTE.map(([v]) => v) },
+      { textbg: TEXT_BG_PALETTE.map(([v]) => v) },
+    ],
+    [{ align: ALIGN_OPTIONS.map(([v]) => v) }],
+    [{ list: 'ordered' }, { list: 'bullet' }],
+    [
+      { line: LINE_HEIGHT_OPTIONS.map(([v]) => v) },
+      { para: PARAGRAPH_GAP_OPTIONS.map(([v]) => v) },
+    ],
+    ['blockquote', 'code-block'],
+    ['link', 'image'],
+    ['clean'],
+  ];
+}
+
+// Quill 生成的下拉项文字直接取 whitelist 里的值（dark / textbg / 125 …），
+// 对中文后台不可读，初始化后统一换成中文标签
+function localizeToolbarPickers(quill) {
+  const toolbar = quill.getModule('toolbar');
+  if (!toolbar || !toolbar.container) return;
+  Object.entries(PICKER_LABELS).forEach(([format, labels]) => {
+    const select = toolbar.container.querySelector(`select.ql-${format}`);
+    if (select) {
+      Array.from(select.options || []).forEach(option => {
+        const label = labels[option.value || ''];
+        if (label) option.textContent = label;
+      });
+    }
+    const picker = toolbar.container.querySelector(`.ql-picker.ql-${format}`);
+    if (!picker) return;
+    picker.querySelectorAll('.ql-picker-item').forEach(item => {
+      const label = labels[item.getAttribute('data-value') || ''];
+      if (label) {
+        item.setAttribute('data-label', label);
+        item.textContent = label;
+      }
+    });
+  });
+}
+
+// ===== Format Painter =====
+const FORMAT_PAINTER = { editor: null, locked: false, formats: null };
+// 不复制 link：格式刷复制的是排版样式，把目标整段变成超链接几乎总是误操作
+const PAINTER_INLINE_KEYS = ['bold', 'italic', 'underline', 'strike', 'code', 'size', 'textcolor', 'textbg'];
+const PAINTER_BLOCK_KEYS = ['align', 'header', 'list', 'blockquote', 'code-block', 'indent', 'line', 'para'];
+let painterEscBound = false;
+
+function painterIsActive() { return !!FORMAT_PAINTER.formats; }
+
+// 取选区起始处的格式（含块级），与 Word 格式刷一致地以首字符为准
+function painterGrab(quill) {
+  // 点按钮会让编辑器失焦，getSelection(true) 会先聚焦并恢复上一次选区
+  const range = quill.getSelection(true);
+  if (!range || range.length === 0) return null;
+  const source = quill.getFormat(range.index, 1) || {};
+  const picked = {};
+  Object.keys(source).forEach(key => {
+    if (key === 'link') return;
+    const value = source[key];
+    if (value === false || value === null || value === undefined || value === '') return;
+    picked[key] = value;
+  });
+  return Object.keys(picked).length ? picked : null;
+}
+
+function painterApply(quill, range) {
+  const formats = FORMAT_PAINTER.formats;
+  if (!formats || !range || range.length === 0) return;
+  // 先整类清空、再按源格式设置，这样「源没有的格式」也会从目标上移除，
+  // 否则源没有加粗、目标有加粗时，刷完目标仍然加粗
+  const clearInline = {};
+  PAINTER_INLINE_KEYS.forEach(key => { clearInline[key] = false; });
+  const clearBlock = {};
+  PAINTER_BLOCK_KEYS.forEach(key => { clearBlock[key] = false; });
+  const inline = {};
+  PAINTER_INLINE_KEYS.forEach(key => {
+    if (key in formats) inline[key] = formats[key];
+  });
+  const block = {};
+  PAINTER_BLOCK_KEYS.forEach(key => {
+    if (key in formats) block[key] = formats[key];
+  });
+
+  quill.formatText(range.index, range.length, clearInline, 'user');
+  quill.formatLine(range.index, range.length, clearBlock, 'user');
+  if (Object.keys(inline).length) quill.formatText(range.index, range.length, inline, 'user');
+  if (Object.keys(block).length) quill.formatLine(range.index, range.length, block, 'user');
+}
+
+function painterDisarm() {
+  if (FORMAT_PAINTER.editor) {
+    FORMAT_PAINTER.editor.root.classList.remove('format-painter-armed');
+  }
+  FORMAT_PAINTER.editor = null;
+  FORMAT_PAINTER.locked = false;
+  FORMAT_PAINTER.formats = null;
+  document.querySelectorAll('.ql-formatpainter.ql-active').forEach(el => el.classList.remove('ql-active'));
+}
+
+function painterArm(quill, locked) {
+  const formats = painterGrab(quill);
+  if (!formats) {
+    showToast('先在源文字上选中一段，再点格式刷', 'error');
+    return;
+  }
+  FORMAT_PAINTER.editor = quill;
+  FORMAT_PAINTER.locked = locked;
+  FORMAT_PAINTER.formats = formats;
+  quill.root.classList.add('format-painter-armed');
+  const toolbar = quill.getModule('toolbar');
+  const btn = toolbar && toolbar.container && toolbar.container.querySelector('.ql-formatpainter');
+  if (btn) btn.classList.add('ql-active');
+}
+
+function setupFormatPainter(quill) {
+  const toolbar = quill.getModule('toolbar');
+  if (!toolbar || !toolbar.container) return;
+  if (toolbar.container.querySelector('.ql-formatpainter')) return;
+
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'ql-formatpainter';
+  btn.title = '格式刷：先选中源文字，单击刷一次，双击可连续刷，Esc 退出';
+  btn.innerHTML = '<i class="ph ph-paint-brush"></i>';
+  toolbar.container.appendChild(btn);
+
+  let clickTimer = null;
+  btn.addEventListener('click', () => {
+    if (painterIsActive() && FORMAT_PAINTER.editor === quill) { painterDisarm(); return; }
+    if (clickTimer) {
+      clearTimeout(clickTimer);
+      clickTimer = null;
+      painterArm(quill, true);
+      return;
+    }
+    // 单击延迟一拍，给双击留判断窗口
+    clickTimer = setTimeout(() => {
+      clickTimer = null;
+      painterArm(quill, false);
+    }, 220);
+  });
+  btn.addEventListener('dblclick', event => event.preventDefault());
+
+  // 松手后才刷，避免拖动选区过程中反复触发
+  const tryPaint = () => {
+    setTimeout(() => {
+      if (!painterIsActive() || FORMAT_PAINTER.editor !== quill) return;
+      const range = quill.getSelection();
+      if (!range || range.length === 0) return;
+      painterApply(quill, range);
+      if (!FORMAT_PAINTER.locked) painterDisarm();
+    }, 0);
+  };
+  quill.root.addEventListener('mouseup', tryPaint);
+  quill.root.addEventListener('keyup', event => {
+    if (event.shiftKey) tryPaint();
+  });
+
+  if (!painterEscBound) {
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape' && painterIsActive()) painterDisarm();
+    });
+    painterEscBound = true;
+  }
 }
 
 // ===== News Management =====
@@ -876,22 +1212,15 @@ function initQuill() {
   if (!container || container.style.display === 'none') return;
   if (typeof Quill === 'undefined') return;
   try {
+    registerRichTextFormats();
     quill = new Quill('#news-editor', {
       theme: 'snow',
-      modules: {
-        toolbar: [
-          [{ header: [1, 2, 3, false] }],
-          ['bold', 'italic', 'underline', 'strike'],
-          [{ color: [] }, { background: [] }],
-          [{ list: 'ordered' }, { list: 'bullet' }],
-          ['blockquote', 'code-block'],
-          ['link', 'image'],
-          ['clean'],
-        ]
-      },
+      modules: { toolbar: richTextToolbar() },
       placeholder: '输入正文内容...',
     });
     quill.getModule('toolbar').addHandler('image', handleNewsEditorImage);
+    localizeToolbarPickers(quill);
+    setupFormatPainter(quill);
     bindEditorImageEvents(quill);
     quillInited = true;
   } catch (e) { console.error('Quill init error:', e); }
@@ -1868,23 +2197,21 @@ function initProdQuill() {
   if (!card || card.style.display === 'none') return;
   if (typeof Quill === 'undefined') return;
   if (prodQuill) {
+    // 编辑器重建时若格式刷还挂在这个实例上，先解除，否则会拿着已销毁的引用去刷
+    if (FORMAT_PAINTER.editor === prodQuill) painterDisarm();
     unbindEditorImageEvents(prodQuill);
     prodQuill.destroy();
     prodQuill = null;
   }
+  registerRichTextFormats();
   prodQuill = new Quill('#prod-editor', {
     theme: 'snow',
-    modules: {
-      toolbar: [
-        [{ header: [1, 2, 3, false] }],
-        ['bold', 'italic', 'underline'],
-        [{ list: 'ordered' }, { list: 'bullet' }],
-        ['link', 'image', 'clean'],
-      ]
-    },
+    modules: { toolbar: richTextToolbar() },
     placeholder: '输入产品详细介绍...',
   });
   prodQuill.getModule('toolbar').addHandler('image', handleProdEditorImage);
+  localizeToolbarPickers(prodQuill);
+  setupFormatPainter(prodQuill);
   bindEditorImageEvents(prodQuill);
 }
 

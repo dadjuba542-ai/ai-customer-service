@@ -1,0 +1,123 @@
+<Slide style={{
+    background: '#F7FAF6',
+    paddingTop: 20, paddingBottom: 20, paddingLeft: 72, paddingRight: 72,
+}}>
+    <Box style={{ height: 100, justifyContent: 'center' }}>
+        <Text style={{ fontSize: 36, fontWeight: 'bold', color: '#1E3A32' }}>案例抽屉怎么用</Text>
+        <Box style={{ width: 56, height: 4, borderRadius: 2, background: '#1F7A5C', marginTop: 8 }} />
+    </Box>
+
+    <Box style={{ height: 528, flexDirection: 'row', gap: 28 }}>
+        <Box style={{ width: 310 }}>
+            <Text style={{ fontSize: 26, fontWeight: 'bold', color: '#1F7A5C', lineHeight: 1.45 }}>
+                一个抽屉里切来切去，<br />不会叠出第二层
+            </Text>
+            <Text style={{ fontSize: 20, color: '#6B7C75', lineHeight: 1.6, marginTop: 20 }}>
+                点开案例后，详情、列表、标签筛选、相似案例都在同一层里切换。你不会因为点得太深而找不回上一个页面。
+            </Text>
+            <Box style={{
+                marginTop: 24, background: 'rgba(31,122,92,0.08)', borderRadius: 14, padding: 16,
+            }}>
+                <Text style={{ fontSize: 19, color: '#1E3A32', lineHeight: 1.55 }}>
+                    老版本是"点开一个弹窗，又冒出一个弹窗"。现在的逻辑只有一层，记住这一句就够了。
+                </Text>
+            </Box>
+            <Box style={{
+                marginTop: 18, background: '#FFFFFF', borderRadius: 14, padding: 16,
+                boxShadow: '0 4px 20px rgba(30,58,50,0.08)',
+            }}>
+                <Text style={{ fontSize: 19, color: '#6B7C75', lineHeight: 1.55 }}>
+                    手机上也是同样逻辑：从底部升起的抽屉，往下滑或者点返回就能收回去。
+                </Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flex: 1, gap: 12 }}>
+            <Box style={{
+                flexDirection: 'row', gap: 18, background: '#FFFFFF', borderRadius: 14, padding: 16,
+                height: 94, boxShadow: '0 4px 20px rgba(30,58,50,0.08)', alignItems: 'center',
+            }}>
+                <Box style={{ width: 46, height: 46, borderRadius: 23, background: '#1F7A5C', justifyContent: 'center', alignItems: 'center' }}>
+                    <FAIcon name='file-text' style={{ fill: '#FFFFFF', width: 24, height: 24 }} />
+                </Box>
+                <Box style={{ flex: 1 }}>
+                    <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#1E3A32' }}>详情</Text>
+                    <Text style={{ fontSize: 19, color: '#6B7C75', lineHeight: 1.45, marginTop: 3 }}>
+                        点开案例卡就进详情：客户画像、使用场景、摘要、正文、封面图都在这里
+                    </Text>
+                </Box>
+            </Box>
+
+            <Box style={{
+                flexDirection: 'row', gap: 18, background: '#FFFFFF', borderRadius: 14, padding: 16,
+                height: 94, boxShadow: '0 4px 20px rgba(30,58,50,0.08)', alignItems: 'center',
+            }}>
+                <Box style={{ width: 46, height: 46, borderRadius: 23, background: '#1F7A5C', justifyContent: 'center', alignItems: 'center' }}>
+                    <FAIcon name='list' style={{ fill: '#FFFFFF', width: 24, height: 24 }} />
+                </Box>
+                <Box style={{ flex: 1 }}>
+                    <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#1E3A32' }}>列表</Text>
+                    <Text style={{ fontSize: 19, color: '#6B7C75', lineHeight: 1.45, marginTop: 3 }}>
+                        从详情退回列表，这次问题相关的案例都在这一层，不用回去重新问一遍
+                    </Text>
+                </Box>
+            </Box>
+
+            <Box style={{
+                flexDirection: 'row', gap: 18, background: '#FFFFFF', borderRadius: 14, padding: 16,
+                height: 94, boxShadow: '0 4px 20px rgba(30,58,50,0.08)', alignItems: 'center',
+            }}>
+                <Box style={{ width: 46, height: 46, borderRadius: 23, background: '#1F7A5C', justifyContent: 'center', alignItems: 'center' }}>
+                    <FAIcon name='tags' style={{ fill: '#FFFFFF', width: 24, height: 24 }} />
+                </Box>
+                <Box style={{ flex: 1 }}>
+                    <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#1E3A32' }}>标签</Text>
+                    <Text style={{ fontSize: 19, color: '#6B7C75', lineHeight: 1.45, marginTop: 3 }}>
+                        点案例上的标签，能看到同标签的更多案例——找相似情况最快的入口
+                    </Text>
+                </Box>
+            </Box>
+
+            <Box style={{
+                flexDirection: 'row', gap: 18, background: 'rgba(224,138,60,0.14)', borderRadius: 14, padding: 16,
+                height: 94, alignItems: 'center',
+            }}>
+                <Box style={{ width: 46, height: 46, borderRadius: 23, background: '#E08A3C', justifyContent: 'center', alignItems: 'center' }}>
+                    <FAIcon name='copy' style={{ fill: '#FFFFFF', width: 24, height: 24 }} />
+                </Box>
+                <Box style={{ flex: 1 }}>
+                    <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#1E3A32' }}>相似案例</Text>
+                    <Text style={{ fontSize: 19, color: '#6B7C75', lineHeight: 1.45, marginTop: 3 }}>
+                        详情页里的"相似案例"直接跳到下一批，同层切换，看完还能再退回来
+                    </Text>
+                </Box>
+            </Box>
+
+            <Box style={{
+                flexDirection: 'row', gap: 18, background: '#FFFFFF', borderRadius: 14, padding: 16,
+                height: 94, boxShadow: '0 4px 20px rgba(30,58,50,0.08)', alignItems: 'center',
+            }}>
+                <Box style={{ width: 46, height: 46, borderRadius: 23, background: '#6B7C75', justifyContent: 'center', alignItems: 'center' }}>
+                    <FAIcon name='arrow-left' style={{ fill: '#FFFFFF', width: 24, height: 24 }} />
+                </Box>
+                <Box style={{ flex: 1 }}>
+                    <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#1E3A32' }}>返回上级</Text>
+                    <Text style={{ fontSize: 19, color: '#6B7C75', lineHeight: 1.45, marginTop: 3 }}>
+                        不管点进去多深，永远能退回上一层；实在乱了就关掉抽屉重新提问
+                    </Text>
+                </Box>
+            </Box>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            <svg width="20" height="20" viewBox="0 0 24 24">
+                <path d="M12 21C12 21 4 17 4 10C4 6 7 3 12 3C17 3 20 6 20 10C20 17 12 21 12 21Z" fill="#1F7A5C" opacity="0.75" />
+                <path d="M12 21V6" stroke="#FFFFFF" strokeWidth="1.6" fill="none" />
+            </svg>
+            <Text style={{ fontSize: 14, color: '#6B7C75' }}>AI宝儿 · 内容与案例参考</Text>
+        </Box>
+        <Text style={{ fontSize: 14, color: '#6B7C75' }}>09 / 13</Text>
+    </Box>
+</Slide>

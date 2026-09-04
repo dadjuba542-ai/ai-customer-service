@@ -1,0 +1,95 @@
+<Slide style={{
+    background: '#F7FAF6',
+    paddingTop: 20, paddingBottom: 20, paddingLeft: 72, paddingRight: 72,
+}}>
+    <Box style={{ height: 100, justifyContent: 'center' }}>
+        <Text style={{ fontSize: 36, fontWeight: 'bold', color: '#1E3A32' }}>一次完整问答的五步</Text>
+        <Box style={{ width: 56, height: 4, borderRadius: 2, background: '#1F7A5C', marginTop: 8 }} />
+    </Box>
+
+    <Box style={{ height: 528 }}>
+        <Box style={{ height: 300, background: '#FFFFFF', borderRadius: 14, padding: 16, boxShadow: '0 4px 20px rgba(30,58,50,0.08)' }}>
+            <svg width="1104" height="268" viewBox="0 0 1104 268">
+                <rect x="14" y="72" width="182" height="92" rx="16" fill="#1F7A5C" />
+                <text x="105" y="112" textAnchor="middle" fontSize="24" fontWeight="bold" fill="#FFFFFF" fontFamily="PingFang SC">1 输入问题</text>
+                <text x="105" y="142" textAnchor="middle" fontSize="18" fill="#FFFFFF" opacity="0.85" fontFamily="PingFang SC">像聊天一样打一句话</text>
+
+                <path d="M204 118 L228 118" stroke="#A8D5BA" strokeWidth="4" />
+                <path d="M220 110 L232 118 L220 126 Z" fill="#A8D5BA" />
+
+                <rect x="240" y="72" width="182" height="92" rx="16" fill="rgba(168,213,186,0.5)" />
+                <text x="331" y="112" textAnchor="middle" fontSize="24" fontWeight="bold" fill="#1E3A32" fontFamily="PingFang SC">2 等它说完</text>
+                <text x="331" y="142" textAnchor="middle" fontSize="18" fill="#1E3A32" opacity="0.75" fontFamily="PingFang SC">文字是一段段出来的</text>
+
+                <path d="M430 118 L454 118" stroke="#A8D5BA" strokeWidth="4" />
+                <path d="M446 110 L458 118 L446 126 Z" fill="#A8D5BA" />
+
+                <rect x="466" y="72" width="182" height="92" rx="16" fill="rgba(168,213,186,0.5)" />
+                <text x="557" y="112" textAnchor="middle" fontSize="24" fontWeight="bold" fill="#1E3A32" fontFamily="PingFang SC">3 先看结论</text>
+                <text x="557" y="142" textAnchor="middle" fontSize="18" fill="#1E3A32" opacity="0.75" fontFamily="PingFang SC">结论通常在最前面</text>
+
+                <path d="M656 118 L680 118" stroke="#A8D5BA" strokeWidth="4" />
+                <path d="M672 110 L684 118 L672 126 Z" fill="#A8D5BA" />
+
+                <rect x="692" y="72" width="182" height="92" rx="16" fill="#1F7A5C" />
+                <text x="783" y="112" textAnchor="middle" fontSize="24" fontWeight="bold" fill="#FFFFFF" fontFamily="PingFang SC">4 看相关案例</text>
+                <text x="783" y="142" textAnchor="middle" fontSize="18" fill="#FFFFFF" opacity="0.85" fontFamily="PingFang SC">回答下方自动推荐</text>
+
+                <path d="M882 118 L906 118" stroke="#A8D5BA" strokeWidth="4" />
+                <path d="M898 110 L910 118 L898 126 Z" fill="#A8D5BA" />
+
+                <rect x="918" y="72" width="182" height="92" rx="16" fill="#E08A3C" />
+                <text x="1009" y="112" textAnchor="middle" fontSize="24" fontWeight="bold" fill="#FFFFFF" fontFamily="PingFang SC">5 继续追问</text>
+                <text x="1009" y="142" textAnchor="middle" fontSize="18" fill="#FFFFFF" opacity="0.9" fontFamily="PingFang SC">没看懂就换个问法</text>
+
+                <text x="105" y="212" textAnchor="middle" fontSize="17" fill="#6B7C75" fontFamily="PingFang SC">别追求一次问对</text>
+                <text x="331" y="212" textAnchor="middle" fontSize="17" fill="#6B7C75" fontFamily="PingFang SC">中途别打断</text>
+                <text x="557" y="212" textAnchor="middle" fontSize="17" fill="#6B7C75" fontFamily="PingFang SC">先看结论再看细节</text>
+                <text x="783" y="212" textAnchor="middle" fontSize="17" fill="#6B7C75" fontFamily="PingFang SC">案例是答案的补充</text>
+                <text x="1009" y="212" textAnchor="middle" fontSize="17" fill="#6B7C75" fontFamily="PingFang SC">追问才是关键一步</text>
+            </svg>
+        </Box>
+
+        <Box style={{
+            height: 214, marginTop: 14, flexDirection: 'row', gap: 20,
+            background: 'rgba(31,122,92,0.08)', borderRadius: 14, padding: 24,
+        }}>
+            <Box style={{ flex: 1, gap: 14 }}>
+                <Box style={{ flexDirection: 'row', gap: 14, alignItems: 'flex-start' }}>
+                    <FAIcon name='exclamation-circle' style={{ fill: '#E08A3C', width: 26, height: 26 }} />
+                    <Text style={{ fontSize: 20, color: '#1E3A32', lineHeight: 1.55, flex: 1 }}>
+                        第 3 步和第 5 步最容易被跳过。很多人只看第一屏就走了，其实回答下方的相关案例，往往才是真正贴合你情况的那部分内容。
+                    </Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', gap: 14, alignItems: 'flex-start' }}>
+                    <FAIcon name='exclamation-circle' style={{ fill: '#E08A3C', width: 26, height: 26 }} />
+                    <Text style={{ fontSize: 20, color: '#1E3A32', lineHeight: 1.55, flex: 1 }}>
+                        回答是分段生成的，等它写完再提问；中途打断，你拿到的是半截答案，还得再问一遍。
+                    </Text>
+                </Box>
+            </Box>
+
+            <Box style={{
+                width: 330, background: '#FFFFFF', borderRadius: 14, padding: 18, justifyContent: 'center',
+            }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#1F7A5C', lineHeight: 1.5 }}>
+                    五步走完，一次问答才算真的完成
+                </Text>
+                <Text style={{ fontSize: 19, color: '#6B7C75', lineHeight: 1.55, marginTop: 12 }}>
+                    只看回答不追问、不看案例，等于只用了这套系统一半的能力。
+                </Text>
+            </Box>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            <svg width="20" height="20" viewBox="0 0 24 24">
+                <path d="M12 21C12 21 4 17 4 10C4 6 7 3 12 3C17 3 20 6 20 10C20 17 12 21 12 21Z" fill="#1F7A5C" opacity="0.75" />
+                <path d="M12 21V6" stroke="#FFFFFF" strokeWidth="1.6" fill="none" />
+            </svg>
+            <Text style={{ fontSize: 14, color: '#6B7C75' }}>AI宝儿 · 五期上手课</Text>
+        </Box>
+        <Text style={{ fontSize: 14, color: '#6B7C75' }}>10 / 33</Text>
+    </Box>
+</Slide>

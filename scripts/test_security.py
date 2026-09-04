@@ -24,6 +24,7 @@ def main():
         from models import save_chat_history, set_setting
 
         client = app.test_client()
+        client.environ_base["HTTP_USER_AGENT"] = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
         assert_true(
             client.post('/api/auth/register', json={'username': 'public', 'password': 'longpassword'}).status_code == 403,
             'public registration should be disabled by default',

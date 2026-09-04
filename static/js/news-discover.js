@@ -306,9 +306,58 @@ async function loadMoreNews() {
   }
 }
 
+/* ===== Preset questions bound to a fixed agent ===== */
+// 首页「不知道怎么问」与「热门问题」都允许在后台绑定固定智能体。
+// 后端返回 [{text, agent_id, agent_name}]，这里只负责按绑定结果路由。
+const presetQuestionStore = { example: [], hot: [] };
+
+function resolvePresetAgentId(agentId) {
+  if (agentId && AGENTS.some(a => a.id === agentId)) return agentId;
+  if (AGENTS.some(a => a.id === 'aura')) return 'aura';
+  return AGENTS.length ? AGENTS[0].id : 'aura';
+}
+
+function presetAgentDot(agentId) {
+  const agent = AGENTS.find(a => a.id === agentId);
+  if (!agent || !agent.color) return '';
+  return `<i class="preset-agent-dot" style="background:${agent.color}"></i>`;
+}
+
+function presetAgentTitle(agentId) {
+  const agent = AGENTS.find(a => a.id === agentId);
+  return agent ? `由「${agent.name}」回答` : '';
+}
+
+function bindPresetQuestions(container) {
+  if (!container || container.dataset.presetBound === '1') return;
+  container.dataset.presetBound = '1';
+  const fire = (event) => {
+    const el = event.target.closest('[data-preset-key]');
+    if (!el) return;
+    const list = presetQuestionStore[el.dataset.presetKey] || [];
+    const item = list[Number(el.dataset.presetIndex)];
+    if (item) quickSend(item.agentId, item.text);
+  };
+  container.addEventListener('click', fire);
+  container.addEventListener('keydown', (event) => {
+    if (event.key !== 'Enter' && event.key !== ' ') return;
+    event.preventDefault();
+    fire(event);
+  });
+}
+
+function storePresetQuestions(key, questions) {
+  presetQuestionStore[key] = questions.map(q => ({
+    text: q.text,
+    agentId: resolvePresetAgentId(q.agent_id),
+  }));
+  return presetQuestionStore[key];
+}
+
 /* ===== Hot Questions ===== */
 async function loadHotQuestions() {
   try {
+    await waitForAgents();
     const res = await fetch(`${API_BASE}/api/history/hot-questions`);
     if (res.ok) {
       const data = await res.json();
@@ -321,13 +370,17 @@ async function loadExampleQuestions() {
   const container = document.getElementById('example-question-list');
   if (!container) return;
   try {
+    await waitForAgents();
     const res = await fetch(`${API_BASE}/api/example-questions`);
     const data = await res.json();
     const questions = Array.isArray(data.questions) ? data.questions : [];
-    container.innerHTML = questions.map((question, index) => {
-      const agentId = index === 1 ? 'coder' : index === 3 ? 'translator' : 'aura';
-      return `<button onclick="quickSend('${agentId}', '${escapeHtml(question).replace(/'/g, "\\'")}')">${escapeHtml(question)}</button>`;
-    }).join('');
+    const items = storePresetQuestions('example', questions);
+    container.innerHTML = items.map((item, index) => `
+      <button type="button" data-preset-key="example" data-preset-index="${index}"
+        title="${escapeHtml(presetAgentTitle(item.agentId))}">
+        ${escapeHtml(item.text)}${presetAgentDot(item.agentId)}
+      </button>`).join('');
+    bindPresetQuestions(container);
   } catch {
     container.innerHTML = '';
   }
@@ -339,13 +392,18 @@ function renderHotQuestions(questions) {
     container.innerHTML = '<div class="news-empty">暂无热门问题</div>';
     return;
   }
-  const maxCount = Math.max(...questions.map(q => q.count));
-  container.innerHTML = questions.map(q => {
-    const ratio = q.count / maxCount;
+  const items = storePresetQuestions('hot', questions);
+  const maxCount = Math.max(...questions.map(q => q.count || 1));
+  container.innerHTML = items.map((item, index) => {
+    const ratio = (questions[index]?.count || 1) / maxCount;
     const size = 12 + Math.round(ratio * 6);
     const opacity = 0.5 + ratio * 0.5;
-    return `<span class="hot-tag" style="font-size:${size}px;opacity:${opacity}" onclick="quickSend('aura','${escapeHtml(q.text)}')">${escapeHtml(q.text)}</span>`;
+    return `<span class="hot-tag" data-preset-key="hot" data-preset-index="${index}"
+      style="font-size:${size}px;opacity:${opacity}"
+      title="${escapeHtml(presetAgentTitle(item.agentId))}"
+      role="button" tabindex="0">${escapeHtml(item.text)}${presetAgentDot(item.agentId)}</span>`;
   }).join('');
+  bindPresetQuestions(container);
 }
 
 /* ===== News Detail ===== */
@@ -410,7 +468,7 @@ function renderNewsDetail(item) {
     </div>
     <h1 class="news-detail-title">${escapeHtml(item.title)}</h1>
     <div class="news-detail-meta">${formatTime(item.created_at)}</div>
-    <div class="news-detail-body">${prepareNewsDetailContent(item.content || item.summary || '暂无内容')}</div>
+    <div class="news-detail-body rich-text">${prepareNewsDetailContent(item.content || item.summary || '暂无内容')}</div>
   `;
 }
 

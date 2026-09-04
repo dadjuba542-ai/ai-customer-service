@@ -1,0 +1,58 @@
+<Slide style={{
+    background: 'linear-gradient(135deg, #F2F8F4 0%, #DCEDE3 100%)',
+    padding: 0,
+}}>
+    <Box style={{ flexDirection: 'row', width: '100%', height: '100%' }}>
+        <Box style={{ width: 660, height: '100%', paddingLeft: 72, paddingRight: 24, paddingTop: 132 }}>
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 46, height: 46, borderRadius: 23, background: '#1F7A5C', justifyContent: 'center', alignItems: 'center' }}>
+                    <svg width="26" height="26" viewBox="0 0 24 24">
+                        <path d="M12 21C12 21 4 17 4 10C4 6 7 3 12 3C17 3 20 6 20 10C20 17 12 21 12 21Z" fill="#FFFFFF" />
+                        <path d="M12 21V6" stroke="#1F7A5C" strokeWidth="1.8" fill="none" />
+                    </svg>
+                </Box>
+                <Text style={{ fontSize: 22, color: '#1F7A5C', fontWeight: 'bold', letterSpacing: 1 }}>AI宝儿智能体</Text>
+            </Box>
+
+            <Text style={{ fontSize: 20, color: '#1F7A5C', fontWeight: 'bold', marginTop: 40, letterSpacing: 1 }}>
+                第 2 套 / 共 3 套 · 终端用户培训
+            </Text>
+
+            <Text style={{ fontSize: 72, fontWeight: 'bold', color: '#1E3A32', lineHeight: 1.15, marginTop: 14 }}>
+                内容<br />与案例参考
+            </Text>
+
+            <Box style={{ width: 96, height: 5, borderRadius: 3, background: '#E08A3C', marginTop: 24 }} />
+
+            <Text style={{ fontSize: 26, color: '#1E3A32', lineHeight: 1.55, marginTop: 24 }}>
+                把现成内容变成<span style={{ color: '#C9742B', fontWeight: 'bold' }}>更好的问题</span><br />
+                用资讯 / 产品 / 历史 / 案例，让答案更贴你的情况
+            </Text>
+
+            <Box style={{
+                flexDirection: 'row', alignItems: 'center', gap: 18, marginTop: 44,
+                background: 'rgba(255,255,255,0.72)', borderRadius: 14, padding: 18, width: 470,
+            }}>
+                <FAIcon name='book' style={{ fill: '#1F7A5C', width: 26, height: 26 }} />
+                <Text style={{ fontSize: 20, color: '#1E3A32' }}>
+                    13 页 · 讲练结合 · 已完成第 1 套
+                </Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flex: 1, height: '100%' }}>
+            <svg width="620" height="720" viewBox="0 0 620 720">
+                <circle cx="452" cy="168" r="132" fill="#E08A3C" opacity="0.26" />
+                <circle cx="452" cy="168" r="88" fill="#E08A3C" opacity="0.2" />
+                <path d="M0 500 Q150 402 300 484 T620 448 L620 720 L0 720 Z" fill="#A8D5BA" opacity="0.55" />
+                <path d="M0 566 Q190 486 380 548 T620 522 L620 720 L0 720 Z" fill="#1F7A5C" opacity="0.26" />
+                <path d="M0 638 Q170 588 350 630 T620 604 L620 720 L0 720 Z" fill="#1F7A5C" opacity="0.46" />
+                <path d="M120 470 q30 -46 74 -58 q-8 50 -74 58Z" fill="#1F7A5C" opacity="0.55" />
+                <path d="M212 512 q26 -40 64 -50 q-7 44 -64 50Z" fill="#1F7A5C" opacity="0.4" />
+                <path d="M470 300 q34 -52 84 -66 q-9 57 -84 66Z" fill="#1F7A5C" opacity="0.32" />
+                <path d="M60 452 L120 470" stroke="#1F7A5C" strokeWidth="4" opacity="0.45" fill="none" />
+                <path d="M470 300 L470 250" stroke="#1F7A5C" strokeWidth="4" opacity="0.35" fill="none" />
+            </svg>
+        </Box>
+    </Box>
+</Slide>

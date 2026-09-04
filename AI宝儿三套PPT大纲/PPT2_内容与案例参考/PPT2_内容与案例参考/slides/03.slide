@@ -1,0 +1,76 @@
+<Slide style={{
+    background: '#F7FAF6',
+    paddingTop: 20, paddingBottom: 20, paddingLeft: 72, paddingRight: 72,
+}}>
+    <Box style={{ height: 100, justifyContent: 'center' }}>
+        <Text style={{ fontSize: 36, fontWeight: 'bold', color: '#1E3A32' }}>内容版图概览</Text>
+        <Box style={{ width: 56, height: 4, borderRadius: 2, background: '#1F7A5C', marginTop: 8 }} />
+    </Box>
+
+    <Box style={{ height: 528 }}>
+        <Text style={{ fontSize: 21, color: '#1E3A32', lineHeight: 1.5 }}>
+            四类内容各管什么——先有地图，再进细节，用的时候不迷路。
+        </Text>
+        <Box style={{ flexDirection: 'row', gap: 20, marginTop: 12 }}>
+            <Box style={{ flex: 1, height: 310, background: '#FFFFFF', borderRadius: 14, padding: 22, boxShadow: '0 4px 20px rgba(30,58,50,0.08)' }}>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 42, height: 42, borderRadius: 21, background: '#1F7A5C', justifyContent: 'center', alignItems: 'center' }}>
+                        <FAIcon name='newspaper' style={{ fill: '#FFFFFF', width: 24, height: 24 }} />
+                    </Box>
+                    <Text style={{ fontSize: 23, fontWeight: 'bold', color: '#1E3A32' }}>资讯</Text>
+                </Box>
+                <Text style={{ fontSize: 20, color: '#1E3A32', lineHeight: 1.55, marginTop: 14 }}>
+                    行业 / 科普文章，帮你建立基础认知。
+                </Text>
+                <Box style={{ marginTop: 'auto', background: 'rgba(31,122,92,0.06)', borderRadius: 10, padding: 12 }}>
+                    <Text style={{ fontSize: 17, color: '#6B7C75' }}>出现位置：首页资讯流 → 阅读详情</Text>
+                </Box>
+            </Box>
+            <Box style={{ flex: 1, height: 310, background: '#FFFFFF', borderRadius: 14, padding: 22, boxShadow: '0 4px 20px rgba(30,58,50,0.08)' }}>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 42, height: 42, borderRadius: 21, background: '#1F7A5C', justifyContent: 'center', alignItems: 'center' }}>
+                        <FAIcon name='box' style={{ fill: '#FFFFFF', width: 24, height: 24 }} />
+                    </Box>
+                    <Text style={{ fontSize: 23, fontWeight: 'bold', color: '#1E3A32' }}>产品</Text>
+                </Box>
+                <Text style={{ fontSize: 20, color: '#1E3A32', lineHeight: 1.55, marginTop: 14 }}>
+                    资料与用法，解「是什么 / 怎么用」。
+                </Text>
+                <Box style={{ marginTop: 'auto', background: 'rgba(31,122,92,0.06)', borderRadius: 10, padding: 12 }}>
+                    <Text style={{ fontSize: 17, color: '#6B7C75' }}>出现位置：快捷入口「产品资料查询」</Text>
+                </Box>
+            </Box>
+        </Box>
+        <Box style={{ flexDirection: 'row', gap: 20, marginTop: 16 }}>
+            <Box style={{ flex: 1, height: 120, background: '#FFFFFF', borderRadius: 14, padding: 18, boxShadow: '0 4px 20px rgba(30,58,50,0.08)' }}>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <FAIcon name='history' style={{ fill: '#1F7A5C', width: 26, height: 26 }} />
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#1E3A32' }}>历史</Text>
+                </Box>
+                <Text style={{ fontSize: 19, color: '#1E3A32', lineHeight: 1.5, marginTop: 8 }}>
+                    你聊过的都留着，随时回看。
+                </Text>
+            </Box>
+            <Box style={{ flex: 1, height: 120, background: '#FFFFFF', borderRadius: 14, padding: 18, boxShadow: '0 4px 20px rgba(30,58,50,0.08)' }}>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <FAIcon name='copy' style={{ fill: '#E08A3C', width: 26, height: 26 }} />
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#1E3A32' }}>案例</Text>
+                </Box>
+                <Text style={{ fontSize: 19, color: '#1E3A32', lineHeight: 1.5, marginTop: 8 }}>
+                    别人的经验，回答后自动出现。
+                </Text>
+            </Box>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            <svg width="20" height="20" viewBox="0 0 24 24">
+                <path d="M12 21C12 21 4 17 4 10C4 6 7 3 12 3C17 3 20 6 20 10C20 17 12 21 12 21Z" fill="#1F7A5C" opacity="0.75" />
+                <path d="M12 21V6" stroke="#FFFFFF" strokeWidth="1.6" fill="none" />
+            </svg>
+            <Text style={{ fontSize: 14, color: '#6B7C75' }}>AI宝儿 · 内容与案例参考</Text>
+        </Box>
+        <Text style={{ fontSize: 14, color: '#6B7C75' }}>03 / 13</Text>
+    </Box>
+</Slide>

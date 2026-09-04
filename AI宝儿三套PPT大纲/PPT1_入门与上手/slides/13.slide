@@ -1,0 +1,85 @@
+<Slide style={{
+    background: '#F7FAF6',
+    paddingTop: 20, paddingBottom: 20, paddingLeft: 72, paddingRight: 72,
+}}>
+    <Box style={{ height: 100, justifyContent: 'center' }}>
+        <Text style={{ fontSize: 36, fontWeight: 'bold', color: '#1E3A32' }}>第 2 期实操：三道练习题</Text>
+        <Box style={{ width: 56, height: 4, borderRadius: 2, background: '#1F7A5C', marginTop: 8 }} />
+    </Box>
+
+    <Box style={{ height: 528, flexDirection: 'row', gap: 20 }}>
+        <Box style={{
+            flex: 1, background: '#FFFFFF', borderRadius: 14, padding: 24,
+            boxShadow: '0 4px 20px rgba(30,58,50,0.08)',
+        }}>
+            <svg width="90" height="90" viewBox="0 0 90 90">
+                <circle cx="40" cy="40" r="26" fill="none" stroke="#1F7A5C" strokeWidth="6" />
+                <path d="M59 59 L78 78" stroke="#1F7A5C" strokeWidth="8" strokeLinecap="round" />
+                <text x="40" y="49" textAnchor="middle" fontSize="26" fontWeight="bold" fill="#E08A3C" fontFamily="PingFang SC">?</text>
+            </svg>
+            <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#1E3A32', marginTop: 16 }}>题一：把笼统改具体</Text>
+            <Text style={{ fontSize: 19, color: '#6B7C75', lineHeight: 1.6, marginTop: 12 }}>
+                原句是"这个产品好不好？"。请加上你自己的情况——年龄、作息、最想改善的问题——把它改成一句 AI 能给出针对性答案的问句，然后真的发出去，对比两次回答的长度和具体程度。
+            </Text>
+            <Box style={{ marginTop: 'auto', background: 'rgba(224,138,60,0.14)', borderRadius: 12, padding: 14 }}>
+                <Text style={{ fontSize: 18, color: '#C9742B', lineHeight: 1.5 }}>
+                    <span style={{ fontWeight: 'bold' }}>参考答案：</span>「我平时经常腹胀、作息不规律，这个适合我吗？重点想改善腹胀。」
+                </Text>
+            </Box>
+        </Box>
+
+        <Box style={{
+            flex: 1, background: '#FFFFFF', borderRadius: 14, padding: 24,
+            boxShadow: '0 4px 20px rgba(30,58,50,0.08)',
+        }}>
+            <svg width="90" height="90" viewBox="0 0 90 90">
+                <path d="M6 20 H60 A10 10 0 0 1 70 30 V46 A10 10 0 0 1 60 56 H28 L14 70 V56 H6 A10 10 0 0 1 6 46 Z" transform="translate(0,-4)" fill="rgba(168,213,186,0.5)" />
+                <path d="M24 44 H84 A10 10 0 0 1 84 64 H56 L44 76 V64 H24 A10 10 0 0 1 24 64 Z" transform="translate(0,-4)" fill="#1F7A5C" />
+                <circle cx="66" cy="20" r="14" fill="#E08A3C" />
+                <text x="66" y="27" textAnchor="middle" fontSize="17" fontWeight="bold" fill="#FFFFFF" fontFamily="PingFang SC">2</text>
+            </svg>
+            <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#1E3A32', marginTop: 16 }}>题二：追问到听懂为止</Text>
+            <Text style={{ fontSize: 19, color: '#6B7C75', lineHeight: 1.6, marginTop: 12 }}>
+                找一条你看不太懂的回答，用技巧三连续追问两次。目标不是得到更多字，而是能用你自己的话把答案复述给同事听——复述得出来，这一题才算过。
+            </Text>
+            <Box style={{ marginTop: 'auto', background: 'rgba(224,138,60,0.14)', borderRadius: 12, padding: 14 }}>
+                <Text style={{ fontSize: 18, color: '#C9742B', lineHeight: 1.5 }}>
+                    <span style={{ fontWeight: 'bold' }}>参考答案：</span>「请说得简单一点」→「你刚才的重点是什么？分成三点告诉我」
+                </Text>
+            </Box>
+        </Box>
+
+        <Box style={{
+            flex: 1, background: '#FFFFFF', borderRadius: 14, padding: 24,
+            boxShadow: '0 4px 20px rgba(30,58,50,0.08)',
+        }}>
+            <svg width="90" height="90" viewBox="0 0 90 90">
+                <rect x="8" y="14" width="56" height="62" rx="10" fill="#1F7A5C" />
+                <path d="M8 56 l16 -14 l12 10 l10 -8 l18 14 v10 a4 4 0 0 1 -4 4 h-48 a4 4 0 0 1 -4 -4 z" fill="#FFFFFF" opacity="0.35" />
+                <circle cx="70" cy="62" r="16" fill="#E08A3C" />
+                <path d="M70 54 v16" stroke="#FFFFFF" strokeWidth="4" strokeLinecap="round" />
+                <path d="M62 62 h16" stroke="#FFFFFF" strokeWidth="4" strokeLinecap="round" />
+            </svg>
+            <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#1E3A32', marginTop: 16 }}>题三：做一张分享图</Text>
+            <Text style={{ fontSize: 19, color: '#6B7C75', lineHeight: 1.6, marginTop: 12 }}>
+                挑一条你觉得有用的回答，点"生成分享图"，把生成的图片检查一遍：有没有你的问题、回答摘要、相关案例摘要。确认无误后发给一位同事看看他能不能看懂。
+            </Text>
+            <Box style={{ marginTop: 'auto', background: 'rgba(224,138,60,0.14)', borderRadius: 12, padding: 14 }}>
+                <Text style={{ fontSize: 18, color: '#C9742B', lineHeight: 1.5 }}>
+                    <span style={{ fontWeight: 'bold' }}>验收：</span>图上应含 AI宝儿标识、你的问题、回答摘要和相关案例
+                </Text>
+            </Box>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            <svg width="20" height="20" viewBox="0 0 24 24">
+                <path d="M12 21C12 21 4 17 4 10C4 6 7 3 12 3C17 3 20 6 20 10C20 17 12 21 12 21Z" fill="#1F7A5C" opacity="0.75" />
+                <path d="M12 21V6" stroke="#FFFFFF" strokeWidth="1.6" fill="none" />
+            </svg>
+            <Text style={{ fontSize: 14, color: '#6B7C75' }}>AI宝儿 · 入门与上手</Text>
+        </Box>
+        <Text style={{ fontSize: 14, color: '#6B7C75' }}>13 / 14</Text>
+    </Box>
+</Slide>

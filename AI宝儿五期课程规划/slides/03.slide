@@ -1,0 +1,28 @@
+<Slide style={{ background: '#F7FAF6', padding: 0 }}>
+    <Box style={{ flexDirection: 'row', width: '100%', height: '100%' }}>
+        <Box style={{
+            width: 742, height: '100%',
+            background: 'linear-gradient(135deg, #1F7A5C 0%, #2E9B77 100%)',
+            paddingLeft: 72, paddingRight: 48, justifyContent: 'center',
+        }}>
+            <Text style={{ fontSize: 120, fontWeight: 'bold', color: '#FFFFFF', opacity: 0.28, lineHeight: 1 }}>01</Text>
+            <Text style={{ fontSize: 68, fontWeight: 'bold', color: '#FFFFFF', lineHeight: 1.15, marginTop: 12 }}>
+                认识 AI宝儿
+            </Text>
+            <Box style={{ width: 96, height: 5, borderRadius: 3, background: '#E08A3C', marginTop: 26 }} />
+            <Text style={{ fontSize: 26, color: '#FFFFFF', opacity: 0.88, lineHeight: 1.55, marginTop: 24 }}>
+                从登录到第一次提问<br />先把「门」找到，再谈技巧
+            </Text>
+        </Box>
+
+        <Box style={{ flex: 1, height: '100%', background: '#F7FAF6' }}>
+            <svg width="538" height="720" viewBox="0 0 538 720">
+                <circle cx="404" cy="150" r="96" fill="#E08A3C" opacity="0.18" />
+                <path d="M0 300 Q130 232 260 300 T538 288 L538 356 Q400 300 260 356 T0 366 Z" fill="#A8D5BA" opacity="0.55" />
+                <path d="M0 420 Q140 356 280 420 T538 408 L538 476 Q390 420 260 476 T0 486 Z" fill="#1F7A5C" opacity="0.22" />
+                <path d="M0 540 Q150 484 300 540 T538 528 L538 596 Q400 540 260 596 T0 606 Z" fill="#1F7A5C" opacity="0.38" />
+                <path d="M0 660 Q160 620 320 660 T538 648 L538 720 L0 720 Z" fill="#1F7A5C" opacity="0.5" />
+            </svg>
+        </Box>
+    </Box>
+</Slide>

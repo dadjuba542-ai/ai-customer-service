@@ -1,0 +1,98 @@
+<Slide style={{
+    background: '#F7FAF6',
+    paddingTop: 20, paddingBottom: 20, paddingLeft: 72, paddingRight: 72,
+}}>
+    <Box style={{ height: 100, justifyContent: 'center' }}>
+        <Text style={{ fontSize: 36, fontWeight: 'bold', color: '#1E3A32' }}>AI宝儿是什么</Text>
+        <Box style={{ width: 56, height: 4, borderRadius: 2, background: '#1F7A5C', marginTop: 8 }} />
+    </Box>
+
+    <Box style={{ height: 528, flexDirection: 'row', gap: 28 }}>
+        <Box style={{ width: 605, height: 528 }}>
+            <svg width="605" height="528" viewBox="0 0 620 528">
+                <circle cx="310" cy="264" r="176" fill="#A8D5BA" opacity="0.18" />
+                <path d="M310 264 L310 96" stroke="#A8D5BA" strokeWidth="3" />
+                <path d="M310 264 L462 178" stroke="#A8D5BA" strokeWidth="3" />
+                <path d="M310 264 L462 350" stroke="#A8D5BA" strokeWidth="3" />
+                <path d="M310 264 L310 432" stroke="#A8D5BA" strokeWidth="3" />
+                <path d="M310 264 L158 350" stroke="#A8D5BA" strokeWidth="3" />
+                <path d="M310 264 L158 178" stroke="#A8D5BA" strokeWidth="3" />
+
+                <rect x="245" y="70" width="130" height="52" rx="14" fill="#1F7A5C" />
+                <text x="310" y="103" textAnchor="middle" fontSize="21" fill="#FFFFFF" fontFamily="PingFang SC">问产品</text>
+
+                <rect x="397" y="152" width="130" height="52" rx="14" fill="rgba(168,213,186,0.45)" />
+                <text x="462" y="185" textAnchor="middle" fontSize="21" fill="#1E3A32" fontFamily="PingFang SC">看案例</text>
+
+                <rect x="397" y="324" width="130" height="52" rx="14" fill="rgba(168,213,186,0.45)" />
+                <text x="462" y="357" textAnchor="middle" fontSize="21" fill="#1E3A32" fontFamily="PingFang SC">读资讯</text>
+
+                <rect x="245" y="406" width="130" height="52" rx="14" fill="rgba(168,213,186,0.45)" />
+                <text x="310" y="439" textAnchor="middle" fontSize="21" fill="#1E3A32" fontFamily="PingFang SC">整理表达</text>
+
+                <rect x="93" y="324" width="130" height="52" rx="14" fill="#1F7A5C" />
+                <text x="158" y="357" textAnchor="middle" fontSize="21" fill="#FFFFFF" fontFamily="PingFang SC">问用法</text>
+
+                <rect x="93" y="152" width="130" height="52" rx="14" fill="#E08A3C" />
+                <text x="158" y="185" textAnchor="middle" fontSize="21" fill="#FFFFFF" fontFamily="PingFang SC">转人工</text>
+
+                <circle cx="310" cy="264" r="80" fill="#1F7A5C" />
+                <circle cx="310" cy="264" r="66" fill="#FFFFFF" opacity="0.12" />
+                <text x="310" y="256" textAnchor="middle" fontSize="26" fontWeight="bold" fill="#FFFFFF" fontFamily="PingFang SC">AI宝儿</text>
+                <text x="310" y="288" textAnchor="middle" fontSize="17" fill="#FFFFFF" opacity="0.85" fontFamily="PingFang SC">随时在线</text>
+            </svg>
+        </Box>
+
+        <Box style={{ flex: 1, height: 528 }}>
+            <Text style={{ fontSize: 26, fontWeight: 'bold', color: '#1F7A5C', lineHeight: 1.4 }}>
+                一个随时在线的小助手
+            </Text>
+            <Text style={{ fontSize: 21, color: '#1E3A32', lineHeight: 1.6, marginTop: 18 }}>
+                AI宝儿不是一套要你先学技术才会用的软件。你只要像平时聊天一样，把想问的打进去，它就帮你找答案、把话说清楚、再挑几条可以参考的案例给你。
+            </Text>
+            <Text style={{ fontSize: 21, color: '#1E3A32', lineHeight: 1.6, marginTop: 14 }}>
+                它记得住你问过什么，也知道别人都在关心什么。实在拿不准的时候，还能帮你接上真人营养师。
+            </Text>
+
+            <Box style={{ marginTop: 26, gap: 16 }}>
+                <Box style={{ flexDirection: 'row', gap: 14, alignItems: 'flex-start' }}>
+                    <FAIcon name='smile' style={{ fill: '#1F7A5C', width: 26, height: 26 }} />
+                    <Text style={{ fontSize: 20, color: '#1E3A32', lineHeight: 1.5, flex: 1 }}>
+                        不懂 AI 也能用：不需要背任何指令
+                    </Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', gap: 14, alignItems: 'flex-start' }}>
+                    <FAIcon name='comment' style={{ fill: '#1F7A5C', width: 26, height: 26 }} />
+                    <Text style={{ fontSize: 20, color: '#1E3A32', lineHeight: 1.5, flex: 1 }}>
+                        不会提问也有办法：照着示例问就行
+                    </Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', gap: 14, alignItems: 'flex-start' }}>
+                    <FAIcon name='undo' style={{ fill: '#1F7A5C', width: 26, height: 26 }} />
+                    <Text style={{ fontSize: 20, color: '#1E3A32', lineHeight: 1.5, flex: 1 }}>
+                        问错了不要紧：重新问一次就好
+                    </Text>
+                </Box>
+            </Box>
+
+            <Box style={{
+                marginTop: 'auto', background: 'rgba(224,138,60,0.14)', borderRadius: 14, padding: 16,
+            }}>
+                <Text style={{ fontSize: 20, color: '#C9742B', fontWeight: 'bold' }}>
+                    先点进去，先问一句，再继续追问。
+                </Text>
+            </Box>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            <svg width="20" height="20" viewBox="0 0 24 24">
+                <path d="M12 21C12 21 4 17 4 10C4 6 7 3 12 3C17 3 20 6 20 10C20 17 12 21 12 21Z" fill="#1F7A5C" opacity="0.75" />
+                <path d="M12 21V6" stroke="#FFFFFF" strokeWidth="1.6" fill="none" />
+            </svg>
+            <Text style={{ fontSize: 14, color: '#6B7C75' }}>AI宝儿 · 五期上手课</Text>
+        </Box>
+        <Text style={{ fontSize: 14, color: '#6B7C75' }}>04 / 33</Text>
+    </Box>
+</Slide>

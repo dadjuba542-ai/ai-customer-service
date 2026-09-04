@@ -1,0 +1,108 @@
+<Slide style={{
+    background: '#F7FAF6',
+    paddingTop: 20, paddingBottom: 20, paddingLeft: 72, paddingRight: 72,
+}}>
+    <Box style={{ height: 100, justifyContent: 'center' }}>
+        <Text style={{ fontSize: 36, fontWeight: 'bold', color: '#1E3A32' }}>五个好习惯</Text>
+        <Box style={{ width: 56, height: 4, borderRadius: 2, background: '#1F7A5C', marginTop: 8 }} />
+    </Box>
+
+    <Box style={{ height: 528, flexDirection: 'row', gap: 28 }}>
+        <Box style={{ width: 320, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 180, fontWeight: 'bold', color: '#E08A3C', lineHeight: 1, letterSpacing: -4 }}>5</Text>
+            <Text style={{ fontSize: 30, fontWeight: 'bold', color: '#1E3A32', marginTop: 14 }}>个好习惯</Text>
+            <Box style={{ width: 72, height: 5, borderRadius: 3, background: '#1F7A5C', marginTop: 20 }} />
+            <Text style={{ fontSize: 20, color: '#6B7C75', lineHeight: 1.6, marginTop: 18 }}>
+                做到其中三条，<br />你就已经超过八成使用者
+            </Text>
+        </Box>
+
+        <Box style={{ flex: 1, gap: 10 }}>
+            <Box style={{
+                flexDirection: 'row', gap: 16, background: '#FFFFFF', borderRadius: 14, padding: 16,
+                height: 97, boxShadow: '0 4px 20px rgba(30,58,50,0.08)', alignItems: 'center',
+            }}>
+                <Box style={{ width: 44, height: 44, borderRadius: 22, background: '#1F7A5C', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#FFFFFF' }}>1</Text>
+                </Box>
+                <Box style={{ flex: 1 }}>
+                    <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#1E3A32' }}>一次只问一件事</Text>
+                    <Text style={{ fontSize: 19, color: '#6B7C75', lineHeight: 1.45, marginTop: 3 }}>
+                        问句越长，答案越散。拆成三句分开问，拿到三份准确的答案，比一份大而全的更有用。
+                    </Text>
+                </Box>
+            </Box>
+
+            <Box style={{
+                flexDirection: 'row', gap: 16, background: '#FFFFFF', borderRadius: 14, padding: 16,
+                height: 97, boxShadow: '0 4px 20px rgba(30,58,50,0.08)', alignItems: 'center',
+            }}>
+                <Box style={{ width: 44, height: 44, borderRadius: 22, background: '#1F7A5C', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#FFFFFF' }}>2</Text>
+                </Box>
+                <Box style={{ flex: 1 }}>
+                    <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#1E3A32' }}>把情况说在前头</Text>
+                    <Text style={{ fontSize: 19, color: '#6B7C75', lineHeight: 1.45, marginTop: 3 }}>
+                        先说人群和现状，再说问题。同样的问句，加了背景之后答案的贴合度完全是两个级别。
+                    </Text>
+                </Box>
+            </Box>
+
+            <Box style={{
+                flexDirection: 'row', gap: 16, background: '#FFFFFF', borderRadius: 14, padding: 16,
+                height: 97, boxShadow: '0 4px 20px rgba(30,58,50,0.08)', alignItems: 'center',
+            }}>
+                <Box style={{ width: 44, height: 44, borderRadius: 22, background: '#1F7A5C', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#FFFFFF' }}>3</Text>
+                </Box>
+                <Box style={{ flex: 1 }}>
+                    <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#1E3A32' }}>先看结论，再看细节</Text>
+                    <Text style={{ fontSize: 19, color: '#6B7C75', lineHeight: 1.45, marginTop: 3 }}>
+                        结论通常在回答的开头。先把结论抓住，再决定要不要往下读细节，能省掉一半阅读时间。
+                    </Text>
+                </Box>
+            </Box>
+
+            <Box style={{
+                flexDirection: 'row', gap: 16, background: '#FFFFFF', borderRadius: 14, padding: 16,
+                height: 97, boxShadow: '0 4px 20px rgba(30,58,50,0.08)', alignItems: 'center',
+            }}>
+                <Box style={{ width: 44, height: 44, borderRadius: 22, background: '#1F7A5C', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#FFFFFF' }}>4</Text>
+                </Box>
+                <Box style={{ flex: 1 }}>
+                    <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#1E3A32' }}>看案例先对相似度</Text>
+                    <Text style={{ fontSize: 19, color: '#6B7C75', lineHeight: 1.45, marginTop: 3 }}>
+                        案例三问先过一遍：像不像、场景对不对、抄哪一点。过不了就果断跳过，别舍不得。
+                    </Text>
+                </Box>
+            </Box>
+
+            <Box style={{
+                flexDirection: 'row', gap: 16, background: 'rgba(224,138,60,0.14)', borderRadius: 14, padding: 16,
+                height: 97, alignItems: 'center',
+            }}>
+                <Box style={{ width: 44, height: 44, borderRadius: 22, background: '#E08A3C', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#FFFFFF' }}>5</Text>
+                </Box>
+                <Box style={{ flex: 1 }}>
+                    <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#1E3A32' }}>用完顺手点个赞</Text>
+                    <Text style={{ fontSize: 19, color: '#6B7C75', lineHeight: 1.45, marginTop: 3 }}>
+                        你点下的每一次反馈，都在决定下一个人拿到的答案质量。点踩时写原因，价值更大。
+                    </Text>
+                </Box>
+            </Box>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            <svg width="20" height="20" viewBox="0 0 24 24">
+                <path d="M12 21C12 21 4 17 4 10C4 6 7 3 12 3C17 3 20 6 20 10C20 17 12 21 12 21Z" fill="#1F7A5C" opacity="0.75" />
+                <path d="M12 21V6" stroke="#FFFFFF" strokeWidth="1.6" fill="none" />
+            </svg>
+            <Text style={{ fontSize: 14, color: '#6B7C75' }}>AI宝儿 · 长效使用与协同保障</Text>
+        </Box>
+        <Text style={{ fontSize: 14, color: '#6B7C75' }}>06 / 9</Text>
+    </Box>
+</Slide>

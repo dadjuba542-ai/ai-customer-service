@@ -16,6 +16,13 @@
   <meta name="twitter:description" content="产品咨询、使用答疑与健康问题解答">
   <meta name="twitter:image" content="/avatar-optimized.png">
   <script>
+    /* 分享功能总开关（2026-09-04 关闭）：生成分享图非主要使用场景，整体隐藏入口。
+       恢复方式：改为 true，并按项目惯例同步升级 chat.js / admin-share.js 的 ?v= 版本号。
+       注意：本开关只管「生成分享图」。后台「分享设置」（微信 og 卡片）不受影响，
+       那决定链接在微信里被转发时的卡片样式，关掉反而更糟。 */
+    window.SHARE_ENABLED = false;
+  </script>
+  <script>
     if (window.location.protocol === 'file:') {
       window.location.replace('http://127.0.0.1:5001/');
     }
@@ -25,12 +32,13 @@
   <link rel="stylesheet" href="/css/chat.css?v=20260724-voice-press1">
   <link rel="stylesheet" href="/css/community.css?v=20260720-split1">
   <link rel="stylesheet" href="/css/overlays.css?v=20260720-split1">
-  <link rel="stylesheet" href="/css/news-nav.css?v=20260720-split1">
+  <link rel="stylesheet" href="/css/news-nav.css?v=20260903-preset-agent1">
   <link rel="stylesheet" href="/css/chat-ui.css?v=20260721-clear1">
+  <link rel="stylesheet" href="/css/rich-text.css?v=20260904-richtext1">
   <link rel="stylesheet" href="/css/related-cases.css?v=20260720-split1">
   <link rel="stylesheet" href="/css/share-misc.css?v=20260720-split1">
   <link rel="stylesheet" href="/css/products.css?v=20260902-prodimg2">
-  <link rel="stylesheet" href="/css/discover.css?v=20260720-split1">
+  <link rel="stylesheet" href="/css/discover.css?v=20260903-preset-agent1">
   <link rel="stylesheet" href="/css/handoff.css?v=20260723-ai-review1">
   <link rel="stylesheet" href="icon-fallback.css?v=20260713-icons2">
 </head>
@@ -367,17 +375,17 @@
   <div id="toast"></div>
   <script src="speech-controller.js?v=20260717-speech113"></script>
   <script src="handoff-intent.js?v=20260721-handoff1"></script>
-  <script src="/js/core.js?v=20260724-voice-press1"></script>
+  <script src="/js/core.js?v=20260903-preset-agent1"></script>
   <script src="/js/views.js?v=20260721-handoff2"></script>
   <script src="/js/handoff.js?v=20260723-offline-message1"></script>
   <script src="/js/fetch-util.js?v=20260724-voice-press1"></script>
   <script src="/js/voice.js?v=20260724-voice-press1"></script>
   <script src="/js/chat-stream.js?v=20260722-queue1"></script>
-  <script src="/js/chat.js?v=20260902-caseimg1"></script>
+  <script src="/js/chat.js?v=20260904-shareoff1"></script>
   <script src="/js/history-community.js?v=20260723-ai-review1"></script>
   <script src="/js/nutritionist-notes.js?v=20260723-ai-review1"></script>
-  <script src="/js/news-discover.js?v=20260721-bulletin-arrow1"></script>
-  <script src="/js/admin-share.js?v=20260720-split1"></script>
+  <script src="/js/news-discover.js?v=20260904-richtext1"></script>
+  <script src="/js/admin-share.js?v=20260904-shareoff1"></script>
   <script src="/js/chat-misc.js?v=20260721-clear2"></script>
   <script src="/js/utils-products.js?v=20260902-imglazy1"></script>
 </body>

@@ -1,0 +1,106 @@
+<Slide style={{
+    background: '#F7FAF6',
+    paddingTop: 20, paddingBottom: 20, paddingLeft: 72, paddingRight: 72,
+}}>
+    <Box style={{ height: 100, justifyContent: 'center' }}>
+        <Text style={{ fontSize: 36, fontWeight: 'bold', color: '#1E3A32' }}>从入门到熟练的 30 天</Text>
+        <Box style={{ width: 56, height: 4, borderRadius: 2, background: '#1F7A5C', marginTop: 8 }} />
+    </Box>
+
+    <Box style={{ height: 528, flexDirection: 'row', gap: 28 }}>
+        <Box style={{ width: 605 }}>
+            <svg width="605" height="528" viewBox="0 0 605 528">
+                <circle cx="470" cy="90" r="66" fill="#E08A3C" opacity="0.2" />
+
+                <path d="M40 470 H180 V400 H40 Z" fill="rgba(168,213,186,0.5)" />
+                <path d="M180 470 H340 V330 H180 Z" fill="#1F7A5C" opacity="0.55" />
+                <path d="M340 470 H520 V210 H340 Z" fill="#1F7A5C" />
+                <path d="M520 470 H580 V150 H520 Z" fill="#E08A3C" />
+
+                <circle cx="110" cy="440" r="20" fill="#FFFFFF" opacity="0.85" />
+                <text x="110" y="448" textAnchor="middle" fontSize="20" fontWeight="bold" fill="#1F7A5C" fontFamily="PingFang SC">1</text>
+                <circle cx="260" cy="410" r="20" fill="#FFFFFF" opacity="0.85" />
+                <text x="260" y="418" textAnchor="middle" fontSize="20" fontWeight="bold" fill="#1F7A5C" fontFamily="PingFang SC">7</text>
+                <circle cx="430" cy="380" r="20" fill="#FFFFFF" opacity="0.85" />
+                <text x="430" y="388" textAnchor="middle" fontSize="18" fontWeight="bold" fill="#1F7A5C" fontFamily="PingFang SC">30</text>
+
+                <path d="M550 150 v-56" stroke="#E08A3C" strokeWidth="5" strokeLinecap="round" />
+                <path d="M550 94 l44 16 l-44 16 z" fill="#E08A3C" />
+
+                <text x="110" y="500" textAnchor="middle" fontSize="21" fontWeight="bold" fill="#1E3A32" fontFamily="PingFang SC">第 1 天</text>
+                <text x="260" y="500" textAnchor="middle" fontSize="21" fontWeight="bold" fill="#1E3A32" fontFamily="PingFang SC">第 7 天</text>
+                <text x="430" y="500" textAnchor="middle" fontSize="21" fontWeight="bold" fill="#1E3A32" fontFamily="PingFang SC">第 30 天</text>
+                <text x="556" y="500" textAnchor="middle" fontSize="18" fill="#6B7C75" fontFamily="PingFang SC">之后</text>
+
+                <text x="110" y="386" textAnchor="middle" fontSize="17" fill="#6B7C75" fontFamily="PingFang SC">敢用</text>
+                <text x="260" y="316" textAnchor="middle" fontSize="17" fill="#FFFFFF" opacity="0.9" fontFamily="PingFang SC">会问</text>
+                <text x="430" y="196" textAnchor="middle" fontSize="17" fill="#FFFFFF" opacity="0.9" fontFamily="PingFang SC">自己找答案</text>
+            </svg>
+        </Box>
+
+        <Box style={{ flex: 1, gap: 12 }}>
+            <Box style={{
+                background: '#FFFFFF', borderRadius: 14, padding: 16,
+                boxShadow: '0 4px 20px rgba(30,58,50,0.08)',
+            }}>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <Box style={{ background: 'rgba(31,122,92,0.12)', borderRadius: 12, paddingLeft: 12, paddingRight: 12, paddingTop: 5, paddingBottom: 5 }}>
+                        <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#1F7A5C' }}>第 1 天</Text>
+                    </Box>
+                    <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#1E3A32' }}>敢用</Text>
+                </Box>
+                <Text style={{ fontSize: 19, color: '#6B7C75', lineHeight: 1.55, marginTop: 10 }}>
+                    把首页四个区域各走一遍，照着示例问题发出第一句话，看一次完整的回答长什么样。
+                </Text>
+            </Box>
+
+            <Box style={{
+                background: '#FFFFFF', borderRadius: 14, padding: 16,
+                boxShadow: '0 4px 20px rgba(30,58,50,0.08)',
+            }}>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <Box style={{ background: 'rgba(31,122,92,0.12)', borderRadius: 12, paddingLeft: 12, paddingRight: 12, paddingTop: 5, paddingBottom: 5 }}>
+                        <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#1F7A5C' }}>第 7 天</Text>
+                    </Box>
+                    <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#1E3A32' }}>会问</Text>
+                </Box>
+                <Text style={{ fontSize: 19, color: '#6B7C75', lineHeight: 1.55, marginTop: 10 }}>
+                    提问时自然带上人群、场景和困扰；卡住时会去热门问题和示例问题里找灵感，而不是干坐着。
+                </Text>
+            </Box>
+
+            <Box style={{
+                background: 'rgba(224,138,60,0.14)', borderRadius: 14, padding: 16,
+            }}>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <Box style={{ background: '#E08A3C', borderRadius: 12, paddingLeft: 12, paddingRight: 12, paddingTop: 5, paddingBottom: 5 }}>
+                        <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>第 30 天</Text>
+                    </Box>
+                    <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#1E3A32' }}>自己找答案</Text>
+                </Box>
+                <Text style={{ fontSize: 19, color: '#6B7C75', lineHeight: 1.55, marginTop: 10 }}>
+                    先看资讯和产品，再带着背景提问；会用品案例三问筛案例；会在社区里翻别人的经验。
+                </Text>
+            </Box>
+
+            <Box style={{
+                marginTop: 'auto', background: '#1F7A5C', borderRadius: 14, padding: 16,
+            }}>
+                <Text style={{ fontSize: 20, color: '#FFFFFF', lineHeight: 1.55, fontWeight: 'bold' }}>
+                    熟练不是问得多，是每次都比上次问得准
+                </Text>
+            </Box>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            <svg width="20" height="20" viewBox="0 0 24 24">
+                <path d="M12 21C12 21 4 17 4 10C4 6 7 3 12 3C17 3 20 6 20 10C20 17 12 21 12 21Z" fill="#1F7A5C" opacity="0.75" />
+                <path d="M12 21V6" stroke="#FFFFFF" strokeWidth="1.6" fill="none" />
+            </svg>
+            <Text style={{ fontSize: 14, color: '#6B7C75' }}>AI宝儿 · 五期上手课</Text>
+        </Box>
+        <Text style={{ fontSize: 14, color: '#6B7C75' }}>32 / 33</Text>
+    </Box>
+</Slide>

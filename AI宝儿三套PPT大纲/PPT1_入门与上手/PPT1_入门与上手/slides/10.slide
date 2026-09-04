@@ -1,0 +1,108 @@
+<Slide style={{
+    background: '#F7FAF6',
+    paddingTop: 20, paddingBottom: 20, paddingLeft: 72, paddingRight: 72,
+}}>
+    <Box style={{ height: 100, justifyContent: 'center' }}>
+        <Text style={{ fontSize: 36, fontWeight: 'bold', color: '#1E3A32' }}>不会问，就照着问</Text>
+        <Box style={{ width: 56, height: 4, borderRadius: 2, background: '#1F7A5C', marginTop: 8 }} />
+    </Box>
+
+    <Box style={{ height: 528, flexDirection: 'row', gap: 28 }}>
+        <Box style={{ width: 660, gap: 14 }}>
+            <Box style={{ height: 121, background: '#FFFFFF', borderRadius: 14, padding: 18, boxShadow: '0 4px 20px rgba(30,58,50,0.08)' }}>
+                <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#1F7A5C' }}>了解产品</Text>
+                <Box style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginTop: 12 }}>
+                    <Box style={{ background: 'rgba(31,122,92,0.08)', borderRadius: 12, padding: 10 }}>
+                        <Text style={{ fontSize: 19, color: '#1E3A32' }}>这个产品主要是做什么的？</Text>
+                    </Box>
+                    <Box style={{ background: 'rgba(31,122,92,0.08)', borderRadius: 12, padding: 10 }}>
+                        <Text style={{ fontSize: 19, color: '#1E3A32' }}>它适合什么人？</Text>
+                    </Box>
+                    <Box style={{ background: 'rgba(31,122,92,0.08)', borderRadius: 12, padding: 10 }}>
+                        <Text style={{ fontSize: 19, color: '#1E3A32' }}>和另一款比区别在哪？</Text>
+                    </Box>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 121, background: '#FFFFFF', borderRadius: 14, padding: 18, boxShadow: '0 4px 20px rgba(30,58,50,0.08)' }}>
+                <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#1F7A5C' }}>使用答疑</Text>
+                <Box style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginTop: 12 }}>
+                    <Box style={{ background: 'rgba(31,122,92,0.08)', borderRadius: 12, padding: 10 }}>
+                        <Text style={{ fontSize: 19, color: '#1E3A32' }}>这个产品怎么使用？</Text>
+                    </Box>
+                    <Box style={{ background: 'rgba(31,122,92,0.08)', borderRadius: 12, padding: 10 }}>
+                        <Text style={{ fontSize: 19, color: '#1E3A32' }}>使用时要注意什么？</Text>
+                    </Box>
+                    <Box style={{ background: 'rgba(31,122,92,0.08)', borderRadius: 12, padding: 10 }}>
+                        <Text style={{ fontSize: 19, color: '#1E3A32' }}>我这种情况重点注意什么？</Text>
+                    </Box>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 121, background: '#FFFFFF', borderRadius: 14, padding: 18, boxShadow: '0 4px 20px rgba(30,58,50,0.08)' }}>
+                <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#1F7A5C' }}>案例参考</Text>
+                <Box style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginTop: 12 }}>
+                    <Box style={{ background: 'rgba(31,122,92,0.08)', borderRadius: 12, padding: 10 }}>
+                        <Text style={{ fontSize: 19, color: '#1E3A32' }}>有没有和我情况差不多的案例？</Text>
+                    </Box>
+                    <Box style={{ background: 'rgba(31,122,92,0.08)', borderRadius: 12, padding: 10 }}>
+                        <Text style={{ fontSize: 19, color: '#1E3A32' }}>哪类案例更适合我参考？</Text>
+                    </Box>
+                    <Box style={{ background: 'rgba(31,122,92,0.08)', borderRadius: 12, padding: 10 }}>
+                        <Text style={{ fontSize: 19, color: '#1E3A32' }}>最值得参考的是哪一点？</Text>
+                    </Box>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 121, background: 'rgba(224,138,60,0.14)', borderRadius: 14, padding: 18 }}>
+                <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#C9742B' }}>继续追问</Text>
+                <Box style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginTop: 12 }}>
+                    <Box style={{ background: '#FFFFFF', borderRadius: 12, padding: 10 }}>
+                        <Text style={{ fontSize: 19, color: '#1E3A32' }}>请你说得简单一点</Text>
+                    </Box>
+                    <Box style={{ background: '#FFFFFF', borderRadius: 12, padding: 10 }}>
+                        <Text style={{ fontSize: 19, color: '#1E3A32' }}>请你分点告诉我</Text>
+                    </Box>
+                    <Box style={{ background: '#FFFFFF', borderRadius: 12, padding: 10 }}>
+                        <Text style={{ fontSize: 19, color: '#1E3A32' }}>你刚才的重点是什么？</Text>
+                    </Box>
+                </Box>
+            </Box>
+        </Box>
+
+        <Box style={{ flex: 1 }}>
+            <Text style={{ fontSize: 26, fontWeight: 'bold', color: '#1F7A5C', lineHeight: 1.45 }}>
+                背不下来就照抄，<br />抄几次就成自己的了
+            </Text>
+            <Text style={{ fontSize: 20, color: '#6B7C75', lineHeight: 1.6, marginTop: 20 }}>
+                这四组模板覆盖了日常八成以上的场景。第一次照着打，第二次改两个词，第三次你会发现——自己写出来的问句，已经自然带上了必要的背景信息。
+            </Text>
+            <Text style={{ fontSize: 20, color: '#6B7C75', lineHeight: 1.6, marginTop: 16 }}>
+                同一句模板换个产品名就能反复用，比如把"这个产品"换成具体名字，答案的准确度会立刻不一样。
+            </Text>
+
+            <Box style={{
+                marginTop: 'auto', background: '#FFFFFF', borderRadius: 14, padding: 18,
+                boxShadow: '0 4px 20px rgba(30,58,50,0.08)',
+            }}>
+                <Text style={{ fontSize: 21, fontWeight: 'bold', color: '#1E3A32', lineHeight: 1.5 }}>
+                    把问题里的"这个产品"<br />换成具体名字
+                </Text>
+                <Text style={{ fontSize: 19, color: '#6B7C75', lineHeight: 1.5, marginTop: 10 }}>
+                    这是提升回答质量最快的一招，成本只有三个字。
+                </Text>
+            </Box>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            <svg width="20" height="20" viewBox="0 0 24 24">
+                <path d="M12 21C12 21 4 17 4 10C4 6 7 3 12 3C17 3 20 6 20 10C20 17 12 21 12 21Z" fill="#1F7A5C" opacity="0.75" />
+                <path d="M12 21V6" stroke="#FFFFFF" strokeWidth="1.6" fill="none" />
+            </svg>
+            <Text style={{ fontSize: 14, color: '#6B7C75' }}>AI宝儿 · 入门与上手</Text>
+        </Box>
+        <Text style={{ fontSize: 14, color: '#6B7C75' }}>10 / 14</Text>
+    </Box>
+</Slide>

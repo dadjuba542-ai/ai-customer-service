@@ -29,16 +29,21 @@ DEFAULT_STEPS = [
     "即将完成...",
 ]
 DEFAULT_EXAMPLE_QUESTIONS = [
-    '这个产品适合什么人？',
-    '产品应该怎么使用？',
-    '帮我推荐一个产品方案',
-    '帮我写一段客户沟通话术',
+    {'text': '这个产品适合什么人？', 'agent_id': 'aura'},
+    {'text': '产品应该怎么使用？', 'agent_id': 'coder'},
+    {'text': '帮我推荐一个产品方案', 'agent_id': 'aura'},
+    {'text': '帮我写一段客户沟通话术', 'agent_id': 'translator'},
 ]
 from flask_cors import CORS
 from config import Config
-from models import init_db, get_setting
+from models import init_db, get_setting, resolve_question_bindings, MAX_PRESET_EXAMPLE_QUESTIONS
 from services.content_security import sanitize_media_url
 from services.handoff_service import start_handoff_reconciler
+from services.security_service import (
+    build_rate_limited_response,
+    check_request_budget,
+    classify_client,
+)
 from routes.auth import auth_bp, token_required
 from routes.chat import chat_bp
 from routes.history import history_bp
@@ -72,6 +77,54 @@ init_db()
 from services.secret_service import migrate_plaintext_secrets
 migrate_plaintext_secrets()
 start_handoff_reconciler()
+
+_CRAWL_GUARD_LIMITS = {
+    'browser': Config.CRAWL_GUARD_BROWSER_PER_MIN,
+    'wechat': Config.CRAWL_GUARD_WECHAT_PER_MIN,
+    'crawler': Config.CRAWL_GUARD_CRAWLER_PER_MIN,
+    'script': Config.CRAWL_GUARD_SCRIPT_PER_MIN,
+}
+
+ROBOTS_TXT = """User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /consultant
+Disallow: /api/
+Disallow: /uploads/
+"""
+
+@app.before_request
+def crawl_guard():
+    """Per-IP budget for API calls, tiered by client type.
+
+    Static assets are intentionally untouched so CDN caching keeps working.
+    This is process-local: on multi-worker deploys keep the edge (Nginx/CDN)
+    limit as the outer layer.
+    """
+    if not Config.CRAWL_GUARD_ENABLED or not request.path.startswith('/api/'):
+        return None
+    client_type = classify_client(request.headers.get('User-Agent', ''))
+    limit = max(1, _CRAWL_GUARD_LIMITS.get(client_type, Config.CRAWL_GUARD_SCRIPT_PER_MIN))
+    subject = request.remote_addr or 'unknown'
+    allowed, retry_after = check_request_budget(f'crawl-guard:{subject}', limit, 60)
+    if allowed:
+        return None
+    if client_type in ('crawler', 'script'):
+        app.logger.warning(
+            'crawl guard: client_type=%s ip=%s path=%s limit=%s',
+            client_type, subject, request.path, limit,
+        )
+    if Config.CRAWL_GUARD_ENFORCE:
+        return build_rate_limited_response(retry_after)
+    return None
+
+
+@app.route('/robots.txt')
+def robots_txt():
+    response = make_response(ROBOTS_TXT)
+    response.headers['Content-Type'] = 'text/plain; charset=utf-8'
+    return response
+
 
 app.register_blueprint(auth_bp, url_prefix='/api/auth')
 app.register_blueprint(chat_bp, url_prefix='/api/chat')
@@ -117,6 +170,9 @@ def add_cache_headers(response):
     )
     if request.is_secure:
         response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'
+    # 后台与数据接口不进搜索引擎索引；首页保持可索引，微信分享卡片依赖其 og 标签。
+    if path.startswith(('/admin', '/consultant', '/api/')):
+        response.headers['X-Robots-Tag'] = 'noindex, nofollow, noarchive, nosnippet'
     return response
 
 
@@ -196,12 +252,10 @@ def waiting_content():
 @app.route('/api/example-questions')
 def example_questions():
     raw = get_setting('example_questions', '[]')
-    try:
-        questions = json.loads(raw)
-    except (TypeError, ValueError):
-        questions = []
-    questions = [str(item).strip() for item in questions if str(item).strip()][:6] if isinstance(questions, list) else []
-    return jsonify({'questions': questions or DEFAULT_EXAMPLE_QUESTIONS})
+    questions = resolve_question_bindings(raw, limit=MAX_PRESET_EXAMPLE_QUESTIONS)
+    if not questions:
+        questions = resolve_question_bindings(DEFAULT_EXAMPLE_QUESTIONS, limit=MAX_PRESET_EXAMPLE_QUESTIONS)
+    return jsonify({'questions': questions})
 
 @app.route('/api/default-team')
 def default_team():

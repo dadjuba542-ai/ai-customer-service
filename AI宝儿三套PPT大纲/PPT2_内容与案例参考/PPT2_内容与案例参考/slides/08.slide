@@ -1,0 +1,94 @@
+<Slide style={{
+    background: '#F7FAF6',
+    paddingTop: 20, paddingBottom: 20, paddingLeft: 72, paddingRight: 72,
+}}>
+    <Box style={{ height: 100, justifyContent: 'center' }}>
+        <Text style={{ fontSize: 36, fontWeight: 'bold', color: '#1E3A32' }}>案例从哪来、什么时候出现</Text>
+        <Box style={{ width: 56, height: 4, borderRadius: 2, background: '#1F7A5C', marginTop: 8 }} />
+    </Box>
+
+    <Box style={{ height: 528, flexDirection: 'row', gap: 28 }}>
+        <Box style={{ width: 605 }}>
+            <svg width="605" height="528" viewBox="0 0 605 528">
+                <path d="M320 24 H580 A14 14 0 0 1 594 38 V62 A14 14 0 0 1 580 76 H334 L316 96 V76 H320 Z" fill="rgba(168,213,186,0.55)" />
+                <rect x="342" y="42" width="200" height="12" rx="6" fill="#1E3A32" opacity="0.45" />
+
+                <path d="M26 116 H470 A16 16 0 0 1 486 132 V196 A16 16 0 0 1 470 212 H96 L56 252 V212 H26 A16 16 0 0 1 10 196 V132 A16 16 0 0 1 26 116 Z" fill="#1F7A5C" />
+                <rect x="40" y="140" width="300" height="14" rx="7" fill="#FFFFFF" opacity="0.9" />
+                <rect x="40" y="166" width="380" height="11" rx="5" fill="#FFFFFF" opacity="0.55" />
+                <rect x="40" y="188" width="330" height="11" rx="5" fill="#FFFFFF" opacity="0.55" />
+
+                <text x="12" y="292" fontSize="20" fontWeight="bold" fill="#1F7A5C" fontFamily="PingFang SC">相关案例</text>
+
+                <rect x="10" y="308" width="585" height="70" rx="14" fill="#FFFFFF" />
+                <rect x="10" y="308" width="585" height="70" rx="14" fill="none" stroke="#DDE7E1" strokeWidth="2" />
+                <rect x="26" y="322" width="42" height="42" rx="10" fill="rgba(168,213,186,0.6)" />
+                <rect x="84" y="326" width="240" height="13" rx="6" fill="#1F7A5C" opacity="0.6" />
+                <rect x="84" y="350" width="330" height="10" rx="5" fill="#A8D5BA" />
+                <rect x="494" y="326" width="84" height="24" rx="12" fill="rgba(31,122,92,0.12)" />
+
+                <rect x="10" y="390" width="585" height="70" rx="14" fill="#FFFFFF" />
+                <rect x="10" y="390" width="585" height="70" rx="14" fill="none" stroke="#DDE7E1" strokeWidth="2" />
+                <rect x="26" y="404" width="42" height="42" rx="10" fill="rgba(168,213,186,0.6)" />
+                <rect x="84" y="408" width="206" height="13" rx="6" fill="#1F7A5C" opacity="0.6" />
+                <rect x="84" y="432" width="300" height="10" rx="5" fill="#A8D5BA" />
+                <rect x="494" y="408" width="84" height="24" rx="12" fill="rgba(224,138,60,0.18)" />
+
+                <rect x="10" y="472" width="585" height="52" rx="14" fill="rgba(31,122,92,0.08)" />
+                <text x="302" y="505" textAnchor="middle" fontSize="19" fill="#1F7A5C" fontFamily="PingFang SC">查看更多</text>
+            </svg>
+        </Box>
+
+        <Box style={{ flex: 1 }}>
+            <Text style={{ fontSize: 26, fontWeight: 'bold', color: '#1F7A5C', lineHeight: 1.45 }}>
+                回答下面那三张卡，<br />就是案例
+            </Text>
+
+            <Box style={{ marginTop: 22, gap: 16 }}>
+                <Box style={{ flexDirection: 'row', gap: 14, alignItems: 'flex-start' }}>
+                    <FAIcon name='check-circle' style={{ fill: '#1F7A5C', width: 26, height: 26 }} />
+                    <Text style={{ fontSize: 19, color: '#1E3A32', lineHeight: 1.55, flex: 1 }}>
+                        <span style={{ fontWeight: 'bold' }}>什么时候出现</span>：每次回答结束后自动推荐，默认给 3 条，不问不要钱。
+                    </Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', gap: 14, alignItems: 'flex-start' }}>
+                    <FAIcon name='check-circle' style={{ fill: '#1F7A5C', width: 26, height: 26 }} />
+                    <Text style={{ fontSize: 19, color: '#1E3A32', lineHeight: 1.55, flex: 1 }}>
+                        <span style={{ fontWeight: 'bold' }}>凭什么推给我</span>：先按症状标签、产品标签匹配，实在找不到再用全文搜索兜底。
+                    </Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', gap: 14, alignItems: 'flex-start' }}>
+                    <FAIcon name='check-circle' style={{ fill: '#1F7A5C', width: 26, height: 26 }} />
+                    <Text style={{ fontSize: 19, color: '#1E3A32', lineHeight: 1.55, flex: 1 }}>
+                        <span style={{ fontWeight: 'bold' }}>为什么只有三条</span>：只推和你这次问题相关的，不会把整个案例库都丢给你。
+                    </Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', gap: 14, alignItems: 'flex-start' }}>
+                    <FAIcon name='check-circle' style={{ fill: '#1F7A5C', width: 26, height: 26 }} />
+                    <Text style={{ fontSize: 19, color: '#1E3A32', lineHeight: 1.55, flex: 1 }}>
+                        <span style={{ fontWeight: 'bold' }}>它不参与回答</span>：案例不会混进 AI 的话里，只是安静地在下面等你翻。
+                    </Text>
+                </Box>
+            </Box>
+
+            <Box style={{
+                marginTop: 'auto', background: 'rgba(224,138,60,0.14)', borderRadius: 14, padding: 18,
+            }}>
+                <Text style={{ fontSize: 20, color: '#C9742B', lineHeight: 1.5, fontWeight: 'bold' }}>
+                    案例是别人真实走过的路，不是标准答案——参考价值全在"像不像你"。
+                </Text>
+            </Box>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            <svg width="20" height="20" viewBox="0 0 24 24">
+                <path d="M12 21C12 21 4 17 4 10C4 6 7 3 12 3C17 3 20 6 20 10C20 17 12 21 12 21Z" fill="#1F7A5C" opacity="0.75" />
+                <path d="M12 21V6" stroke="#FFFFFF" strokeWidth="1.6" fill="none" />
+            </svg>
+            <Text style={{ fontSize: 14, color: '#6B7C75' }}>AI宝儿 · 内容与案例参考</Text>
+        </Box>
+        <Text style={{ fontSize: 14, color: '#6B7C75' }}>08 / 13</Text>
+    </Box>
+</Slide>

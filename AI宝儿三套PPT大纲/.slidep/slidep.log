@@ -1,0 +1,55 @@
+=== boot pid=16936 ts=2026-08-31 16:21:28.545 cwd=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲 argv=/Users/test/.workbuddy/binaries/node/versions/22.22.2/bin/slidep-start --project PPT1_入门与上手 --filename AI宝儿_第1套_入门与上手.pptx ===
+[2026-08-31 16:21:28.542] [INFO ] [pid=16936] [start] invoked pid=16936 cwd=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲 daemonChild=no dev=no argv=[--project PPT1_入门与上手 --filename AI宝儿_第1套_入门与上手.pptx]
+[2026-08-31 16:21:28.546] [INFO ] [pid=16936] [start] spawning daemon projectDir=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手 filename=AI宝儿_第1套_入门与上手.pptx
+[2026-08-31 16:21:28.549] [INFO ] [pid=16936] [start] daemon spawned childPid=16938; waiting started ipc
+[2026-08-31 16:21:29.563] [INFO ] [pid=16936] [start] daemon started childPid=16938 ms=1017
+=== boot pid=16940 ts=2026-08-31 16:21:30.472 cwd=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲 argv=/Users/test/.workbuddy/binaries/node/versions/22.22.2/bin/slidep-start --project PPT2_内容与案例参考 --filename AI宝儿_第2套_内容与案例参考.pptx ===
+[2026-08-31 16:21:30.471] [INFO ] [pid=16940] [start] invoked pid=16940 cwd=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲 daemonChild=no dev=no argv=[--project PPT2_内容与案例参考 --filename AI宝儿_第2套_内容与案例参考.pptx]
+[2026-08-31 16:21:30.472] [INFO ] [pid=16940] [start] spawning daemon projectDir=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考 filename=AI宝儿_第2套_内容与案例参考.pptx
+[2026-08-31 16:21:30.474] [INFO ] [pid=16940] [start] daemon spawned childPid=16942; waiting started ipc
+[2026-08-31 16:21:31.415] [INFO ] [pid=16940] [start] daemon started childPid=16942 ms=943
+=== boot pid=16943 ts=2026-08-31 16:21:32.322 cwd=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲 argv=/Users/test/.workbuddy/binaries/node/versions/22.22.2/bin/slidep-start --project PPT3_长效使用与协同保障 --filename AI宝儿_第3套_长效使用与协同保障.pptx ===
+[2026-08-31 16:21:32.321] [INFO ] [pid=16943] [start] invoked pid=16943 cwd=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲 daemonChild=no dev=no argv=[--project PPT3_长效使用与协同保障 --filename AI宝儿_第3套_长效使用与协同保障.pptx]
+[2026-08-31 16:21:32.322] [INFO ] [pid=16943] [start] spawning daemon projectDir=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT3_长效使用与协同保障 filename=AI宝儿_第3套_长效使用与协同保障.pptx
+[2026-08-31 16:21:32.324] [INFO ] [pid=16943] [start] daemon spawned childPid=16947; waiting started ipc
+[2026-08-31 16:21:33.422] [INFO ] [pid=16943] [start] daemon started childPid=16947 ms=1100
+=== boot pid=16953 ts=2026-08-31 16:21:39.321 cwd=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲 argv=/Users/test/.workbuddy/binaries/node/versions/22.22.2/bin/slidep-validate --all --project PPT1_入门与上手 ===
+[2026-08-31 16:21:39.320] [INFO ] [pid=16953] [validate] --all mode: found 14 files in /Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手/slides
+[2026-08-31 16:21:39.322] [INFO ] [pid=16953] [validate] batch start files=14 checkOverflow=true
+[2026-08-31 16:21:40.478] [INFO ] [pid=16953] [validate] batch done total=14 passed=14 failed=0 ms=1158
+=== boot pid=16955 ts=2026-08-31 16:21:41.345 cwd=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲 argv=/Users/test/.workbuddy/binaries/node/versions/22.22.2/bin/slidep-validate --all --project PPT2_内容与案例参考 ===
+[2026-08-31 16:21:41.344] [INFO ] [pid=16955] [validate] --all mode: found 13 files in /Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/slides
+[2026-08-31 16:21:41.345] [INFO ] [pid=16955] [validate] batch start files=13 checkOverflow=true
+[2026-08-31 16:21:42.389] [INFO ] [pid=16955] [validate] batch done total=13 passed=12 failed=1 ms=1045
+=== boot pid=16957 ts=2026-08-31 16:21:43.237 cwd=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲 argv=/Users/test/.workbuddy/binaries/node/versions/22.22.2/bin/slidep-validate --all --project PPT3_长效使用与协同保障 ===
+[2026-08-31 16:21:43.237] [INFO ] [pid=16957] [validate] --all mode: found 9 files in /Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT3_长效使用与协同保障/slides
+[2026-08-31 16:21:43.237] [INFO ] [pid=16957] [validate] batch start files=9 checkOverflow=true
+[2026-08-31 16:21:43.994] [INFO ] [pid=16957] [validate] batch done total=9 passed=9 failed=0 ms=759
+=== boot pid=16979 ts=2026-08-31 16:22:47.136 cwd=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲 argv=/Users/test/.workbuddy/binaries/node/versions/22.22.2/bin/slidep-validate --all --project PPT2_内容与案例参考 ===
+[2026-08-31 16:22:47.135] [INFO ] [pid=16979] [validate] --all mode: found 13 files in /Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考/slides
+[2026-08-31 16:22:47.137] [INFO ] [pid=16979] [validate] batch start files=13 checkOverflow=true
+[2026-08-31 16:22:48.280] [INFO ] [pid=16979] [validate] batch done total=13 passed=13 failed=0 ms=1145
+=== boot pid=16995 ts=2026-08-31 16:23:03.424 cwd=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲 argv=/Users/test/.workbuddy/binaries/node/versions/22.22.2/bin/slidep-start --project PPT2_内容与案例参考 --filename AI宝儿_第2套_内容与案例参考.pptx ===
+[2026-08-31 16:23:03.423] [INFO ] [pid=16995] [start] invoked pid=16995 cwd=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲 daemonChild=no dev=no argv=[--project PPT2_内容与案例参考 --filename AI宝儿_第2套_内容与案例参考.pptx]
+[2026-08-31 16:23:03.424] [INFO ] [pid=16995] [start] previous instance pid=16942 found, sending SIGTERM ...
+[2026-08-31 16:23:03.659] [INFO ] [pid=16995] [start] spawning daemon projectDir=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考 filename=AI宝儿_第2套_内容与案例参考.pptx
+[2026-08-31 16:23:03.660] [INFO ] [pid=16995] [start] daemon spawned childPid=16999; waiting started ipc
+[2026-08-31 16:23:04.582] [INFO ] [pid=16995] [start] daemon started childPid=16999 ms=923
+=== boot pid=17400 ts=2026-08-31 16:35:00.209 cwd=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲 argv=/Users/test/.workbuddy/binaries/node/versions/22.22.2/bin/slidep-start --project PPT1_入门与上手 --filename AI宝儿_第1套_入门与上手.pptx ===
+[2026-08-31 16:35:00.206] [INFO ] [pid=17400] [start] invoked pid=17400 cwd=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲 daemonChild=no dev=no argv=[--project PPT1_入门与上手 --filename AI宝儿_第1套_入门与上手.pptx]
+[2026-08-31 16:35:00.210] [INFO ] [pid=17400] [start] previous instance pid=16938 found, sending SIGTERM ...
+[2026-08-31 16:35:00.351] [INFO ] [pid=17400] [start] spawning daemon projectDir=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT1_入门与上手 filename=AI宝儿_第1套_入门与上手.pptx
+[2026-08-31 16:35:00.353] [INFO ] [pid=17400] [start] daemon spawned childPid=17405; waiting started ipc
+[2026-08-31 16:35:01.298] [INFO ] [pid=17400] [start] daemon started childPid=17405 ms=947
+=== boot pid=17529 ts=2026-08-31 16:35:31.461 cwd=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲 argv=/Users/test/.workbuddy/binaries/node/versions/22.22.2/bin/slidep-start --project PPT2_内容与案例参考 --filename AI宝儿_第2套_内容与案例参考.pptx ===
+[2026-08-31 16:35:31.461] [INFO ] [pid=17529] [start] invoked pid=17529 cwd=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲 daemonChild=no dev=no argv=[--project PPT2_内容与案例参考 --filename AI宝儿_第2套_内容与案例参考.pptx]
+[2026-08-31 16:35:31.462] [INFO ] [pid=17529] [start] previous instance pid=16999 found, sending SIGTERM ...
+[2026-08-31 16:35:31.607] [INFO ] [pid=17529] [start] spawning daemon projectDir=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT2_内容与案例参考 filename=AI宝儿_第2套_内容与案例参考.pptx
+[2026-08-31 16:35:31.609] [INFO ] [pid=17529] [start] daemon spawned childPid=17534; waiting started ipc
+[2026-08-31 16:35:32.515] [INFO ] [pid=17529] [start] daemon started childPid=17534 ms=908
+=== boot pid=17650 ts=2026-08-31 16:35:52.476 cwd=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲 argv=/Users/test/.workbuddy/binaries/node/versions/22.22.2/bin/slidep-start --project PPT3_长效使用与协同保障 --filename AI宝儿_第3套_长效使用与协同保障.pptx ===
+[2026-08-31 16:35:52.475] [INFO ] [pid=17650] [start] invoked pid=17650 cwd=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲 daemonChild=no dev=no argv=[--project PPT3_长效使用与协同保障 --filename AI宝儿_第3套_长效使用与协同保障.pptx]
+[2026-08-31 16:35:52.476] [INFO ] [pid=17650] [start] previous instance pid=16947 found, sending SIGTERM ...
+[2026-08-31 16:35:52.623] [INFO ] [pid=17650] [start] spawning daemon projectDir=/Users/test/Downloads/ai-customer-service/AI宝儿三套PPT大纲/PPT3_长效使用与协同保障 filename=AI宝儿_第3套_长效使用与协同保障.pptx
+[2026-08-31 16:35:52.624] [INFO ] [pid=17650] [start] daemon spawned childPid=17654; waiting started ipc
+[2026-08-31 16:35:53.542] [INFO ] [pid=17650] [start] daemon started childPid=17654 ms=919

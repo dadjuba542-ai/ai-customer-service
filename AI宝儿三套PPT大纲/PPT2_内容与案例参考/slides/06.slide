@@ -1,0 +1,103 @@
+<Slide style={{
+    background: '#F7FAF6',
+    paddingTop: 20, paddingBottom: 20, paddingLeft: 72, paddingRight: 72,
+}}>
+    <Box style={{ height: 100, justifyContent: 'center' }}>
+        <Text style={{ fontSize: 36, fontWeight: 'bold', color: '#1E3A32' }}>产品模块怎么看</Text>
+        <Box style={{ width: 56, height: 4, borderRadius: 2, background: '#1F7A5C', marginTop: 8 }} />
+    </Box>
+
+    <Box style={{ height: 528, flexDirection: 'row', gap: 28 }}>
+        <Box style={{ width: 310 }}>
+            <Text style={{ fontSize: 26, fontWeight: 'bold', color: '#1F7A5C', lineHeight: 1.45 }}>
+                产品资料是提问的<br />"参考答案"
+            </Text>
+            <Text style={{ fontSize: 20, color: '#6B7C75', lineHeight: 1.6, marginTop: 20 }}>
+                产品模块里是公司整理好的标准说法。先把这些看过一遍，你问出来的问题会更专业，也更接近客户真正会问的那种。
+            </Text>
+            <Text style={{ fontSize: 20, color: '#6B7C75', lineHeight: 1.6, marginTop: 16 }}>
+                更重要的是：看过标准说法之后，你一眼就能发现 AI 回答里有没有跑偏。
+            </Text>
+            <Box style={{
+                marginTop: 24, background: 'rgba(31,122,92,0.08)', borderRadius: 14, padding: 16,
+            }}>
+                <Text style={{ fontSize: 19, color: '#1E3A32', lineHeight: 1.55 }}>
+                    别问"介绍一下这个产品"，这种问法拿到的答案最没有信息量。
+                </Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flex: 1, gap: 14 }}>
+            <Box style={{
+                flexDirection: 'row', gap: 18, background: '#FFFFFF', borderRadius: 14, padding: 20,
+                height: 130, boxShadow: '0 4px 20px rgba(30,58,50,0.08)',
+            }}>
+                <Box style={{ width: 50, height: 50, borderRadius: 25, background: '#1F7A5C', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#FFFFFF' }}>1</Text>
+                </Box>
+                <Box style={{ flex: 1, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#1E3A32' }}>先看分类</Text>
+                    <Text style={{ fontSize: 19, color: '#6B7C75', lineHeight: 1.55, marginTop: 6 }}>
+                        按分类找到你要了解的那条产品线，先看清公司一共有哪些品类、各自定位是什么，别一上来就搜一个名字。
+                    </Text>
+                </Box>
+            </Box>
+
+            <Box style={{
+                flexDirection: 'row', gap: 18, background: '#FFFFFF', borderRadius: 14, padding: 20,
+                height: 130, boxShadow: '0 4px 20px rgba(30,58,50,0.08)',
+            }}>
+                <Box style={{ width: 50, height: 50, borderRadius: 25, background: '#1F7A5C', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#FFFFFF' }}>2</Text>
+                </Box>
+                <Box style={{ flex: 1, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#1E3A32' }}>再看亮点</Text>
+                    <Text style={{ fontSize: 19, color: '#6B7C75', lineHeight: 1.55, marginTop: 6 }}>
+                        产品卡上被高亮出来的那几句，通常就是客户最常问、也最容易卡住的点，值得单独记一下。
+                    </Text>
+                </Box>
+            </Box>
+
+            <Box style={{
+                flexDirection: 'row', gap: 18, background: 'rgba(224,138,60,0.14)', borderRadius: 14, padding: 20,
+                height: 130,
+            }}>
+                <Box style={{ width: 50, height: 50, borderRadius: 25, background: '#E08A3C', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#FFFFFF' }}>3</Text>
+                </Box>
+                <Box style={{ flex: 1, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#1E3A32' }}>拎一点去问</Text>
+                    <Text style={{ fontSize: 19, color: '#6B7C75', lineHeight: 1.55, marginTop: 6 }}>
+                        把最关心的那一点单独拎出来提问。问一句"这个产品适合哪些人"，比问"介绍一下这个产品"有用得多。
+                    </Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 110, background: '#FFFFFF', borderRadius: 14, padding: 18, boxShadow: '0 4px 20px rgba(30,58,50,0.08)' }}>
+                <Text style={{ fontSize: 21, fontWeight: 'bold', color: '#1F7A5C' }}>看完产品卡，推荐这样问</Text>
+                <Box style={{ flexDirection: 'row', gap: 12, marginTop: 12 }}>
+                    <Box style={{ background: 'rgba(31,122,92,0.08)', borderRadius: 12, padding: 10 }}>
+                        <Text style={{ fontSize: 19, color: '#1E3A32' }}>适合哪些人？</Text>
+                    </Box>
+                    <Box style={{ background: 'rgba(31,122,92,0.08)', borderRadius: 12, padding: 10 }}>
+                        <Text style={{ fontSize: 19, color: '#1E3A32' }}>主要特点是什么？</Text>
+                    </Box>
+                    <Box style={{ background: 'rgba(31,122,92,0.08)', borderRadius: 12, padding: 10 }}>
+                        <Text style={{ fontSize: 19, color: '#1E3A32' }}>我该重点看哪一点？</Text>
+                    </Box>
+                </Box>
+            </Box>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            <svg width="20" height="20" viewBox="0 0 24 24">
+                <path d="M12 21C12 21 4 17 4 10C4 6 7 3 12 3C17 3 20 6 20 10C20 17 12 21 12 21Z" fill="#1F7A5C" opacity="0.75" />
+                <path d="M12 21V6" stroke="#FFFFFF" strokeWidth="1.6" fill="none" />
+            </svg>
+            <Text style={{ fontSize: 14, color: '#6B7C75' }}>AI宝儿 · 内容与案例参考</Text>
+        </Box>
+        <Text style={{ fontSize: 14, color: '#6B7C75' }}>06 / 13</Text>
+    </Box>
+</Slide>

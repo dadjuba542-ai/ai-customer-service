@@ -1,0 +1,107 @@
+<Slide style={{
+    background: '#F7FAF6',
+    paddingTop: 20, paddingBottom: 20, paddingLeft: 72, paddingRight: 72,
+}}>
+    <Box style={{ height: 100, justifyContent: 'center' }}>
+        <Text style={{ fontSize: 36, fontWeight: 'bold', color: '#1E3A32' }}>社区问答怎么用</Text>
+        <Box style={{ width: 56, height: 4, borderRadius: 2, background: '#1F7A5C', marginTop: 8 }} />
+    </Box>
+
+    <Box style={{ height: 528 }}>
+        <Box style={{ height: 290, background: '#FFFFFF', borderRadius: 14, padding: 16, boxShadow: '0 4px 20px rgba(30,58,50,0.08)' }}>
+            <svg width="1104" height="258" viewBox="0 0 1104 258">
+                <rect x="14" y="24" width="400" height="210" rx="16" fill="#F7FAF6" />
+                <rect x="14" y="24" width="400" height="210" rx="16" fill="none" stroke="#DDE7E1" strokeWidth="2" />
+                <rect x="40" y="50" width="280" height="18" rx="9" fill="#1F7A5C" />
+                <rect x="40" y="88" width="340" height="11" rx="5" fill="#A8D5BA" />
+                <rect x="40" y="112" width="300" height="11" rx="5" fill="#A8D5BA" />
+                <rect x="40" y="150" width="86" height="26" rx="13" fill="rgba(31,122,92,0.16)" />
+                <rect x="136" y="150" width="70" height="26" rx="13" fill="rgba(31,122,92,0.16)" />
+                <rect x="40" y="196" width="150" height="12" rx="6" fill="#A8D5BA" opacity="0.7" />
+
+                <rect x="440" y="24" width="650" height="96" rx="16" fill="rgba(168,213,186,0.42)" />
+                <circle cx="480" cy="72" r="22" fill="#FFFFFF" />
+                <circle cx="480" cy="66" r="8" fill="#1F7A5C" opacity="0.6" />
+                <path d="M460 92 a20 20 0 0 1 40 0 z" fill="#1F7A5C" opacity="0.6" />
+                <rect x="518" y="52" width="380" height="12" rx="6" fill="#1E3A32" opacity="0.55" />
+                <rect x="518" y="76" width="300" height="12" rx="6" fill="#1E3A32" opacity="0.35" />
+                <circle cx="1044" cy="72" r="20" fill="#FFFFFF" opacity="0.8" />
+                <path d="M1036 66 v-6 a8 8 0 0 1 16 0 v6 h6 a6 6 0 0 1 6 6 v12 a6 6 0 0 1 -6 6 h-22 a6 6 0 0 1 -6 -6 v-12 a6 6 0 0 1 6 -6 z" fill="#1F7A5C" />
+                <text x="1014" y="116" textAnchor="middle" fontSize="17" fill="#6B7C75" fontFamily="PingFang SC">12</text>
+
+                <rect x="440" y="146" width="650" height="64" rx="16" fill="#1F7A5C" />
+                <circle cx="480" cy="178" r="20" fill="#FFFFFF" opacity="0.25" />
+                <rect x="518" y="162" width="330" height="12" rx="6" fill="#FFFFFF" opacity="0.85" />
+                <rect x="518" y="184" width="220" height="10" rx="5" fill="#FFFFFF" opacity="0.5" />
+                <rect x="920" y="164" width="150" height="28" rx="14" fill="#E08A3C" />
+                <text x="995" y="184" textAnchor="middle" fontSize="17" fill="#FFFFFF" fontFamily="PingFang SC">审核中</text>
+
+                <text x="214" y="252" textAnchor="middle" fontSize="18" fill="#6B7C75" fontFamily="PingFang SC">别人提的问题</text>
+                <text x="765" y="252" textAnchor="middle" fontSize="18" fill="#6B7C75" fontFamily="PingFang SC">已公开的回复 · 可点赞</text>
+            </svg>
+        </Box>
+
+        <Box style={{
+            height: 214, marginTop: 14, flexDirection: 'row', gap: 20,
+            background: 'rgba(31,122,92,0.08)', borderRadius: 14, padding: 24,
+        }}>
+            <Box style={{ flex: 1, gap: 10 }}>
+                <Box style={{ flexDirection: 'row', gap: 14, alignItems: 'center' }}>
+                    <Box style={{ width: 40, height: 40, borderRadius: 20, background: '#1F7A5C', justifyContent: 'center', alignItems: 'center' }}>
+                        <FAIcon name='comments' style={{ fill: '#FFFFFF', width: 22, height: 22 }} />
+                    </Box>
+                    <Text style={{ fontSize: 20, color: '#1E3A32' }}>
+                        <span style={{ fontWeight: 'bold' }}>逛</span>：看别人都在问什么，这是现成的选题库和话题库
+                    </Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', gap: 14, alignItems: 'center' }}>
+                    <Box style={{ width: 40, height: 40, borderRadius: 20, background: '#1F7A5C', justifyContent: 'center', alignItems: 'center' }}>
+                        <FAIcon name='eye' style={{ fill: '#FFFFFF', width: 22, height: 22 }} />
+                    </Box>
+                    <Text style={{ fontSize: 20, color: '#1E3A32' }}>
+                        <span style={{ fontWeight: 'bold' }}>看</span>：看别人怎么回答，比自己从零憋一套说法快得多
+                    </Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', gap: 14, alignItems: 'center' }}>
+                    <Box style={{ width: 40, height: 40, borderRadius: 20, background: '#1F7A5C', justifyContent: 'center', alignItems: 'center' }}>
+                        <FAIcon name='thumbs-up' style={{ fill: '#FFFFFF', width: 22, height: 22 }} />
+                    </Box>
+                    <Text style={{ fontSize: 20, color: '#1E3A32' }}>
+                        <span style={{ fontWeight: 'bold' }}>赞</span>：觉得有用就点个赞，好内容会被更多人看到
+                    </Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', gap: 14, alignItems: 'center' }}>
+                    <Box style={{ width: 40, height: 40, borderRadius: 20, background: '#E08A3C', justifyContent: 'center', alignItems: 'center' }}>
+                        <FAIcon name='edit' style={{ fill: '#FFFFFF', width: 22, height: 22 }} />
+                    </Box>
+                    <Text style={{ fontSize: 20, color: '#1E3A32' }}>
+                        <span style={{ fontWeight: 'bold' }}>发</span>：自己也能回复，默认以「匿名用户」的身份发布
+                    </Text>
+                </Box>
+            </Box>
+
+            <Box style={{
+                width: 340, background: '#FFFFFF', borderRadius: 14, padding: 18, justifyContent: 'center',
+            }}>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <FAIcon name='shield' style={{ fill: '#E08A3C', width: 24, height: 24 }} />
+                    <Text style={{ fontSize: 21, fontWeight: 'bold', color: '#1E3A32' }}>回复要先审核</Text>
+                </Box>
+                <Text style={{ fontSize: 19, color: '#6B7C75', lineHeight: 1.55, marginTop: 10 }}>
+                    新回复提交后是"审核中"，这段时间只有你自己看得见——不是没发出去。审核通过后才会对所有人生效。
+                </Text>
+            </Box>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            <svg width="20" height="20" viewBox="0 0 24 24">
+                <path d="M12 21C12 21 4 17 4 10C4 6 7 3 12 3C17 3 20 6 20 10C20 17 12 21 12 21Z" fill="#1F7A5C" opacity="0.75" />
+                <path d="M12 21V6" stroke="#FFFFFF" strokeWidth="1.6" fill="none" />
+            </svg>
+            <Text style={{ fontSize: 14, color: '#6B7C75' }}>AI宝儿 · 五期上手课</Text>
+        </Box>
+        <Text style={{ fontSize: 14, color: '#6B7C75' }}>28 / 33</Text>
+    </Box>
+</Slide>

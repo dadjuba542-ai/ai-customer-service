@@ -117,7 +117,9 @@
 /* ===== Hot Questions Tag Cloud ===== */
 .hot-tags { display: flex; flex-wrap: wrap; gap: 8px; padding: 4px 0; }
 .hot-tag {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   padding: 6px 14px;
   background: var(--white);
   border: 1px solid var(--slate-100);

@@ -1,0 +1,110 @@
+/* ===== 富文本渲染样式 =====
+ * 后台 Quill 容器（.ql-container.ql-snow .ql-editor）与前台渲染容器（.rich-text）共用同一套定义，
+ * 保证「编辑所见 = 前台所见」。
+ *
+ * 前台不加载 quill.snow.css（后台才由 admin.js 动态加载），因此对齐、字号等 class 在这里必须
+ * 自带完整定义，否则后端即使放行了 class，前台也只是一段没有样式的 HTML。
+ *
+ * 所有 class 必须同步登记到 services/content_security.py 的 CLASS_PATTERN，否则保存时被清空。
+ * 当前仅放行 class，不放行 style 属性 —— 字体颜色走预设色板而非自由取值，XSS 面不扩大。
+ */
+
+/* ===== 字号（editor 选择器需强于 quill.snow.css 的 .ql-snow .ql-editor .ql-size-*） ===== */
+.ql-container.ql-snow .ql-editor .ql-size-small,
+.rich-text .ql-size-small { font-size: 0.875em; }
+.ql-container.ql-snow .ql-editor .ql-size-large,
+.rich-text .ql-size-large { font-size: 1.25em; }
+.ql-container.ql-snow .ql-editor .ql-size-huge,
+.rich-text .ql-size-huge { font-size: 1.5em; }
+
+/* ===== 对齐 ===== */
+.ql-container.ql-snow .ql-editor .ql-align-center,
+.rich-text .ql-align-center { text-align: center; }
+.ql-container.ql-snow .ql-editor .ql-align-right,
+.rich-text .ql-align-right { text-align: right; }
+.ql-container.ql-snow .ql-editor .ql-align-justify,
+.rich-text .ql-align-justify { text-align: justify; }
+
+/* ===== 文字颜色（预设色板，与 admin.js 的 TEXT_COLOR_PALETTE 对应） ===== */
+.ql-container.ql-snow .ql-editor .ql-color-dark,
+.rich-text .ql-color-dark { color: #333333; }
+.ql-container.ql-snow .ql-editor .ql-color-gray,
+.rich-text .ql-color-gray { color: #666666; }
+.ql-container.ql-snow .ql-editor .ql-color-muted,
+.rich-text .ql-color-muted { color: #999999; }
+.ql-container.ql-snow .ql-editor .ql-color-red,
+.rich-text .ql-color-red { color: #c0392b; }
+.ql-container.ql-snow .ql-editor .ql-color-orange,
+.rich-text .ql-color-orange { color: #e67e22; }
+.ql-container.ql-snow .ql-editor .ql-color-amber,
+.rich-text .ql-color-amber { color: #f39c12; }
+.ql-container.ql-snow .ql-editor .ql-color-green,
+.rich-text .ql-color-green { color: #27ae60; }
+.ql-container.ql-snow .ql-editor .ql-color-teal,
+.rich-text .ql-color-teal { color: #16a085; }
+.ql-container.ql-snow .ql-editor .ql-color-blue,
+.rich-text .ql-color-blue { color: #2980b9; }
+.ql-container.ql-snow .ql-editor .ql-color-purple,
+.rich-text .ql-color-purple { color: #8e44ad; }
+.ql-container.ql-snow .ql-editor .ql-color-pink,
+.rich-text .ql-color-pink { color: #e84393; }
+.ql-container.ql-snow .ql-editor .ql-color-brown,
+.rich-text .ql-color-brown { color: #8b5a2b; }
+
+/* ===== 文字背景高亮（与 admin.js 的 TEXT_BG_PALETTE 对应） ===== */
+.ql-container.ql-snow .ql-editor .ql-bg-yellow,
+.rich-text .ql-bg-yellow { background-color: #fff3a3; }
+.ql-container.ql-snow .ql-editor .ql-bg-mint,
+.rich-text .ql-bg-mint { background-color: #b9f0d8; }
+.ql-container.ql-snow .ql-editor .ql-bg-peach,
+.rich-text .ql-bg-peach { background-color: #ffd9bd; }
+.ql-container.ql-snow .ql-editor .ql-bg-sky,
+.rich-text .ql-bg-sky { background-color: #cfe4ff; }
+.ql-container.ql-snow .ql-editor .ql-bg-rose,
+.rich-text .ql-bg-rose { background-color: #ffd6e8; }
+.ql-container.ql-snow .ql-editor .ql-bg-silver,
+.rich-text .ql-bg-silver { background-color: #e6e6e6; }
+
+/* ===== 行间距（倍数，与 admin.js 的 LINE_HEIGHT_OPTIONS 对应） ===== */
+.ql-container.ql-snow .ql-editor .ql-line-1,
+.rich-text .ql-line-1 { line-height: 1; }
+.ql-container.ql-snow .ql-editor .ql-line-125,
+.rich-text .ql-line-125 { line-height: 1.25; }
+.ql-container.ql-snow .ql-editor .ql-line-15,
+.rich-text .ql-line-15 { line-height: 1.5; }
+.ql-container.ql-snow .ql-editor .ql-line-175,
+.rich-text .ql-line-175 { line-height: 1.75; }
+.ql-container.ql-snow .ql-editor .ql-line-2,
+.rich-text .ql-line-2 { line-height: 2; }
+.ql-container.ql-snow .ql-editor .ql-line-25,
+.rich-text .ql-line-25 { line-height: 2.5; }
+.ql-container.ql-snow .ql-editor .ql-line-3,
+.rich-text .ql-line-3 { line-height: 3; }
+
+/* ===== 段间距（px，与 admin.js 的 PARAGRAPH_GAP_OPTIONS 对应） ===== */
+.ql-container.ql-snow .ql-editor .ql-para-0,
+.rich-text .ql-para-0 { margin-bottom: 0; }
+.ql-container.ql-snow .ql-editor .ql-para-8,
+.rich-text .ql-para-8 { margin-bottom: 8px; }
+.ql-container.ql-snow .ql-editor .ql-para-12,
+.rich-text .ql-para-12 { margin-bottom: 12px; }
+.ql-container.ql-snow .ql-editor .ql-para-20,
+.rich-text .ql-para-20 { margin-bottom: 20px; }
+.ql-container.ql-snow .ql-editor .ql-para-32,
+.rich-text .ql-para-32 { margin-bottom: 32px; }
+.ql-container.ql-snow .ql-editor .ql-para-48,
+.rich-text .ql-para-48 { margin-bottom: 48px; }
+
+/* ===== 格式刷（后台工具栏自定义按钮） ===== */
+.ql-snow .ql-toolbar button.ql-formatpainter {
+  color: #444;
+  font-size: 15px;
+  line-height: 1;
+}
+.ql-snow .ql-toolbar button.ql-formatpainter.ql-active {
+  color: #06c;
+  background: #e6f1fb;
+}
+.ql-container.ql-snow .ql-editor.format-painter-armed {
+  cursor: crosshair;
+}

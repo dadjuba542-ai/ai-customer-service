@@ -2,6 +2,7 @@ import os
 import json
 from flask import Blueprint, request, jsonify, current_app
 from models import get_all_agent_configs, get_agent_config, update_agent_config, create_agent_config, delete_agent_config, get_setting, set_setting, list_lead_requests, update_lead_request, get_news_page
+from models import get_agent_options, resolve_question_bindings, parse_question_binding_payload, MAX_PRESET_EXAMPLE_QUESTIONS
 from config import Config
 from routes.auth import admin_required
 from services.image_service import is_allowed_image_filename, process_uploaded_image
@@ -180,25 +181,28 @@ def blocked_keywords(current_user):
 @admin_bp.route('/settings/example-questions', methods=['GET', 'PUT'])
 @admin_required
 def example_questions(current_user):
-    default_questions = ['这个产品适合什么人？', '产品应该怎么使用？', '帮我推荐一个产品方案', '帮我写一段客户沟通话术']
+    default_questions = [
+        {'text': '这个产品适合什么人？', 'agent_id': 'aura'},
+        {'text': '产品应该怎么使用？', 'agent_id': 'coder'},
+        {'text': '帮我推荐一个产品方案', 'agent_id': 'aura'},
+        {'text': '帮我写一段客户沟通话术', 'agent_id': 'translator'},
+    ]
     if request.method == 'PUT':
         data = request.get_json(silent=True) or {}
         questions = data.get('questions') or []
         if not isinstance(questions, list):
             return jsonify({'error': '问题格式不正确'}), 400
-        questions = [str(item).strip() for item in questions if str(item).strip()][:6]
-        if not questions:
-            return jsonify({'error': '至少保留一条示例问题'}), 400
-        if any(len(item) > 80 for item in questions):
-            return jsonify({'error': '单条问题不能超过80字'}), 400
-        set_setting('example_questions', json.dumps(questions, ensure_ascii=False))
-        return jsonify({'message': '示例问题已更新', 'questions': questions})
+        try:
+            items = parse_question_binding_payload(questions, limit=MAX_PRESET_EXAMPLE_QUESTIONS)
+        except ValueError as exc:
+            return jsonify({'error': str(exc)}), 400
+        set_setting('example_questions', json.dumps(items, ensure_ascii=False))
+        return jsonify({'message': '示例问题已更新', 'questions': items})
     raw = get_setting('example_questions', '[]')
-    try:
-        questions = json.loads(raw)
-    except (TypeError, ValueError):
-        questions = []
-    return jsonify({'questions': questions if isinstance(questions, list) and questions else default_questions})
+    questions = resolve_question_bindings(raw, limit=MAX_PRESET_EXAMPLE_QUESTIONS)
+    if not questions:
+        questions = resolve_question_bindings(default_questions, limit=MAX_PRESET_EXAMPLE_QUESTIONS)
+    return jsonify({'questions': questions, 'agents': get_agent_options()})
 
 
 @admin_bp.route('/settings/speech', methods=['GET', 'PUT'])

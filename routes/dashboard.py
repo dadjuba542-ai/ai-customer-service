@@ -2,9 +2,19 @@ import json
 
 from flask import Blueprint, request, jsonify
 from models import get_db_connection, get_feedback_reasons, get_feedback_stats, get_setting, set_setting
+from models import get_agent_options, parse_question_binding_payload, MAX_PRESET_HOT_QUESTIONS
 from routes.auth import admin_required
 
 dashboard_bp = Blueprint('dashboard', __name__)
+
+def agent_id_by_type(query_type):
+    """按历史记录的 query_type 反查智能体 agent_id，供后台预填绑定。"""
+    if not query_type:
+        return ''
+    for agent in get_agent_options():
+        if agent.get('type') == query_type:
+            return agent['agent_id']
+    return ''
 
 def date_filter():
     start = request.args.get('start_date')
@@ -99,7 +109,12 @@ def get_hot_questions(current_user):
     dclause, dparams = date_filter()
     conn = get_db_connection()
     rows = conn.execute(
-        f'SELECT user_message, COUNT(DISTINCT user_id) as users, COUNT(*) as total FROM chat_history WHERE 1=1{dclause} GROUP BY user_message ORDER BY users DESC LIMIT 30',
+        f'''SELECT user_message,
+                   COUNT(DISTINCT user_id) as users,
+                   COUNT(*) as total,
+                   MAX(query_type) as query_type
+            FROM chat_history WHERE 1=1{dclause}
+            GROUP BY user_message ORDER BY users DESC LIMIT 30''',
         dparams
     ).fetchall()
     conn.close()
@@ -108,8 +123,14 @@ def get_hot_questions(current_user):
         msg = r['user_message']
         if any(k in msg for k in blocked):
             continue
-        result.append({'text': msg, 'users': r['users'], 'total': r['total']})
-    return jsonify({'questions': result[:20]})
+        result.append({
+            'text': msg,
+            'users': r['users'],
+            'total': r['total'],
+            # 该问题历史上归属的智能体，作为后台绑定的默认值
+            'agent_id': agent_id_by_type(r['query_type']),
+        })
+    return jsonify({'questions': result[:20], 'agents': get_agent_options()})
 
 @dashboard_bp.route('/user-stats')
 @admin_required
@@ -213,8 +234,12 @@ def feedback_reasons(current_user):
 def save_hot_questions(current_user):
     data = request.get_json(silent=True) or {}
     questions = data.get('questions', [])
-    set_setting('approved_hot_questions', json.dumps(questions, ensure_ascii=False))
-    return jsonify({'message': 'Saved', 'count': len(questions)})
+    try:
+        items = parse_question_binding_payload(questions, limit=MAX_PRESET_HOT_QUESTIONS)
+    except ValueError as exc:
+        return jsonify({'error': str(exc)}), 400
+    set_setting('approved_hot_questions', json.dumps(items, ensure_ascii=False))
+    return jsonify({'message': 'Saved', 'count': len(items), 'questions': items})
 
 @dashboard_bp.route('/team-question-stats')
 @admin_required

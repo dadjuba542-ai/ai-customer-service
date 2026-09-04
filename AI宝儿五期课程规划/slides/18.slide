@@ -1,0 +1,123 @@
+<Slide style={{
+    background: '#F7FAF6',
+    paddingTop: 20, paddingBottom: 20, paddingLeft: 72, paddingRight: 72,
+}}>
+    <Box style={{ height: 100, justifyContent: 'center' }}>
+        <Text style={{ fontSize: 36, fontWeight: 'bold', color: '#1E3A32' }}>为什么「先读后问」更好</Text>
+        <Box style={{ width: 56, height: 4, borderRadius: 2, background: '#1F7A5C', marginTop: 8 }} />
+    </Box>
+
+    <Box style={{ height: 528, flexDirection: 'row', gap: 28 }}>
+        <Box style={{ width: 270, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 180, fontWeight: 'bold', color: '#E08A3C', lineHeight: 1, letterSpacing: -4 }}>2</Text>
+            <Text style={{ fontSize: 30, fontWeight: 'bold', color: '#1E3A32', marginTop: 14 }}>种问法</Text>
+            <Text style={{ fontSize: 30, fontWeight: 'bold', color: '#1E3A32' }}>两种结果</Text>
+            <Box style={{ width: 72, height: 5, borderRadius: 3, background: '#1F7A5C', marginTop: 20 }} />
+            <Text style={{ fontSize: 20, color: '#6B7C75', lineHeight: 1.6, marginTop: 18 }}>
+                少读三分钟，<br />往往要多问四轮
+            </Text>
+        </Box>
+
+        <Box style={{ flex: 1, flexDirection: 'row', gap: 20 }}>
+            <Box style={{
+                width: 540, height: 528, background: '#FFFFFF', borderRadius: 14, padding: 26,
+                boxShadow: '0 4px 20px rgba(30,58,50,0.08)',
+            }}>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 44, height: 44, borderRadius: 22, background: '#1F7A5C', justifyContent: 'center', alignItems: 'center' }}>
+                        <FAIcon name='book-open' style={{ fill: '#FFFFFF', width: 24, height: 24 }} />
+                    </Box>
+                    <Text style={{ fontSize: 27, fontWeight: 'bold', color: '#1F7A5C' }}>先读一篇，再提问</Text>
+                </Box>
+
+                <Box style={{ marginTop: 20, background: 'rgba(31,122,92,0.08)', borderRadius: 12, padding: 16 }}>
+                    <Text style={{ fontSize: 20, color: '#1E3A32', lineHeight: 1.55 }}>
+                        「我看到文章里说要按周期调理，我这种经常出差、作息不规律的情况，周期要怎么安排？」
+                    </Text>
+                </Box>
+
+                <Box style={{ marginTop: 20, gap: 12 }}>
+                    <Box style={{ flexDirection: 'row', gap: 12, alignItems: 'flex-start' }}>
+                        <FAIcon name='check-circle' style={{ fill: '#1F7A5C', width: 24, height: 24 }} />
+                        <Text style={{ fontSize: 20, color: '#1E3A32', lineHeight: 1.55, flex: 1 }}>
+                            问句里自带背景词：出差、作息、周期
+                        </Text>
+                    </Box>
+                    <Box style={{ flexDirection: 'row', gap: 12, alignItems: 'flex-start' }}>
+                        <FAIcon name='check-circle' style={{ fill: '#1F7A5C', width: 24, height: 24 }} />
+                        <Text style={{ fontSize: 20, color: '#1E3A32', lineHeight: 1.55, flex: 1 }}>
+                            AI 一上来就知道你的场景，第一轮就给得出能直接用的答案
+                        </Text>
+                    </Box>
+                    <Box style={{ flexDirection: 'row', gap: 12, alignItems: 'flex-start' }}>
+                        <FAIcon name='check-circle' style={{ fill: '#1F7A5C', width: 24, height: 24 }} />
+                        <Text style={{ fontSize: 20, color: '#1E3A32', lineHeight: 1.55, flex: 1 }}>
+                            拿到的答案可以直接转给客户，不用自己再加工一遍
+                        </Text>
+                    </Box>
+                </Box>
+
+                <Box style={{ marginTop: 'auto', background: '#1F7A5C', borderRadius: 12, padding: 16 }}>
+                    <Text style={{ fontSize: 21, fontWeight: 'bold', color: '#FFFFFF' }}>
+                        通常 1–2 轮就能问到位
+                    </Text>
+                </Box>
+            </Box>
+
+            <Box style={{
+                flex: 1, height: 528, background: 'rgba(107,124,117,0.1)', borderRadius: 14, padding: 24,
+            }}>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 44, height: 44, borderRadius: 22, background: '#6B7C75', justifyContent: 'center', alignItems: 'center' }}>
+                        <FAIcon name='comment' style={{ fill: '#FFFFFF', width: 24, height: 24 }} />
+                    </Box>
+                    <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#6B7C75' }}>上来就问</Text>
+                </Box>
+
+                <Box style={{ marginTop: 20, background: '#FFFFFF', borderRadius: 12, padding: 16 }}>
+                    <Text style={{ fontSize: 20, color: '#6B7C75', lineHeight: 1.55 }}>
+                        「这个产品怎么吃？」
+                    </Text>
+                </Box>
+
+                <Box style={{ marginTop: 20, gap: 12 }}>
+                    <Box style={{ flexDirection: 'row', gap: 12, alignItems: 'flex-start' }}>
+                        <FAIcon name='times-circle' style={{ fill: '#6B7C75', width: 24, height: 24 }} />
+                        <Text style={{ fontSize: 19, color: '#6B7C75', lineHeight: 1.55, flex: 1 }}>
+                            没有任何背景，AI 只能给通用说法
+                        </Text>
+                    </Box>
+                    <Box style={{ flexDirection: 'row', gap: 12, alignItems: 'flex-start' }}>
+                        <FAIcon name='times-circle' style={{ fill: '#6B7C75', width: 24, height: 24 }} />
+                        <Text style={{ fontSize: 19, color: '#6B7C75', lineHeight: 1.55, flex: 1 }}>
+                            你得自己补充好几轮，它才知道你到底是谁
+                        </Text>
+                    </Box>
+                    <Box style={{ flexDirection: 'row', gap: 12, alignItems: 'flex-start' }}>
+                        <FAIcon name='times-circle' style={{ fill: '#6B7C75', width: 24, height: 24 }} />
+                        <Text style={{ fontSize: 19, color: '#6B7C75', lineHeight: 1.55, flex: 1 }}>
+                            问到后面容易忘了最初要问什么
+                        </Text>
+                    </Box>
+                </Box>
+
+                <Box style={{ marginTop: 'auto', background: '#6B7C75', borderRadius: 12, padding: 16 }}>
+                    <Text style={{ fontSize: 21, fontWeight: 'bold', color: '#FFFFFF' }}>
+                        通常要 3–4 轮
+                    </Text>
+                </Box>
+            </Box>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            <svg width="20" height="20" viewBox="0 0 24 24">
+                <path d="M12 21C12 21 4 17 4 10C4 6 7 3 12 3C17 3 20 6 20 10C20 17 12 21 12 21Z" fill="#1F7A5C" opacity="0.75" />
+                <path d="M12 21V6" stroke="#FFFFFF" strokeWidth="1.6" fill="none" />
+            </svg>
+            <Text style={{ fontSize: 14, color: '#6B7C75' }}>AI宝儿 · 五期上手课</Text>
+        </Box>
+        <Text style={{ fontSize: 14, color: '#6B7C75' }}>18 / 33</Text>
+    </Box>
+</Slide>
