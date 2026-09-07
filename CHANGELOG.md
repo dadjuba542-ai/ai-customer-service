@@ -40,8 +40,10 @@
 - **修复：编辑器内容写入绕过数据模型**。三处 `root.innerHTML = ...` 统一改为
   `clipboard.convert + setContents`，Delta 模型与 DOM 保持同步
 - **修复：菜单栏错乱**。格式刷按钮改内联 SVG 图标（原 Phosphor 字形缺失时按钮是空位），
-  并包进 `.ql-formats` 分组；修复工具栏 flex 压缩导致下拉标签竖排（如「左对齐」叠成两行）
-- 前端缓存版本号：`admin.js` / `rich-text.css` → `?v=20260907-prodfix1`
+  并包进 `.ql-formats` 分组；修复窄窗口下下拉中文标签逐字竖排（如「左对齐」叠成三行——
+  工具栏下拉是 float 收缩宽度，中文单字可断行导致宽度被压到单字；现强制整词不换行，
+  放不下时整组掉到下一行）
+- 前端缓存版本号：`admin.js` → `?v=20260907-prodfix1`；`rich-text.css` → `?v=20260907-prodfix2`
 
 ### 验证
 

@@ -103,11 +103,14 @@
   color: #06c;
   background: #e6f1fb;
 }
-/* Quill 2 的工具栏是 flex + wrap，组被压缩时下拉标签会竖排换行（如「左对齐」叠成两行），
-   禁止收缩并禁止 label 换行，放不下时整组换行而不是挤压变形 */
-.ql-snow .ql-toolbar .ql-formats { flex-shrink: 0; }
-.ql-snow .ql-toolbar .ql-picker-label,
-.ql-snow .ql-toolbar .ql-picker-item { white-space: nowrap; }
+/* 下拉中文标签防竖排。
+   注意：工具栏 DOM 是 <div class="ql-toolbar ql-snow">，两个 class 在同一个元素上，
+   必须写联合选择器 .ql-snow.ql-toolbar；写成后代选择器 .ql-snow .ql-toolbar 永远不匹配。
+   背景：工具栏是 block 布局、下拉是 float:left 收缩宽度，中文每个字都是合法断行点，
+   空间不足时 float 会收缩到单字宽导致「左对齐」逐字竖排（英文单词不可断所以官方没这问题），
+   nowrap 后整词成为最小宽度，放不下时整组掉到下一行。 */
+.ql-snow.ql-toolbar .ql-picker-label,
+.ql-snow.ql-toolbar .ql-picker-item { white-space: nowrap; }
 .ql-container.ql-snow .ql-editor.format-painter-armed {
   cursor: crosshair;
 }
