@@ -8,7 +8,7 @@ import uuid
 from datetime import datetime
 
 from config import Config
-from models import get_agent_config, get_chat_history_by_ids, get_db_connection, get_setting, get_user_by_username, set_setting
+from models import create_user, get_agent_config, get_chat_history_by_ids, get_db_connection, get_setting, get_user_by_username, set_setting
 
 
 OPEN_STATUSES = ('queued', 'assigned', 'active')
@@ -685,16 +685,30 @@ def list_cs_agents():
     return [dict(row) for row in rows]
 
 
-def add_cs_agent(operator_id, username, display_name='', max_concurrent=3):
-    """添加坐席（白名单注册入口）。要求用户存在且为管理员。"""
+def add_cs_agent(operator_id, username, display_name='', max_concurrent=3, password=None):
+    """添加坐席。人工账号体系：
+    - 用户名不存在 + 提供初始密码 → 创建非管理员人工账号（is_admin=0）并加入名单；
+    - 用户名已存在 → 直接加入名单（不再要求必须是管理员）；
+    - 用户名不存在且未提供密码 → 引导填写初始密码。"""
+    from routes.auth import hash_password
     username = str(username or '').strip()
     if not username:
-        raise HandoffError('请填写要添加的管理员用户名')
+        raise HandoffError('请填写人工账号用户名')
     display_name = str(display_name or '').strip()[:40]
     max_concurrent = max(1, min(int(max_concurrent if max_concurrent is not None else 3), 10))
     user = get_user_by_username(username)
-    if not user or not user.get('is_admin'):
-        raise HandoffError('该用户不存在或不是管理员账号', 404)
+    if not user:
+        password = str(password or '')
+        if not password:
+            raise HandoffError('该用户名不存在。如需新建人工账号，请填写初始密码', 404)
+        if not 10 <= len(password) <= 128:
+            raise HandoffError('初始密码长度必须为 10 到 128 个字符', 400)
+        new_user_id = create_user(username, hash_password(password), is_admin=0)
+        if not new_user_id:
+            raise HandoffError('创建人工账号失败，请稍后重试', 500)
+        user = get_user_by_username(username)
+        if not user:
+            raise HandoffError('创建人工账号失败，请稍后重试', 500)
     if not display_name:
         display_name = user.get('username') or username
     conn = get_db_connection()

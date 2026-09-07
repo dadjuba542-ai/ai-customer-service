@@ -8,7 +8,7 @@ from flask import Blueprint, g, request, jsonify
 from functools import wraps
 from werkzeug.security import generate_password_hash, check_password_hash
 from config import Config
-from models import create_user, get_setting, get_user_by_username, get_user_by_id, update_user_password_hash
+from models import create_user, get_db_connection, get_setting, get_user_by_username, get_user_by_id, update_user_password_hash
 from services.security_service import rate_limit
 
 auth_bp = Blueprint('auth', __name__)
@@ -127,6 +127,16 @@ def token_required(f):
         return f(current_user, *args, **kwargs)
     return decorated
 
+def is_seat_agent(user_id):
+    """判断用户是否在人工客服坐席名单中（cs_agents 白名单）。"""
+    conn = get_db_connection()
+    try:
+        row = conn.execute('SELECT 1 FROM cs_agents WHERE user_id = ?', (user_id,)).fetchone()
+        return bool(row)
+    finally:
+        conn.close()
+
+
 def admin_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
@@ -142,6 +152,27 @@ def admin_required(f):
         current_user = identity['user']
         if not current_user.get('is_admin'):
             return jsonify({'error': 'Admin access required'}), 403
+        g.request_identity = identity
+        return f(current_user, *args, **kwargs)
+    return decorated
+
+
+def agent_required(f):
+    """人工客服坐席权限：管理员，或在 cs_agents 名单内的专用人工账号。"""
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        try:
+            payload = _decode_request_token()
+            identity = _identity_from_payload(payload, allow_guest=False, require_user=True) if payload else None
+        except jwt.ExpiredSignatureError:
+            return jsonify({'error': 'Token has expired'}), 401
+        except jwt.InvalidTokenError:
+            return jsonify({'error': 'Invalid token'}), 401
+        if not identity:
+            return jsonify({'error': 'User token is required'}), 401
+        current_user = identity['user']
+        if not current_user.get('is_admin') and not is_seat_agent(current_user['user_id']):
+            return jsonify({'error': '客服坐席权限验证失败'}), 403
         g.request_identity = identity
         return f(current_user, *args, **kwargs)
     return decorated
@@ -200,7 +231,8 @@ def login():
         'message': 'Login successful',
         'token': token,
         'user_id': user['user_id'],
-        'is_admin': user.get('is_admin', 0)
+        'is_admin': user.get('is_admin', 0),
+        'is_agent': is_seat_agent(user['user_id']),
     })
 
 

@@ -351,6 +351,34 @@ def main():
         assert_true(not offline_reply.get_json()['message']['auto_closed'], '离线留言回复不应立即关闭')
         close_offline = client.post(f"/api/admin/handoff/{offline_session['session_id']}/close", headers=admin_headers, json={'reason': 'done'})
         assert_true(close_offline.status_code == 200, close_offline.get_data(as_text=True))
+
+        # 人工账号体系：管理员创建非管理员人工账号，用其登录工作台接待
+        seat_add = client.post('/api/admin/handoff/agents', headers=admin_headers, json={
+            'username': 'nutritionist02', 'display_name': '营养师小李', 'max_concurrent': 2,
+            'password': 'seat-password-123',
+        })
+        assert_true(seat_add.status_code == 201, seat_add.get_data(as_text=True))
+        no_pwd = client.post('/api/admin/handoff/agents', headers=admin_headers, json={'username': 'nutritionist03'})
+        assert_true(no_pwd.status_code == 404, no_pwd.get_data(as_text=True))
+        weak_pwd = client.post('/api/admin/handoff/agents', headers=admin_headers, json={'username': 'nutritionist03', 'password': 'short'})
+        assert_true(weak_pwd.status_code == 400, weak_pwd.get_data(as_text=True))
+        seat_login = client.post('/api/auth/login', json={'username': 'nutritionist02', 'password': 'seat-password-123'})
+        assert_true(seat_login.status_code == 200, seat_login.get_data(as_text=True))
+        seat_data = seat_login.get_json()
+        assert_true(seat_data['is_admin'] == 0 and seat_data['is_agent'], seat_data)
+        seat_headers = {'Authorization': f"Bearer {seat_data['token']}"}
+        seat_profile = client.get('/api/user/profile', headers=seat_headers).get_json()
+        assert_true(seat_profile['is_agent'] and not seat_profile['is_admin'], seat_profile)
+        seat_online = client.post('/api/admin/handoff/agent/status', headers=seat_headers, json={'online': True})
+        assert_true(seat_online.status_code == 200, seat_online.get_data(as_text=True))
+        assert_true(client.get('/api/admin/handoff/agent/me', headers=seat_headers).status_code == 200, 'seat must access agent/me')
+        assert_true(client.get('/api/admin/handoff/quick-replies?enabled=1', headers=seat_headers).status_code == 200, 'seat must load quick replies')
+        assert_true(client.get('/api/admin/handoff/agents', headers=seat_headers).status_code == 403, 'seat must not manage agent list')
+        assert_true(client.post('/api/admin/handoff/quick-replies', headers=seat_headers, json={'title': 'x', 'content': 'y'}).status_code == 403, 'seat must not create quick replies')
+        assert_true(client.get('/api/admin/handoff/agent/me').status_code == 401, 'anonymous must be rejected on agent api')
+        seat_offline = client.post('/api/admin/handoff/agent/status', headers=seat_headers, json={'online': False})
+        assert_true(seat_offline.status_code == 200, seat_offline.get_data(as_text=True))
+
         from services.handoff_service import start_handoff
         identities = [
             {'user_id': f'concurrent-user-{index}', 'team_name': '营养一组', 'member_name': f'并发用户{index}'}

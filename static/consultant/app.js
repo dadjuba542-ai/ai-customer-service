@@ -128,7 +128,7 @@ async function login(event) {
       body: JSON.stringify({ username: $('login-username').value.trim(), password: $('login-password').value }),
     });
     const data = await response.json().catch(() => ({}));
-    if (!response.ok || !data.is_admin) throw new Error(data.error || '该账号没有后台权限');
+    if (!response.ok || !(data.is_admin || data.is_agent)) throw new Error(data.error || '该账号没有工作台权限');
     state.token = data.token;
     localStorage.setItem('token', data.token);
     $('settings-modal').hidden = true;
@@ -143,10 +143,12 @@ async function login(event) {
 async function bootWorkspace() {
   try {
     state.user = await api('/api/user/profile');
-    if (!state.user.is_admin) throw new Error('该账号没有后台权限');
+    if (!state.user.is_admin && !state.user.is_agent) throw new Error('该账号没有工作台权限');
     $('login-page').hidden = true;
     $('workspace').hidden = false;
     $('agent-name').textContent = '在线营养师';
+    // 全局「AI 与转接设置」仅管理员可见；人工账号只做接待
+    $('settings-button').hidden = !state.user.is_admin;
     const me = await api('/api/admin/handoff/agent/me');
     state.agent = me.agent;
     if (state.agent) {

@@ -1154,12 +1154,23 @@ function setupFormatPainter(quill) {
   if (!toolbar || !toolbar.container) return;
   if (toolbar.container.querySelector('.ql-formatpainter')) return;
 
+  // 和 Quill 其他组一样包一层 .ql-formats：裸 button 直接挂在 .ql-toolbar 上会失去
+  // 组间距，视觉上孤立错位；图标用内联 SVG（与 Quill 自带图标同风格），不再依赖
+  // Phosphor 字体里是否有 paint-brush 字形——之前用 <i class="ph">，图标缺失时按钮
+  // 就是一个看不见的空位，看起来像「菜单栏错乱」
+  const group = document.createElement('span');
+  group.className = 'ql-formats';
   const btn = document.createElement('button');
   btn.type = 'button';
   btn.className = 'ql-formatpainter';
   btn.title = '格式刷：先选中源文字，单击刷一次，双击可连续刷，Esc 退出';
-  btn.innerHTML = '<i class="ph ph-paint-brush"></i>';
-  toolbar.container.appendChild(btn);
+  btn.innerHTML =
+    '<svg viewBox="0 0 18 18" aria-hidden="true">' +
+    '<path d="M15 3l-5.2 5.2" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>' +
+    '<path d="M8.6 7.2l2.2 2.2-4.2 4.2a1.6 1.6 0 01-2.2-2.2z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/>' +
+    '</svg>';
+  group.appendChild(btn);
+  toolbar.container.appendChild(group);
 
   let clickTimer = null;
   btn.addEventListener('click', () => {
@@ -1199,6 +1210,17 @@ function setupFormatPainter(quill) {
     });
     painterEscBound = true;
   }
+}
+
+// 填充/清空编辑器内容的唯一入口。
+// 不能直接赋值 quill.root.innerHTML：那只改了 DOM，Quill 内部的 Delta 模型不知道，
+// 之后的光标、格式识别、撤销都会错。必须走 clipboard.convert -> setContents 同步模型。
+function setEditorContents(quill, html) {
+  if (!quill) return;
+  try {
+    const delta = quill.clipboard.convert({ html: html || '<p><br></p>' });
+    quill.setContents(delta, 'user');
+  } catch (e) { console.error('set editor contents failed:', e); }
 }
 
 // ===== News Management =====
@@ -1388,7 +1410,7 @@ function resetNewsForm() {
   document.getElementById('news-category').value = '';
   document.getElementById('news-category').readOnly = false;
   document.getElementById('news-summary').value = '';
-  if (quill) quill.root.innerHTML = '';
+  if (quill) setEditorContents(quill, '');
   document.getElementById('news-image-preview').classList.add('hidden');
   document.getElementById('news-upload-placeholder').classList.remove('hidden');
   document.getElementById('news-image-input').value = '';
@@ -1430,7 +1452,7 @@ async function editNews(id) {
       document.getElementById('news-category').readOnly = item.category === '首页滚动';
       document.getElementById('news-title').placeholder = item.category === '首页滚动' ? '首页滚动标题' : '资讯标题';
       document.getElementById('news-summary').value = item.summary || '';
-      if (quill) quill.root.innerHTML = item.content || '';
+      if (quill) setEditorContents(quill, item.content || '');
       document.getElementById('news-form-title').textContent = '编辑资讯';
       newsEditingId = id;
       if (item.image_url) {
@@ -2021,19 +2043,21 @@ async function updateCsAgentMax(userId, value) {
 async function addCsAgent() {
   const username = document.getElementById('cs-agent-username-input').value.trim();
   const display_name = document.getElementById('cs-agent-display-input').value.trim();
+  const password = document.getElementById('cs-agent-password-input').value;
   const max_concurrent = Number(document.getElementById('cs-agent-max-input').value) || 3;
-  if (!username) return showToast('请填写管理员用户名', 'error');
+  if (!username) return showToast('请填写人工账号用户名', 'error');
   try {
     const res = await fetch(apiUrl('/api/admin/handoff/agents'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${getToken()}` },
-      body: JSON.stringify({ username, display_name, max_concurrent }),
+      body: JSON.stringify({ username, display_name, max_concurrent, password }),
     });
     const data = await res.json().catch(() => ({}));
     if (!res.ok) throw new Error(data.error || '添加失败');
-    showToast('坐席已添加，对方可在工作台上线', 'success');
+    showToast('坐席已添加，用该账号登录营养师工作台即可接单', 'success');
     document.getElementById('cs-agent-username-input').value = '';
     document.getElementById('cs-agent-display-input').value = '';
+    document.getElementById('cs-agent-password-input').value = '';
     loadCsAgents();
   } catch (err) {
     showToast(err.message || '添加失败', 'error');
@@ -2196,13 +2220,11 @@ function initProdQuill() {
   const card = document.getElementById('prod-form-card');
   if (!card || card.style.display === 'none') return;
   if (typeof Quill === 'undefined') return;
-  if (prodQuill) {
-    // 编辑器重建时若格式刷还挂在这个实例上，先解除，否则会拿着已销毁的引用去刷
-    if (FORMAT_PAINTER.editor === prodQuill) painterDisarm();
-    unbindEditorImageEvents(prodQuill);
-    prodQuill.destroy();
-    prodQuill = null;
-  }
+  // Quill 2 没有 destroy()（实测 quill@2.0.3 里这个词一次都不出现），旧代码在这里调
+  // prodQuill.destroy() 会直接抛 TypeError，后面的 new Quill 和内容填充统统执行不到——
+  // 表现就是「编辑器永远停在上一次打开的内容」。所以这里做成惰性单例：只建一次，
+  // 内容一律由 setEditorContents 覆盖，绝不销毁重建（重建还会叠加第二套工具栏）。
+  if (prodQuill) return;
   registerRichTextFormats();
   prodQuill = new Quill('#prod-editor', {
     theme: 'snow',
@@ -2228,7 +2250,11 @@ function showProdForm() {
   document.getElementById('prod-summary').value = '';
   document.getElementById('prod-highlights').value = '';
   document.getElementById('prod-image-url').value = '';
-  ensureQuill().then(() => setTimeout(initProdQuill, 200)).catch(e => console.error('quill load error:', e));
+  ensureQuill().then(() => setTimeout(() => {
+    initProdQuill();
+    // 新增必须是空白，否则残留上次编辑/查看的内容
+    setEditorContents(prodQuill, '');
+  }, 200)).catch(e => console.error('quill load error:', e));
 }
 
 function hideProdForm() {
@@ -2253,7 +2279,7 @@ function editProduct(id) {
   ensureQuill().then(() => {
     setTimeout(() => {
       initProdQuill();
-      if (prodQuill) prodQuill.root.innerHTML = p.content || '';
+      setEditorContents(prodQuill, p.content);
     }, 200);
   }).catch(e => console.error('quill load error:', e));
   window.scrollTo({ top: 0, behavior: 'smooth' });

@@ -95,16 +95,19 @@
 .ql-container.ql-snow .ql-editor .ql-para-48,
 .rich-text .ql-para-48 { margin-bottom: 48px; }
 
-/* ===== 格式刷（后台工具栏自定义按钮） ===== */
+/* ===== 格式刷（后台工具栏自定义按钮，图标为内联 SVG，跟随 currentColor） ===== */
 .ql-snow .ql-toolbar button.ql-formatpainter {
   color: #444;
-  font-size: 15px;
-  line-height: 1;
 }
 .ql-snow .ql-toolbar button.ql-formatpainter.ql-active {
   color: #06c;
   background: #e6f1fb;
 }
+/* Quill 2 的工具栏是 flex + wrap，组被压缩时下拉标签会竖排换行（如「左对齐」叠成两行），
+   禁止收缩并禁止 label 换行，放不下时整组换行而不是挤压变形 */
+.ql-snow .ql-toolbar .ql-formats { flex-shrink: 0; }
+.ql-snow .ql-toolbar .ql-picker-label,
+.ql-snow .ql-toolbar .ql-picker-item { white-space: nowrap; }
 .ql-container.ql-snow .ql-editor.format-painter-armed {
   cursor: crosshair;
 }

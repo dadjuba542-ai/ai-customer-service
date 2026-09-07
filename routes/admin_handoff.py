@@ -1,6 +1,6 @@
 from flask import Blueprint, Response, jsonify, request
 
-from routes.auth import admin_required
+from routes.auth import admin_required, agent_required
 from services.handoff_service import (
     HandoffError,
     add_cs_agent,
@@ -36,7 +36,7 @@ def _error_response(exc):
 
 
 @admin_handoff_bp.route('/queue', methods=['GET'])
-@admin_required
+@agent_required
 def queue(current_user):
     try:
         return jsonify(list_agent_queue(current_user['user_id']))
@@ -45,7 +45,7 @@ def queue(current_user):
 
 
 @admin_handoff_bp.route('/archive', methods=['GET'])
-@admin_required
+@agent_required
 def archive(current_user):
     try:
         return jsonify(list_archived_sessions(
@@ -63,7 +63,7 @@ def archive(current_user):
 
 
 @admin_handoff_bp.route('/archive/<session_id>', methods=['GET'])
-@admin_required
+@agent_required
 def archive_detail(current_user, session_id):
     try:
         return jsonify({'session': get_archived_session_detail(session_id)})
@@ -72,7 +72,7 @@ def archive_detail(current_user, session_id):
 
 
 @admin_handoff_bp.route('/users/<user_id>/history', methods=['GET'])
-@admin_required
+@agent_required
 def user_history(current_user, user_id):
     try:
         return jsonify(list_user_archived_sessions(
@@ -86,7 +86,7 @@ def user_history(current_user, user_id):
 
 
 @admin_handoff_bp.route('/export', methods=['POST'])
-@admin_required
+@agent_required
 @rate_limit('handoff-export', limit=10, window_seconds=60)
 def export_archive(current_user):
     data = request.get_json(silent=True) or {}
@@ -105,7 +105,7 @@ def export_archive(current_user):
 
 
 @admin_handoff_bp.route('/<session_id>/claim', methods=['POST'])
-@admin_required
+@agent_required
 @rate_limit('handoff-claim', limit=30, window_seconds=60)
 def claim(current_user, session_id):
     try:
@@ -115,7 +115,7 @@ def claim(current_user, session_id):
 
 
 @admin_handoff_bp.route('/<session_id>/detail', methods=['GET'])
-@admin_required
+@agent_required
 def detail(current_user, session_id):
     try:
         return jsonify({'session': get_agent_session_detail(current_user['user_id'], session_id)})
@@ -124,7 +124,7 @@ def detail(current_user, session_id):
 
 
 @admin_handoff_bp.route('/<session_id>/reply', methods=['POST'])
-@admin_required
+@agent_required
 @rate_limit('handoff-reply', limit=60, window_seconds=60)
 def reply(current_user, session_id):
     data = request.get_json(silent=True) or {}
@@ -135,7 +135,7 @@ def reply(current_user, session_id):
 
 
 @admin_handoff_bp.route('/<session_id>/close', methods=['POST'])
-@admin_required
+@agent_required
 def close(current_user, session_id):
     data = request.get_json(silent=True) or {}
     try:
@@ -145,7 +145,7 @@ def close(current_user, session_id):
 
 
 @admin_handoff_bp.route('/<session_id>/read', methods=['POST'])
-@admin_required
+@agent_required
 def read(current_user, session_id):
     data = request.get_json(silent=True) or {}
     try:
@@ -156,7 +156,7 @@ def read(current_user, session_id):
 
 
 @admin_handoff_bp.route('/agent/status', methods=['POST'])
-@admin_required
+@agent_required
 def agent_status(current_user):
     data = request.get_json(silent=True) or {}
     try:
@@ -169,13 +169,13 @@ def agent_status(current_user):
 
 
 @admin_handoff_bp.route('/agent/me', methods=['GET'])
-@admin_required
+@agent_required
 def agent_me(current_user):
     return jsonify({'agent': get_agent_me(current_user['user_id'])})
 
 
 @admin_handoff_bp.route('/notifications', methods=['GET'])
-@admin_required
+@agent_required
 def notifications(current_user):
     try:
         return jsonify(list_notifications(
@@ -204,6 +204,7 @@ def cs_agent_add(current_user):
             data.get('username'),
             data.get('display_name', ''),
             data.get('max_concurrent', 3),
+            password=data.get('password'),
         )
         return jsonify({'agent': agent}), 201
     except HandoffError as exc:
@@ -241,7 +242,7 @@ def cs_agent_remove(current_user, user_id):
 
 
 @admin_handoff_bp.route('/quick-replies', methods=['GET'])
-@admin_required
+@agent_required
 def quick_replies(current_user):
     enabled_only = request.args.get('enabled') == '1'
     return jsonify({'quick_replies': list_quick_replies(include_disabled=not enabled_only)})

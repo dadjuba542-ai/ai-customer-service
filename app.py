@@ -44,7 +44,7 @@ from services.security_service import (
     check_request_budget,
     classify_client,
 )
-from routes.auth import auth_bp, token_required
+from routes.auth import auth_bp, is_seat_agent, token_required
 from routes.chat import chat_bp
 from routes.history import history_bp
 from routes.news import news_bp
@@ -283,6 +283,7 @@ def user_profile(current_user):
         'user_id': current_user['user_id'],
         'username': current_user['username'],
         'is_admin': current_user.get('is_admin', 0),
+        'is_agent': is_seat_agent(current_user['user_id']),
         'created_at': current_user['created_at']
     })
 

@@ -6,7 +6,7 @@
   <title>AI宝儿 · 管理后台</title>
   <link rel="stylesheet" href="/icon-fallback.css?v=20260714-admin-icons" data-page-node-id="wVSQAXqpJsDspYqM8fA6f7">
   <link rel="stylesheet" href="/css/admin.css?v=20260902-editorimg1" data-page-node-id="YgX9ukhM2eftjt5Z1gfe3J">
-  <link rel="stylesheet" href="/css/rich-text.css?v=20260904-richtext1">
+  <link rel="stylesheet" href="/css/rich-text.css?v=20260907-prodfix1">
 </head>
 <body data-page-node-id="iHP7hfTWdAOYNwDf9SQ2my">
 
@@ -733,19 +733,23 @@
 
         <div class="admin-card" style="margin-top:16px" data-page-node-id="rLXLq6c3k0my047EfKFJ6l">
           <h3 data-page-node-id="HNURlP7rjTWp0hlCViBssN"><i class="ph ph-users" data-page-node-id="Zj9JICWpgcULI8t3IWS3MD"></i>客服坐席名单</h3>
-          <p style="font-size:12px;color:var(--slate-500);margin:0 0 14px" data-page-node-id="zvPTOkyTdQtZVSxScKbtWr">白名单制：只有名单内的管理员可以在营养师工作台上线接单。移除坐席时，其排队中的会话会自动释放回队列。</p>
+          <p style="font-size:12px;color:var(--slate-500);margin:0 0 14px" data-page-node-id="zvPTOkyTdQtZVSxScKbtWr">人工客服使用专门的「人工账号」登录营养师工作台（无需管理员权限）。用户名不存在时会自动创建人工账号（初始密码必填，10-128 位）；已存在的账号直接加入名单。移除坐席时，其排队中的会话会自动释放回队列。</p>
           <div class="admin-row" style="align-items:flex-end" data-page-node-id="swDilLwxapcDTBnMW1el2g">
             <div class="field" data-page-node-id="cfKVoKuHqne9C9usFb3jVP">
-              <label data-page-node-id="mNgTfNA8bX2Sl4khZkITT9">管理员用户名</label>
-              <input type="text" id="cs-agent-username-input" maxlength="40" placeholder="要添加的后台账号用户名" data-page-node-id="jMm0khHr3jZD35jtfz5rhg">
+              <label data-page-node-id="mNgTfNA8bX2Sl4khZkITT9">人工账号用户名</label>
+              <input type="text" id="cs-agent-username-input" maxlength="40" placeholder="如：营养师小王01" data-page-node-id="jMm0khHr3jZD35jtfz5rhg">
             </div>
             <div class="field" data-page-node-id="HIoiUsm2qFEAIjswuKAXnk">
               <label data-page-node-id="MauqdB9ui53h4xbTlZ8LZJ">坐席显示名</label>
               <input type="text" id="cs-agent-display-input" maxlength="40" placeholder="如：营养师小王（留空用用户名）" data-page-node-id="yjTnZKaA21rQz5QIm9haXa">
             </div>
-            <div class="field" style="max-width:130px" data-page-node-id="nwbNeHQGJipbyj9LnP4K1o">
+            <div class="field" style="max-width:160px" data-page-node-id="nwbNeHQGJipbyj9LnP4K1o">
+              <label>初始密码（新账号必填）</label>
+              <input type="password" id="cs-agent-password-input" maxlength="128" placeholder="10-128 位，仅新建时生效" autocomplete="new-password">
+            </div>
+            <div class="field" style="max-width:110px" data-page-node-id="ZuPe5vaSCnVUELNUQ0wBOI">
               <label data-page-node-id="IoBh42Nu7I8Qrdcye3KlIF">并发上限</label>
-              <input type="number" id="cs-agent-max-input" min="1" max="10" value="3" data-page-node-id="ZuPe5vaSCnVUELNUQ0wBOI">
+              <input type="number" id="cs-agent-max-input" min="1" max="10" value="3">
             </div>
             <button class="btn btn-primary" onclick="addCsAgent()" data-page-node-id="ad62pXXnN5s0RH2rnLUrjl"><i class="ph ph-plus" data-page-node-id="5PMEG3GKlRsi4CUsTUsg3y"></i> 添加坐席</button>
           </div>
@@ -787,7 +791,7 @@
 
 <div class="toast" id="toast" data-page-node-id="8Ztsru779Gl5WfFgBlEIOZ"></div>
 
-<script src="/js/admin.js?v=20260904-richtext1"></script>
+<script src="/js/admin.js?v=20260907-prodfix1"></script>
 <script src="/admin/cases.js?v=20260902-casebatch1"></script>
 </body>
 </html>
