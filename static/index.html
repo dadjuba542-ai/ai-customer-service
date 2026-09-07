@@ -29,7 +29,7 @@
   </script>
   <link rel="stylesheet" href="/css/base.css?v=20260720-split1">
   <link rel="stylesheet" href="/css/home.css?v=20260720-split1">
-  <link rel="stylesheet" href="/css/chat.css?v=20260724-voice-press1">
+  <link rel="stylesheet" href="/css/chat.css?v=20260907-voice-toggle1">
   <link rel="stylesheet" href="/css/community.css?v=20260720-split1">
   <link rel="stylesheet" href="/css/overlays.css?v=20260720-split1">
   <link rel="stylesheet" href="/css/news-nav.css?v=20260903-preset-agent1">
@@ -142,7 +142,7 @@
           </div>
         </div>
         <div class="chat-input-area">
-          <button type="button" class="voice-btn" id="voice-btn" style="display:none" title="按住说话，松手结束" aria-label="按住说话，松手结束" aria-pressed="false"><i class="ph ph-microphone"></i></button>
+          <button type="button" class="voice-btn" id="voice-btn" data-voice-icon="mic" style="display:none" title="点击开始录音" aria-label="点击开始录音" aria-pressed="false"><svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9.2" y="2.6" width="5.6" height="10.8" rx="2.8"/><path d="M5.6 11.2v.9a6.4 6.4 0 0 0 12.8 0v-.9"/><path d="M12 18.6v2.1"/><path d="M8.7 20.7h6.6"/></svg></button>
           <div class="input-wrapper">
             <button class="input-plus"><i class="ph ph-plus"></i></button>
             <textarea id="message-input" rows="1" placeholder="说点什么..." onkeydown="handleInputKeydown(event)"></textarea>
@@ -375,11 +375,11 @@
   <div id="toast"></div>
   <script src="speech-controller.js?v=20260717-speech113"></script>
   <script src="handoff-intent.js?v=20260721-handoff1"></script>
-  <script src="/js/core.js?v=20260903-preset-agent1"></script>
+  <script src="/js/core.js?v=20260907-voice-toggle1"></script>
   <script src="/js/views.js?v=20260721-handoff2"></script>
   <script src="/js/handoff.js?v=20260723-offline-message1"></script>
-  <script src="/js/fetch-util.js?v=20260724-voice-press1"></script>
-  <script src="/js/voice.js?v=20260724-voice-press1"></script>
+  <script src="/js/fetch-util.js?v=20260907-voice-toggle1"></script>
+  <script src="/js/voice.js?v=20260907-voice-toggle1"></script>
   <script src="/js/chat-stream.js?v=20260722-queue1"></script>
   <script src="/js/chat.js?v=20260904-shareoff1"></script>
   <script src="/js/history-community.js?v=20260723-ai-review1"></script>

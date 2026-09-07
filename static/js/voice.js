@@ -1,5 +1,3 @@
-const VOICE_PRESS_THRESHOLD_MS = 150;
-
 async function toggleVoiceInput() {
   if (!state.speech.enabled) return showToast('语音识别未开启', 'info');
   if (['connecting', 'transcribing', 'finalizing'].includes(state.speech.phase)) return;
@@ -8,74 +6,11 @@ async function toggleVoiceInput() {
   await startVoiceRecording();
 }
 
-function initVoicePress() {
+// 点击式交互：点一下开始录音，再点一下结束并转写（不再支持按住说话）
+function initVoiceButton() {
   const btn = document.getElementById('voice-btn');
   if (!btn) return;
-  btn.addEventListener('pointerdown', handleVoicePointerDown);
-  btn.addEventListener('pointerup', handleVoicePointerUp);
-  btn.addEventListener('pointercancel', handleVoicePointerCancel);
-  btn.addEventListener('contextmenu', (e) => e.preventDefault());
-  btn.addEventListener('click', handleVoiceClick);
-}
-
-function clearVoicePressTimer() {
-  if (state.speech.pressTimer) clearTimeout(state.speech.pressTimer);
-  state.speech.pressTimer = null;
-}
-
-function handleVoicePointerDown(e) {
-  if (!state.speech.enabled) return;
-  if (['connecting', 'transcribing', 'finalizing'].includes(state.speech.phase)) return;
-  if (state.isStreaming || state.isTyping) return;
-  if (state.speech.phase === 'recording' || state.speech.pressActive) return;
-  e.preventDefault();
-  state.speech.pressActive = true;
-  state.speech.pressStarted = false;
-  state.speech.pressTriggered = false;
-  state.speech.pressPointerId = e.pointerId;
-  try { e.currentTarget.setPointerCapture?.(e.pointerId); } catch (_) {}
-  clearVoicePressTimer();
-  state.speech.pressTimer = setTimeout(() => {
-    state.speech.pressTimer = null;
-    if (!state.speech.pressActive) return;
-    state.speech.pressStarted = true;
-    state.speech.pressTriggered = true;
-    startVoiceRecording();
-  }, VOICE_PRESS_THRESHOLD_MS);
-}
-
-function handleVoicePointerUp(e) {
-  if (state.speech.pressPointerId !== null && e.pointerId !== state.speech.pressPointerId) return;
-  clearVoicePressTimer();
-  const wasActive = state.speech.pressActive;
-  state.speech.pressActive = false;
-  state.speech.pressPointerId = null;
-  state.speech.suppressClick = true;
-  updateVoiceButton();
-  setTimeout(() => { state.speech.suppressClick = false; }, 0);
-  if (!wasActive) return;
-  if (state.speech.phase === 'recording') {
-    stopVoiceRecording();
-  }
-}
-
-function handleVoicePointerCancel(e) {
-  if (state.speech.pressPointerId !== null && e.pointerId !== state.speech.pressPointerId) return;
-  clearVoicePressTimer();
-  const shouldCancel = state.speech.pressActive && state.speech.phase !== 'idle';
-  state.speech.pressActive = false;
-  state.speech.pressStarted = false;
-  state.speech.pressTriggered = false;
-  state.speech.pressPointerId = null;
-  if (shouldCancel) cancelVoiceInput();
-}
-
-function handleVoiceClick(e) {
-  if (state.speech.suppressClick) {
-    e.preventDefault();
-    return;
-  }
-  toggleVoiceInput();
+  btn.addEventListener('click', toggleVoiceInput);
 }
 
 async function startVoiceRecording() {
@@ -83,7 +18,6 @@ async function startVoiceRecording() {
   createVoiceDraft();
   state.speech.cancelled = false;
   state.speech.fallbackInProgress = false;
-  state.speech.pressStarted = true;
   const canRealtime = state.speech.realtimeEnabled && state.speech.mode !== 'batch' &&
     window.TencentRealtimeSpeechController?.isSupported();
   if (canRealtime) {
@@ -93,9 +27,6 @@ async function startVoiceRecording() {
     return showToast('当前浏览器不支持腾讯云实时语音，请换用新版浏览器', 'error');
   } else {
     await startBatchVoiceRecording();
-  }
-  if (state.speech.pressTriggered && !state.speech.pressActive && state.speech.phase !== 'idle') {
-    await stopVoiceRecording();
   }
 }
 
@@ -199,7 +130,7 @@ async function startBatchVoiceRecording(fromRealtime = false) {
     state.speech.phase = 'recording';
     state.speech.isRecording = true;
     startSpeechClock();
-    updateVoiceButton('正在录音，松手结束');
+    updateVoiceButton('正在录音，点击结束');
     state.speech.stopTimer = setTimeout(() => {
       if (state.speech.phase === 'recording') {
         showToast(`已到 ${state.speech.maxDurationSeconds} 秒，正在转写`, 'info');
@@ -416,12 +347,6 @@ function resetVoiceState() {
   state.speech.fallbackInProgress = false;
   state.speech.sessionAbortController = null;
   state.speech.transcribeAbortController = null;
-  clearVoicePressTimer();
-  state.speech.pressActive = false;
-  state.speech.pressStarted = false;
-  state.speech.pressTriggered = false;
-  state.speech.pressPointerId = null;
-  state.speech.suppressClick = false;
   state.speech.draft = null;
   state.speech.committedText = '';
   state.speech.partialText = '';

@@ -86,12 +86,6 @@ let state = {
     fallbackInProgress: false,
     sessionAbortController: null,
     transcribeAbortController: null,
-    pressActive: false,
-    pressTimer: null,
-    pressStarted: false,
-    pressTriggered: false,
-    pressPointerId: null,
-    suppressClick: false,
   },
 };
 
@@ -153,7 +147,7 @@ document.addEventListener('DOMContentLoaded', () => {
   loadNews();
   loadCaseLibraryConfig();
   loadSpeechConfig();
-  initVoicePress();
+  initVoiceButton();
   // Chat scroll listener for "scroll to bottom" button
   const chatContainer = document.getElementById('chat-messages');
   if (chatContainer) {

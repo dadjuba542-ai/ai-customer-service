@@ -1,5 +1,23 @@
 # Changelog
 
+## 1.1.5.4 (2026-09-07)
+
+### 语音输入交互改版（前台）
+
+- **交互改为点击式**：去掉「按住说话，松手结束」的 press-to-talk 逻辑，改为
+  点一下开始录音 → 再点一下结束并转文字；60 秒自动停止逻辑保留
+- **语音按钮图标改内联 SVG**（小话筒 / 停止方块 / 转圈），不再用 Phosphor 字体图标，
+  修复字体缺失时字形叠加导致图标重叠的问题；三种状态均居中渲染
+- 涉及文件：`static/js/voice.js`、`static/js/fetch-util.js`（图标 + 文案）、
+  `static/js/core.js`（移除 press 状态字段）、`static/css/chat.css`
+  （spinner 动画选择器、touch-action: manipulation）
+- 前端缓存版本号：`core.js` / `fetch-util.js` / `voice.js` / `chat.css` → `?v=20260907-voice-toggle1`
+
+### 验证
+
+静态环境（Chrome + playwright DOM 几何校验）：mic / stop / spinner 三态均单 SVG、
+44px 按钮内图标居中对齐（偏移 0px）、无页面 JS 错误
+
 ## 1.1.5.3 (2026-09-07)
 
 ### 富文本编辑器升级（后台资讯 + 产品详情共用）
