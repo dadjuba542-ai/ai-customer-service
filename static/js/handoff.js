@@ -1,5 +1,17 @@
 /* ===== Nutrition consultation / AI to human handoff ===== */
 async function loadHandoffConfig() {
+  // 人工客服系统总开关关闭：不拉配置、不轮询，入口保持不可用（以后端状态为准）
+  if (!featureEnabled('handoff')) {
+    state.handoff.config = null;
+    state.handoff.session = null;
+    state.handoff.isNutritionMode = false;
+    if (state.handoff.pollTimer) {
+      clearInterval(state.handoff.pollTimer);
+      state.handoff.pollTimer = null;
+    }
+    updateHandoffUi();
+    return false;
+  }
   try {
     const res = await fetch(`${API_BASE}/api/handoff/config`);
     if (!res.ok) {
@@ -319,7 +331,9 @@ async function startHumanHandoff(note) {
 }
 
 async function restoreHandoffSession() {
+  if (!featureEnabled('handoff')) return;
   if (!state.handoff.config) await loadHandoffConfig();
+  if (!state.handoff.config) return;
   try {
     let res = await fetch(`${API_BASE}/api/handoff/current`, { headers: authHeaders() });
     if (!res.ok) return;

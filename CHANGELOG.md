@@ -1,5 +1,33 @@
 # Changelog
 
+## 1.1.5.5 (2026-09-08)
+
+### 案例系统 / 人工客服系统 独立启用开关
+
+- 新增统一开关模块 `services/feature_flags.py`：一个开关 = 名字 + settings key + 环境变量 +
+  代码默认值，全部登记在 `FLAGS` 注册表（新增开关只需加一行）
+  - `cases`（案例系统）：key `cases_enabled`，env `CASES_ENABLED`，**默认开启**
+  - `handoff`（人工客服系统）：key `handoff_enabled`，env `HANDOFF_ENABLED`，**默认关闭**
+    （沿用原有约定；现网 DB 里已是 `1`，行为不变）
+  - 取值优先级：settings 表 > 环境变量 > 默认值；读取结果带 `source` 字段说明来源
+- 统一配置入口：后台新增「功能开关」页（两个独立开关，实时显示状态/来源/默认值）；
+  接口 `GET /api/feature-flags`（前台只读）、`GET|PUT /api/admin/feature-flags`（管理员读写，
+  支持单个 `{name, enabled}` 或批量 `{flags: {...}}`）
+- 关闭后三层拦截：
+  1. HTTP 入口：`app.before_request` 按注册表前缀统一拦截（页面给说明页 403，接口给
+     `code=feature_disabled` 的 403 JSON），cases / handoff / admin_handoff 三个 blueprint
+     再各带一层 `before_request` 兜底
+  2. 调用链路：`chat_service.find_related_cases()` 短路（不再推荐相关案例）；
+     handoff 的 start/message/close/defer、坐席上下线/接单/回复等服务函数直接抛 403
+  3. 定时任务：派单线程在开关关闭时不启动，运行期被关掉则每轮跳过
+     （`assign_available()` 返回 0）；后台打开开关会补启动线程
+- 前端：首页拉取 `/api/feature-flags`，关闭的系统不渲染入口、不发请求；
+  后台侧边栏对应入口（案例档案 / 人工客服 / 营养师工作台）自动隐藏
+- 豁免：`/api/handoff/config` 始终可读，前台靠它拿到 `enabled=false` 来隐藏转人工入口
+- 业务约束保留：开启人工客服系统仍需先配置营养咨询 AI 智能体（原校验迁移到开关层）
+- 回归测试：`scripts/test_feature_flags.py`
+- 前端缓存版本号：`core.js` / `handoff.js` / `chat.js` / `admin.js` → `?v=20260908-featureflags1`
+
 ## 1.1.5.4 (2026-09-07)
 
 ### 语音输入交互改版（前台）

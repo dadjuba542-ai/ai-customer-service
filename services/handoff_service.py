@@ -9,12 +9,14 @@ from datetime import datetime
 
 from config import Config
 from models import create_user, get_agent_config, get_chat_history_by_ids, get_db_connection, get_setting, get_user_by_username, set_setting
+from services import feature_flags
 
 
 OPEN_STATUSES = ('queued', 'assigned', 'active')
 MESSAGE_STATUSES = ('queued', 'assigned', 'active')
 DEFAULTS = {
-    'enabled': Config.HANDOFF_ENABLED,
+    # 开关状态统一由 services/feature_flags.py 决定（settings 表 > 环境变量 > 默认值）
+    'enabled': feature_flags.default_enabled(feature_flags.HANDOFF_SYSTEM),
     'ai_agent_id': Config.HANDOFF_AI_AGENT_ID,
     'button_label': '联系在线营养师',
     'queue_msg': '客服忙线中，您前面还有 {position} 位',
@@ -35,6 +37,17 @@ class HandoffError(Exception):
         super().__init__(message)
         self.message = message
         self.status_code = status_code
+
+
+def handoff_enabled():
+    """人工客服系统总开关（案例系统互不影响，各自独立）。"""
+    return feature_flags.is_enabled(feature_flags.HANDOFF_SYSTEM)
+
+
+def _require_handoff_enabled():
+    """服务层兜底：绕过 HTTP 入口的内部调用也必须被开关拦住。"""
+    if not handoff_enabled():
+        raise HandoffError('人工客服系统当前已关闭', 403)
 
 
 def _bool_setting(key, default=False, values=None):
@@ -75,7 +88,7 @@ def _read_settings(conn=None):
 def get_handoff_settings(conn=None):
     values = _read_settings(conn)
     return {
-        'enabled': _bool_setting('handoff_enabled', DEFAULTS['enabled'], values=values),
+        'enabled': handoff_enabled(),
         'ai_agent_id': values.get('handoff_ai_agent_id', DEFAULTS['ai_agent_id']).strip(),
         'button_label': values.get('handoff_button_label', DEFAULTS['button_label']).strip() or DEFAULTS['button_label'],
         'queue_msg': values.get('handoff_queue_msg', DEFAULTS['queue_msg']).strip() or DEFAULTS['queue_msg'],
@@ -97,7 +110,6 @@ def update_handoff_settings(data):
         if not agent or not (agent.get('bot_id') or '').strip():
             raise HandoffError('请选择已配置 Bot ID 的有效智能体')
     values = {
-        'handoff_enabled': '1' if enabled else '0',
         'handoff_ai_agent_id': ai_agent_id,
         'handoff_button_label': str(data.get('button_label', current['button_label']) or '').strip()[:40] or DEFAULTS['button_label'],
         'handoff_queue_msg': str(data.get('queue_msg', current['queue_msg']) or '').strip()[:200] or DEFAULTS['queue_msg'],
@@ -108,12 +120,20 @@ def update_handoff_settings(data):
     }
     for key, value in values.items():
         set_setting(key, value)
+    # 开关统一走 feature_flags（settings 表同一个 key: handoff_enabled），
+    # 放在最后写，保证开启时的「已配置 AI 智能体」校验读到刚写入的值。
+    feature_flags.set_enabled(feature_flags.HANDOFF_SYSTEM, enabled)
     return get_handoff_settings()
 
 
 def start_handoff_reconciler():
-    """Start a process-local background thread that periodically runs assign_available()."""
+    """Start a process-local background thread that periodically runs assign_available().
+
+    人工客服系统关闭时不启动；后台把开关打开会由 feature_flags 的 on_change 补启动。
+    """
     global _reconcile_thread
+    if not handoff_enabled():
+        return None
     with _reconcile_started_lock:
         if _reconcile_thread and _reconcile_thread.is_alive():
             return _reconcile_thread
@@ -139,7 +159,9 @@ def stop_handoff_reconciler_for_tests():
 def _reconcile_loop():
     while not _reconcile_stop.is_set():
         try:
-            assign_available()
+            # 开关可能在运行期被关掉，每轮都重新判断，避免定时任务继续派单。
+            if handoff_enabled():
+                assign_available()
         except Exception:
             logging.getLogger(__name__).exception('handoff.reconciler error')
         _reconcile_stop.wait(max(2, int(Config.HANDOFF_RECONCILE_INTERVAL_SECONDS)))
@@ -325,6 +347,8 @@ def _reconcile_locked(conn):
 
 
 def assign_available():
+    if not handoff_enabled():
+        return 0
     conn = get_db_connection()
     try:
         conn.execute('BEGIN IMMEDIATE')
@@ -472,6 +496,8 @@ def start_handoff(identity, history_ids=None, query_type='', note='', service_mo
 
 
 def get_current_session(user_id):
+    if not handoff_enabled():
+        return None
     conn = get_db_connection()
     row = conn.execute(
         f'''SELECT * FROM handoff_sessions WHERE user_id = ?
@@ -492,6 +518,7 @@ def get_user_session(user_id, session_id, include_context=True):
 
 
 def append_user_message(user_id, session_id, content):
+    _require_handoff_enabled()
     content = str(content or '').strip()
     if not content:
         raise HandoffError('消息不能为空')
@@ -570,10 +597,12 @@ def list_recent_sessions(user_id, limit=20):
 
 
 def close_user_session(user_id, session_id, reason='user_cancel'):
+    _require_handoff_enabled()
     return _close_session(session_id, user_id=user_id, reason=reason)
 
 
 def defer_user_session(user_id, session_id):
+    _require_handoff_enabled()
     conn = get_db_connection()
     try:
         conn.execute('BEGIN IMMEDIATE')
@@ -646,6 +675,7 @@ def _close_session(session_id, user_id=None, agent_id=None, reason='done'):
 def set_agent_status(user, online, max_concurrent=None):
     """坐席上线/下线。白名单制：仅已在 cs_agents 名单中的账号可操作，
     不再自动注册坐席（注册入口为 add_cs_agent，由管理员在后台维护）。"""
+    _require_handoff_enabled()
     online = 1 if online else 0
     conn = get_db_connection()
     try:
@@ -939,6 +969,7 @@ def list_agent_queue(user_id):
 
 
 def claim_session(user_id, session_id):
+    _require_handoff_enabled()
     conn = get_db_connection()
     try:
         conn.execute('BEGIN IMMEDIATE')
@@ -1272,6 +1303,7 @@ def export_archived_sessions(exported_by, session_ids=None, filters=None):
 
 
 def append_agent_reply(user_id, session_id, content):
+    _require_handoff_enabled()
     content = str(content or '').strip()
     if not content:
         raise HandoffError('回复不能为空')
@@ -1329,6 +1361,7 @@ def mark_agent_read(user_id, session_id, message_id):
 
 
 def close_agent_session(user_id, session_id, reason='agent_close'):
+    _require_handoff_enabled()
     return _close_session(session_id, agent_id=user_id, reason=reason)
 
 

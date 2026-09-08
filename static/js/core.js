@@ -29,6 +29,44 @@ function waitForAgents() {
 }
 let lastUserAgentId = '';
 let caseLibraryUrl = '';
+
+// ===== 功能开关（案例系统 / 人工客服系统）=====
+// 真实状态以后端为准，这里只用于决定是否渲染入口、是否发起请求。
+// 拉取失败时按「开启」处理，避免误伤；后端接口仍会拦截已关闭的系统。
+let FEATURE_FLAGS = {
+  cases: { enabled: true, label: '案例系统' },
+  handoff: { enabled: true, label: '人工客服系统' },
+};
+
+function featureEnabled(name) {
+  return !!(FEATURE_FLAGS[name] && FEATURE_FLAGS[name].enabled);
+}
+
+async function loadFeatureFlags() {
+  try {
+    const res = await fetch(`${API_BASE}/api/feature-flags`);
+    if (!res.ok) return;
+    const data = await res.json();
+    const incoming = (data && data.flags) || {};
+    Object.keys(FEATURE_FLAGS).forEach((name) => {
+      const item = incoming[name];
+      if (!item) return;
+      FEATURE_FLAGS[name] = {
+        enabled: !!item.enabled,
+        label: item.label || FEATURE_FLAGS[name].label,
+      };
+    });
+  } catch {
+    /* 保持默认值 */
+  }
+  applyFeatureFlags();
+}
+
+function applyFeatureFlags() {
+  document.querySelectorAll('[data-feature]').forEach((el) => {
+    el.hidden = !featureEnabled(el.dataset.feature);
+  });
+}
 let bulletinTimer = null;
 const assetLoaders = new Map();
 let state = {
@@ -139,13 +177,14 @@ function getViewerId() {
   return id;
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-  loadHandoffConfig();
+document.addEventListener('DOMContentLoaded', async () => {
+  await loadFeatureFlags();
+  if (featureEnabled('handoff')) loadHandoffConfig();
   loadAgents();
   loadWaitingContent();
   loadExampleQuestions();
   loadNews();
-  loadCaseLibraryConfig();
+  if (featureEnabled('cases')) loadCaseLibraryConfig();
   loadSpeechConfig();
   initVoiceButton();
   // Chat scroll listener for "scroll to bottom" button
@@ -185,7 +224,7 @@ async function loadAgents() {
   renderAgentTabs();
   renderQuickFunctions();
   await ensureIdentity();
-  if (state.sessionToken || state.token) await restoreHandoffSession();
+  if (featureEnabled('handoff') && (state.sessionToken || state.token)) await restoreHandoffSession();
 }
 
 async function loadDefaultTeamSetting() {

@@ -243,6 +243,7 @@ function renderCaseTagList(value, className, tagType = '') {
 }
 
 function renderRelatedCases(cases, query = '', total) {
+  if (!featureEnabled('cases')) return '';
   if (!cases || cases.length === 0) return '';
   const relatedTotal = Number.isFinite(Number(total)) ? Number(total) : cases.length;
   const showMore = query && relatedTotal > cases.length;
@@ -322,6 +323,7 @@ function renderCaseDrawerHeader({ title, kicker = '案例档案', showBack = fal
 }
 
 async function openCaseDrawerDetail(caseId, options = {}) {
+  if (!featureEnabled('cases')) return;
   ensureCaseDrawer();
   try {
     const res = await fetch(`${API_BASE}/api/cases/${caseId}`);
@@ -429,6 +431,7 @@ async function openRelatedCaseDrawerList(event, query) {
 }
 
 async function openCaseDrawerList(event, tagType, tag) {
+  if (!featureEnabled('cases')) return;
   event?.stopPropagation();
   ensureCaseDrawer();
   caseDrawerState.mode = 'list';

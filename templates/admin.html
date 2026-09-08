@@ -48,7 +48,7 @@
         <div class="nav-item" data-page="products" onclick="switchPage('products')" data-page-node-id="sR8ECPQmqR3ki3sUGSE5Cy">
           <i class="ph ph-shopping-bag" data-page-node-id="GvmyxuC6cj6y6Nxnyu6PDb"></i><span data-page-node-id="hK9Y7LXj7WFDO0VEOtCXIK">产品管理</span>
         </div>
-        <div class="nav-item" data-page="cases" onclick="switchPage('cases')" data-page-node-id="sk2U9tuhYcaFbGTRApx6YU">
+        <div class="nav-item" data-page="cases" data-feature="cases" onclick="switchPage('cases')" data-page-node-id="sk2U9tuhYcaFbGTRApx6YU">
           <i class="ph ph-files" data-page-node-id="TLd1KPFMNGBeJIDRUModsG"></i><span data-page-node-id="riCr3CMF6sBxSCdh12FpEL">案例档案</span>
         </div>
         <div class="nav-item" data-page="agents" onclick="switchPage('agents')" data-page-node-id="VzQqCdb1raslbZ2KXwM5bN">
@@ -69,10 +69,13 @@
         <div class="nav-item" data-page="leads" onclick="switchPage('leads')" data-page-node-id="o8B8NH1fT9ADE9de78FB5o">
           <i class="ph ph-chat-circle-text" data-page-node-id="8CzpElh86MNy10TfkLopg4"></i><span data-page-node-id="Swz8qIDaDQvjkARgRv7P85">客户需求</span>
         </div>
-        <div class="nav-item" data-page="handoff" onclick="switchPage('handoff')" data-page-node-id="m7bpt5jY9iRzQIGuVd5WVq">
+        <div class="nav-item" data-page="handoff" data-feature="handoff" onclick="switchPage('handoff')" data-page-node-id="m7bpt5jY9iRzQIGuVd5WVq">
           <i class="ph ph-users" data-page-node-id="2pGHL6P53yyIkn2f4QzMgW"></i><span data-page-node-id="GNeCe9hcq7OrNru5EhMA6G">人工客服</span>
         </div>
-        <div class="nav-item" onclick="window.location.href='/consultant'" data-page-node-id="xOQsOnBCPAw6CKMawIkbvz">
+        <div class="nav-item" data-page="features" onclick="switchPage('features')" data-page-node-id="Kb7FeatureFlagsNav001">
+          <i class="ph ph-toggle-left"></i><span>功能开关</span>
+        </div>
+        <div class="nav-item" data-feature="handoff" onclick="window.location.href='/consultant'" data-page-node-id="xOQsOnBCPAw6CKMawIkbvz">
           <i class="ph ph-headset" data-page-node-id="C6reS2d3XJl21ENgTUg9Lc"></i><span data-page-node-id="8LIFyPy68Jb89aTp6JLXPS">营养师工作台</span>
         </div>
       </nav>
@@ -275,6 +278,17 @@
             <button class="btn btn-primary btn-sm" onclick="showProdForm()" data-page-node-id="PhEXuBp6aX1r5Kse3pe8g1"><i class="ph ph-plus" data-page-node-id="UaYKiLkKwGui1qh93XX6Pc"></i> 新增</button>
           </h3>
           <div id="admin-products-list" data-page-node-id="mTuH1K1CdzGzpQbCgnZv3R"></div>
+        </div>
+      </div>
+
+      <!-- ===== Page: Feature Flags ===== -->
+      <div id="page-features" class="page-content">
+        <div class="admin-card">
+          <h3><i class="ph ph-toggle-left"></i>功能开关</h3>
+          <p style="font-size:12px;color:var(--slate-500);margin-bottom:12px">
+            案例系统与人工客服系统各自独立开关。关闭后，对应系统的前台入口、后台接口与定时任务会立即停用，不影响其它系统。
+          </p>
+          <div id="admin-feature-flags-list"></div>
         </div>
       </div>
 
@@ -791,7 +805,7 @@
 
 <div class="toast" id="toast" data-page-node-id="8Ztsru779Gl5WfFgBlEIOZ"></div>
 
-<script src="/js/admin.js?v=20260907-prodfix1"></script>
+<script src="/js/admin.js?v=20260908-featureflags1"></script>
 <script src="/admin/cases.js?v=20260902-casebatch1"></script>
 </body>
 </html>

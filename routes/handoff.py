@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify, request
 
 from routes.auth import identity_required
+from services import feature_flags
 from services.handoff_service import (
     HandoffError,
     append_user_message,
@@ -17,6 +18,12 @@ from services.security_service import rate_limit
 
 
 handoff_bp = Blueprint('handoff', __name__)
+
+
+@handoff_bp.before_request
+def _require_handoff_enabled():
+    """兜底拦截。/config 例外：前台靠它拿到 enabled=false 来隐藏转人工入口。"""
+    return feature_flags.guard_request(feature_flags.HANDOFF_SYSTEM)
 
 
 def _error_response(exc):

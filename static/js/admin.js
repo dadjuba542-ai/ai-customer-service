@@ -146,7 +146,8 @@ async function switchPage(page) {
     community: '问答管理',
     'team-stats': '团队提问统计',
     leads: '客户需求',
-    handoff: '人工客服'
+    handoff: '人工客服',
+    features: '功能开关'
   };
   document.getElementById('page-title-text').textContent = titles[page] || '数据看板';
 
@@ -173,6 +174,7 @@ async function switchPage(page) {
   if (page === 'team-stats') loadTeamStatsPage();
   if (page === 'leads') loadAdminLeads();
   if (page === 'handoff') loadHandoffPage();
+  if (page === 'features') loadFeatureFlagsPage();
 }
 
 // ===== Dashboard Data =====
@@ -2571,5 +2573,96 @@ async function deleteReply(id) {
   } catch { showToast('网络错误', 'error'); }
 }
 
+// ===== Feature flags =====
+let FEATURE_FLAGS = [];
+
+async function loadAdminFeatureFlags() {
+  try {
+    const res = await fetch(`${API}/api/admin/feature-flags`, {
+      headers: { 'Authorization': `Bearer ${getToken()}` }
+    });
+    if (!res.ok) return;
+    const data = await res.json();
+    FEATURE_FLAGS = data.flags || [];
+  } catch {
+    FEATURE_FLAGS = [];
+  }
+  applyAdminFeatureFlags();
+}
+
+function applyAdminFeatureFlags() {
+  const map = {};
+  FEATURE_FLAGS.forEach(item => { map[item.name] = !!item.enabled; });
+  document.querySelectorAll('.sidebar-nav [data-feature]').forEach((el) => {
+    el.hidden = map[el.dataset.feature] === false;
+  });
+  // 当前停在已关闭系统的页面上时退回数据看板
+  FEATURE_FLAGS.forEach((item) => {
+    if (item.enabled) return;
+    const page = document.getElementById(`page-${item.name}`);
+    if (page && page.classList.contains('active')) switchPage('dashboard');
+  });
+}
+
+function loadFeatureFlagsPage() {
+  const host = document.getElementById('admin-feature-flags-list');
+  if (!host) return;
+  if (!FEATURE_FLAGS.length) {
+    host.innerHTML = '<div style="font-size:13px;color:var(--slate-400)">开关加载失败，请刷新重试。</div>';
+    return;
+  }
+  host.innerHTML = FEATURE_FLAGS.map(item => `
+    <div style="padding:14px 0;border-bottom:1px solid var(--slate-100)">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+        <div>
+          <div style="font-size:14px;font-weight:700;color:var(--slate-800)">${escapeHtmlAdmin(item.label)}</div>
+          <div style="font-size:12px;color:var(--slate-500);margin-top:4px;line-height:1.6">${escapeHtmlAdmin(item.description || '')}</div>
+          <div style="font-size:11px;color:var(--slate-400);margin-top:6px">
+            当前状态：${item.enabled ? '已开启' : '已关闭'} · 来源：${escapeHtmlAdmin(item.source || '')} · 默认值：${item.default ? '开启' : '关闭'}
+          </div>
+        </div>
+        <label style="display:flex;align-items:center;gap:8px;flex-shrink:0;cursor:pointer">
+          <input type="checkbox" id="feature-flag-${escapeHtmlAdmin(item.name)}" ${item.enabled ? 'checked' : ''}
+                 onchange="saveFeatureFlag('${escapeHtmlAdmin(item.name)}', this.checked)"
+                 style="width:18px;height:18px;accent-color:#0F766E;cursor:pointer">
+          <span style="font-size:13px;color:var(--slate-600)">${item.enabled ? '开启' : '关闭'}</span>
+        </label>
+      </div>
+    </div>
+  `).join('');
+}
+
+function escapeHtmlAdmin(value) {
+  return String(value == null ? '' : value).replace(/[&<>"']/g, (ch) => (
+    { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]
+  ));
+}
+
+async function saveFeatureFlag(name, enabled) {
+  try {
+    const res = await fetch(`${API}/api/admin/feature-flags`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${getToken()}` },
+      body: JSON.stringify({ name, enabled }),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      showToast(data.error || '保存失败', 'error');
+      await loadAdminFeatureFlags();
+      loadFeatureFlagsPage();
+      return;
+    }
+    FEATURE_FLAGS = data.flags || FEATURE_FLAGS;
+    applyAdminFeatureFlags();
+    loadFeatureFlagsPage();
+    showToast(enabled ? '已开启' : '已关闭', 'success');
+  } catch {
+    showToast('网络错误', 'error');
+  }
+}
+
 // ===== Init =====
-checkAuth();
+(async function initAdmin() {
+  await checkAuth();
+  await loadAdminFeatureFlags();
+})();

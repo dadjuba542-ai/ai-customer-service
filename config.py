@@ -28,6 +28,8 @@ class Config:
     CHAT_QUEUE_POLL_INTERVAL_SECONDS = max(1, int(os.environ.get('CHAT_QUEUE_POLL_INTERVAL_SECONDS', '2')))
     SPEECH_RATE_LIMIT = int(os.environ.get('SPEECH_RATE_LIMIT', '20'))
     SPEECH_REALTIME_SESSION_LIMIT = int(os.environ.get('SPEECH_REALTIME_SESSION_LIMIT', '20'))
+    # 功能开关默认值（运行时状态以 settings 表为准，详见 services/feature_flags.py）
+    CASES_ENABLED = os.environ.get('CASES_ENABLED', 'true').lower() == 'true'
     HANDOFF_ENABLED = os.environ.get('HANDOFF_ENABLED', 'false').lower() == 'true'
     HANDOFF_AI_AGENT_ID = os.environ.get('HANDOFF_AI_AGENT_ID', '')
     HANDOFF_AVG_HANDLE_SEC = max(30, int(os.environ.get('HANDOFF_AVG_HANDLE_SEC', '180')))

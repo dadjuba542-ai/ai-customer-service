@@ -8,6 +8,7 @@ import requests
 
 from config import Config
 from models import get_agent_config, save_chat_history, search_case_documents_page
+from services import feature_flags
 from services.secret_service import get_secret_setting
 
 logger = logging.getLogger(__name__)
@@ -29,6 +30,13 @@ class ChatServiceError(Exception):
         self.message = message
         self.status_code = status_code
         self.retryable = retryable
+
+
+def find_related_cases(message, limit=3):
+    """相关案例推荐。案例系统关闭时直接短路，不查库、不返回任何案例。"""
+    if not feature_flags.is_enabled(feature_flags.CASES_SYSTEM):
+        return {'items': [], 'total': 0}
+    return search_case_documents_page(message, page=1, limit=limit)
 
 
 @dataclass
@@ -124,7 +132,7 @@ def build_chat_context(data, identity):
 
 def execute_sync_chat(ctx):
     started_at = time.monotonic()
-    related_case_result = search_case_documents_page(ctx.message, page=1, limit=3)
+    related_case_result = find_related_cases(ctx.message)
     related_cases = related_case_result['items']
     try:
         response = requests.post(
@@ -180,7 +188,7 @@ def execute_sync_chat(ctx):
 def iter_coze_stream(ctx):
     stream_payload = dict(ctx.payload)
     stream_payload['stream'] = True
-    related_case_result = search_case_documents_page(ctx.message, page=1, limit=3)
+    related_case_result = find_related_cases(ctx.message)
     related_cases = related_case_result['items']
     state = StreamState(request_started_at=time.monotonic())
     connect_started_at = time.monotonic()

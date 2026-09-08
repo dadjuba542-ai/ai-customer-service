@@ -1,6 +1,7 @@
 from flask import Blueprint, Response, jsonify, request
 
 from routes.auth import admin_required, agent_required
+from services import feature_flags
 from services.handoff_service import (
     HandoffError,
     add_cs_agent,
@@ -29,6 +30,11 @@ from services.security_service import rate_limit
 
 
 admin_handoff_bp = Blueprint('admin_handoff', __name__)
+
+
+@admin_handoff_bp.before_request
+def _require_handoff_enabled():
+    return feature_flags.guard_request(feature_flags.HANDOFF_SYSTEM)
 
 
 def _error_response(exc):

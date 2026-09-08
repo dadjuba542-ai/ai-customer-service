@@ -38,6 +38,7 @@ from flask_cors import CORS
 from config import Config
 from models import init_db, get_setting, resolve_question_bindings, MAX_PRESET_EXAMPLE_QUESTIONS
 from services.content_security import sanitize_media_url
+from services import feature_flags
 from services.handoff_service import start_handoff_reconciler
 from services.security_service import (
     build_rate_limited_response,
@@ -62,6 +63,7 @@ from routes.handoff import handoff_bp
 from routes.admin_handoff import admin_handoff_bp
 from routes.ai_review import ai_review_bp
 from routes.nutritionist_notes import nutritionist_notes_bp
+from routes.features import features_bp
 
 app = Flask(__name__, static_folder='static', static_url_path='')
 Config.validate()
@@ -73,10 +75,15 @@ if Config.CORS_ORIGINS:
 
 os.makedirs(Config.UPLOAD_DIR, exist_ok=True)
 
+# 功能开关统一入口：关闭的系统在 before_request 阶段就被拦掉（页面 + 接口）
+feature_flags.install_request_guard(app)
+
 init_db()
 from services.secret_service import migrate_plaintext_secrets
 migrate_plaintext_secrets()
-start_handoff_reconciler()
+# 人工客服系统关闭时不启动派单线程；后续在后台打开开关会由 on_change 补启动。
+if feature_flags.is_enabled(feature_flags.HANDOFF_SYSTEM):
+    start_handoff_reconciler()
 
 _CRAWL_GUARD_LIMITS = {
     'browser': Config.CRAWL_GUARD_BROWSER_PER_MIN,
@@ -144,6 +151,7 @@ app.register_blueprint(handoff_bp, url_prefix='/api/handoff')
 app.register_blueprint(admin_handoff_bp, url_prefix='/api/admin/handoff')
 app.register_blueprint(ai_review_bp, url_prefix='/api/admin/ai-review')
 app.register_blueprint(nutritionist_notes_bp, url_prefix='/api/nutritionist-notes')
+app.register_blueprint(features_bp, url_prefix='/api')
 
 
 @app.after_request

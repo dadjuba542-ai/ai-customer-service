@@ -15,6 +15,7 @@ from models import (
     update_case_tag,
 )
 from routes.auth import admin_required
+from services import feature_flags
 from services.content_security import redact_customer_profile
 from services.case_recognition_service import (
     CaseRecognitionError,
@@ -23,6 +24,12 @@ from services.case_recognition_service import (
 )
 
 cases_bp = Blueprint('cases', __name__)
+
+
+@cases_bp.before_request
+def _require_cases_enabled():
+    """兜底拦截：即便全局路径前缀没覆盖到，案例系统的任何接口都不放行。"""
+    return feature_flags.guard_request(feature_flags.CASES_SYSTEM)
 
 
 def _redact_case_payload(payload):
