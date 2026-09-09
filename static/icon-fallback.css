@@ -140,12 +140,16 @@ i[class*="ph-"] {
   -webkit-mask-size: contain;
   mask-size: contain;
 }
+i.ph-arrow-bend-down-right { --ico: url("/icons/arrow-bend-down-right.svg"); }
 i.ph-arrow-down { --ico: url("/icons/arrow-down.svg"); }
 i.ph-arrow-right { --ico: url("/icons/arrow-right.svg"); }
+i.ph-arrows-clockwise { --ico: url("/icons/arrows-clockwise.svg"); }
 i.ph-barricade { --ico: url("/icons/barricade.svg"); }
 i.ph-buildings { --ico: url("/icons/buildings.svg"); }
 i.ph-caret-left { --ico: url("/icons/caret-left.svg"); }
 i.ph-caret-right { --ico: url("/icons/caret-right.svg"); }
+i.ph-book-open { --ico: url("/icons/book-open.svg"); }
+i.ph-books { --ico: url("/icons/books.svg"); }
 i.ph-chart-bar { --ico: url("/icons/chart-bar.svg"); }
 i.ph-chat-circle-text { --ico: url("/icons/chat-circle-text.svg"); }
 i.ph-chat-dots { --ico: url("/icons/chat-dots.svg"); }
@@ -156,6 +160,7 @@ i.ph-clock-counter-clockwise { --ico: url("/icons/clock-counter-clockwise.svg");
 i.ph-compass { --ico: url("/icons/compass.svg"); }
 i.ph-copy-simple { --ico: url("/icons/copy-simple.svg"); }
 i.ph-download { --ico: url("/icons/download.svg"); }
+i.ph-database { --ico: url("/icons/database.svg"); }
 i.ph-file-text { --ico: url("/icons/file-text.svg"); }
 i.ph-files { --ico: url("/icons/files.svg"); }
 i.ph-frown { --ico: url("/icons/frown.svg"); }
@@ -166,23 +171,30 @@ i.ph-grip-vertical { --ico: url("/icons/grip-vertical.svg"); }
 i.ph-hand-fist { --ico: url("/icons/hand-fist.svg"); }
 i.ph-hand-thumbs-up { --ico: url("/icons/hand-thumbs-up.svg"); }
 i.ph-headset { --ico: url("/icons/headset.svg"); }
+i.ph-heartbeat { --ico: url("/icons/heartbeat.svg"); }
 i.ph-home { --ico: url("/icons/home.svg"); }
 i.ph-hourglass { --ico: url("/icons/hourglass.svg"); }
 i.ph-image { --ico: url("/icons/image.svg"); }
 i.ph-inbox { --ico: url("/icons/inbox.svg"); }
 i.ph-key { --ico: url("/icons/key.svg"); }
+i.ph-lifebuoy { --ico: url("/icons/lifebuoy.svg"); }
 i.ph-lightbulb { --ico: url("/icons/lightbulb.svg"); }
+i.ph-lightning { --ico: url("/icons/lightning.svg"); }
 i.ph-list { --ico: url("/icons/list.svg"); }
 i.ph-magic-wand { --ico: url("/icons/magic-wand.svg"); }
+i.ph-magnifying-glass { --ico: url("/icons/magnifying-glass.svg"); }
 i.ph-megaphone { --ico: url("/icons/megaphone.svg"); }
 i.ph-meh { --ico: url("/icons/meh.svg"); }
 i.ph-newspaper { --ico: url("/icons/newspaper.svg"); }
 i.ph-package { --ico: url("/icons/package.svg"); }
 i.ph-paper-plane-right { --ico: url("/icons/paper-plane-right.svg"); }
 i.ph-pencil { --ico: url("/icons/pencil.svg"); }
+i.ph-pencil-line { --ico: url("/icons/pencil-line.svg"); }
 i.ph-pie-chart { --ico: url("/icons/pie-chart.svg"); }
 i.ph-plus { --ico: url("/icons/plus.svg"); }
+i.ph-question { --ico: url("/icons/question.svg"); }
 i.ph-robot { --ico: url("/icons/robot.svg"); }
+i.ph-rocket-launch { --ico: url("/icons/rocket-launch.svg"); }
 i.ph-share-network { --ico: url("/icons/share-network.svg"); }
 i.ph-shield-check { --ico: url("/icons/shield-check.svg"); }
 i.ph-shopping-bag { --ico: url("/icons/shopping-bag.svg"); }
