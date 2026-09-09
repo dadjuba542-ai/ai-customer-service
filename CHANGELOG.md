@@ -1,5 +1,34 @@
 # Changelog
 
+## 1.1.5.6 (2026-09-08)
+
+### 全站图标改为内联 SVG（告别 Phosphor 字体图标）
+
+- **问题**：全站 187 处图标用 Phosphor `<i class="ph ph-xxx">` 写法，但 Phosphor CDN
+  实际未引入，浏览器渲染的是 `icon-fallback.css` 里的 Unicode 兜底字符（◆ ⌂ □ 之类），
+  不是矢量图标，字号/颜色/粗细都不可控
+- **方案**：手写 67 枚 SVG（24 网格、实心、`fill="currentColor"`），三层落地：
+  1. **HTML 静态 113 处** → 内联 `<svg class="icon icon-{name}">`，零额外请求，
+     `width/height: 1em` 继承父级字号、`currentColor` 继承父级颜色
+     - 前台 `static/index.html` 32 处（底部导航 5 + 其余 27）
+     - 后台 `templates/admin.html` 81 处（品牌位 + 侧边栏 15 + 其余 66）
+  2. **JS 动态生成 74 处** → CSS mask 兜底：`i[class*="ph-"]` 用
+     `--ico: url(/icons/{name}.svg)` + `mask-image` + `background-color: currentColor`，
+     一次定义全覆盖，且能兜住以后新写的 `.ph-*`；同时 `::before { content: none }`
+     清掉原来的 Unicode 兜底字符
+  3. **spinner 补动画**：新增 `@keyframes icon-spin`，`.icon-spinner` / `i.ph-spinner`
+     等 0.9s 匀速旋转（原来根本不会转）
+- **新增** `static/icons/`：67 枚独立 SVG 文件（供 mask 兜底与后续复用），
+  全部 `viewBox="0 0 24 24"`、绘制元素显式 `currentColor`
+- **样式**：`icon-fallback.css` 新增 `.icon` 基线（1em / inline-block / `-0.125em`
+  基线对齐 / `flex-shrink:0` / `pointer-events:none`）；`news-nav.css`、`admin.css`
+  的图标选择器扩展为同时命中 `i` 与 `.icon`
+- **不动布局与交互**：只换图标节点，未改任何 class 结构或事件绑定
+- 前端缓存版本号：`icon-fallback.css` / `css/news-nav.css` / `css/admin.css`
+  → `?v=20260908-icons1`
+- 校验：67 枚 SVG 全部通过 XML / viewBox / currentColor / 坐标边界检查；
+  Flask 冒烟（`/icons/*.svg`、`/`、`/admin`）全 200，页面残留 `<i class="ph"` = 0
+
 ## 1.1.5.5 (2026-09-08)
 
 ### 案例系统 / 人工客服系统 独立启用开关

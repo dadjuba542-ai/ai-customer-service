@@ -23,10 +23,10 @@
   transition: all 0.2s;
   font-family: inherit;
 }
-.nav-item i { font-size: 22px; transition: all 0.2s; }
+.nav-item i, .nav-item .icon { font-size: 22px; transition: all 0.2s; }
 .nav-item span { font-size: 10px; font-weight: 600; transition: all 0.2s; }
 .nav-item.active { color: var(--primary); }
-.nav-item.active i { transform: scale(1.1); }
+.nav-item.active i, .nav-item.active .icon { transform: scale(1.1); }
 
 .nav-ai-wrap {
   position: absolute;

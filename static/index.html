@@ -32,7 +32,7 @@
   <link rel="stylesheet" href="/css/chat.css?v=20260907-voice-toggle1">
   <link rel="stylesheet" href="/css/community.css?v=20260720-split1">
   <link rel="stylesheet" href="/css/overlays.css?v=20260720-split1">
-  <link rel="stylesheet" href="/css/news-nav.css?v=20260903-preset-agent1">
+  <link rel="stylesheet" href="/css/news-nav.css?v=20260908-icons1">
   <link rel="stylesheet" href="/css/chat-ui.css?v=20260721-clear1">
   <link rel="stylesheet" href="/css/rich-text.css?v=20260907-prodfix2">
   <link rel="stylesheet" href="/css/related-cases.css?v=20260720-split1">
@@ -40,7 +40,7 @@
   <link rel="stylesheet" href="/css/products.css?v=20260902-prodimg2">
   <link rel="stylesheet" href="/css/discover.css?v=20260903-preset-agent1">
   <link rel="stylesheet" href="/css/handoff.css?v=20260723-ai-review1">
-  <link rel="stylesheet" href="icon-fallback.css?v=20260713-icons2">
+  <link rel="stylesheet" href="icon-fallback.css?v=20260908-icons1">
 </head>
 <body>
   <div id="identity-gate" class="admin-overlay active" onclick="event.stopPropagation();">
@@ -50,13 +50,18 @@
         <div class="login-subtitle">请选择团队并输入姓名</div>
       </div>
       <div class="input-group">
-        <i class="ph ph-users-three"></i>
+        <svg class="icon icon-users-three" viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true">
+  <circle cx="12" cy="7" r="3.3" fill="currentColor"/>
+  <path d="M12 11.4c3.4 0 6.2 1.9 6.2 4v2.6H5.8v-2.6c0-2.1 2.8-4 6.2-4Z" fill="currentColor"/>
+  <circle cx="4.3" cy="9.9" r="2.4" fill="currentColor"/>
+  <circle cx="19.7" cy="9.9" r="2.4" fill="currentColor"/>
+</svg>
         <select id="team-select" style="width:100%;padding:14px 16px 14px 46px;font-size:15px;font-family:inherit;background:var(--slate-50);border:2px solid transparent;border-radius:var(--radius-xl);outline:none;">
           <option value="">请选择团队</option>
         </select>
       </div>
       <div class="input-group">
-        <i class="ph ph-user"></i>
+        <svg class="icon icon-user" viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true"><path d="M12 3.2a4.2 4.2 0 1 0 0 8.4 4.2 4.2 0 0 0 0-8.4zM12 13c-4.2 0-7.6 2.5-7.6 5.4V21h15.2v-2.6C19.6 15.5 16.2 13 12 13z" fill="currentColor"/></svg>
         <input id="member-name-input" type="text" placeholder="请输入姓名" maxlength="20">
       </div>
       <button class="btn-primary" onclick="submitIdentity()">进入系统</button>
@@ -66,9 +71,13 @@
   <div id="app" class="page active">
     <div id="app-container">
       <button id="nutritionist-note-alert" class="nutritionist-note-alert" type="button" hidden onclick="openLatestNutritionistNote()">
-        <span class="nutritionist-note-alert-icon"><i class="ph ph-headset"></i></span>
+        <span class="nutritionist-note-alert-icon"><svg class="icon icon-headset" viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true">
+  <path d="M4.2 13.8v-1.8a7.8 7.8 0 0 1 15.6 0v1.8h-2.6V12a5.2 5.2 0 0 0-10.4 0v1.8H4.2Z" fill="currentColor"/>
+  <rect x="2.6" y="12.6" width="4.4" height="7.4" rx="2.2" fill="currentColor"/>
+  <rect x="17" y="12.6" width="4.4" height="7.4" rx="2.2" fill="currentColor"/>
+</svg></span>
         <span><strong>在线营养师有新留言</strong><small id="nutritionist-note-alert-text">点击查看补充内容</small></span>
-        <b id="nutritionist-note-alert-count">1</b><i class="ph ph-caret-right"></i>
+        <b id="nutritionist-note-alert-count">1</b><svg class="icon icon-caret-right" viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true"><path d="M8.8 4.2 16.6 12l-7.8 7.8V4.2z" fill="currentColor"/></svg>
       </button>
       <!-- Home View -->
       <div id="home-view" class="view active">
@@ -84,9 +93,12 @@
             </div>
           </div>
           <div class="home-bulletin" id="home-bulletin" hidden aria-label="精选资讯">
-            <div class="bulletin-mark"><i class="ph ph-sparkle"></i><span>精选</span></div>
+            <div class="bulletin-mark"><svg class="icon icon-sparkle" viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true">
+  <path d="M11 2.2L13.2 9.4L20.6 11.4L13.2 13.4L11 20.6L8.8 13.4L1.4 11.4L8.8 9.4Z" fill="currentColor"/>
+  <path d="M18.8 1.8L19.7 4.9L22.8 5.8L19.7 6.7L18.8 9.8L17.9 6.7L14.8 5.8L17.9 4.9Z" fill="currentColor"/>
+</svg><span>精选</span></div>
             <div class="bulletin-window"><div class="bulletin-track" id="home-bulletin-track"></div></div>
-            <button type="button" class="bulletin-arrow" aria-label="查看精选资讯" onclick="openHomeBulletin()"><i class="ph ph-arrow-right"></i></button>
+            <button type="button" class="bulletin-arrow" aria-label="查看精选资讯" onclick="openHomeBulletin()"><svg class="icon icon-arrow-right" viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true"><path d="M12.7 4.7 19.4 11.5H3v2h16.4l-6.7 6.8 1.4 1.4L23 12l-8.9-8.7-1.4 1.4z" fill="currentColor"/></svg></button>
           </div>
           <div class="section">
             <div class="section-header">
@@ -109,7 +121,7 @@
               <h3 class="section-title">最新资讯</h3>
             </div>
             <div class="news-list" id="home-news"></div>
-            <button class="view-all-link" onclick="switchView('discover')">查看全部 <i class="ph ph-arrow-right"></i></button>
+            <button class="view-all-link" onclick="switchView('discover')">查看全部 <svg class="icon icon-arrow-right" viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true"><path d="M12.7 4.7 19.4 11.5H3v2h16.4l-6.7 6.8 1.4 1.4L23 12l-8.9-8.7-1.4 1.4z" fill="currentColor"/></svg></button>
           </div>
         </div>
       </div>
@@ -118,7 +130,7 @@
       <div id="chat-view" class="view">
         <header class="chat-header">
           <div class="chat-header-top">
-            <button class="icon-btn" onclick="switchView('home')"><i class="ph ph-caret-left"></i></button>
+            <button class="icon-btn" onclick="switchView('home')"><svg class="icon icon-caret-left" viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true"><path d="M15.2 4.2v15.6L7.4 12l7.8-7.8z" fill="currentColor"/></svg></button>
             <div class="chat-agent-info">
               <span class="chat-agent-name" id="chat-agent-name">产品资料查询</span>
             </div>
@@ -137,16 +149,19 @@
         </div>
         <div class="chat-messages" id="chat-messages">
           <div class="empty-chat" id="empty-chat">
-            <i class="ph ph-sparkle"></i>
+            <svg class="icon icon-sparkle" viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true">
+  <path d="M11 2.2L13.2 9.4L20.6 11.4L13.2 13.4L11 20.6L8.8 13.4L1.4 11.4L8.8 9.4Z" fill="currentColor"/>
+  <path d="M18.8 1.8L19.7 4.9L22.8 5.8L19.7 6.7L18.8 9.8L17.9 6.7L14.8 5.8L17.9 4.9Z" fill="currentColor"/>
+</svg>
             <p>开始一段新的对话吧</p>
           </div>
         </div>
         <div class="chat-input-area">
           <button type="button" class="voice-btn" id="voice-btn" data-voice-icon="mic" style="display:none" title="点击开始录音" aria-label="点击开始录音" aria-pressed="false"><svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9.2" y="2.6" width="5.6" height="10.8" rx="2.8"/><path d="M5.6 11.2v.9a6.4 6.4 0 0 0 12.8 0v-.9"/><path d="M12 18.6v2.1"/><path d="M8.7 20.7h6.6"/></svg></button>
           <div class="input-wrapper">
-            <button class="input-plus"><i class="ph ph-plus"></i></button>
+            <button class="input-plus"><svg class="icon icon-plus" viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true"><path d="M11 4.5h2v6.5H20v2h-7v6.5h-2V13H4v-2h7V4.5z" fill="currentColor"/></svg></button>
             <textarea id="message-input" rows="1" placeholder="说点什么..." onkeydown="handleInputKeydown(event)"></textarea>
-            <button class="send-btn" id="send-btn" onclick="sendMessage()"><i class="ph ph-paper-plane-right"></i></button>
+            <button class="send-btn" id="send-btn" onclick="sendMessage()"><svg class="icon icon-paper-plane-right" viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true"><path d="M21.8 2.2 15 21.8l-3.9-8.9L2.2 9l19.6-6.8z" fill="currentColor"/></svg></button>
           </div>
           <div class="voice-status" id="voice-status" role="status" aria-live="polite" style="display:none">
             <span class="voice-live-dot" aria-hidden="true"></span>
@@ -158,7 +173,7 @@
             <button type="button" class="voice-cancel-btn" id="voice-cancel-btn" onclick="cancelVoiceInput()">取消</button>
           </div>
           <button class="scroll-bottom-btn" id="scroll-bottom-btn" onclick="scrollToBottom()">
-            <i class="ph ph-arrow-down"></i>
+            <svg class="icon icon-arrow-down" viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true"><path transform="rotate(90 12 12)" d="M12.7 4.7 19.4 11.5H3v2h16.4l-6.7 6.8 1.4 1.4L23 12l-8.9-8.7-1.4 1.4z" fill="currentColor"/></svg>
           </button>
         </div>
       </div>
@@ -169,7 +184,7 @@
           <h1 class="memory-title">产品中心</h1>
         </header>
         <div class="products-content" id="products-content">
-          <div class="products-loading"><i class="ph ph-spinner"></i> 加载中...</div>
+          <div class="products-loading"><svg class="icon icon-spinner" viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true"><path d="M12 2.6a9.4 9.4 0 1 0 9.4 9.4" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg> 加载中...</div>
         </div>
       </div>
 
@@ -227,19 +242,19 @@
       <!-- Bottom Navigation -->
       <nav class="bottom-nav">
         <button class="nav-item active" onclick="switchView('home')" data-view="home">
-          <i class="ph ph-house"></i><span>首页</span>
+          <svg class="icon" viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd" d="M12 2.4l9.9 7.9v11.3H2.1V10.3L12 2.4ZM10 15h4v6.6h-4V15Z"/></svg><span>首页</span>
         </button>
         <button class="nav-item" onclick="switchView('products')" data-view="products">
-          <i class="ph ph-shopping-bag"></i><span>产品</span>
+          <svg class="icon" viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true"><rect x="3" y="7.6" width="18" height="13.8" rx="2.6" fill="currentColor"/><path d="M8.2 7.9V6a3.8 3.8 0 0 1 7.6 0v1.9h-2.3V6a1.5 1.5 0 0 0-3 0v1.9H8.2Z" fill="currentColor"/></svg><span>产品</span>
         </button>
         <div class="nav-ai-wrap">
-          <button class="nav-ai-btn" onclick="switchView('chat')"><i class="ph ph-sparkle"></i></button>
+          <button class="nav-ai-btn" onclick="switchView('chat')"><svg class="icon" viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true"><path d="M11 2.2L13.2 9.4L20.6 11.4L13.2 13.4L11 20.6L8.8 13.4L1.4 11.4L8.8 9.4Z" fill="currentColor"/><path d="M18.8 1.8L19.7 4.9L22.8 5.8L19.7 6.7L18.8 9.8L17.9 6.7L14.8 5.8L17.9 4.9Z" fill="currentColor"/></svg></button>
         </div>
         <button class="nav-item" onclick="switchView('discover')" data-view="discover">
-          <i class="ph ph-compass"></i><span>发现</span>
+          <svg class="icon" viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd" d="M12 2.2a9.8 9.8 0 1 0 0 19.6 9.8 9.8 0 0 0 0-19.6ZM12 4.8a7.2 7.2 0 1 1 0 14.4 7.2 7.2 0 0 1 0-14.4Z"/><path fill="currentColor" d="M16.2 7.8L13.6 13.6L7.8 16.2L10.4 10.4L16.2 7.8Z"/></svg><span>发现</span>
         </button>
         <button class="nav-item" onclick="switchView('community')" data-view="community">
-          <i class="ph ph-users-three"></i><span>社区</span>
+          <svg class="icon" viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true"><circle cx="12" cy="7" r="3.3" fill="currentColor"/><path d="M12 11.4c3.4 0 6.2 1.9 6.2 4v2.6H5.8v-2.6c0-2.1 2.8-4 6.2-4Z" fill="currentColor"/><circle cx="4.3" cy="9.9" r="2.4" fill="currentColor"/><circle cx="19.7" cy="9.9" r="2.4" fill="currentColor"/></svg><span>社区</span>
         </button>
       </nav>
 
@@ -247,7 +262,7 @@
       <div id="news-detail-overlay" class="admin-overlay">
         <div class="news-detail-panel">
           <header class="news-detail-header">
-            <button class="icon-btn" onclick="closeNewsDetail()"><i class="ph ph-x"></i></button>
+            <button class="icon-btn" onclick="closeNewsDetail()"><svg class="icon icon-x" viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z" fill="currentColor"/></svg></button>
           </header>
           <div class="news-detail-scroll" id="news-detail-content"></div>
         </div>
@@ -257,12 +272,15 @@
       <div id="product-detail-overlay" class="admin-overlay">
         <div class="news-detail-panel">
           <header class="news-detail-header">
-            <button class="icon-btn" onclick="closeProductDetail()"><i class="ph ph-x"></i></button>
+            <button class="icon-btn" onclick="closeProductDetail()"><svg class="icon icon-x" viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z" fill="currentColor"/></svg></button>
           </header>
           <div class="news-detail-scroll" id="product-detail-content"></div>
           <div class="product-detail-cta">
             <button class="product-cta-btn" id="product-cta-btn" onclick="consultProduct()">
-              <i class="ph ph-chat-circle-text"></i> 立即咨询
+              <svg class="icon icon-chat-circle-text" viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true">
+  <path fill-rule="evenodd" clip-rule="evenodd" d="M7 4.2h10a4.2 4.2 0 0 1 4.2 4.2V13a4.2 4.2 0 0 1-4.2 4.2H7A4.2 4.2 0 0 1 2.8 13V8.4A4.2 4.2 0 0 1 7 4.2ZM8.4 8.4a1.4 1.4 0 1 0 0 2.8 1.4 1.4 0 0 0 0-2.8ZM12 8.4a1.4 1.4 0 1 0 0 2.8 1.4 1.4 0 0 0 0-2.8ZM15.6 8.4a1.4 1.4 0 1 0 0 2.8 1.4 1.4 0 0 0 0-2.8Z" fill="currentColor"/>
+  <path d="M8.8 16.6h4.4L7.4 21.8l1.4-5.2Z" fill="currentColor"/>
+</svg> 立即咨询
             </button>
           </div>
         </div>
@@ -273,15 +291,15 @@
         <div class="share-panel" onclick="event.stopPropagation()">
           <div class="share-panel-header">
             <span class="share-panel-title">微信分享图</span>
-            <button class="icon-btn" onclick="closeSharePreview()"><i class="ph ph-x"></i></button>
+            <button class="icon-btn" onclick="closeSharePreview()"><svg class="icon icon-x" viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z" fill="currentColor"/></svg></button>
           </div>
           <div class="share-panel-body">
             <div class="share-image-wrap" id="share-image-wrap">
-              <div class="share-loading"><i class="ph ph-spinner-gap"></i> 生成中...</div>
+              <div class="share-loading"><svg class="icon icon-spinner-gap" viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true"><path d="M12 2.6a9.4 9.4 0 1 1-9.4 9.4" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg> 生成中...</div>
             </div>
           </div>
           <div class="share-panel-footer">
-            <p class="share-tip"><i class="ph ph-hand-fist"></i> 微信内长按图片保存或转发</p>
+            <p class="share-tip"><svg class="icon icon-hand-fist" viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true"><path d="M6.5 12.5v-3h2.8V7h2.5v2h2.5V7.5h2.5V15a5.5 5.5 0 0 1-5.5 5.5h-.6A5.5 5.5 0 0 1 6.5 15v-2.5z" fill="currentColor"/></svg> 微信内长按图片保存或转发</p>
           </div>
         </div>
       </div>
@@ -325,11 +343,18 @@
       <div id="handoff-choice-overlay" class="admin-overlay handoff-choice-overlay" aria-hidden="true" onclick="closeHandoffChoice(event)">
         <section class="handoff-choice-sheet" role="dialog" aria-modal="true" aria-labelledby="handoff-choice-title" onclick="event.stopPropagation()">
           <div class="handoff-choice-handle" aria-hidden="true"></div>
-          <button type="button" class="handoff-choice-close" aria-label="关闭" onclick="closeHandoffChoice()"><i class="ph ph-x"></i></button>
-          <div class="handoff-choice-icon"><i class="ph ph-sparkle"></i></div>
+          <button type="button" class="handoff-choice-close" aria-label="关闭" onclick="closeHandoffChoice()"><svg class="icon icon-x" viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z" fill="currentColor"/></svg></button>
+          <div class="handoff-choice-icon"><svg class="icon icon-sparkle" viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true">
+  <path d="M11 2.2L13.2 9.4L20.6 11.4L13.2 13.4L11 20.6L8.8 13.4L1.4 11.4L8.8 9.4Z" fill="currentColor"/>
+  <path d="M18.8 1.8L19.7 4.9L22.8 5.8L19.7 6.7L18.8 9.8L17.9 6.7L14.8 5.8L17.9 4.9Z" fill="currentColor"/>
+</svg></div>
           <h2 id="handoff-choice-title">要联系在线营养师吗？</h2>
           <p>AI 通常响应更快，建议先让营养咨询 AI 继续帮你；如仍需真人，也可以立即转接。</p>
-          <div class="handoff-choice-ai-note"><i class="ph ph-robot"></i><span id="handoff-choice-ai-name">将由营养咨询 AI 继续解答</span></div>
+          <div class="handoff-choice-ai-note"><svg class="icon icon-robot" viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true">
+  <path fill-rule="evenodd" clip-rule="evenodd" d="M8.2 7.6h7.6a3.6 3.6 0 0 1 3.6 3.6v5.2a3.6 3.6 0 0 1-3.6 3.6H8.2A3.6 3.6 0 0 1 4.6 16.4v-5.2a3.6 3.6 0 0 1 3.6-3.6ZM9.3 11.8a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3ZM14.7 11.8a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3Z" fill="currentColor"/>
+  <rect x="11.1" y="5.2" width="1.8" height="2.6" rx="0.9" fill="currentColor"/>
+  <circle cx="12" cy="3.6" r="1.7" fill="currentColor"/>
+</svg><span id="handoff-choice-ai-name">将由营养咨询 AI 继续解答</span></div>
           <div id="handoff-choice-status" class="handoff-choice-status"></div>
           <label class="handoff-choice-note-label" for="handoff-choice-note">给营养师的留言</label>
           <textarea id="handoff-choice-note" class="handoff-choice-note" rows="3" maxlength="2000" placeholder="请描述想让营养师重点了解的问题" oninput="syncHandoffDraftState()"></textarea>
@@ -345,9 +370,9 @@
         <div class="survey-modal">
           <div class="survey-title">最近用下来感觉怎么样？</div>
           <div class="survey-options">
-            <button class="survey-btn" onclick="submitSurvey(3)"><i class="ph ph-smiley"></i> 很好</button>
-            <button class="survey-btn" onclick="submitSurvey(2)"><i class="ph ph-meh"></i> 还行</button>
-            <button class="survey-btn" onclick="submitSurvey(1)"><i class="ph ph-frown"></i> 不太好</button>
+            <button class="survey-btn" onclick="submitSurvey(3)"><svg class="icon icon-smiley" viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M12 2.5a9.5 9.5 0 1 0 0 19 9.5 9.5 0 0 0 0-19Zm0 2.3a7.2 7.2 0 1 1 0 14.4 7.2 7.2 0 0 1 0-14.4Z" fill="currentColor"/><path d="M8.6 9h2v2.6h-2V9zm4.8 0h2v2.6h-2V9z" fill="currentColor"/><path d="M8 14.4h8a4 4 0 0 1-8 0v0z" fill="currentColor"/></svg> 很好</button>
+            <button class="survey-btn" onclick="submitSurvey(2)"><svg class="icon icon-meh" viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M12 2.5a9.5 9.5 0 1 0 0 19 9.5 9.5 0 0 0 0-19Zm0 2.3a7.2 7.2 0 1 1 0 14.4 7.2 7.2 0 0 1 0-14.4Z" fill="currentColor"/><path d="M8.6 9h2v2.6h-2V9zm4.8 0h2v2.6h-2V9z" fill="currentColor"/><path d="M8 14.6h8v1.9H8v-1.9z" fill="currentColor"/></svg> 还行</button>
+            <button class="survey-btn" onclick="submitSurvey(1)"><svg class="icon icon-frown" viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M12 2.5a9.5 9.5 0 1 0 0 19 9.5 9.5 0 0 0 0-19Zm0 2.3a7.2 7.2 0 1 1 0 14.4 7.2 7.2 0 0 1 0-14.4Z" fill="currentColor"/><path d="M8.6 9h2v2.6h-2V9zm4.8 0h2v2.6h-2V9z" fill="currentColor"/><path d="M8 16.2h8a4 4 0 0 0-8 0v0z" fill="currentColor"/></svg> 不太好</button>
           </div>
         </div>
       </div>
@@ -356,14 +381,14 @@
       <div id="qdetail-overlay" class="admin-overlay" onclick="closeQDetail(event)">
         <div class="qdetail-panel" onclick="event.stopPropagation()">
           <div class="qdetail-header">
-            <button class="icon-btn" onclick="closeQDetail()"><i class="ph ph-x"></i></button>
+            <button class="icon-btn" onclick="closeQDetail()"><svg class="icon icon-x" viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z" fill="currentColor"/></svg></button>
           </div>
           <div class="qdetail-scroll" id="qdetail-content"></div>
           <div class="qdetail-reply-box">
             <div class="qdetail-reply-input-wrap">
               <span class="qdetail-nickname-label" id="qdetail-username" contenteditable="false"></span>
               <textarea id="qdetail-reply-input" rows="1" placeholder="写回复..." maxlength="500"></textarea>
-              <button class="qdetail-send-btn" onclick="submitReply()"><i class="ph ph-paper-plane-right"></i></button>
+              <button class="qdetail-send-btn" onclick="submitReply()"><svg class="icon icon-paper-plane-right" viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true"><path d="M21.8 2.2 15 21.8l-3.9-8.9L2.2 9l19.6-6.8z" fill="currentColor"/></svg></button>
             </div>
           </div>
         </div>

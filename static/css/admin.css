@@ -109,7 +109,8 @@
     }
     .sidebar-nav .nav-item:hover { background: var(--slate-100); color: var(--slate-800); }
     .sidebar-nav .nav-item.active { background: var(--primary-light); color: var(--primary); font-weight: 600; }
-    .sidebar-nav .nav-item i { font-size: 18px; }
+    .sidebar-nav .nav-item i, .sidebar-nav .nav-item .icon,
+    .sidebar-footer .nav-item .icon { font-size: 18px; }
     .sidebar-footer { padding: 12px; border-top: 1px solid var(--slate-100); }
     .sidebar-footer .nav-item {
       display: flex; align-items: center; gap: 10px;

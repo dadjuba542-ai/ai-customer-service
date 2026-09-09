@@ -109,3 +109,107 @@
 .ph-users-three::before { content: ""; width: .35em; height: .35em; border: .1em solid currentColor; border-radius: 50%; box-shadow: -.33em .14em 0 -.04em var(--icon-bg, transparent), .33em .14em 0 -.04em var(--icon-bg, transparent); }
 .ph-users-three::after { content: ""; position: absolute; width: .9em; height: .38em; border: .1em solid currentColor; border-bottom: 0; border-radius: .5em .5em 0 0; bottom: .02em; }
 .ph-sparkle::before { content: "✦"; font: 700 .95em/1 Arial, sans-serif; }
+
+/* ===== 内联 SVG 图标基线（1.1.5.4 图标改造） =====
+   新图标一律用 <svg class="icon">，颜色 currentColor、尺寸 1em，
+   随父级 color / font-size 自动变化，无需逐处写色值。 */
+.icon {
+  width: 1em;
+  height: 1em;
+  display: inline-block;
+  vertical-align: -0.125em;
+  flex-shrink: 0;
+  pointer-events: none;
+}
+
+/* ===== 图标兜底：Phosphor 类名 -> SVG mask（覆盖 JS 动态生成的图标） ===== */
+i[class*="ph-"]::before { content: none !important; }
+i[class*="ph-"] {
+  width: 1em;
+  height: 1em;
+  display: inline-block;
+  vertical-align: -0.125em;
+  flex-shrink: 0;
+  background-color: currentColor;
+  -webkit-mask-image: var(--ico);
+  mask-image: var(--ico);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+}
+i.ph-arrow-down { --ico: url("/icons/arrow-down.svg"); }
+i.ph-arrow-right { --ico: url("/icons/arrow-right.svg"); }
+i.ph-barricade { --ico: url("/icons/barricade.svg"); }
+i.ph-buildings { --ico: url("/icons/buildings.svg"); }
+i.ph-caret-left { --ico: url("/icons/caret-left.svg"); }
+i.ph-caret-right { --ico: url("/icons/caret-right.svg"); }
+i.ph-chart-bar { --ico: url("/icons/chart-bar.svg"); }
+i.ph-chat-circle-text { --ico: url("/icons/chat-circle-text.svg"); }
+i.ph-chat-dots { --ico: url("/icons/chat-dots.svg"); }
+i.ph-chats { --ico: url("/icons/chats.svg"); }
+i.ph-check { --ico: url("/icons/check.svg"); }
+i.ph-check-circle { --ico: url("/icons/check-circle.svg"); }
+i.ph-clock-counter-clockwise { --ico: url("/icons/clock-counter-clockwise.svg"); }
+i.ph-compass { --ico: url("/icons/compass.svg"); }
+i.ph-copy-simple { --ico: url("/icons/copy-simple.svg"); }
+i.ph-download { --ico: url("/icons/download.svg"); }
+i.ph-file-text { --ico: url("/icons/file-text.svg"); }
+i.ph-files { --ico: url("/icons/files.svg"); }
+i.ph-frown { --ico: url("/icons/frown.svg"); }
+i.ph-gauge { --ico: url("/icons/gauge.svg"); }
+i.ph-gear { --ico: url("/icons/gear.svg"); }
+i.ph-gear-six { --ico: url("/icons/gear-six.svg"); }
+i.ph-grip-vertical { --ico: url("/icons/grip-vertical.svg"); }
+i.ph-hand-fist { --ico: url("/icons/hand-fist.svg"); }
+i.ph-hand-thumbs-up { --ico: url("/icons/hand-thumbs-up.svg"); }
+i.ph-headset { --ico: url("/icons/headset.svg"); }
+i.ph-home { --ico: url("/icons/home.svg"); }
+i.ph-hourglass { --ico: url("/icons/hourglass.svg"); }
+i.ph-image { --ico: url("/icons/image.svg"); }
+i.ph-inbox { --ico: url("/icons/inbox.svg"); }
+i.ph-key { --ico: url("/icons/key.svg"); }
+i.ph-lightbulb { --ico: url("/icons/lightbulb.svg"); }
+i.ph-list { --ico: url("/icons/list.svg"); }
+i.ph-magic-wand { --ico: url("/icons/magic-wand.svg"); }
+i.ph-megaphone { --ico: url("/icons/megaphone.svg"); }
+i.ph-meh { --ico: url("/icons/meh.svg"); }
+i.ph-newspaper { --ico: url("/icons/newspaper.svg"); }
+i.ph-package { --ico: url("/icons/package.svg"); }
+i.ph-paper-plane-right { --ico: url("/icons/paper-plane-right.svg"); }
+i.ph-pencil { --ico: url("/icons/pencil.svg"); }
+i.ph-pie-chart { --ico: url("/icons/pie-chart.svg"); }
+i.ph-plus { --ico: url("/icons/plus.svg"); }
+i.ph-robot { --ico: url("/icons/robot.svg"); }
+i.ph-share-network { --ico: url("/icons/share-network.svg"); }
+i.ph-shield-check { --ico: url("/icons/shield-check.svg"); }
+i.ph-shopping-bag { --ico: url("/icons/shopping-bag.svg"); }
+i.ph-sign-out { --ico: url("/icons/sign-out.svg"); }
+i.ph-smiley { --ico: url("/icons/smiley.svg"); }
+i.ph-sort-ascending { --ico: url("/icons/sort-ascending.svg"); }
+i.ph-sparkle { --ico: url("/icons/sparkle.svg"); }
+i.ph-spinner { --ico: url("/icons/spinner.svg"); }
+i.ph-spinner-gap { --ico: url("/icons/spinner-gap.svg"); }
+i.ph-star { --ico: url("/icons/star.svg"); }
+i.ph-table { --ico: url("/icons/table.svg"); }
+i.ph-tag { --ico: url("/icons/tag.svg"); }
+i.ph-thumbs-down { --ico: url("/icons/thumbs-down.svg"); }
+i.ph-thumbs-up { --ico: url("/icons/thumbs-up.svg"); }
+i.ph-toggle-left { --ico: url("/icons/toggle-left.svg"); }
+i.ph-trash { --ico: url("/icons/trash.svg"); }
+i.ph-trend-up { --ico: url("/icons/trend-up.svg"); }
+i.ph-upload { --ico: url("/icons/upload.svg"); }
+i.ph-user { --ico: url("/icons/user.svg"); }
+i.ph-users { --ico: url("/icons/users.svg"); }
+i.ph-users-three { --ico: url("/icons/users-three.svg"); }
+i.ph-warning { --ico: url("/icons/warning.svg"); }
+i.ph-warning-circle { --ico: url("/icons/warning-circle.svg"); }
+i.ph-x { --ico: url("/icons/x.svg"); }
+@keyframes icon-spin { to { transform: rotate(360deg); } }
+i.ph-spinner, i.ph-spinner-gap,
+.icon-spinner, .icon-spinner-gap {
+  animation: icon-spin 0.9s linear infinite;
+  transform-origin: 50% 50%;
+}
