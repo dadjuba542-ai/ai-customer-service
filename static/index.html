@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
   <title>AI宝儿智能体</title>
   <meta name="description" content="产品咨询、使用答疑与健康问题解答">
   <meta property="og:type" content="website">
@@ -27,26 +27,36 @@
       window.location.replace('http://127.0.0.1:5001/');
     }
   </script>
-  <link rel="stylesheet" href="/css/base.css?v=20260720-split1">
-  <link rel="stylesheet" href="/css/home.css?v=20260720-split1">
-  <link rel="stylesheet" href="/css/chat.css?v=20260907-voice-toggle1">
-  <link rel="stylesheet" href="/css/community.css?v=20260720-split1">
-  <link rel="stylesheet" href="/css/overlays.css?v=20260720-split1">
-  <link rel="stylesheet" href="/css/news-nav.css?v=20260908-icons1">
-  <link rel="stylesheet" href="/css/chat-ui.css?v=20260721-clear1">
+  <script>
+    /* 大字·清晰版 · 防闪烁：必须在所有样式表生效前打上档位，
+       否则会出现"标准字号先渲染、再突然跳成大字"的跳变 */
+    try {
+      var __ts = localStorage.getItem('ui_text_size');
+      if (__ts === 'l' || __ts === 'xl') document.documentElement.setAttribute('data-ts', __ts);
+    } catch (e) {}
+  </script>
+  <link rel="stylesheet" href="/css/base.css?v=20260910-textsize1">
+  <link rel="stylesheet" href="/css/home.css?v=20260910-textsize1">
+  <link rel="stylesheet" href="/css/chat.css?v=20260910-textsize1">
+  <link rel="stylesheet" href="/css/community.css?v=20260910-textsize1">
+  <link rel="stylesheet" href="/css/overlays.css?v=20260910-textsize1">
+  <link rel="stylesheet" href="/css/news-nav.css?v=20260910-textsize1">
+  <link rel="stylesheet" href="/css/chat-ui.css?v=20260910-textsize1">
   <link rel="stylesheet" href="/css/rich-text.css?v=20260907-prodfix2">
-  <link rel="stylesheet" href="/css/related-cases.css?v=20260720-split1">
-  <link rel="stylesheet" href="/css/share-misc.css?v=20260720-split1">
-  <link rel="stylesheet" href="/css/products.css?v=20260902-prodimg2">
-  <link rel="stylesheet" href="/css/discover.css?v=20260903-preset-agent1">
-  <link rel="stylesheet" href="/css/handoff.css?v=20260723-ai-review1">
+  <link rel="stylesheet" href="/css/related-cases.css?v=20260910-textsize1">
+  <link rel="stylesheet" href="/css/share-misc.css?v=20260910-textsize1">
+  <link rel="stylesheet" href="/css/products.css?v=20260910-textsize1">
+  <link rel="stylesheet" href="/css/discover.css?v=20260910-textsize1">
+  <link rel="stylesheet" href="/css/handoff.css?v=20260910-textsize1">
   <link rel="stylesheet" href="icon-fallback.css?v=20260909-icons2">
+  <link rel="stylesheet" href="/css/text-size.css?v=20260910-textsize2">
 </head>
 <body>
   <div id="identity-gate" class="admin-overlay active" onclick="event.stopPropagation();">
+    <button type="button" class="tsize-btn tsize-btn--gate" aria-label="字体大小设置" title="字体大小">字号</button>
     <div class="login-card" style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(90vw,360px);">
       <div class="login-header" style="margin-bottom:18px;">
-        <div class="login-title" style="font-size:22px;">开始咨询</div>
+        <div class="login-title" style="font-size:calc(22px * var(--fs-scale));">开始咨询</div>
         <div class="login-subtitle">请选择团队并输入姓名</div>
       </div>
       <div class="input-group">
@@ -56,7 +66,7 @@
   <circle cx="4.3" cy="9.9" r="2.4" fill="currentColor"/>
   <circle cx="19.7" cy="9.9" r="2.4" fill="currentColor"/>
 </svg>
-        <select id="team-select" style="width:100%;padding:14px 16px 14px 46px;font-size:15px;font-family:inherit;background:var(--slate-50);border:2px solid transparent;border-radius:var(--radius-xl);outline:none;">
+        <select id="team-select" style="width:100%;padding:14px 16px 14px 46px;font-size:max(16px, calc(15px * var(--fs-scale)));font-family:inherit;background:var(--slate-50);border:2px solid transparent;border-radius:var(--radius-xl);outline:none;">
           <option value="">请选择团队</option>
         </select>
       </div>
@@ -88,6 +98,7 @@
               <p class="greeting-line2">我是AI宝儿</p>
               <p class="greeting-line3">今天想让我为你做点什么</p>
             </div>
+            <button type="button" class="tsize-btn tsize-btn--home" aria-label="字体大小设置" title="字体大小">字号</button>
             <div class="avatar-ring">
               <img src="/avatar-optimized.png" class="avatar-img" alt="avatar" loading="eager" decoding="async" fetchpriority="high">
             </div>
@@ -134,6 +145,7 @@
             <div class="chat-agent-info">
               <span class="chat-agent-name" id="chat-agent-name">产品资料查询</span>
             </div>
+            <button type="button" class="tsize-btn tsize-btn--chat" aria-label="字体大小设置" title="字体大小">字号</button>
             <button class="icon-btn chat-clear-btn" onclick="clearChat()" aria-label="清空聊天记录" title="清空聊天记录">
               <span aria-hidden="true">清</span>
             </button>
@@ -182,6 +194,7 @@
       <div id="products-view" class="view">
         <header class="memory-header" style="border-bottom:none">
           <h1 class="memory-title">产品中心</h1>
+          <button type="button" class="tsize-btn" aria-label="字体大小设置" title="字体大小">字号</button>
         </header>
         <div class="products-content" id="products-content">
           <div class="products-loading"><svg class="icon icon-spinner" viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true"><path d="M12 2.6a9.4 9.4 0 1 0 9.4 9.4" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg> 加载中...</div>
@@ -192,6 +205,7 @@
       <div id="discover-view" class="view">
         <header class="memory-header">
           <h1 class="memory-title">发现</h1>
+          <button type="button" class="tsize-btn" aria-label="字体大小设置" title="字体大小">字号</button>
         </header>
         <div class="discover-content" id="discover-content">
           <div class="category-tabs" id="category-tabs">
@@ -212,6 +226,7 @@
       <div id="community-view" class="view">
         <header class="memory-header">
           <h1 class="memory-title">社区</h1>
+          <button type="button" class="tsize-btn" aria-label="字体大小设置" title="字体大小">字号</button>
         </header>
         <div class="community-content">
           <div class="community-tabs">
@@ -394,6 +409,44 @@
         </div>
       </div>
 
+      <!-- 大字·清晰版：档位面板 + 后悔条（定位在 #app-container 内） -->
+      <div class="tsize-mask" id="tsize-mask">
+        <div class="tsize-sheet" role="dialog" aria-modal="true" aria-label="字体大小">
+          <div class="tsize-sheet-grip"></div>
+          <div class="tsize-sheet-title">字体大小</div>
+          <div class="tsize-sheet-sub">切换到大字·清晰版，阅读更轻松</div>
+          <div class="tsize-preview">血压偏高的人，日常饮食要少盐少油，多吃新鲜蔬菜。</div>
+          <button type="button" class="tsize-option" data-ts-value="" onclick="selectTextSize('')">
+            <span class="tsize-option-check" aria-hidden="true">✓</span>
+            <span class="tsize-option-body">
+              <span class="tsize-option-label">标准</span>
+              <span class="tsize-option-desc">默认显示</span>
+            </span>
+            <span class="tsize-option-sample" aria-hidden="true">Aa</span>
+          </button>
+          <button type="button" class="tsize-option" data-ts-value="l" onclick="selectTextSize('l')">
+            <span class="tsize-option-check" aria-hidden="true">✓</span>
+            <span class="tsize-option-body">
+              <span class="tsize-option-label">大</span>
+              <span class="tsize-option-desc">正文约 18px，推荐阅读</span>
+            </span>
+            <span class="tsize-option-sample" aria-hidden="true">Aa</span>
+          </button>
+          <button type="button" class="tsize-option" data-ts-value="xl" onclick="selectTextSize('xl')">
+            <span class="tsize-option-check" aria-hidden="true">✓</span>
+            <span class="tsize-option-body">
+              <span class="tsize-option-label">超大</span>
+              <span class="tsize-option-desc">正文约 22px，长文更轻松</span>
+            </span>
+            <span class="tsize-option-sample" aria-hidden="true">Aa</span>
+          </button>
+          <button type="button" class="tsize-reset" onclick="resetTextSize()">恢复默认设置</button>
+        </div>
+      </div>
+      <div class="tsize-hint" id="tsize-hint">字看不清？点这里调大</div>
+      <button type="button" class="tsize-undo" id="tsize-undo" onclick="undoTextSize()">
+        <strong>已放大</strong><span>点这里恢复</span>
+      </button>
     </div>
   </div>
 
@@ -409,9 +462,10 @@
   <script src="/js/chat.js?v=20260908-featureflags1"></script>
   <script src="/js/history-community.js?v=20260723-ai-review1"></script>
   <script src="/js/nutritionist-notes.js?v=20260723-ai-review1"></script>
-  <script src="/js/news-discover.js?v=20260904-richtext1"></script>
+  <script src="/js/news-discover.js?v=20260910-textsize1"></script>
   <script src="/js/admin-share.js?v=20260904-shareoff1"></script>
   <script src="/js/chat-misc.js?v=20260721-clear2"></script>
   <script src="/js/utils-products.js?v=20260902-imglazy1"></script>
+  <script src="/js/text-size.js?v=20260910-textsize2"></script>
 </body>
 </html>
