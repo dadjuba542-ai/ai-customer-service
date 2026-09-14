@@ -3,6 +3,7 @@ import json
 from flask import Blueprint, request, jsonify
 from models import get_db_connection, get_feedback_reasons, get_feedback_stats, get_setting, set_setting
 from models import get_agent_options, parse_question_binding_payload, MAX_PRESET_HOT_QUESTIONS
+from models import list_research_surveys
 from routes.auth import admin_required
 
 dashboard_bp = Blueprint('dashboard', __name__)
@@ -228,6 +229,16 @@ def feedback_reasons(current_user):
         request.args.get('end_date')
     )
     return jsonify({'reasons': rows})
+
+
+@dashboard_bp.route('/research-surveys')
+@admin_required
+def research_surveys(current_user):
+    items = list_research_surveys(
+        request.args.get('start_date'),
+        request.args.get('end_date'),
+    )
+    return jsonify({'items': items})
 
 @dashboard_bp.route('/hot-questions/save', methods=['POST'])
 @admin_required

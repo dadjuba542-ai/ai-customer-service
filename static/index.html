@@ -39,7 +39,7 @@
   <link rel="stylesheet" href="/css/home.css?v=20260910-textsize1">
   <link rel="stylesheet" href="/css/chat.css?v=20260910-textsize1">
   <link rel="stylesheet" href="/css/community.css?v=20260910-textsize1">
-  <link rel="stylesheet" href="/css/overlays.css?v=20260910-textsize1">
+  <link rel="stylesheet" href="/css/overlays.css?v=20260914-survey1">
   <link rel="stylesheet" href="/css/news-nav.css?v=20260910-textsize1">
   <link rel="stylesheet" href="/css/chat-ui.css?v=20260910-textsize1">
   <link rel="stylesheet" href="/css/rich-text.css?v=20260907-prodfix2">
@@ -418,6 +418,20 @@
         </div>
       </div>
 
+      <!-- Research Survey Overlay -->
+      <div id="research-overlay" class="admin-overlay" onclick="closeResearchSurvey()">
+        <div class="survey-modal research-modal" onclick="event.stopPropagation()">
+          <div class="research-head">
+            <div class="survey-title research-title">帮忙填个小问卷吧</div>
+            <button type="button" class="research-close" aria-label="关闭" onclick="closeResearchSurvey()"><svg class="icon icon-x" viewBox="0 0 24 24" width="20" height="20" fill="none" aria-hidden="true"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z" fill="currentColor"/></svg></button>
+          </div>
+          <div class="research-sub">大约 1 分钟，帮助我们持续优化产品</div>
+          <div class="research-body" id="research-body"></div>
+          <input id="research-contact" class="research-contact-input" type="text" maxlength="60" placeholder="联系方式（选填，便于回访）">
+          <button type="button" class="research-submit" id="research-submit" onclick="submitResearchSurvey()">提交</button>
+        </div>
+      </div>
+
       <!-- Question Detail Overlay -->
       <div id="qdetail-overlay" class="admin-overlay" onclick="closeQDetail(event)">
         <div class="qdetail-panel" onclick="event.stopPropagation()">
@@ -480,7 +494,7 @@
   <script src="speech-controller.js?v=20260717-speech113"></script>
   <script src="handoff-intent.js?v=20260721-handoff1"></script>
   <script src="/js/core.js?v=20260914-audio2"></script>
-  <script src="/js/views.js?v=20260914-audio12"></script>
+  <script src="/js/views.js?v=20260914-survey1"></script>
   <script src="/js/handoff.js?v=20260908-featureflags1"></script>
   <script src="/js/fetch-util.js?v=20260907-voice-toggle1"></script>
   <script src="/js/voice.js?v=20260907-voice-toggle1"></script>
@@ -491,6 +505,7 @@
   <script src="/js/news-discover.js?v=20260910-textsize1"></script>
   <script src="/js/admin-share.js?v=20260904-shareoff1"></script>
   <script src="/js/chat-misc.js?v=20260721-clear2"></script>
+  <script src="/js/research-survey.js?v=20260914-survey1"></script>
   <script src="/js/utils-products.js?v=20260902-imglazy1"></script>
   <script src="/js/audio-courses.js?v=20260914-audio10"></script>
   <script src="/js/text-size.js?v=20260910-textsize2"></script>

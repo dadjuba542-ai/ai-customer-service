@@ -2,6 +2,16 @@
 
 ## 1.1.5.8 (2026-09-14)
 
+### 新增用户调研问卷
+
+- 前台首页「快捷功能」新增「意见反馈」入口，打开多题调研问卷（使用时长 / 常用功能 /
+  满意度 / 待改进 / 建议），复用现有满意度弹窗样式
+- 新增表 `research_surveys`（迁移版本 `202609140003`），答案以 JSON 存储，异步问题结构可扩展
+- 新增 `POST /api/survey/research`（需身份 + 每日限流）与后台
+  `GET /api/admin/dashboard/research-surveys`
+- 后台「评价看板」新增「用户调研问卷」卡片，展示平均满意度并支持 CSV 导出
+- 问卷问题集中维护在 `static/js/research-survey.js` 的 `RESEARCH_QUESTIONS`
+
 ### 新增音频课程模块（Phase 1）
 
 - 新增与「案例系统」平级的「音频课程」模块，独立功能开关 `audio_courses`（默认关闭），

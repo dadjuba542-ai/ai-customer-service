@@ -354,6 +354,21 @@ MIGRATIONS = [
             ('audio_courses', 'show_on_home', 'INTEGER DEFAULT 0'),
         ],
     },
+    {
+        'version': '202609140003',
+        'name': 'create_research_surveys_table',
+        'sqls': [
+            '''CREATE TABLE IF NOT EXISTS research_surveys (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id TEXT DEFAULT '',
+                user_type TEXT DEFAULT '',
+                answers TEXT DEFAULT '{}',
+                contact TEXT DEFAULT '',
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )''',
+            'CREATE INDEX IF NOT EXISTS idx_research_surveys_created ON research_surveys(created_at DESC)',
+        ],
+    },
 ]
 
 

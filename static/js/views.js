@@ -151,7 +151,16 @@ function renderQuickFunctions() {
         <div class="quick-card-desc">${getAgentDesc(a.id)}</div>
       </div>
     </button>
-  `).join('');
+  `).join('') + `
+    <button class="quick-card" onclick="openResearchSurvey()">
+      <div class="quick-card-icon" style="background:#F59E0B">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" aria-hidden="true"><path d="M12 3C6.9 3 2.8 6.4 2.8 10.6c0 2.3 1.3 4.3 3.3 5.7-.1.9-.5 2-1.4 2.9 1.6-.2 3-1 3.8-1.7 1.1.3 2.3.5 3.5.5 5.1 0 9.2-3.4 9.2-7.6S17.1 3 12 3Z" fill="currentColor"/></svg>
+      </div>
+      <div class="quick-card-text">
+        <div class="quick-card-title">意见反馈</div>
+        <div class="quick-card-desc">帮我们把产品做得更好</div>
+      </div>
+    </button>`;
 }
 
 function getAgentDesc(agentId) {

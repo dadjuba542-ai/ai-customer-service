@@ -112,6 +112,17 @@ def _init_db_locked():
     ''')
 
     cursor.execute('''
+        CREATE TABLE IF NOT EXISTS research_surveys (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id TEXT DEFAULT '',
+            user_type TEXT DEFAULT '',
+            answers TEXT DEFAULT '{}',
+            contact TEXT DEFAULT '',
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    ''')
+
+    cursor.execute('''
         CREATE TABLE IF NOT EXISTS share_events (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             user_id TEXT DEFAULT '',
@@ -1685,6 +1696,44 @@ def create_survey(score):
     conn.execute('INSERT INTO satisfaction_surveys (score) VALUES (?)', (score,))
     conn.commit()
     conn.close()
+
+
+def create_research_survey(user_id, answers, contact='', user_type=''):
+    conn = get_db_connection()
+    conn.execute(
+        'INSERT INTO research_surveys (user_id, user_type, answers, contact) VALUES (?, ?, ?, ?)',
+        (user_id or '', user_type or '', json.dumps(answers or {}, ensure_ascii=False), contact or ''),
+    )
+    conn.commit()
+    conn.close()
+
+
+def list_research_surveys(start_date=None, end_date=None, limit=500):
+    clause = ''
+    params = []
+    if start_date:
+        clause += ' AND created_at >= ?'
+        params.append(start_date)
+    if end_date:
+        clause += ' AND created_at <= ?'
+        params.append(end_date + ' 23:59:59')
+    conn = get_db_connection()
+    rows = conn.execute(
+        f'''SELECT id, user_id, user_type, answers, contact, created_at
+            FROM research_surveys WHERE 1=1{clause}
+            ORDER BY id DESC LIMIT ?''',
+        params + [max(1, min(int(limit), 2000))],
+    ).fetchall()
+    conn.close()
+    items = []
+    for row in rows:
+        item = dict(row)
+        try:
+            item['answers'] = json.loads(item.get('answers') or '{}')
+        except (ValueError, TypeError):
+            item['answers'] = {}
+        items.append(item)
+    return items
 
 
 def create_share_event(data):
