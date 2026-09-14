@@ -131,7 +131,12 @@ async function uploadAudioCourseFile(input) {
     if (!res.ok) {
       status.textContent = '';
       input.value = '';
-      return showToast(data.error || '音频上传失败', 'error');
+      let message = data.error;
+      if (!message && res.status === 413) {
+        message = '音频超过服务器允许的大小（413），请压缩后重试，或让运维调高上传上限';
+      }
+      if (!message) message = `音频上传失败（${res.status}）`;
+      return showToast(message, 'error');
     }
     document.getElementById('audio-course-audio-url').value = data.url || '';
     if (data.duration_seconds) {

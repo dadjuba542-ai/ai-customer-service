@@ -154,6 +154,12 @@ FeatureFlag(
 - 音频 URL 统一走 `sanitize_audio_url`，拒绝 `javascript:`、`file:`、`data:` 等。
 - `UPLOAD_DIR` 在 Railway/Zeabur 指向持久卷（`/data/uploads`）。
 - 音频体积较大，全局 `MAX_CONTENT_LENGTH` 需放宽（图片接口仍单独限制 8MB）。
+- **上线必备两步（缺一会 413）**
+  1. 反向代理：`client_max_body_size 60M;`（nginx 默认 1M，线上若有 `10M` 会先挡掉）；
+  2. 应用：`.env` 里 `MAX_CONTENT_LENGTH` 若显式设置会**覆盖**代码默认 52MB，
+     线上需改为 `54525952`，并按需设置 `AUDIO_MAX_UPLOAD_BYTES=52428800`。
+- 改完执行 `nginx -t && nginx -s reload`，并重启应用进程。`scripts/` 无自动读取 `.env`，
+  配置以运行环境注入为准。
 
 ## 9. 测试与验收
 
