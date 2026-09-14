@@ -3,7 +3,7 @@ let audioCoursesCache = [];
 let audioCoursePreviewAudio = null;
 
 function fmtAudioDuration(seconds) {
-  const total = Number(seconds) || 0;
+  const total = Math.floor(Number(seconds) || 0);
   if (total <= 0) return '';
   const mins = Math.floor(total / 60);
   const secs = total % 60;

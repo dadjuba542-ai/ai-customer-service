@@ -57,10 +57,16 @@ const sandbox = {
 };
 vm.createContext(sandbox);
 vm.runInContext(
-  `${code}\nthis.__escapeAttr = escapeAttr; this.__play = playAudioCourse; ` +
-  `this.__stop = stopAudio; this.__close = closeAudioDrawer; this.__state = audioPlayerState;`,
+  `${code}\nthis.__escapeAttr = escapeAttr; this.__fmt = formatAudioDuration; ` +
+  `this.__play = playAudioCourse; this.__stop = stopAudio; this.__close = closeAudioDrawer; this.__state = audioPlayerState;`,
   sandbox,
 );
+
+// ---- formatAudioDuration ----
+const fmt = sandbox.__fmt;
+assert(fmt(20.445745) === '0:20', '小数秒应取整到 0:20');
+assert(fmt(1411.1359999999997) === '23:31', '长音频小数秒应取整到 23:31');
+assert(fmt(0) === '', '0 应返回空串');
 
 // ---- escapeAttr ----
 const escapeAttr = sandbox.__escapeAttr;
