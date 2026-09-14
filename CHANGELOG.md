@@ -47,6 +47,13 @@
 - 修复播放时间显示小数（`20.445745`）问题：时长/进度取整为 `m:ss`
 - 回归：`scripts/test_audio_courses_frontend.js` 覆盖收起保留进度、切课、显式关闭
 
+### 音频课程播放页增强（Phase 1.1）
+
+- 点详情面板外改为**收起为迷你条**（继续播放），不再需要精确点关闭按钮
+- 详情页新增 **15 秒快退 / 快进**按钮，`seekAudioBy()` 做 `[0, duration]` 边界钳制
+- 修复迷你条点关闭后不消失：`.audio-mini-player` 的 `display:flex` 覆盖了 `[hidden]`，补 `[hidden]{display:none}`
+- 缓存版本：`audio-courses.js/css` -> `20260914-audio7`/`audio8`
+
 ## 1.1.5.6 (2026-09-08 ~ 09-10)
 ### 全站图标改为内联 SVG（告别 Phosphor 字体图标）
 

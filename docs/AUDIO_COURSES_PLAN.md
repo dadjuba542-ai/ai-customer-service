@@ -257,3 +257,16 @@ FeatureFlag(
 ### Phase 2（后续）
 
 刷新后恢复进度（sessionStorage）、锁屏控制（Media Session API）、倍速、播完自动下一节。
+
+## 14. 播放页增强（Phase 1.1）
+
+- **点详情面板外收起为迷你条**：给遮罩恢复点击监听，点外部仅 `closeAudioDrawer()`（收 UI，
+  不停播）；面板加 `stopPropagation`，保留关闭按钮。
+- **15 秒快退/快进**：详情控制区改为 `[快退15] [播放/暂停] [快进15]` + 下方进度条与时间；
+  新增 `seekAudioBy(delta)`，对 `[0, duration]` 做钳制，未加载或时长未知时不响应。
+- 测试：`scripts/test_audio_courses_frontend.js` 新增快进/快退与边界用例。
+- 缓存版本：`audio-courses.js/css` → `?v=20260914-audio7`。
+
+### Phase 1.2（待做）
+
+进度条拖动（Pointer Events + scrubbing 状态 + 拖拽把手 + `touch-action: none` + 键盘无障碍）。

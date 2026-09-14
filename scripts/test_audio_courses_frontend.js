@@ -57,7 +57,7 @@ const sandbox = {
 };
 vm.createContext(sandbox);
 vm.runInContext(
-  `${code}\nthis.__escapeAttr = escapeAttr; this.__fmt = formatAudioDuration; ` +
+  `${code}\nthis.__escapeAttr = escapeAttr; this.__fmt = formatAudioDuration; this.__seekBy = seekAudioBy; ` +
   `this.__play = playAudioCourse; this.__stop = stopAudio; this.__close = closeAudioDrawer; this.__state = audioPlayerState;`,
   sandbox,
 );
@@ -109,10 +109,23 @@ play(courseB);
 assert(el.src === '/uploads/audio/b.mp3', '切换课程应换源');
 assert(state.currentTime === 0 && state.id === 2, '切课应从 0 开始');
 
+// 15 秒快退/快进（含边界钳制）
+el.currentTime = 5;
+state.currentTime = 5;
+sandbox.__seekBy(-15);
+assert(el.currentTime === 0, '快退不应越过开头');
+sandbox.__seekBy(15);
+assert(el.currentTime === 15, '快进 15 秒');
+sandbox.__seekBy(1000);
+assert(el.currentTime === 100, '快进不应越过结尾');
+
 // 显式关闭：暂停 + 清空
 stop();
 assert(el.pauseCalls >= 1, '显式关闭应暂停');
 assert(el.src === '', '显式关闭应清空 src');
 assert(state.loaded === false && state.id === null, '显式关闭应清空状态');
+
+// 未加载时快进不应报错
+sandbox.__seekBy(15);
 
 console.log('audio courses frontend tests passed');

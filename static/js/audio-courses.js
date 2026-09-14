@@ -332,6 +332,17 @@ function seekAudioFromEvent(event) {
   if (audioPlayerEl) audioPlayerEl.currentTime = ratio * audioPlayerState.duration;
 }
 
+function seekAudioBy(delta) {
+  if (!audioPlayerState.loaded || !audioPlayerEl || !audioPlayerState.duration) return;
+  const target = Math.min(
+    audioPlayerState.duration,
+    Math.max(0, (audioPlayerEl.currentTime || 0) + delta),
+  );
+  audioPlayerEl.currentTime = target;
+  audioPlayerState.currentTime = target;
+  renderAudioPlayerUi();
+}
+
 function expandAudioPlayer() {
   if (audioPlayerState.id == null) return;
   openAudioCourse(audioPlayerState.id, { autoplay: false });
@@ -345,7 +356,7 @@ function ensureAudioDrawer() {
   overlay.id = 'audio-drawer-overlay';
   overlay.className = 'audio-drawer-overlay';
   overlay.innerHTML = `
-    <div class="audio-drawer-panel">
+    <div class="audio-drawer-panel" onclick="event.stopPropagation()">
       <div class="audio-drawer-header">
         <div class="audio-drawer-kicker">音频课程</div>
         <button type="button" class="audio-drawer-close" aria-label="关闭" onclick="closeAudioDrawer()">
@@ -354,6 +365,8 @@ function ensureAudioDrawer() {
       </div>
       <div class="audio-drawer-body" id="audio-drawer-body"></div>
     </div>`;
+  // 点面板外只收起为迷你条，不停止播放
+  overlay.addEventListener('click', () => closeAudioDrawer());
   document.body.appendChild(overlay);
   return overlay;
 }
@@ -393,11 +406,23 @@ function renderAudioCourseDetail(item, autoplay = true) {
     <h2 class="audio-detail-title">${escapeHtml(item.title || '')}</h2>
     ${meta.length ? `<div class="audio-detail-meta">${escapeHtml(meta.join(' · '))}</div>` : ''}
     ${item.audio_url ? `<div class="audio-detail-player">
-      <button type="button" class="audio-detail-toggle" id="audio-detail-toggle" aria-label="播放或暂停" onclick="toggleAudioPlayback()"></button>
-      <div class="audio-detail-progress" onclick="seekAudioFromEvent(event)" role="slider" aria-label="播放进度">
-        <div class="audio-detail-progress-fill" id="audio-detail-progress-fill"></div>
+      <div class="audio-detail-controls">
+        <button type="button" class="audio-detail-skip" aria-label="快退15秒" onclick="seekAudioBy(-15)">
+          <svg viewBox="0 0 24 24" width="26" height="26" fill="none" aria-hidden="true"><path d="M12 4.6V2L7 6.2l5 4.2V7.8a6.2 6.2 0 1 1-6.2 6.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span class="audio-skip-num">15</span>
+        </button>
+        <button type="button" class="audio-detail-toggle" id="audio-detail-toggle" aria-label="播放或暂停" onclick="toggleAudioPlayback()"></button>
+        <button type="button" class="audio-detail-skip" aria-label="快进15秒" onclick="seekAudioBy(15)">
+          <svg viewBox="0 0 24 24" width="26" height="26" fill="none" aria-hidden="true"><path d="M12 4.6V2l5 4.2-5 4.2V7.8a6.2 6.2 0 1 0 6.2 6.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span class="audio-skip-num">15</span>
+        </button>
       </div>
-      <span class="audio-detail-time" id="audio-detail-time"></span>
+      <div class="audio-detail-timeline">
+        <div class="audio-detail-progress" onclick="seekAudioFromEvent(event)" role="slider" aria-label="播放进度">
+          <div class="audio-detail-progress-fill" id="audio-detail-progress-fill"></div>
+        </div>
+        <span class="audio-detail-time" id="audio-detail-time"></span>
+      </div>
     </div>` : ''}
     ${item.summary ? `<div class="audio-detail-section"><strong>课程简介</strong><p>${escapeHtml(item.summary)}</p></div>` : ''}
     ${item.content ? `<div class="audio-detail-section"><strong>课程内容</strong><p>${escapeHtml(item.content).replace(/\n/g, '<br>')}</p></div>` : ''}
