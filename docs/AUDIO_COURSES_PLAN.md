@@ -192,3 +192,68 @@ FeatureFlag(
 - **PUT 合并式更新**：只覆盖请求中显式出现的字段，避免部分更新清空数据。
 - **LIKE 转义**：标签筛选对 `% _ \` 做转义并加 `ESCAPE`。
 - **缓存版本**：`audio-courses.js/css` → `?v=20260914-audio3`，后台 → `?v=20260914-audio2`。
+
+## 13. 迷你播放器（Phase 1）
+
+### 目标
+
+- 点详情遮罩不再关闭，避免误触；
+- 关闭详情后**继续播放**，重新打开**接着上次进度**；
+- 常驻「迷你播放条」，跨视图控制播放。
+
+### 已定决策
+
+| 项 | 选择 |
+| --- | --- |
+| 迷你条位置 | 底部导航之上（`.bottom-nav` 之上，安全区适配） |
+| 详情关闭方式 | 只留关闭按钮，去掉点遮罩关闭 |
+| 播放控件 | 迷你条与详情**统一自定义控件** |
+| 停止入口 | 迷你条带独立关闭按钮（唯一真正停止/归零的入口） |
+
+### 结构
+
+```text
+#audio-mini-player（动态挂到 #app-container 内，position:absolute，z-index 30）
+  [播放/暂停]  标题(点击展开详情)  [进度条]  时间  [关闭]
+```
+
+- 单例 `<audio>` 挂在 `body`，**不随详情抽屉销毁**；抽屉只负责展示，不复创建播放器。
+- 迷你条仅在「已有已加载课程」时显示；播放/暂停/结束都保留。
+
+### 状态与渲染
+
+- 状态：`{ id, title, series, episode, duration, currentTime, playing }`
+- 单一 `renderPlayer()` 同时刷新迷你条与抽屉内控件（播放键、进度、时间）。
+- 事件：`timeupdate` 进度、`loadedmetadata` 时长、`ended` 保留条与进度并回播放态、`play/pause` 切图标。
+
+### 交互规则
+
+| 操作 | 行为 |
+| --- | --- |
+| 点详情遮罩 | 不关闭 |
+| 详情关闭按钮 | 只收起抽屉，播放继续 |
+| 离开 audio 视图 | 收起抽屉 UI，播放继续（`views.js` 不停播） |
+| 点迷你条标题 | 重新展开详情，接着当前进度 |
+| 迷你条播放/暂停 | 控制单例 |
+| 迷你条关闭 | 唯一 `pause + 归零 + 清除` 入口 |
+| 切到另一课程 | 暂停旧的、加载新的、从 0 播 |
+| 播放结束 | 迷你条保留，点播放从头 |
+
+### 实现要点
+
+- `closeAudioDrawer()` 语义改为「仅收 UI」；新增 `stopAudio()` 供迷你条关闭使用。
+- 迷你条定位 `bottom: calc(72px + env(safe-area-inset-bottom))`；大字档底部导航 88px，需覆盖。
+- 按钮热区 ≥44px，字号用 `calc(Npx * var(--fs-scale))`。
+- iOS 自动播放需用户手势内触发 `play()`。
+
+### 涉及文件
+
+- `static/js/audio-courses.js`（主改：单例播放器 + 迷你条 + 抽屉改造）
+- `static/css/audio-courses.css`（迷你条与自定义控件样式）
+- `static/js/views.js`（离开 audio 不停播；`closeAudioDrawer` 语义已满足）
+- `scripts/test_audio_courses_frontend.js`（mock `Audio` 验证收起后进度保留、显式关闭才归零）
+- 缓存版本号 bump
+
+### Phase 2（后续）
+
+刷新后恢复进度（sessionStorage）、锁屏控制（Media Session API）、倍速、播完自动下一节。
