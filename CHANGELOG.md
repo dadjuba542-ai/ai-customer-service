@@ -61,6 +61,12 @@
 - 无障碍：`role="slider"` + `aria-valuenow` + 左右方向键 ±5 秒
 - 缓存版本：`audio-courses.js/css` -> `20260914-audio10`
 
+### 修复音频课程「查看全部」看不到课程
+
+- `.audio-content` 未设为可滚动容器（`#app-container` 为 `overflow:hidden`），列表被裁掉无法滚动
+- 补齐 `flex:1; min-height:0; overflow-y:auto` 与底部留白（100px），与发现页/社区页一致
+- 缓存版本：`audio-courses.css` -> `20260914-audio11`
+
 ## 1.1.5.6 (2026-09-08 ~ 09-10)
 ### 全站图标改为内联 SVG（告别 Phosphor 字体图标）
 
