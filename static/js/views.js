@@ -17,6 +17,8 @@ function switchView(view) {
   if (view === 'community') loadQA();
   if (view === 'products') loadProducts();
   if (view === 'discover') loadDiscover();
+  if (view === 'audio') loadAudioCoursesPage();
+  if (view !== 'audio' && typeof closeAudioDrawer === 'function') closeAudioDrawer();
   if (view !== 'discover') stopCarouselAuto();
 }
 

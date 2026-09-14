@@ -35,6 +35,7 @@ let caseLibraryUrl = '';
 // 拉取失败时按「开启」处理，避免误伤；后端接口仍会拦截已关闭的系统。
 let FEATURE_FLAGS = {
   cases: { enabled: true, label: '案例系统' },
+  audio_courses: { enabled: false, label: '音频课程' },
   handoff: { enabled: true, label: '人工客服系统' },
 };
 

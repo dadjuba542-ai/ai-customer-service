@@ -44,18 +44,21 @@ def main():
         auth = {'Authorization': f"Bearer {login.get_json()['token']}"}
 
         try:
-            # 1) 默认状态：案例系统开、人工客服系统关
+            # 1) 默认状态：案例系统开、音频课程关、人工客服系统关
             assert_true(feature_flags.is_enabled('cases') is True, '案例系统默认应为开启')
+            assert_true(feature_flags.is_enabled('audio_courses') is False, '音频课程默认应为关闭')
             assert_true(feature_flags.is_enabled('handoff') is False, '人工客服系统默认应为关闭')
             assert_true(feature_flags.is_enabled('nope') is False, '未知开关必须按关闭处理')
 
             states = {item['name']: item for item in feature_flags.list_states()}
             assert_true(states['cases']['source'] == 'default', 'cases 应来自默认值')
+            assert_true(states['audio_courses']['default'] is False, 'audio_courses 默认值应为关闭')
             assert_true(states['handoff']['default'] is False, 'handoff 默认值应为关闭')
 
             # 2) 公开接口只暴露最小信息
             public = client.get('/api/feature-flags').get_json()['flags']
             assert_true(public['cases']['enabled'] is True, '公开接口 cases 状态不对')
+            assert_true(public['audio_courses']['enabled'] is False, '公开接口 audio_courses 状态不对')
             assert_true('setting_key' not in public['cases'], '公开接口不应暴露内部 key')
 
             # 3) 案例系统关闭：入口全被禁用
@@ -82,6 +85,16 @@ def main():
             # 5) 重新开启案例系统后恢复
             set_setting('cases_enabled', '1')
             assert_true(client.get('/api/cases').status_code == 200, '案例系统重开后应恢复 200')
+
+            # 5.1) 音频课程：默认关闭拦截，开启后可用
+            blocked_audio = client.get('/api/audio-courses')
+            assert_true(blocked_audio.status_code == 403, '音频课程默认关闭应 403')
+            assert_true(blocked_audio.get_json()['feature'] == 'audio_courses', '缺少 audio_courses 标识')
+            enable_audio = client.put('/api/admin/feature-flags', headers=auth,
+                                      json={'name': 'audio_courses', 'enabled': True})
+            assert_true(enable_audio.status_code == 200, enable_audio.get_data(as_text=True))
+            assert_true(feature_flags.is_enabled('audio_courses') is True, '开启后 audio_courses 应为 True')
+            assert_true(client.get('/api/audio-courses').status_code == 200, '开启后音频课程应 200')
 
             # 6) 人工客服系统关闭：页面、接口、定时任务全停
             assert_true(client.get('/consultant').status_code == 403, '坐席工作台页面应 403')

@@ -51,6 +51,9 @@
         <div class="nav-item" data-page="cases" data-feature="cases" onclick="switchPage('cases')" data-page-node-id="sk2U9tuhYcaFbGTRApx6YU">
           <svg class="icon" data-page-node-id="TLd1KPFMNGBeJIDRUModsG" viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true"><rect x="9.6" y="3.4" width="11" height="11" rx="2.2" fill="currentColor"/><path fill-rule="evenodd" d="M7.2 7.8h5.8a2.4 2.4 0 0 1 2.4 2.4V18a2.4 2.4 0 0 1-2.4 2.4H7.2A2.4 2.4 0 0 1 4.8 18v-7.8a2.4 2.4 0 0 1 2.4-2.4ZM7.8 12.2h6.6v1.8H7.8v-1.8ZM7.8 16.2h6.6v1.8H7.8v-1.8Z" fill="currentColor"/></svg><span data-page-node-id="riCr3CMF6sBxSCdh12FpEL">案例档案</span>
         </div>
+        <div class="nav-item" data-page="audio-courses" data-feature="audio_courses" onclick="switchPage('audio-courses')" data-page-node-id="Kb7AudioCoursesNav001">
+          <svg class="icon" viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true"><path fill-rule="evenodd" d="M9 5.2a2.6 2.6 0 1 0 0 5.2 2.6 2.6 0 0 0 0-5.2Zm0 2.2a.4.4 0 1 1 0 .8.4.4 0 0 1 0-.8Z" fill="currentColor"/><path d="M15.4 3.4v11.1a3 3 0 0 1-2.4 2.9v-2.1a.9.9 0 0 0 1.2-.8V5.7l-3.2-.9v9.7a3 3 0 1 1-2.2-2.9v2.2a.8.8 0 0 0-.8.8 3 3 0 0 0 3.6-.1V3.9l4.8 1.3-1 2.1V3.4Z" fill="currentColor"/><path d="M15.4 3.4l4.8 1.3v2.2l-4.8-1.3V3.4Z" fill="currentColor"/></svg><span>音频课程</span>
+        </div>
         <div class="nav-item" data-page="agents" onclick="switchPage('agents')" data-page-node-id="VzQqCdb1raslbZ2KXwM5bN">
           <svg class="icon" data-page-node-id="GDsfhgjAejVq16BrkNIPxT" viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true"><path fill-rule="evenodd" d="M8.2 7.6h7.6a3.6 3.6 0 0 1 3.6 3.6v5.2a3.6 3.6 0 0 1-3.6 3.6H8.2A3.6 3.6 0 0 1 4.6 16.4v-5.2a3.6 3.6 0 0 1 3.6-3.6ZM9.3 11.8a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3ZM14.7 11.8a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3Z" fill="currentColor"/><rect x="11.1" y="5.2" width="1.8" height="2.6" rx="0.9" fill="currentColor"/><circle cx="12" cy="3.6" r="1.7" fill="currentColor"/></svg><span data-page-node-id="mQJx5fOE7E4N5yb8Piay6x">智能体配置</span>
         </div>
@@ -427,6 +430,59 @@
         <div class="admin-card" data-page-node-id="E7tYVwgwasPsec9l7WrJ64">
           <h3 data-page-node-id="R21l5LC7keA1NAZGkONHkL"><svg class="icon icon-list" viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true" data-page-node-id="S0jHigLAfWDtyyoXonfVqN"><path d="M8 5.5h12v2H8v-2zm0 5.5h12v2H8v-2zm0 5.5h12v2H8v-2zM4 5.5h2v2H4v-2zm0 5.5h2v2H4v-2zm0 5.5h2v2H4v-2z" fill="currentColor"/></svg>案例列表</h3>
           <div id="admin-cases-list" data-page-node-id="Sd96nFsK698caJrt20qmnb"></div>
+        </div>
+      </div>
+
+      <!-- ===== Page: Audio Courses ===== -->
+      <div id="page-audio-courses" class="page-content">
+        <div class="admin-card">
+          <h3><svg class="icon icon-music-notes" viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true"><path fill-rule="evenodd" d="M9 5.2a2.6 2.6 0 1 0 0 5.2 2.6 2.6 0 0 0 0-5.2Zm0 2.2a.4.4 0 1 1 0 .8.4.4 0 0 1 0-.8Z" fill="currentColor"/><path d="M15.4 3.4v11.1a3 3 0 0 1-2.4 2.9v-2.1a.9.9 0 0 0 1.2-.8V5.7l-3.2-.9v9.7a3 3 0 1 1-2.2-2.9v2.2a.8.8 0 0 0-.8.8 3 3 0 0 0 3.6-.1V3.9l4.8 1.3-1 2.1V3.4Z" fill="currentColor"/><path d="M15.4 3.4l4.8 1.3v2.2l-4.8-1.3V3.4Z" fill="currentColor"/></svg><span id="audio-course-form-title">新增音频课程</span></h3>
+          <input type="hidden" id="audio-course-editing-id">
+          <div class="admin-row">
+            <div class="field" style="flex:1"><label>标题</label><input type="text" id="audio-course-title" placeholder="如：便秘怎么调理"></div>
+            <div class="field" style="width:160px"><label>系列</label><input type="text" id="audio-course-series" placeholder="如：五期课程"></div>
+            <div class="field" style="width:100px"><label>讲次</label><input type="number" id="audio-course-episode" value="0"></div>
+          </div>
+          <div class="admin-row">
+            <div class="field" style="flex:1"><label>音频文件（上传）</label>
+              <input type="file" id="audio-course-audio-file" accept=".mp3,.m4a,.aac,.wav,.ogg,.mp4" onchange="uploadAudioCourseFile(this)">
+              <div id="audio-course-upload-status" style="font-size:11px;color:var(--slate-400);margin-top:4px"></div>
+            </div>
+            <div class="field" style="flex:1"><label>或音频地址（/uploads/... 或 https://）</label><input type="text" id="audio-course-audio-url" placeholder="/uploads/audio/xxx.mp3"></div>
+          </div>
+          <div class="admin-row">
+            <div class="field" style="flex:1"><label>外部播放页（选填）</label><input type="text" id="audio-course-external-url" placeholder="https://..."></div>
+            <div class="field" style="width:130px"><label>时长（秒）</label><input type="number" id="audio-course-duration" value="0"></div>
+            <div class="field" style="width:120px"><label>排序</label><input type="number" id="audio-course-sort-order" value="0"></div>
+          </div>
+          <div class="admin-row">
+            <div class="field" style="flex:1"><label>标签（逗号分隔）</label><input type="text" id="audio-course-tags" placeholder="便秘,肠道,饮食"></div>
+          </div>
+          <div class="admin-row">
+            <div class="field"><label>摘要</label><textarea id="audio-course-summary" rows="2" placeholder="用于前台列表展示"></textarea></div>
+          </div>
+          <div class="admin-row">
+            <div class="field"><label>文字稿（选填）</label><textarea id="audio-course-content" rows="5" placeholder="课程文字内容"></textarea></div>
+          </div>
+          <div class="admin-row" style="gap:20px;flex-wrap:wrap">
+            <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--slate-600)">
+              <input type="checkbox" id="audio-course-status" checked> 前台可见
+            </label>
+            <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--slate-600)">
+              <input type="checkbox" id="audio-course-pinned"> 置顶
+            </label>
+            <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--slate-600)">
+              <input type="checkbox" id="audio-course-home"> 首页展示
+            </label>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:4px">
+            <button class="btn btn-secondary" onclick="resetAudioCourseForm()">取消</button>
+            <button class="btn btn-primary" onclick="saveAudioCourse()">保存课程</button>
+          </div>
+        </div>
+        <div class="admin-card">
+          <h3><svg class="icon icon-list" viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true"><path d="M8 5.5h12v2H8v-2zm0 5.5h12v2H8v-2zm0 5.5h12v2H8v-2zM4 5.5h2v2H4v-2zm0 5.5h2v2H4v-2zm0 5.5h2v2H4v-2z" fill="currentColor"/></svg>课程列表</h3>
+          <div id="admin-audio-courses-list"></div>
         </div>
       </div>
 
@@ -852,5 +908,6 @@
 
 <script src="/js/admin.js?v=20260908-featureflags1"></script>
 <script src="/admin/cases.js?v=20260902-casebatch1"></script>
+<script src="/admin/audio-courses.js?v=20260914-audio2"></script>
 </body>
 </html>

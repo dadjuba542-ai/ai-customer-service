@@ -1,0 +1,270 @@
+/* ===== Audio Courses (前台) ===== */
+.home-tabs { justify-content: flex-start; gap: 18px; }
+.home-tab-btn {
+  border: none;
+  background: none;
+  padding: 0 0 4px;
+  font-family: inherit;
+  font-size: calc(17px * var(--fs-scale));
+  font-weight: 700;
+  letter-spacing: -0.3px;
+  color: var(--slate-400);
+  cursor: pointer;
+  position: relative;
+}
+.home-tab-btn.active { color: var(--slate-800); }
+.home-tab-btn.active::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -2px;
+  height: 3px;
+  border-radius: 3px;
+  background: var(--primary);
+}
+
+.audio-home-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.audio-course-card {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid var(--slate-100);
+  border-radius: 10px;
+  background: var(--white);
+  text-align: left;
+  cursor: pointer;
+  font-family: inherit;
+  transition: border-color 0.15s, transform 0.15s;
+}
+.audio-course-card:hover {
+  border-color: var(--primary);
+  transform: translateY(-1px);
+}
+.audio-course-play {
+  width: 42px;
+  height: 42px;
+  flex: 0 0 42px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.audio-course-play .icon { font-size: calc(20px * var(--fs-scale)); }
+.audio-course-body { flex: 1; min-width: 0; }
+.audio-course-title {
+  font-size: calc(14px * var(--fs-scale));
+  font-weight: 700;
+  color: var(--slate-800);
+  margin-bottom: 2px;
+}
+.audio-course-meta {
+  font-size: calc(11px * var(--fs-scale));
+  color: var(--slate-500);
+  margin-bottom: 4px;
+}
+.audio-course-summary {
+  font-size: calc(12px * var(--fs-scale));
+  line-height: 1.5;
+  color: var(--slate-600);
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ===== 独立页面 ===== */
+.audio-content { padding: 12px 16px 24px; }
+.audio-ask {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.audio-ask input {
+  flex: 1;
+  min-width: 0;
+  padding: 12px 14px;
+  font-size: max(16px, calc(14px * var(--fs-scale)));
+  font-family: inherit;
+  border: 1.5px solid var(--slate-200);
+  border-radius: 12px;
+  outline: none;
+}
+.audio-ask input:focus { border-color: var(--primary); }
+.audio-ask button {
+  flex-shrink: 0;
+  padding: 0 18px;
+  border: none;
+  border-radius: 12px;
+  background: var(--primary);
+  color: #fff;
+  font-size: calc(14px * var(--fs-scale));
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+}
+.audio-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.audio-tag {
+  border: 1px solid var(--slate-200);
+  border-radius: 999px;
+  padding: 6px 12px;
+  background: var(--slate-50);
+  color: var(--slate-600);
+  font-size: calc(12px * var(--fs-scale));
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+}
+.audio-tag.active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+}
+.audio-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.audio-loading, .audio-empty {
+  padding: 32px 12px;
+  text-align: center;
+  color: var(--slate-400);
+  font-size: calc(13px * var(--fs-scale));
+}
+
+/* ===== 发现页入口 ===== */
+.audio-entry-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  margin-bottom: 12px;
+  padding: 14px 16px;
+  border: 1px solid var(--slate-100);
+  border-radius: 14px;
+  background: linear-gradient(135deg, #EEF2FF 0%, #F0FDFA 100%);
+  text-align: left;
+  cursor: pointer;
+  font-family: inherit;
+}
+.audio-entry-icon {
+  width: 40px;
+  height: 40px;
+  flex: 0 0 40px;
+  border-radius: 12px;
+  background: var(--primary);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.audio-entry-text { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.audio-entry-text strong { font-size: calc(15px * var(--fs-scale)); color: var(--slate-800); }
+.audio-entry-text small { font-size: calc(12px * var(--fs-scale)); color: var(--slate-500); }
+
+/* ===== 详情抽屉 ===== */
+.audio-drawer-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background: rgba(15, 23, 42, 0.42);
+}
+.audio-drawer-panel {
+  width: min(640px, 100%);
+  max-height: 86vh;
+  background: var(--white);
+  border-radius: 16px 16px 0 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 -10px 40px rgba(15, 23, 42, 0.18);
+}
+.audio-drawer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 18px 10px;
+  border-bottom: 1px solid var(--slate-100);
+  flex-shrink: 0;
+}
+.audio-drawer-kicker {
+  color: var(--primary);
+  font-size: calc(12px * var(--fs-scale));
+  font-weight: 800;
+}
+.audio-drawer-close {
+  width: 34px;
+  height: 34px;
+  border: none;
+  border-radius: 50%;
+  background: var(--slate-50);
+  color: var(--slate-600);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.audio-drawer-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 18px;
+}
+.audio-detail-title {
+  font-size: calc(19px * var(--fs-scale));
+  color: var(--slate-900);
+  margin-bottom: 6px;
+}
+.audio-detail-meta {
+  color: var(--slate-500);
+  font-size: calc(12px * var(--fs-scale));
+  margin-bottom: 14px;
+}
+.audio-detail-player {
+  width: 100%;
+  margin-bottom: 16px;
+}
+.audio-detail-section {
+  margin-top: 14px;
+  color: var(--slate-700);
+  font-size: calc(14px * var(--fs-scale));
+  line-height: 1.7;
+}
+.audio-detail-section strong {
+  display: block;
+  color: var(--slate-900);
+  margin-bottom: 4px;
+}
+.audio-detail-external {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 16px;
+  min-height: 40px;
+  padding: 9px 14px;
+  border-radius: 10px;
+  background: var(--primary);
+  color: #fff;
+  font-size: calc(13px * var(--fs-scale));
+  font-weight: 700;
+  text-decoration: none;
+}

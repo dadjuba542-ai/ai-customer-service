@@ -140,6 +140,7 @@ async function switchPage(page) {
     news: '资讯管理',
     products: '产品管理',
     cases: '案例档案',
+    'audio-courses': '音频课程',
     agents: '智能体配置',
     share: '分享设置',
     feedback: '评价看板',
@@ -167,6 +168,7 @@ async function switchPage(page) {
     loadCaseTags();
     loadAdminCases();
   }
+  if (page === 'audio-courses') loadAdminAudioCourses();
   if (page === 'agents') loadAdminAgents();
   if (page === 'share') loadShareSettings();
   if (page === 'feedback') loadFeedbackDashboard();
@@ -2597,9 +2599,10 @@ function applyAdminFeatureFlags() {
     el.hidden = map[el.dataset.feature] === false;
   });
   // 当前停在已关闭系统的页面上时退回数据看板
+  const pageIdByName = { audio_courses: 'audio-courses' };
   FEATURE_FLAGS.forEach((item) => {
     if (item.enabled) return;
-    const page = document.getElementById(`page-${item.name}`);
+    const page = document.getElementById(`page-${pageIdByName[item.name] || item.name}`);
     if (page && page.classList.contains('active')) switchPage('dashboard');
   });
 }

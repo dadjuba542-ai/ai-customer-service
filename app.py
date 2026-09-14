@@ -56,6 +56,7 @@ from routes.admin import admin_bp
 from routes.agents import agents_bp
 from routes.dashboard import dashboard_bp
 from routes.cases import cases_bp
+from routes.audio_courses import audio_courses_bp
 from routes.share import share_bp
 from routes.speech import speech_bp
 from routes.leads import leads_bp
@@ -144,6 +145,7 @@ app.register_blueprint(admin_bp, url_prefix='/api/admin')
 app.register_blueprint(agents_bp, url_prefix='/api/agents')
 app.register_blueprint(dashboard_bp, url_prefix='/api/admin/dashboard')
 app.register_blueprint(cases_bp, url_prefix='/api')
+app.register_blueprint(audio_courses_bp, url_prefix='/api')
 app.register_blueprint(share_bp, url_prefix='/api')
 app.register_blueprint(speech_bp, url_prefix='/api/speech')
 app.register_blueprint(leads_bp, url_prefix='/api/leads')
@@ -174,7 +176,7 @@ def add_cache_headers(response):
         "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://html2canvas.hertzen.com; "
         "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; "
         "img-src 'self' data: https:; connect-src 'self' wss://asr.cloud.tencent.com; "
-        "media-src 'self' blob:; worker-src 'self' blob:"
+        "media-src 'self' blob: https:; worker-src 'self' blob:"
     )
     if request.is_secure:
         response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'

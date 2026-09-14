@@ -34,6 +34,7 @@ from models import get_setting, set_setting
 
 # 开关名字常量：其它模块请引用常量，不要到处写字符串字面量。
 CASES_SYSTEM = 'cases'
+AUDIO_COURSES_SYSTEM = 'audio_courses'
 HANDOFF_SYSTEM = 'handoff'
 
 _TRUE_VALUES = {'1', 'true', 'yes', 'on'}
@@ -44,6 +45,11 @@ _CASES_ROUTES = (
     '/api/admin/cases',
     '/api/admin/case-tags',
     '/api/case-library-config',
+)
+
+_AUDIO_COURSES_ROUTES = (
+    '/api/audio-courses',
+    '/api/admin/audio-courses',
 )
 
 _HANDOFF_ROUTES = (
@@ -173,6 +179,15 @@ FLAGS = {
         label='案例系统',
         description='案例档案库：AI 回答的相关案例推荐、前台案例抽屉、后台案例与标签管理、链接识别入库。',
         routes=_CASES_ROUTES,
+    ),
+    AUDIO_COURSES_SYSTEM: FeatureFlag(
+        name=AUDIO_COURSES_SYSTEM,
+        key='audio_courses_enabled',
+        env='AUDIO_COURSES_ENABLED',
+        default=Config.AUDIO_COURSES_ENABLED,
+        label='音频课程',
+        description='音频课程库：独立问答入口、标签/全文检索、后台课程管理、音频上传与外链。',
+        routes=_AUDIO_COURSES_ROUTES,
     ),
     HANDOFF_SYSTEM: FeatureFlag(
         name=HANDOFF_SYSTEM,

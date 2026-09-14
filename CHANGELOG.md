@@ -1,5 +1,36 @@
 # Changelog
 
+## 1.1.5.8 (2026-09-14)
+
+### 新增音频课程模块（Phase 1）
+
+- 新增与「案例系统」平级的「音频课程」模块，独立功能开关 `audio_courses`（默认关闭），
+  沿用统一三层拦截（HTTP 入口 / 服务层 / 后台入口），后台「功能开关」页可直接开关
+- 独立问答入口：前台新增 `audio-view` 页面，输入问题 → 返回相关音频课程；
+  首页「快捷功能 / 音频课程」并排 tab（默认快捷功能），发现页加入口
+- 后台新增「置顶 `pinned`」「首页展示 `show_on_home`」（迁移版本 `202609140002`）；
+  首页只展示勾选首页的课程，固定 6 条，置顶课程排最前
+- 匹配算法复用案例打分（标签 ×100 + FTS ×25 + 正文 ×10），新增表
+  `audio_courses` 与 FTS `audio_courses_fts`（迁移版本 `202609140001`）
+- 音频双来源：后台上传到 `UPLOAD_DIR/audio/`，或填写 https 外链；
+  CSP `media-src` 放开 https 以支持外链播放
+- 后台新增「音频课程」管理页与 `static/admin/audio-courses.js`；
+  前台新增 `static/js/audio-courses.js` 与 `static/css/audio-courses.css`（含大字版适配）
+- 数据模型保持轻量：不含封面图、不含讲师字段
+- 全局请求体上限放宽到 52MB 以容纳音频，图片上传仍单独限制 8MB
+- 回归：新增 `scripts/test_audio_courses.py`，更新 `scripts/test_feature_flags.py`
+- 方案文档：`docs/AUDIO_COURSES_PLAN.md`
+
+### 音频课程安全与健壮性加固（评审后）
+
+- 前台新增 `escapeAttr()`，属性位置全部转义；标签按钮改事件委托，移除内联 `onclick` 拼接
+- 服务端 `sanitize_audio_url()` 收紧为仅 `http(s)://` 或 `/uploads/`，拒绝引号/尖括号/空白
+- 公开列表 / 首页 / 搜索改返回精简投影，不再下发文字稿与音频地址
+- 删除课程或替换音频时清理本地音频文件；新增 `scripts/cleanup_audio_uploads.py`（默认 dry-run）
+- 上传改为流式落盘 + `content_length` 预检，避免整包读入内存
+- 更新接口改为合并式 PUT，标签筛选补 LIKE 转义
+- 新增前端回归 `scripts/test_audio_courses_frontend.js`
+
 ## 1.1.5.6 (2026-09-08 ~ 09-10)
 ### 全站图标改为内联 SVG（告别 Phosphor 字体图标）
 

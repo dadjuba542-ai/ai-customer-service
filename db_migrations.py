@@ -315,6 +315,45 @@ MIGRATIONS = [
             'CREATE INDEX IF NOT EXISTS idx_handoff_quick_replies_order ON handoff_quick_replies(enabled, sort_order ASC, id DESC)',
         ],
     },
+    {
+        'version': '202609140001',
+        'name': 'create_audio_courses_table',
+        'sqls': [
+            '''CREATE TABLE IF NOT EXISTS audio_courses (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                title TEXT NOT NULL DEFAULT '',
+                series TEXT DEFAULT '',
+                episode INTEGER DEFAULT 0,
+                duration_seconds INTEGER DEFAULT 0,
+                audio_url TEXT DEFAULT '',
+                external_url TEXT DEFAULT '',
+                summary TEXT DEFAULT '',
+                content TEXT DEFAULT '',
+                tags TEXT DEFAULT '',
+                status INTEGER DEFAULT 1,
+                sort_order INTEGER DEFAULT 0,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )''',
+            'CREATE INDEX IF NOT EXISTS idx_audio_courses_status_sort ON audio_courses(status, sort_order ASC, id DESC)',
+            '''CREATE VIRTUAL TABLE IF NOT EXISTS audio_courses_fts USING fts5(
+                title,
+                series,
+                summary,
+                content,
+                tags,
+                tokenize='trigram'
+            )''',
+        ],
+    },
+    {
+        'version': '202609140002',
+        'name': 'add_audio_course_home_flags',
+        'columns': [
+            ('audio_courses', 'pinned', 'INTEGER DEFAULT 0'),
+            ('audio_courses', 'show_on_home', 'INTEGER DEFAULT 0'),
+        ],
+    },
 ]
 
 

@@ -1071,6 +1071,299 @@ def seed_case_documents():
         payload.setdefault('status', 1)
         create_case_document(payload)
 
+# ===== Audio Courses =====
+AUDIO_COURSE_FIELDS = (
+    'title', 'series', 'episode', 'duration_seconds', 'audio_url',
+    'external_url', 'summary', 'content', 'tags', 'status',
+    'pinned', 'show_on_home', 'sort_order',
+)
+
+
+def _audio_course_payload(data):
+    data = data or {}
+    title = (data.get('title') or '').strip()
+    if not title:
+        raise ValueError('title is required')
+    try:
+        episode = int(data.get('episode', 0) or 0)
+    except (TypeError, ValueError):
+        episode = 0
+    try:
+        duration_seconds = int(data.get('duration_seconds', 0) or 0)
+    except (TypeError, ValueError):
+        duration_seconds = 0
+    return {
+        'title': title,
+        'series': (data.get('series') or '').strip(),
+        'episode': max(0, episode),
+        'duration_seconds': max(0, duration_seconds),
+        'audio_url': (data.get('audio_url') or '').strip(),
+        'external_url': (data.get('external_url') or '').strip(),
+        'summary': (data.get('summary') or '').strip(),
+        'content': (data.get('content') or '').strip(),
+        'tags': normalize_case_tags(data.get('tags')),
+        'status': 1 if int(data.get('status', 1) or 0) else 0,
+        'pinned': 1 if int(data.get('pinned', 0) or 0) else 0,
+        'show_on_home': 1 if int(data.get('show_on_home', 0) or 0) else 0,
+        'sort_order': int(data.get('sort_order', 0) or 0),
+    }
+
+
+def _sync_audio_course_fts(conn, course_id, payload):
+    conn.execute('DELETE FROM audio_courses_fts WHERE rowid = ?', (course_id,))
+    conn.execute(
+        '''INSERT INTO audio_courses_fts
+           (rowid, title, series, summary, content, tags)
+           VALUES (?, ?, ?, ?, ?, ?)''',
+        (
+            course_id,
+            payload.get('title', ''),
+            payload.get('series', ''),
+            payload.get('summary', ''),
+            payload.get('content', ''),
+            payload.get('tags', ''),
+        )
+    )
+
+
+def create_audio_course(data):
+    conn = get_db_connection()
+    payload = _audio_course_payload(data)
+    cursor = conn.cursor()
+    cursor.execute(
+        '''INSERT INTO audio_courses
+           (title, series, episode, duration_seconds, audio_url, external_url,
+            summary, content, tags, status, pinned, show_on_home, sort_order)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',
+        tuple(payload[field] for field in AUDIO_COURSE_FIELDS),
+    )
+    course_id = cursor.lastrowid
+    _sync_audio_course_fts(conn, course_id, payload)
+    conn.commit()
+    conn.close()
+    return course_id
+
+
+def update_audio_course(course_id, data):
+    conn = get_db_connection()
+    row = conn.execute('SELECT * FROM audio_courses WHERE id = ?', (course_id,)).fetchone()
+    if not row:
+        conn.close()
+        return False
+    # 部分更新：只覆盖请求里显式出现的字段，未传字段保留原值
+    existing = dict(row)
+    data = data or {}
+    merged = {
+        field: data[field] if field in data else existing.get(field)
+        for field in ('title', 'series', 'episode', 'duration_seconds', 'audio_url', 'external_url',
+                      'summary', 'content', 'tags', 'status', 'pinned', 'show_on_home', 'sort_order')
+    }
+    payload = _audio_course_payload(merged)
+    conn.execute(
+        '''UPDATE audio_courses
+           SET title=?, series=?, episode=?, duration_seconds=?, audio_url=?, external_url=?,
+               summary=?, content=?, tags=?, status=?, pinned=?, show_on_home=?, sort_order=?, updated_at=CURRENT_TIMESTAMP
+           WHERE id=?''',
+        tuple(payload[field] for field in AUDIO_COURSE_FIELDS) + (course_id,),
+    )
+    _sync_audio_course_fts(conn, course_id, payload)
+    conn.commit()
+    conn.close()
+    return True
+
+
+def delete_audio_course(course_id):
+    conn = get_db_connection()
+    conn.execute('DELETE FROM audio_courses WHERE id = ?', (course_id,))
+    conn.execute('DELETE FROM audio_courses_fts WHERE rowid = ?', (course_id,))
+    conn.commit()
+    conn.close()
+
+
+def set_audio_course_status(course_id, status):
+    conn = get_db_connection()
+    row = conn.execute('SELECT id FROM audio_courses WHERE id = ?', (course_id,)).fetchone()
+    if not row:
+        conn.close()
+        return None
+    val = 1 if int(status) else 0
+    conn.execute(
+        'UPDATE audio_courses SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
+        (val, course_id),
+    )
+    conn.commit()
+    conn.close()
+    return val
+
+
+_AUDIO_COURSE_FLAGS = {'pinned', 'show_on_home'}
+
+
+def set_audio_course_flag(course_id, flag, value):
+    if flag not in _AUDIO_COURSE_FLAGS:
+        raise ValueError('unsupported flag')
+    conn = get_db_connection()
+    row = conn.execute('SELECT id FROM audio_courses WHERE id = ?', (course_id,)).fetchone()
+    if not row:
+        conn.close()
+        return None
+    val = 1 if int(value) else 0
+    conn.execute(
+        f'UPDATE audio_courses SET {flag} = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
+        (val, course_id),
+    )
+    conn.commit()
+    conn.close()
+    return val
+
+
+def get_all_audio_courses(include_hidden=True):
+    conn = get_db_connection()
+    where = '' if include_hidden else 'WHERE status = 1'
+    rows = conn.execute(
+        f'SELECT * FROM audio_courses {where} ORDER BY pinned DESC, sort_order ASC, id DESC'
+    ).fetchall()
+    conn.close()
+    return [dict(r) for r in rows]
+
+
+AUDIO_COURSE_PREVIEW_FIELDS = (
+    'id', 'title', 'series', 'episode', 'duration_seconds', 'summary', 'tags',
+    'pinned', 'show_on_home',
+)
+
+
+def _audio_course_preview(row):
+    """列表/搜索用的精简投影：不含文字稿 content、音频地址与时间戳。"""
+    item = dict(row) if row is not None else {}
+    preview = {field: item.get(field, '') for field in AUDIO_COURSE_PREVIEW_FIELDS}
+    for field in ('id', 'episode', 'duration_seconds', 'pinned', 'show_on_home'):
+        preview[field] = item.get(field, 0)
+    return preview
+
+
+def get_audio_course_by_id(course_id, public_only=False):
+    conn = get_db_connection()
+    if public_only:
+        row = conn.execute(
+            'SELECT * FROM audio_courses WHERE id = ? AND status = 1', (course_id,)
+        ).fetchone()
+    else:
+        row = conn.execute('SELECT * FROM audio_courses WHERE id = ?', (course_id,)).fetchone()
+    conn.close()
+    return dict(row) if row else None
+
+
+def _escape_like(value):
+    return str(value or '').replace('\\', '\\\\').replace('%', '\\%').replace('_', '\\_')
+
+
+def get_audio_courses_page(page=1, limit=10, tag=''):
+    page = max(1, int(page or 1))
+    limit = max(1, min(int(limit or 10), 50))
+    conditions = ['status = 1']
+    params = []
+    tag = (tag or '').strip()
+    if tag:
+        conditions.append("(',' || tags || ',') LIKE ? ESCAPE '\\'")
+        params.append(f'%,{_escape_like(tag)},%')
+    where = 'WHERE ' + ' AND '.join(conditions)
+    offset = (page - 1) * limit
+    conn = get_db_connection()
+    total = conn.execute(
+        f'SELECT COUNT(*) as cnt FROM audio_courses {where}', params
+    ).fetchone()['cnt']
+    rows = conn.execute(
+        f'''SELECT * FROM audio_courses {where}
+            ORDER BY pinned DESC, sort_order ASC, id DESC
+            LIMIT ? OFFSET ?''',
+        params + [limit, offset],
+    ).fetchall()
+    conn.close()
+    return {
+        'items': [_audio_course_preview(r) for r in rows],
+        'total': total,
+        'page': page,
+        'pages': max(1, (total + limit - 1) // limit),
+    }
+
+
+def get_home_audio_courses(limit=6):
+    """首页展示：只取 show_on_home=1 的课程，置顶优先。"""
+    limit = max(1, min(int(limit or 6), 20))
+    conn = get_db_connection()
+    rows = conn.execute(
+        '''SELECT * FROM audio_courses
+           WHERE status = 1 AND show_on_home = 1
+           ORDER BY pinned DESC, sort_order ASC, id DESC
+           LIMIT ?''',
+        (limit,),
+    ).fetchall()
+    conn.close()
+    return [_audio_course_preview(r) for r in rows]
+
+
+def _score_audio_courses(query):
+    query = (query or '').strip()
+    if not query:
+        return []
+    conn = get_db_connection()
+    rows = conn.execute('SELECT * FROM audio_courses WHERE status = 1').fetchall()
+    fts_ids = set()
+    expr = _fts_match_expr(query)
+    if expr:
+        try:
+            fts_rows = conn.execute(
+                'SELECT rowid FROM audio_courses_fts WHERE audio_courses_fts MATCH ? LIMIT 20',
+                (expr,),
+            ).fetchall()
+            fts_ids = {r['rowid'] for r in fts_rows}
+        except sqlite3.OperationalError:
+            fts_ids = set()
+    conn.close()
+
+    tokens = [part for part in re.split(r'[\s,，。！？、；;:：]+', query) if len(part) >= 2]
+    scored = []
+    for row in rows:
+        item = dict(row)
+        tags = _split_case_tags(item.get('tags'))
+        tag_hits = sum(1 for tag in tags if tag and tag in query)
+        haystack = ' '.join(str(item.get(k, '')) for k in ('title', 'series', 'summary', 'content'))
+        text_hit = 1 if any(part and part in haystack for part in tokens) else 0
+        fts_hit = 1 if item['id'] in fts_ids else 0
+        score = tag_hits * 100 + fts_hit * 25 + text_hit * 10 - int(item.get('sort_order') or 0) * 0.01
+        if score > 0:
+            scored.append((score, int(item.get('sort_order') or 0), item['id'], item))
+    scored.sort(key=lambda x: (-x[0], x[1], -x[2]))
+    return [item for _, _, _, item in scored]
+
+
+def search_audio_courses_page(query, page=1, limit=10):
+    page = max(1, int(page or 1))
+    limit = max(1, min(int(limit or 10), 50))
+    items = [_audio_course_preview(item) for item in _score_audio_courses(query)]
+    total = len(items)
+    start = (page - 1) * limit
+    return {
+        'items': items[start:start + limit],
+        'total': total,
+        'page': page,
+        'pages': max(1, (total + limit - 1) // limit),
+    }
+
+
+def get_audio_course_tags():
+    conn = get_db_connection()
+    rows = conn.execute('SELECT tags FROM audio_courses WHERE status = 1').fetchall()
+    conn.close()
+    tags = []
+    for row in rows:
+        for tag in _split_case_tags(row['tags']):
+            if tag not in tags:
+                tags.append(tag)
+    return tags
+
+
 # ===== Homepage preset questions (bound to a fixed agent) =====
 # 首页默认问题（「不知道怎么问」/「热门问题」）允许绑定固定智能体，
 # 存储格式为 JSON 数组，元素形如 {"text": "...", "agent_id": "aura"}。
