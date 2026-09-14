@@ -86,10 +86,14 @@ def main():
             set_setting('cases_enabled', '1')
             assert_true(client.get('/api/cases').status_code == 200, '案例系统重开后应恢复 200')
 
-            # 5.1) 音频课程：默认关闭拦截，开启后可用
+            # 5.1) 音频课程：默认关闭拦截公开接口，但后台管理始终可用（内容优先）
             blocked_audio = client.get('/api/audio-courses')
             assert_true(blocked_audio.status_code == 403, '音频课程默认关闭应 403')
             assert_true(blocked_audio.get_json()['feature'] == 'audio_courses', '缺少 audio_courses 标识')
+            assert_true(
+                client.get('/api/admin/audio-courses', headers=auth).status_code == 200,
+                '音频课程关闭时后台管理应仍可用',
+            )
             enable_audio = client.put('/api/admin/feature-flags', headers=auth,
                                       json={'name': 'audio_courses', 'enabled': True})
             assert_true(enable_audio.status_code == 200, enable_audio.get_data(as_text=True))

@@ -52,10 +52,14 @@ def main():
         assert_true(login.status_code == 200, login.get_data(as_text=True))
         auth = {'Authorization': f"Bearer {login.get_json()['token']}"}
 
-        # 默认关闭：公开与后台接口都应 403
+        # 默认关闭：公开接口 403，后台管理不受影响（内容优先）
         assert_true(feature_flags.is_enabled('audio_courses') is False, '默认应为关闭')
         assert_true(client.get('/api/audio-courses').status_code == 403, '关闭时公开列表应 403')
-        assert_true(client.get('/api/admin/audio-courses', headers=auth).status_code == 403, '关闭时后台列表应 403')
+        assert_true(client.get('/api/admin/audio-courses', headers=auth).status_code == 200, '关闭时后台管理应仍可用')
+        draft = client.post('/api/admin/audio-courses', headers=auth,
+                            json={'title': '关闭态草稿', 'audio_url': '/uploads/audio/draft.mp3'})
+        assert_true(draft.status_code == 201, '关闭时后台应能创建课程')
+        client.delete(f"/api/admin/audio-courses/{draft.get_json()['id']}", headers=auth)
 
         # 开启开关
         set_setting('audio_courses_enabled', '1')

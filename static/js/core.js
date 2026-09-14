@@ -186,6 +186,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   loadExampleQuestions();
   loadNews();
   if (featureEnabled('cases')) loadCaseLibraryConfig();
+  if (featureEnabled('audio_courses')) initHomeAudioTab();
   loadSpeechConfig();
   initVoiceButton();
   // Chat scroll listener for "scroll to bottom" button

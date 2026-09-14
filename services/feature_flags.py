@@ -49,6 +49,10 @@ _CASES_ROUTES = (
 
 _AUDIO_COURSES_ROUTES = (
     '/api/audio-courses',
+)
+
+# 音频课程是「内容优先」：后台管理不随开关关闭，管理员可先录课程，再决定是否前台展示。
+_AUDIO_COURSES_ROUTE_EXEMPT = (
     '/api/admin/audio-courses',
 )
 
@@ -188,6 +192,7 @@ FLAGS = {
         label='音频课程',
         description='音频课程库：独立问答入口、标签/全文检索、后台课程管理、音频上传与外链。',
         routes=_AUDIO_COURSES_ROUTES,
+        route_exempt=_AUDIO_COURSES_ROUTE_EXEMPT,
     ),
     HANDOFF_SYSTEM: FeatureFlag(
         name=HANDOFF_SYSTEM,

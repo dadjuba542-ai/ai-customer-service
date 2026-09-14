@@ -42,6 +42,38 @@ function renderAudioCourseList(items, host) {
 }
 
 let homeAudioTabLoaded = false;
+let homeAudioPrefetched = false;
+
+function initHomeAudioTab() {
+  if (!featureEnabled('audio_courses')) return;
+  prefetchHomeAudioCourses();
+}
+
+function hideHomeAudioTab() {
+  const btn = document.querySelector('.home-tab-btn[data-tab="audio"]');
+  if (btn) btn.hidden = true;
+  const audio = document.getElementById('home-tab-audio');
+  if (audio && !audio.hidden) switchHomeTab('quick');
+}
+
+async function prefetchHomeAudioCourses() {
+  if (homeAudioPrefetched) return;
+  homeAudioPrefetched = true;
+  try {
+    const res = await fetch(`${API_BASE}/api/audio-courses?mode=home&limit=6`);
+    if (!res.ok) return;
+    const data = await res.json();
+    const items = data.items || [];
+    if (!items.length) {
+      hideHomeAudioTab();
+      return;
+    }
+    homeAudioTabLoaded = true;
+    renderAudioCourseList(items, document.getElementById('home-audio-list'));
+  } catch {
+    /* 预取失败保留入口，点击时再试 */
+  }
+}
 
 function switchHomeTab(mode) {
   const isAudio = mode === 'audio';
@@ -54,7 +86,6 @@ function switchHomeTab(mode) {
   if (quick) quick.hidden = isAudio;
   if (audio) audio.hidden = !isAudio;
   if (isAudio && !homeAudioTabLoaded) {
-    homeAudioTabLoaded = true;
     loadHomeAudioCourses();
   }
 }
@@ -73,6 +104,7 @@ async function loadHomeAudioCourses() {
       host.innerHTML = '<div class="audio-empty">暂无音频课程</div>';
       return;
     }
+    homeAudioTabLoaded = true;
     renderAudioCourseList(items, host);
   } catch {
     host.innerHTML = '<div class="audio-empty">音频课程加载失败</div>';

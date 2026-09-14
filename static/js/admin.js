@@ -2599,10 +2599,9 @@ function applyAdminFeatureFlags() {
     el.hidden = map[el.dataset.feature] === false;
   });
   // 当前停在已关闭系统的页面上时退回数据看板
-  const pageIdByName = { audio_courses: 'audio-courses' };
   FEATURE_FLAGS.forEach((item) => {
     if (item.enabled) return;
-    const page = document.getElementById(`page-${pageIdByName[item.name] || item.name}`);
+    const page = document.getElementById(`page-${item.name}`);
     if (page && page.classList.contains('active')) switchPage('dashboard');
   });
 }

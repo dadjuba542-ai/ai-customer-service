@@ -63,7 +63,9 @@ CREATE VIRTUAL TABLE IF NOT EXISTS audio_courses_fts USING fts5(
 
 ```python
 AUDIO_COURSES = 'audio_courses'
-_AUDIO_COURSES_ROUTES = ('/api/audio-courses', '/api/admin/audio-courses')
+# 开关只控制前台展示；后台管理路径豁免，管理员可先录课程再决定是否开启
+_AUDIO_COURSES_ROUTES = ('/api/audio-courses',)
+_AUDIO_COURSES_ROUTE_EXEMPT = ('/api/admin/audio-courses',)
 
 FeatureFlag(
     name=AUDIO_COURSES,
@@ -73,8 +75,12 @@ FeatureFlag(
     label='音频课程',
     description='音频课程库：独立问答入口、标签/全文检索、后台课程管理、音频上传与外链。',
     routes=_AUDIO_COURSES_ROUTES,
+    route_exempt=_AUDIO_COURSES_ROUTE_EXEMPT,
 )
 ```
+
+- **开关语义**：关闭时前台入口与公开接口（`/api/audio-courses`）全停；**后台管理始终可用**，
+  避免「关闭状态无法备稿」的死循环。后台侧边栏入口不带 `data-feature`，始终可见。
 
 - `config.py` 增加 `AUDIO_COURSES_ENABLED`（默认 false）。
 - 自动继承三层拦截：HTTP 入口 403 (`code=feature_disabled`)、服务层短路、后台侧边栏入口隐藏。

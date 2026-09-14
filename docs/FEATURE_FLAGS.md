@@ -53,6 +53,8 @@ HTTP 接口：
    `_reconcile_loop` 每轮跳过，`assign_available()` 返回 0。后台重新打开开关会补启动线程。
 
 豁免路径：`/api/handoff/config` 始终可读——前台靠它拿到 `enabled=false` 来决定是否隐藏转人工入口。
+`audio_courses` 的 `/api/admin/audio-courses` 同样豁免：该开关只控制前台展示，后台管理始终可用，
+管理员可先录课程、再开启前台。
 
 前台（`static/js/core.js`）启动时拉 `/api/feature-flags`，关闭的系统不渲染入口、不发请求；
 后台侧边栏里带 `data-feature` 的入口（案例档案 / 音频课程 / 人工客服 / 营养师工作台）会自动隐藏。
