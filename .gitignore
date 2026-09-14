@@ -33,3 +33,7 @@ static/uploads/*
 
 # Generated intermediate execution cache under outputs
 outputs/**/.codex-exec/
+
+# 与程序无关的课程/PPT 素材，不入库、不推送
+AI宝儿三套PPT大纲/
+AI宝儿五期课程规划/
