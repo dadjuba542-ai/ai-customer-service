@@ -198,18 +198,35 @@ html[data-ts="xl"] .audio-mini-player {
   cursor: pointer;
 }
 .audio-mini-progress {
+  position: relative;
   flex: 0 0 70px;
   height: 6px;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.25);
   cursor: pointer;
-  overflow: hidden;
+  touch-action: none;
+  outline: none;
 }
 .audio-mini-progress-fill {
+  position: relative;
   width: 0;
   height: 100%;
+  border-radius: 999px;
   background: var(--primary);
 }
+.audio-mini-progress-fill::after {
+  content: '';
+  position: absolute;
+  right: -5px;
+  top: 50%;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #fff;
+  transform: translateY(-50%);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+.audio-mini-progress:focus-visible { box-shadow: 0 0 0 2px var(--primary); }
 .audio-mini-time {
   flex-shrink: 0;
   font-size: calc(11px * var(--fs-scale));
@@ -309,17 +326,24 @@ html[data-ts="xl"] .audio-mini-player {
   height: 44px;
   border: none;
   background: transparent;
-  color: var(--slate-600);
+  color: var(--slate-500);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  line-height: 0;
 }
+.audio-detail-skip svg { display: block; }
 .audio-skip-num {
   position: absolute;
-  font-size: 9px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 8px;
   font-weight: 800;
+  line-height: 1;
   color: currentColor;
+  pointer-events: none;
 }
 .audio-detail-timeline {
   display: flex;
@@ -340,18 +364,35 @@ html[data-ts="xl"] .audio-mini-player {
   cursor: pointer;
 }
 .audio-detail-progress {
+  position: relative;
   flex: 1;
   height: 6px;
   border-radius: 999px;
   background: var(--slate-100);
   cursor: pointer;
-  overflow: hidden;
+  touch-action: none;
+  outline: none;
 }
 .audio-detail-progress-fill {
+  position: relative;
   width: 0;
   height: 100%;
+  border-radius: 999px;
   background: var(--primary);
 }
+.audio-detail-progress-fill::after {
+  content: '';
+  position: absolute;
+  right: -6px;
+  top: 50%;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--primary);
+  transform: translateY(-50%);
+  box-shadow: 0 1px 4px rgba(15, 23, 42, 0.3);
+}
+.audio-detail-progress:focus-visible { box-shadow: 0 0 0 2px var(--primary); }
 .audio-detail-time {
   flex-shrink: 0;
   font-size: calc(12px * var(--fs-scale));

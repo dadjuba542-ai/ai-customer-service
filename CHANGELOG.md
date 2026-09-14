@@ -54,6 +54,13 @@
 - 修复迷你条点关闭后不消失：`.audio-mini-player` 的 `display:flex` 覆盖了 `[hidden]`，补 `[hidden]{display:none}`
 - 缓存版本：`audio-courses.js/css` -> `20260914-audio7`/`audio8`
 
+### 音频课程进度条拖动（Phase 1.2）
+
+- 迷你条与详情进度条支持拖动跳转（Pointer Events + scrubbing 状态，拖动中不被 `timeupdate` 覆盖）
+- 进度条新增圆形把手、`touch-action: none`（避免触屏拖动触发页面滚动）
+- 无障碍：`role="slider"` + `aria-valuenow` + 左右方向键 ±5 秒
+- 缓存版本：`audio-courses.js/css` -> `20260914-audio10`
+
 ## 1.1.5.6 (2026-09-08 ~ 09-10)
 ### 全站图标改为内联 SVG（告别 Phosphor 字体图标）
 

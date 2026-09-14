@@ -203,6 +203,7 @@ const audioPlayerState = {
   url: '', duration: 0, currentTime: 0, playing: false, loaded: false,
 };
 let audioPlayerEl = null;
+let audioScrub = null;
 
 function ensureAudioPlayerEl() {
   if (audioPlayerEl) return audioPlayerEl;
@@ -234,7 +235,7 @@ function ensureAudioMiniPlayer() {
   bar.innerHTML = `
     <button type="button" class="audio-mini-toggle" aria-label="播放或暂停" onclick="toggleAudioPlayback()"></button>
     <button type="button" class="audio-mini-title" onclick="expandAudioPlayer()"></button>
-    <div class="audio-mini-progress" onclick="seekAudioFromEvent(event)" role="slider" aria-label="播放进度">
+    <div class="audio-mini-progress" role="slider" tabindex="0" aria-label="播放进度" onpointerdown="beginAudioScrub(event)" onkeydown="handleAudioProgressKey(event)">
       <div class="audio-mini-progress-fill"></div>
     </div>
     <span class="audio-mini-time"></span>
@@ -254,7 +255,7 @@ function audioPlayerTitleText() {
 }
 
 function audioPlayerTimeText() {
-  const current = formatAudioDuration(audioPlayerState.currentTime) || '0:00';
+  const current = formatAudioDuration(audioPreviewSeconds()) || '0:00';
   const total = formatAudioDuration(audioPlayerState.duration) || '0:00';
   return `${current} / ${total}`;
 }
@@ -268,12 +269,17 @@ function renderAudioPlayerUi() {
       if (toggle) toggle.innerHTML = audioPlayerState.playing ? AUDIO_PAUSE_ICON : AUDIO_PLAY_ICON;
       const title = bar.querySelector('.audio-mini-title');
       if (title) title.textContent = audioPlayerTitleText();
-      const ratio = audioPlayerState.duration
-        ? Math.min(1, audioPlayerState.currentTime / audioPlayerState.duration) : 0;
+      const ratio = audioProgressRatio();
       const fill = bar.querySelector('.audio-mini-progress-fill');
       if (fill) fill.style.width = `${ratio * 100}%`;
       const time = bar.querySelector('.audio-mini-time');
       if (time) time.textContent = audioPlayerTimeText();
+      const track = bar.querySelector('.audio-mini-progress');
+      if (track) {
+        track.setAttribute('aria-valuemin', '0');
+        track.setAttribute('aria-valuemax', String(Math.round(audioPlayerState.duration || 0)));
+        track.setAttribute('aria-valuenow', String(Math.round(audioPreviewSeconds())));
+      }
     }
   }
   syncDrawerAudioControls();
@@ -323,13 +329,61 @@ function stopAudio() {
   renderAudioPlayerUi();
 }
 
-function seekAudioFromEvent(event) {
+function audioTrackRatio(track, clientX) {
+  const rect = track.getBoundingClientRect();
+  if (!rect.width) return 0;
+  return Math.min(1, Math.max(0, (clientX - rect.left) / rect.width));
+}
+
+function audioProgressRatio() {
+  if (audioScrub) return audioScrub.ratio;
+  return audioPlayerState.duration
+    ? Math.min(1, audioPlayerState.currentTime / audioPlayerState.duration) : 0;
+}
+
+function audioPreviewSeconds() {
+  if (audioScrub && audioPlayerState.duration) return audioScrub.ratio * audioPlayerState.duration;
+  return audioPlayerState.currentTime;
+}
+
+function beginAudioScrub(event) {
   if (!audioPlayerState.loaded || !audioPlayerState.duration) return;
   const track = event.currentTarget;
-  const rect = track.getBoundingClientRect();
-  if (!rect.width) return;
-  const ratio = Math.min(1, Math.max(0, (event.clientX - rect.left) / rect.width));
-  if (audioPlayerEl) audioPlayerEl.currentTime = ratio * audioPlayerState.duration;
+  audioScrub = { track, ratio: audioTrackRatio(track, event.clientX) };
+  try { track.setPointerCapture(event.pointerId); } catch (err) { /* ignore */ }
+  track.addEventListener('pointermove', onAudioScrubMove);
+  track.addEventListener('pointerup', endAudioScrub);
+  track.addEventListener('pointercancel', endAudioScrub);
+  event.preventDefault();
+  renderAudioPlayerUi();
+}
+
+function onAudioScrubMove(event) {
+  if (!audioScrub) return;
+  audioScrub.ratio = audioTrackRatio(audioScrub.track, event.clientX);
+  renderAudioPlayerUi();
+}
+
+function endAudioScrub() {
+  if (!audioScrub) return;
+  const track = audioScrub.track;
+  const ratio = audioScrub.ratio;
+  track.removeEventListener('pointermove', onAudioScrubMove);
+  track.removeEventListener('pointerup', endAudioScrub);
+  track.removeEventListener('pointercancel', endAudioScrub);
+  audioScrub = null;
+  if (audioPlayerEl && audioPlayerState.duration) {
+    audioPlayerEl.currentTime = ratio * audioPlayerState.duration;
+    audioPlayerState.currentTime = audioPlayerEl.currentTime;
+  }
+  renderAudioPlayerUi();
+}
+
+function handleAudioProgressKey(event) {
+  if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+  if (!audioPlayerState.loaded || !audioPlayerState.duration) return;
+  event.preventDefault();
+  seekAudioBy(event.key === 'ArrowLeft' ? -5 : 5);
 }
 
 function seekAudioBy(delta) {
@@ -408,17 +462,23 @@ function renderAudioCourseDetail(item, autoplay = true) {
     ${item.audio_url ? `<div class="audio-detail-player">
       <div class="audio-detail-controls">
         <button type="button" class="audio-detail-skip" aria-label="快退15秒" onclick="seekAudioBy(-15)">
-          <svg viewBox="0 0 24 24" width="26" height="26" fill="none" aria-hidden="true"><path d="M12 4.6V2L7 6.2l5 4.2V7.8a6.2 6.2 0 1 1-6.2 6.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <svg viewBox="0 0 24 24" width="30" height="30" fill="none" aria-hidden="true">
+            <circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="1.6"/>
+            <path d="M12 0.9 8.9 4 12 7.1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
           <span class="audio-skip-num">15</span>
         </button>
         <button type="button" class="audio-detail-toggle" id="audio-detail-toggle" aria-label="播放或暂停" onclick="toggleAudioPlayback()"></button>
         <button type="button" class="audio-detail-skip" aria-label="快进15秒" onclick="seekAudioBy(15)">
-          <svg viewBox="0 0 24 24" width="26" height="26" fill="none" aria-hidden="true"><path d="M12 4.6V2l5 4.2-5 4.2V7.8a6.2 6.2 0 1 0 6.2 6.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <svg viewBox="0 0 24 24" width="30" height="30" fill="none" aria-hidden="true">
+            <circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="1.6"/>
+            <path d="M12 0.9 15.1 4 12 7.1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
           <span class="audio-skip-num">15</span>
         </button>
       </div>
       <div class="audio-detail-timeline">
-        <div class="audio-detail-progress" onclick="seekAudioFromEvent(event)" role="slider" aria-label="播放进度">
+        <div class="audio-detail-progress" role="slider" tabindex="0" aria-label="播放进度" onpointerdown="beginAudioScrub(event)" onkeydown="handleAudioProgressKey(event)">
           <div class="audio-detail-progress-fill" id="audio-detail-progress-fill"></div>
         </div>
         <span class="audio-detail-time" id="audio-detail-time"></span>
@@ -435,12 +495,17 @@ function syncDrawerAudioControls() {
   const toggle = document.getElementById('audio-detail-toggle');
   if (!toggle) return;
   toggle.innerHTML = audioPlayerState.playing ? AUDIO_PAUSE_ICON : AUDIO_PLAY_ICON;
-  const ratio = audioPlayerState.duration
-    ? Math.min(1, audioPlayerState.currentTime / audioPlayerState.duration) : 0;
+  const ratio = audioProgressRatio();
   const fill = document.getElementById('audio-detail-progress-fill');
   if (fill) fill.style.width = `${ratio * 100}%`;
   const time = document.getElementById('audio-detail-time');
   if (time) time.textContent = audioPlayerTimeText();
+  const track = document.querySelector('.audio-detail-progress');
+  if (track) {
+    track.setAttribute('aria-valuemin', '0');
+    track.setAttribute('aria-valuemax', String(Math.round(audioPlayerState.duration || 0)));
+    track.setAttribute('aria-valuenow', String(Math.round(audioPreviewSeconds())));
+  }
 }
 
 function closeAudioDrawer() {

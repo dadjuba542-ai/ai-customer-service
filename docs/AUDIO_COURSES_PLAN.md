@@ -267,6 +267,9 @@ FeatureFlag(
 - 测试：`scripts/test_audio_courses_frontend.js` 新增快进/快退与边界用例。
 - 缓存版本：`audio-courses.js/css` → `?v=20260914-audio7`。
 
-### Phase 1.2（待做）
+### Phase 1.2（已完成）
 
-进度条拖动（Pointer Events + scrubbing 状态 + 拖拽把手 + `touch-action: none` + 键盘无障碍）。
+进度条拖动：`beginAudioScrub/onAudioScrubMove/endAudioScrub`（Pointer Events + `scrubbing` 状态，
+拖动期间 `timeupdate` 不覆盖预览），迷你条与详情共用；进度把手、`touch-action: none`；
+`role="slider"` + `aria-valuenow` + 左右方向键 ±5 秒。
+缓存版本：`audio-courses.js/css` → `?v=20260914-audio10`。

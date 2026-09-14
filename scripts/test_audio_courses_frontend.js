@@ -58,6 +58,8 @@ const sandbox = {
 vm.createContext(sandbox);
 vm.runInContext(
   `${code}\nthis.__escapeAttr = escapeAttr; this.__fmt = formatAudioDuration; this.__seekBy = seekAudioBy; ` +
+  `this.__beginScrub = beginAudioScrub; this.__scrubMove = onAudioScrubMove; this.__endScrub = endAudioScrub; ` +
+  `this.__ratio = audioProgressRatio; this.__key = handleAudioProgressKey; ` +
   `this.__play = playAudioCourse; this.__stop = stopAudio; this.__close = closeAudioDrawer; this.__state = audioPlayerState;`,
   sandbox,
 );
@@ -118,6 +120,30 @@ sandbox.__seekBy(15);
 assert(el.currentTime === 15, '快进 15 秒');
 sandbox.__seekBy(1000);
 assert(el.currentTime === 100, '快进不应越过结尾');
+
+// 进度条拖动（scrubbing）
+const track = {
+  getBoundingClientRect: () => ({ left: 0, width: 200 }),
+  addEventListener() {},
+  removeEventListener() {},
+  setPointerCapture() {},
+};
+sandbox.__beginScrub({ currentTarget: track, clientX: 50, pointerId: 1, preventDefault() {} });
+assert(Math.abs(sandbox.__ratio() - 0.25) < 1e-9, '拖动开始应更新预览比例');
+sandbox.__scrubMove({ clientX: 100 });
+assert(Math.abs(sandbox.__ratio() - 0.5) < 1e-9, '拖动移动应更新比例');
+el.currentTime = 10;
+el.dispatch('timeupdate');
+assert(Math.abs(sandbox.__ratio() - 0.5) < 1e-9, '拖动中 timeupdate 不应覆盖预览');
+sandbox.__endScrub();
+assert(el.currentTime === 50, '拖动结束应提交进度');
+assert(state.currentTime === 50, '拖动结束应同步状态');
+
+// 键盘左右 ±5 秒
+sandbox.__key({ key: 'ArrowRight', preventDefault() {} });
+assert(el.currentTime === 55, '键盘右移 5 秒');
+sandbox.__key({ key: 'ArrowLeft', preventDefault() {} });
+assert(el.currentTime === 50, '键盘左移 5 秒');
 
 // 显式关闭：暂停 + 清空
 stop();
