@@ -67,6 +67,11 @@
 - 补齐 `flex:1; min-height:0; overflow-y:auto` 与底部留白（100px），与发现页/社区页一致
 - 缓存版本：`audio-courses.css` -> `20260914-audio11`
 
+### 修复音频课程页空白（缓存版本号漏升）
+
+- `views.js` 增加 `loadAudioCoursesPage()` 后未升 `?v=`，浏览器缓存旧文件导致切到音频页不加载
+- 补 `views.js?v=20260914-audio12`
+
 ## 1.1.5.6 (2026-09-08 ~ 09-10)
 ### 全站图标改为内联 SVG（告别 Phosphor 字体图标）
 
