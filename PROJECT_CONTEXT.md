@@ -767,7 +767,7 @@ python3 scripts/optimize_news_content_images.py --apply
 - 数据表 `audio_courses` + 全文检索 `audio_courses_fts`（迁移版本 `202609140001` / `202609140002`）；字段保持轻量，无封面图、无讲师。
 - 后台支持「置顶 `pinned`」与「首页展示 `show_on_home`」：置顶影响排序，首页只展示勾选的课程（固定 6 条）。
 - 开关 `audio_courses` 只控制前台展示：关闭时前台入口与公开接口全停，后台管理（`/api/admin/audio-courses`）豁免，侧边栏入口常驻，可先备稿再开启。
-- 前台为**独立问答入口**：首页「快捷功能 / 音频课程」并排 tab（默认快捷功能），发现页加入口，`audio-view` 页面支持提问与标签筛选，详情抽屉内嵌 `<audio>` 播放器。
+- 前台为**独立问答入口**：首页「快捷功能 / 音频课程」并排 tab（默认快捷功能），`audio-view` 页面支持提问与标签筛选，详情抽屉内嵌 `<audio>` 播放器。
 - 音频来源双支持：后台可上传音频（`/api/admin/audio-courses/upload-audio`，存 `UPLOAD_DIR/audio/`）或填写 https 外链；播放器允许外链音频（CSP `media-src` 已放开 https）。
 - 匹配算法复用案例打分：`标签命中 × 100 + FTS × 25 + 正文命中 × 10`。
 - 后台新增「音频课程」管理页（`page-audio-courses`）与 `static/admin/audio-courses.js`。

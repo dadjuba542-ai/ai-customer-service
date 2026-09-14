@@ -138,14 +138,13 @@ FeatureFlag(
   - 首页「快捷功能 / 音频课程」为并排 tab，默认显示快捷功能；点「音频课程」懒加载 `?mode=home&limit=6`。
   - 新增 `audio-view` 独立页面。
   - 引入 `audio-courses.js` 与 `audio-courses.css`（带新缓存版本号）。
-  - 发现页增加音频课程入口。
 - `static/js/audio-courses.js`：提问框 → `/search`；标签 chips；课程列表；点击开详情抽屉，内含 `<audio controls>` 播放器 + 文字稿 + 外链按钮。
 - `static/js/core.js`：`FEATURE_FLAGS` 增加 `audio_courses`；关闭时不渲染、不发请求。
 - `static/css/audio-courses.css`：字号用 `calc(Npx * var(--fs-scale))`，兼容大字版。
 
 ## 7. 管理后台
 
-- `templates/admin.html`：侧边栏新增 `data-page="audio-courses" data-feature="audio_courses"` 入口；新增 `page-audio-courses` 页面。
+- `templates/admin.html`：侧边栏新增 `data-page="audio-courses"` 入口（不带 `data-feature`，关闭时也常驻）；新增 `page-audio-courses` 页面。
 - `static/js/admin.js`：`switchPage` 标题与加载分发增加 `audio-courses`。
 - `static/js/admin-audio-courses.js`：列表 + 新增/编辑表单（标题 / 系列 / 讲次 / 时长 / 音频上传或外链 / 外部播放页 / 摘要 / 文字稿 / 标签 / 状态 / 排序）。
 

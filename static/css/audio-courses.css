@@ -148,36 +148,6 @@
   font-size: calc(13px * var(--fs-scale));
 }
 
-/* ===== 发现页入口 ===== */
-.audio-entry-card {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  width: 100%;
-  margin-bottom: 12px;
-  padding: 14px 16px;
-  border: 1px solid var(--slate-100);
-  border-radius: 14px;
-  background: linear-gradient(135deg, #EEF2FF 0%, #F0FDFA 100%);
-  text-align: left;
-  cursor: pointer;
-  font-family: inherit;
-}
-.audio-entry-icon {
-  width: 40px;
-  height: 40px;
-  flex: 0 0 40px;
-  border-radius: 12px;
-  background: var(--primary);
-  color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.audio-entry-text { flex: 1; min-width: 0; display: flex; flex-direction: column; }
-.audio-entry-text strong { font-size: calc(15px * var(--fs-scale)); color: var(--slate-800); }
-.audio-entry-text small { font-size: calc(12px * var(--fs-scale)); color: var(--slate-500); }
-
 /* ===== 详情抽屉 ===== */
 .audio-drawer-overlay {
   position: fixed;
