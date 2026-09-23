@@ -45,38 +45,36 @@
    - 未配置 `MCP_TOKEN` → `403 MCP endpoint disabled`
    - 正常 → `200` + 工具列表
 
-4. 在 opencode 运行环境导出环境变量（`MCP_URL` 指向线上端点）：
+4. 本地准备 token 文件（**已被 `.gitignore` 忽略，不进仓库**）：
 
    ```bash
-   export MCP_URL="https://你的域名/api/mcp"
-   export MCP_TOKEN="<与服务器一致>"
+   printf '%s' '<与服务器一致的 MCP_TOKEN>' > .mcp_token   # 注意结尾不要换行
    ```
 
-   `opencode.json` 已配好 remote（并用 `{env:...}` 注入，不落明文）：
+   `opencode.json` 已配好 remote，token 用 `{file:...}` 从本地文件读取：
 
    ```json
    {
      "mcp": {
        "ai-customer-service": {
          "type": "remote",
-         "url": "{env:MCP_URL}",
-         "headers": { "Authorization": "Bearer {env:MCP_TOKEN}" },
+         "url": "https://aibao.jzzbaizhushou.com/api/mcp",
+         "headers": { "Authorization": "Bearer {file:./.mcp_token}" },
          "enabled": true
        }
      }
    }
    ```
 
+   > 若你的 opencode 版本不支持 `{file:...}`，改用 `{env:MCP_TOKEN}`，并先
+   > `export MCP_TOKEN=...` 再启动 opencode。
+
 5. **退出并重启 opencode**（配置只在启动时加载）。
 
 ### 本地先用 remote 自测（不部署也行）
 
-本机跑起 Flask（`MCP_TOKEN=... python3 app.py`），再设：
-
-```bash
-export MCP_URL="http://127.0.0.1:5001/api/mcp"
-export MCP_TOKEN="<本机启动时用的 token>"
-```
+本机跑起 Flask（`MCP_TOKEN=... python3 app.py`），把 `opencode.json` 的 `url`
+临时改成 `http://127.0.0.1:5001/api/mcp` 即可。
 
 ## 四、本地启用（stdio，备用）
 
@@ -99,6 +97,7 @@ printf '%s\n' \
 |---|---|---|
 | `chat_stats` | `days=7` | 问答量、独立用户、类型/智能体分布、赞踩数 |
 | `search_chat_history` | `keyword`(必填), `days=30`, `limit=20` | 关键词搜历史问答 |
+| `top_user_questions` | `days=30`, `limit=20`, `min_count=1` | 用户提问频次排行榜（归一化后计数） |
 | `recent_bad_feedback` | `days=30`, `limit=20` | 被点踩的回答及原因 |
 | `list_leads` | `status`, `limit=20` | 留资线索（联系方式已脱敏） |
 | `search_products` | `keyword`, `limit=20` | 搜产品，返回名称/简介/卖点 |

@@ -1,6 +1,7 @@
 # Environment
 .env
 *.env
+.mcp_token
 
 # Database
 *.db

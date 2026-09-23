@@ -3,9 +3,9 @@
   "mcp": {
     "ai-customer-service": {
       "type": "remote",
-      "url": "{env:MCP_URL}",
+      "url": "https://aibao.jzzbaizhushou.com/api/mcp",
       "headers": {
-        "Authorization": "Bearer {env:MCP_TOKEN}"
+        "Authorization": "Bearer {file:./.mcp_token}"
       },
       "enabled": true
     },

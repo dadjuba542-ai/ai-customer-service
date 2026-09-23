@@ -11,10 +11,11 @@
 
 ### 新增只读 MCP 集成（内部运营/内容辅助，本地 + 线上）
 
-- 工具逻辑集中在 `services/mcp_service.py`，两种传输共用，**只读**：
-  11 个工具 `chat_stats` / `search_chat_history` / `recent_bad_feedback` /
+- 工具逻辑集中在 `services/mcp_service.py`，两种传输共用，**只读**，12 个工具：
+  `chat_stats` / `top_user_questions` / `search_chat_history` / `recent_bad_feedback` /
   `list_leads` / `search_products` / `get_product` / `search_cases` / `get_case` /
   `list_news` / `get_news` / `list_agents`
+  - `top_user_questions`：用户提问频次榜，按提问原文轻量归一化（去空白/首尾标点）后计数
 - **线上**：新增 `routes/mcp.py`，`POST /api/mcp`（MCP Streamable HTTP，JSON-RPC 2.0），
   Bearer token 鉴权；未配置 `MCP_TOKEN` 时端点整体关闭（403）；已豁免按 IP 反爬预算
 - **本地**：`scripts/mcp_server.py` 纯标准库 stdio，零依赖，直连本地 SQLite

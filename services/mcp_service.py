@@ -9,6 +9,7 @@
 """
 
 import json
+import re
 from datetime import datetime, timedelta
 
 from models import (
@@ -181,6 +182,62 @@ def tool_recent_bad_feedback(args):
     return _to_text({'window_days': days, 'count': len(items), 'items': items})
 
 
+_QUESTION_STRIP_CHARS = '。！？!?，,、；;：:.·"\'“”‘’()（）[]【】<>《》'
+
+
+def _normalize_question(text):
+    """轻量归一化：去掉全部空白与首尾标点，尽量把近义/错标点的同问合并。"""
+    text = re.sub(r'\s+', '', text or '')
+    return text.strip(_QUESTION_STRIP_CHARS)
+
+
+def tool_top_user_questions(args):
+    days = _int_arg(args, 'days', 30, low=1, high=365)
+    limit = _int_arg(args, 'limit', 20)
+    window = args.get('min_count') if isinstance(args, dict) else None
+    try:
+        min_count = max(1, int(window)) if window else 1
+    except (TypeError, ValueError):
+        min_count = 1
+    since = _since(days, 30)
+    conn = get_db_connection()
+    rows = conn.execute(
+        '''SELECT user_message, created_at FROM chat_history
+           WHERE created_at >= ? AND TRIM(user_message) != \'\'''',
+        (since,)
+    ).fetchall()
+    total = conn.execute(
+        'SELECT COUNT(*) AS c FROM chat_history WHERE created_at >= ?', (since,)
+    ).fetchone()['c']
+    conn.close()
+
+    groups = {}
+    for row in rows:
+        key = _normalize_question(row['user_message'])
+        if not key:
+            continue
+        group = groups.setdefault(key, {'count': 0, 'last': '', 'sample': row['user_message']})
+        group['count'] += 1
+        if row['created_at'] >= group['last']:
+            group['last'] = row['created_at']
+            group['sample'] = row['user_message']
+    ordered = sorted(groups.values(), key=lambda g: (g['count'], g['last']), reverse=True)
+    items = [{
+        'question': _truncate(g['sample'], 200),
+        'count': g['count'],
+        'last_asked_at': g['last'],
+    } for g in ordered if g['count'] >= min_count][:limit]
+    return _to_text({
+        'window_days': days,
+        'since_utc': since,
+        'total_messages': total,
+        'distinct_questions': len(groups),
+        'count': len(items),
+        'note': '已做轻量归一化（去空白/首尾标点）；明显近义但用词不同的提问仍分开计',
+        'items': items,
+    })
+
+
 def tool_list_leads(args):
     status = ((args or {}).get('status') or '').strip()
     limit = _int_arg(args, 'limit', 20)
@@ -341,6 +398,19 @@ TOOLS = [
             },
         },
         'handler': tool_recent_bad_feedback,
+    },
+    {
+        'name': 'top_user_questions',
+        'description': '统计最近 N 天用户提问频次排行榜（按提问原文分组计数），用于发现高频诉求与知识库缺口。',
+        'inputSchema': {
+            'type': 'object',
+            'properties': {
+                'days': {'type': 'integer', 'description': '统计窗口（天），默认 30'},
+                'limit': {'type': 'integer', 'description': '返回条数，默认 20'},
+                'min_count': {'type': 'integer', 'description': '只保留出现次数 ≥ 该值的提问，默认 1'},
+            },
+        },
+        'handler': tool_top_user_questions,
     },
     {
         'name': 'list_leads',

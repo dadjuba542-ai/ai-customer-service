@@ -58,7 +58,8 @@ def main():
         listing = client.post('/api/mcp', headers=auth,
                               json={'jsonrpc': '2.0', 'id': 2, 'method': 'tools/list'}).get_json()
         names = [tool['name'] for tool in listing['result']['tools']]
-        for expected in ('chat_stats', 'search_products', 'get_product', 'list_leads', 'list_agents'):
+        for expected in ('chat_stats', 'top_user_questions', 'search_products', 'get_product',
+                         'list_leads', 'list_agents'):
             assert_true(expected in names, '缺少工具 %s' % expected)
         assert_true(all('handler' not in tool for tool in listing['result']['tools']),
                     '不能把 handler 暴露出去')
