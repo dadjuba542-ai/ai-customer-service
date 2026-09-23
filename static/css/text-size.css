@@ -344,6 +344,18 @@ html[data-ts="xl"] .system-bubble {
   overflow-wrap: anywhere;
 }
 
+/* 系统切换气泡标题：标准档靠 nowrap + 省略号收在一行；
+   大字档下字号变大，若继续 nowrap 会撑出气泡的 85% 上限，
+   改为允许换行，保证「已切换到『xxx』」完整可读 */
+html[data-ts="l"] .system-bubble .sb-title,
+html[data-ts="xl"] .system-bubble .sb-title {
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
 /* 卡片内边距补偿，避免字贴边 */
 html[data-ts="l"] .quick-card,
 html[data-ts="xl"] .quick-card,

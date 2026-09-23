@@ -89,7 +89,7 @@
   text-align: left; max-width: 85%; line-height: 1.5;
 }
 .system-bubble i { margin-top: 2px; flex-shrink: 0; font-size: calc(16px * var(--fs-scale)); }
-.sb-text { flex: 1; display: flex; flex-direction: column; }
+.sb-text { flex: 1; min-width: 0; display: flex; flex-direction: column; }
 .sb-title { font-size: calc(15px * var(--fs-scale)); font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .sb-desc { font-size: calc(12px * var(--fs-scale)); font-weight: 400; opacity: 0.85; margin-top: 4px; line-height: 1.5; }
 
