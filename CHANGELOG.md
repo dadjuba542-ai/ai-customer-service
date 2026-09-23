@@ -2,6 +2,29 @@
 
 ## 1.1.5.8 (2026-09-14)
 
+### 新增大字档系统切换气泡溢出修复
+
+- 大字档下「已切换到『xxx』」系统气泡标题用 `nowrap` 且父级 `.sb-text` 缺
+  `min-width:0`，字号放大后撑破气泡 `max-width:85%` 上限、文字溢出圆角框
+- `.sb-text` 补 `min-width:0`；大字档允许 `.sb-title` 换行，保证智能体名完整可读
+- 同步升级 `chat.css` / `text-size.css` / `views.js` 缓存版本号
+
+### 新增只读 MCP 集成（内部运营/内容辅助，本地 + 线上）
+
+- 工具逻辑集中在 `services/mcp_service.py`，两种传输共用，**只读**：
+  11 个工具 `chat_stats` / `search_chat_history` / `recent_bad_feedback` /
+  `list_leads` / `search_products` / `get_product` / `search_cases` / `get_case` /
+  `list_news` / `get_news` / `list_agents`
+- **线上**：新增 `routes/mcp.py`，`POST /api/mcp`（MCP Streamable HTTP，JSON-RPC 2.0），
+  Bearer token 鉴权；未配置 `MCP_TOKEN` 时端点整体关闭（403）；已豁免按 IP 反爬预算
+- **本地**：`scripts/mcp_server.py` 纯标准库 stdio，零依赖，直连本地 SQLite
+- `opencode.json` 默认接 remote（`{env:MCP_URL}` / `{env:MCP_TOKEN}` 注入，不落明文），
+  local 版保留为可选
+- 安全：不注册写操作；`list_agents` 不返回 `prompt`/`bot_id`；
+  `list_leads` 手机号/微信默认脱敏
+- 配置：`config.py` → `Config.MCP_TOKEN`，`.env.example` 增示例
+- 方案与用法文档：`docs/MCP_INTEGRATION.md`
+
 ### 新增用户调研问卷
 
 - 前台首页「快捷功能」新增「意见反馈」入口，打开多题调研问卷（使用时长 / 常用功能 /

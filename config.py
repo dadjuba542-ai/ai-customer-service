@@ -29,6 +29,8 @@ class Config:
     CHAT_QUEUE_TTL_SECONDS = max(60, int(os.environ.get('CHAT_QUEUE_TTL_SECONDS', '300')))
     CHAT_QUEUE_POLL_INTERVAL_SECONDS = max(1, int(os.environ.get('CHAT_QUEUE_POLL_INTERVAL_SECONDS', '2')))
     SPEECH_RATE_LIMIT = int(os.environ.get('SPEECH_RATE_LIMIT', '20'))
+    # 只读 MCP 端点（/api/mcp）的 Bearer token；留空则端点关闭
+    MCP_TOKEN = os.environ.get('MCP_TOKEN', '')
     SPEECH_REALTIME_SESSION_LIMIT = int(os.environ.get('SPEECH_REALTIME_SESSION_LIMIT', '20'))
     # 功能开关默认值（运行时状态以 settings 表为准，详见 services/feature_flags.py）
     CASES_ENABLED = os.environ.get('CASES_ENABLED', 'true').lower() == 'true'

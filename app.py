@@ -65,6 +65,7 @@ from routes.admin_handoff import admin_handoff_bp
 from routes.ai_review import ai_review_bp
 from routes.nutritionist_notes import nutritionist_notes_bp
 from routes.features import features_bp
+from routes.mcp import mcp_bp
 
 app = Flask(__name__, static_folder='static', static_url_path='')
 Config.validate()
@@ -111,6 +112,8 @@ def crawl_guard():
     """
     if not Config.CRAWL_GUARD_ENABLED or not request.path.startswith('/api/'):
         return None
+    if request.path.startswith('/api/mcp'):
+        return None  # MCP 走 Bearer token 鉴权，不受按 IP 的反爬预算限制
     client_type = classify_client(request.headers.get('User-Agent', ''))
     limit = max(1, _CRAWL_GUARD_LIMITS.get(client_type, Config.CRAWL_GUARD_SCRIPT_PER_MIN))
     subject = request.remote_addr or 'unknown'
@@ -154,6 +157,7 @@ app.register_blueprint(admin_handoff_bp, url_prefix='/api/admin/handoff')
 app.register_blueprint(ai_review_bp, url_prefix='/api/admin/ai-review')
 app.register_blueprint(nutritionist_notes_bp, url_prefix='/api/nutritionist-notes')
 app.register_blueprint(features_bp, url_prefix='/api')
+app.register_blueprint(mcp_bp, url_prefix='/api')
 
 
 @app.after_request
