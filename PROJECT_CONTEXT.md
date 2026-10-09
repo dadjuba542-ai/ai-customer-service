@@ -13,6 +13,7 @@
   - 客户案例档案推荐
   - 社区问答与评论精选
   - 满意度问卷
+  - 用户调研问卷
   - 管理后台（智能体、资讯、配置、统计）
 - 外部 AI 依赖：Coze Bot API
 
@@ -58,6 +59,7 @@ static/consultant/      客服台多会话、通知和独立样式
 routes/handoff.py       前台转人工与会话恢复接口
 routes/admin_handoff.py 客服台队列、接入、回复和通知接口
 services/handoff_service.py 排队分配、状态机和 AI 上下文快照
+services/audio_service.py 音频课程文件上传与时长识别
 services/image_service.py 图片压缩、缩略图和上传图处理服务
 templates/admin.html    管理后台页面
 scripts/test_today_features.py 现有冒烟测试
@@ -301,6 +303,8 @@ outputs/                历史生成物/设计产物，非主应用运行核心
   - 各类后台可编辑配置
 - `satisfaction_surveys`
   - 满意度问卷打分
+- `research_surveys`
+  - 用户调研问卷，答案以 JSON 存储，含可选联系方式
 - `share_events`
   - 微信端分享图生成记录，记录团队、成员、咨询类型、历史记录和分享类型
 - `questions`
@@ -411,6 +415,20 @@ outputs/                历史生成物/设计产物，非主应用运行核心
 - `PUT /api/admin/case-tags/<id>/status`
 - `GET/PUT /api/admin/settings/case-library-url`
 
+### 音频课程
+
+- `GET /api/audio-courses`
+- `GET /api/audio-courses/<id>`
+- `GET /api/audio-courses/search`
+- `GET /api/audio-courses/tags`
+- `GET /api/admin/audio-courses`
+- `POST /api/admin/audio-courses`
+- `POST /api/admin/audio-courses/upload-audio`
+- `PUT /api/admin/audio-courses/<id>`
+- `DELETE /api/admin/audio-courses/<id>`
+- `PUT /api/admin/audio-courses/<id>/status`
+- `PUT /api/admin/audio-courses/<id>/flag`
+
 ### 社区
 
 - `GET /api/community/questions`
@@ -451,6 +469,8 @@ outputs/                历史生成物/设计产物，非主应用运行核心
 - `CORS_ORIGINS`
 - `PUBLIC_REGISTRATION_ENABLED`
 - `UPLOAD_DIR`
+- `AUDIO_COURSES_ENABLED`
+- `AUDIO_MAX_UPLOAD_BYTES`
 - `TRUST_PROXY`
 - `BOT_PRODUCT`
 - `BOT_FAQ`
@@ -743,3 +763,18 @@ python3 scripts/optimize_news_content_images.py --apply
 - 新增咨询档案、筛选分页、只读详情和同一用户历史回复。
 - 新增单次、多选和筛选 CSV 导出，限制 5,000 条，支持 UTF-8 BOM、公式注入防护和 `handoff_export_logs` 审计；不导出转人工前 AI 对话。
 - 数据库迁移新增人工咨询相关表、留言模式字段和导出审计表；完整回归入口为 `scripts/test_handoff.py` 与 `scripts/test_handoff_intent.js`。
+
+## 19. 2026-09-14 音频课程模块（Phase 1）
+
+- 新增与案例系统平级的「音频课程」模块，由统一功能开关 `audio_courses` 控制，**默认关闭**。
+- 数据表 `audio_courses` + 全文检索 `audio_courses_fts`（迁移版本 `202609140001` / `202609140002`）；字段保持轻量，无封面图、无讲师。
+- 后台支持「置顶 `pinned`」与「首页展示 `show_on_home`」：置顶影响排序，首页只展示勾选的课程（固定 6 条）。
+- 开关 `audio_courses` 只控制前台展示：关闭时前台入口与公开接口全停，后台管理（`/api/admin/audio-courses`）豁免，侧边栏入口常驻，可先备稿再开启。
+- 前台为**独立问答入口**：首页「快捷功能 / 音频课程」并排 tab（默认快捷功能），`audio-view` 页面支持提问与标签筛选。
+- 播放器为**全局单例 + 底部迷你播放条**（Phase 1，见 `docs/AUDIO_COURSES_PLAN.md` 第 13 节）：关闭详情不停止、会话内续播，显式点迷你条关闭才归零。
+- 音频来源双支持：后台可上传音频（`/api/admin/audio-courses/upload-audio`，存 `UPLOAD_DIR/audio/`）或填写 https 外链；播放器允许外链音频（CSP `media-src` 已放开 https）。
+- 匹配算法复用案例打分：`标签命中 × 100 + FTS × 25 + 正文命中 × 10`。
+- 后台新增「音频课程」管理页（`page-audio-courses`）与 `static/admin/audio-courses.js`。
+- 公开接口（列表/首页/搜索）返回精简投影，不下发文字稿；删除或替换音频会清理本地文件，孤儿文件可用 `scripts/cleanup_audio_uploads.py`（默认 dry-run）清理。
+- 回归入口：`scripts/test_audio_courses.py`、`scripts/test_audio_courses_frontend.js`、`scripts/test_feature_flags.py`；方案文档 `docs/AUDIO_COURSES_PLAN.md`。
+- Phase 2 待办：AI 回答后自动推送（模式 A）、链接识别入库、系列聚合、播放统计、标准标签库。

@@ -2,8 +2,12 @@
 .memory-header {
   padding: 56px 20px 16px;
   border-bottom: 1px solid var(--slate-50);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
 }
-.memory-title { font-size: 18px; font-weight: 700; }
+.memory-title { font-size: calc(18px * var(--fs-scale)); font-weight: 700; }
 
 .memory-content { flex: 1; min-height: 0; overflow-y: auto; padding: 16px 20px 100px; }
 .memory-filter { margin-bottom: 16px; }
@@ -11,7 +15,7 @@
 .memory-filter select {
   width: 100%;
   padding: 10px 14px;
-  font-size: 13px; font-family: inherit;
+  font-size: calc(13px * var(--fs-scale)); font-family: inherit;
   color: var(--slate-800);
   background: var(--slate-50);
   border: 1px solid var(--slate-200);
@@ -48,18 +52,18 @@
 .memory-item-tag {
   display: inline-block;
   padding: 2px 8px;
-  font-size: 10px; font-weight: 500;
+  font-size: calc(10px * var(--fs-scale)); font-weight: 500;
   color: var(--primary);
   background: var(--primary-light);
   border-radius: 4px;
   margin-bottom: 4px;
 }
 .memory-item-text {
-  font-size: 13px; color: var(--slate-600);
+  font-size: calc(13px * var(--fs-scale)); color: var(--slate-600);
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 .memory-item-time {
-  font-size: 11px; color: var(--slate-300);
+  font-size: calc(11px * var(--fs-scale)); color: var(--slate-300);
   margin-top: 4px;
 }
 
@@ -67,8 +71,8 @@
   text-align: center; padding: 60px 20px;
   color: var(--slate-300);
 }
-.memory-empty i { font-size: 40px; display: block; margin-bottom: 12px; }
-.memory-empty p { font-size: 14px; }
+.memory-empty i { font-size: calc(40px * var(--fs-scale)); display: block; margin-bottom: 12px; }
+.memory-empty p { font-size: calc(14px * var(--fs-scale)); }
 
 /* ===== Session Cards ===== */
 .session-card {
@@ -93,26 +97,26 @@
   width: 38px; height: 38px; min-width: 38px;
   border-radius: 10px;
   display: flex; align-items: center; justify-content: center;
-  color: #fff; font-size: 18px;
+  color: #fff; font-size: calc(18px * var(--fs-scale));
 }
 .session-body { flex: 1; min-width: 0; }
 .session-meta {
-  font-size: 12px; font-weight: 600; color: var(--slate-500);
+  font-size: calc(12px * var(--fs-scale)); font-weight: 600; color: var(--slate-500);
   margin-bottom: 4px;
 }
 .session-preview {
-  font-size: 14px; color: var(--slate-700);
+  font-size: calc(14px * var(--fs-scale)); color: var(--slate-700);
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 .session-arrow {
-  font-size: 16px; color: var(--slate-300); flex-shrink: 0;
+  font-size: calc(16px * var(--fs-scale)); color: var(--slate-300); flex-shrink: 0;
 }
 .session-delete {
   width: 32px; height: 32px;
   display: flex; align-items: center; justify-content: center;
   background: none; border: none;
   color: var(--slate-300); cursor: pointer;
-  border-radius: 6px; font-size: 15px;
+  border-radius: 6px; font-size: calc(15px * var(--fs-scale));
   flex-shrink: 0;
   transition: all 0.15s;
 }
@@ -129,7 +133,7 @@
 }
 .community-tab {
   flex: 1; padding: 12px 0;
-  font-size: 14px; font-weight: 600;
+  font-size: calc(14px * var(--fs-scale)); font-weight: 600;
   color: var(--slate-400); background: none; border: none; border-bottom: 2px solid transparent;
   font-family: inherit; cursor: pointer; transition: all 0.2s;
 }
@@ -149,13 +153,13 @@
   text-align: center;
 }
 .nickname-header {
-  font-size: 16px; font-weight: 700; color: var(--slate-800);
+  font-size: calc(16px * var(--fs-scale)); font-weight: 700; color: var(--slate-800);
   margin-bottom: 16px;
 }
 .nickname-input {
   width: 100%; padding: 10px 14px;
   border: 1.5px solid var(--slate-200); border-radius: 8px;
-  font-size: 14px; font-family: inherit; outline: none;
+  font-size: calc(14px * var(--fs-scale)); font-family: inherit; outline: none;
   margin-bottom: 16px; text-align: center;
 }
 .nickname-input:focus { border-color: var(--primary); }

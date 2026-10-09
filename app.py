@@ -56,6 +56,7 @@ from routes.admin import admin_bp
 from routes.agents import agents_bp
 from routes.dashboard import dashboard_bp
 from routes.cases import cases_bp
+from routes.audio_courses import audio_courses_bp
 from routes.share import share_bp
 from routes.speech import speech_bp
 from routes.leads import leads_bp
@@ -64,6 +65,7 @@ from routes.admin_handoff import admin_handoff_bp
 from routes.ai_review import ai_review_bp
 from routes.nutritionist_notes import nutritionist_notes_bp
 from routes.features import features_bp
+from routes.mcp import mcp_bp
 
 app = Flask(__name__, static_folder='static', static_url_path='')
 Config.validate()
@@ -110,6 +112,8 @@ def crawl_guard():
     """
     if not Config.CRAWL_GUARD_ENABLED or not request.path.startswith('/api/'):
         return None
+    if request.path.startswith('/api/mcp'):
+        return None  # MCP 走 Bearer token 鉴权，不受按 IP 的反爬预算限制
     client_type = classify_client(request.headers.get('User-Agent', ''))
     limit = max(1, _CRAWL_GUARD_LIMITS.get(client_type, Config.CRAWL_GUARD_SCRIPT_PER_MIN))
     subject = request.remote_addr or 'unknown'
@@ -144,6 +148,7 @@ app.register_blueprint(admin_bp, url_prefix='/api/admin')
 app.register_blueprint(agents_bp, url_prefix='/api/agents')
 app.register_blueprint(dashboard_bp, url_prefix='/api/admin/dashboard')
 app.register_blueprint(cases_bp, url_prefix='/api')
+app.register_blueprint(audio_courses_bp, url_prefix='/api')
 app.register_blueprint(share_bp, url_prefix='/api')
 app.register_blueprint(speech_bp, url_prefix='/api/speech')
 app.register_blueprint(leads_bp, url_prefix='/api/leads')
@@ -152,6 +157,7 @@ app.register_blueprint(admin_handoff_bp, url_prefix='/api/admin/handoff')
 app.register_blueprint(ai_review_bp, url_prefix='/api/admin/ai-review')
 app.register_blueprint(nutritionist_notes_bp, url_prefix='/api/nutritionist-notes')
 app.register_blueprint(features_bp, url_prefix='/api')
+app.register_blueprint(mcp_bp, url_prefix='/api')
 
 
 @app.after_request
@@ -174,7 +180,7 @@ def add_cache_headers(response):
         "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://html2canvas.hertzen.com; "
         "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; "
         "img-src 'self' data: https:; connect-src 'self' wss://asr.cloud.tencent.com; "
-        "media-src 'self' blob:; worker-src 'self' blob:"
+        "media-src 'self' blob: https:; worker-src 'self' blob:"
     )
     if request.is_secure:
         response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'

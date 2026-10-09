@@ -32,6 +32,26 @@ def sanitize_media_url(value):
     return _safe_url(str(value or '').strip(), image=True)
 
 
+def sanitize_audio_url(value):
+    """音频/外链地址：仅允许 `http(s)://` 或本站 `/uploads/` 相对路径。
+
+    比 `_safe_url` 更严：拒绝 `mailto:`/`tel:`/其它相对路径，并显式拒绝会破坏
+    HTML 属性的引号、尖括号与空白，作为前端转义之外的服务端防线。
+    """
+    text = html.unescape(str(value or '')).strip()
+    if not text:
+        return ''
+    if any(ch in text for ch in ('"', "'", '<', '>', ' ', '\t', '\x00', '\r', '\n')):
+        return ''
+    parsed = urlparse(text)
+    scheme = parsed.scheme.lower()
+    if scheme in ('http', 'https'):
+        return text
+    if not scheme and text.startswith('/uploads/') and '..' not in text:
+        return text
+    return ''
+
+
 _AGE_PATTERN = re.compile(r'(\d{1,3})\s*(?:周岁|岁)')
 # 精确到具体年龄 + 职业 + 生活习惯的组合具备可识别性，对外只保留粗粒度区间。
 _AGE_BUCKETS = ((18, '未成年'), (35, '青年'), (50, '中年'), (200, '中老年'))

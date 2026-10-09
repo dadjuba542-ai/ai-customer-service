@@ -396,10 +396,11 @@ function renderHotQuestions(questions) {
   const maxCount = Math.max(...questions.map(q => q.count || 1));
   container.innerHTML = items.map((item, index) => {
     const ratio = (questions[index]?.count || 1) / maxCount;
+    /* 词云字号按热度 12-18px，再乘全局缩放系数，大字档同步放大 */
     const size = 12 + Math.round(ratio * 6);
     const opacity = 0.5 + ratio * 0.5;
     return `<span class="hot-tag" data-preset-key="hot" data-preset-index="${index}"
-      style="font-size:${size}px;opacity:${opacity}"
+      style="font-size:calc(${size}px * var(--fs-scale));opacity:${opacity}"
       title="${escapeHtml(presetAgentTitle(item.agentId))}"
       role="button" tabindex="0">${escapeHtml(item.text)}${presetAgentDot(item.agentId)}</span>`;
   }).join('');
