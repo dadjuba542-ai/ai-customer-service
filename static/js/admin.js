@@ -146,6 +146,7 @@ async function switchPage(page) {
     feedback: '评价看板',
     community: '问答管理',
     'team-stats': '团队提问统计',
+    'qa-records': '问答记录',
     leads: '客户需求',
     handoff: '人工客服',
     features: '功能开关'
@@ -174,6 +175,7 @@ async function switchPage(page) {
   if (page === 'feedback') loadFeedbackDashboard();
   if (page === 'community') loadAdminQA();
   if (page === 'team-stats') loadTeamStatsPage();
+  if (page === 'qa-records') loadQaRecordsPage();
   if (page === 'leads') loadAdminLeads();
   if (page === 'handoff') loadHandoffPage();
   if (page === 'features') loadFeatureFlagsPage();
@@ -697,6 +699,174 @@ function exportFbCSV() {
   a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
+}
+
+/* ===== QA Records（按周期查看全部问答） ===== */
+let qaPage = 1;
+
+function qaSetQuickActive(range) {
+  document.querySelectorAll('#page-qa-records .quick-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.range === range);
+  });
+}
+
+function qaDateInputs(start, end) {
+  document.getElementById('qa-filter-start').value = start;
+  document.getElementById('qa-filter-end').value = end;
+}
+
+function setQaRange(range) {
+  qaSetQuickActive(range);
+  const now = new Date();
+  const fmt = d => d.toISOString().slice(0, 10);
+  const dow = now.getDay() === 0 ? 7 : now.getDay(); // 周一为一周开始
+  if (range === 'all') {
+    qaDateInputs('', '');
+  } else if (range === '7' || range === '30') {
+    const start = new Date(now);
+    start.setDate(start.getDate() - parseInt(range, 10));
+    qaDateInputs(fmt(start), fmt(now));
+  } else if (range === 'week') {
+    const start = new Date(now);
+    start.setDate(now.getDate() - (dow - 1));
+    qaDateInputs(fmt(start), fmt(now));
+  } else if (range === 'lastweek') {
+    const start = new Date(now);
+    start.setDate(now.getDate() - (dow - 1) - 7);
+    const end = new Date(now);
+    end.setDate(now.getDate() - dow);
+    qaDateInputs(fmt(start), fmt(end));
+  } else if (range === 'month') {
+    qaDateInputs(fmt(new Date(now.getFullYear(), now.getMonth(), 1)), fmt(now));
+  } else if (range === 'lastmonth') {
+    qaDateInputs(
+      fmt(new Date(now.getFullYear(), now.getMonth() - 1, 1)),
+      fmt(new Date(now.getFullYear(), now.getMonth(), 0))
+    );
+  }
+  qaPage = 1;
+  loadQaRecords();
+}
+
+function applyQaFilter() {
+  qaPage = 1;
+  loadQaRecords();
+}
+
+function qaParams() {
+  const p = new URLSearchParams();
+  const s = document.getElementById('qa-filter-start').value;
+  const e = document.getElementById('qa-filter-end').value;
+  const t = document.getElementById('qa-filter-type').value;
+  const kw = (document.getElementById('qa-filter-keyword').value || '').trim();
+  if (s) p.set('start_date', s);
+  if (e) p.set('end_date', e);
+  if (t) p.set('query_type', t);
+  if (kw) p.set('keyword', kw);
+  return p;
+}
+
+async function loadQaRecordsPage() {
+  await loadQaAgentOptions();
+  if (!document.getElementById('qa-filter-start').value && !document.getElementById('qa-filter-end').value) {
+    setQaRange('month'); // 首次默认本月
+    return;
+  }
+  loadQaRecords();
+}
+
+async function loadQaAgentOptions() {
+  const select = document.getElementById('qa-filter-type');
+  if (!select || select.dataset.loaded === '1') return;
+  try {
+    const res = await fetch(`${API}/api/admin/agents`, {
+      headers: { 'Authorization': `Bearer ${getToken()}` }
+    });
+    const data = await res.json();
+    const seen = new Set();
+    const opts = [];
+    (data.agents || []).forEach(a => {
+      const type = (a.type || '').trim();
+      if (type && !seen.has(type)) {
+        seen.add(type);
+        opts.push(`<option value="${esc(type)}">${esc(a.name || type)}</option>`);
+      }
+    });
+    select.innerHTML = '<option value="">全部智能体</option>' + opts.join('');
+    select.dataset.loaded = '1';
+  } catch {}
+}
+
+async function loadQaRecords() {
+  const loading = document.getElementById('qa-loading');
+  const wrap = document.getElementById('qa-wrap');
+  loading.style.display = '';
+  wrap.style.display = 'none';
+  try {
+    const p = qaParams();
+    p.set('page', qaPage);
+    p.set('limit', 20);
+    const res = await fetch(`${API}/api/admin/dashboard/qa-records?${p.toString()}`, {
+      headers: { 'Authorization': `Bearer ${getToken()}` }
+    });
+    const data = await res.json();
+    const items = data.items || [];
+    document.getElementById('qa-total').textContent = data.total || 0;
+    document.getElementById('qa-page-info').textContent = data.total ? `第 ${data.page} / ${data.pages} 页` : '';
+    const body = document.getElementById('qa-body');
+    if (!items.length) {
+      body.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--slate-400)">暂无数据</td></tr>';
+    } else {
+      body.innerHTML = items.map(it => `
+        <tr>
+          <td style="white-space:nowrap;color:var(--slate-500)">${esc(it.created_at || '')}</td>
+          <td><span class="tag tag-sky">${esc(it.agent_name || it.query_type || '')}</span></td>
+          <td style="white-space:pre-wrap">${esc(it.user_message || '')}</td>
+          <td><div style="max-height:160px;overflow:auto;white-space:pre-wrap">${esc(it.bot_response || '')}</div></td>
+        </tr>`).join('');
+    }
+    renderQaPager(data.page || 1, data.pages || 1);
+    wrap.style.display = '';
+  } catch {
+    document.getElementById('qa-body').innerHTML =
+      '<tr><td colspan="4" style="text-align:center;color:var(--rose)">加载失败</td></tr>';
+    wrap.style.display = '';
+  } finally {
+    loading.style.display = 'none';
+  }
+}
+
+function renderQaPager(page, pages) {
+  const pager = document.getElementById('qa-pager');
+  if (pages <= 1) { pager.innerHTML = ''; return; }
+  pager.innerHTML = `
+    <button class="btn btn-secondary btn-sm" ${page <= 1 ? 'disabled' : ''} onclick="gotoQaPage(${page - 1})">上一页</button>
+    <span style="color:var(--slate-500)">第 ${page} / ${pages} 页</span>
+    <button class="btn btn-secondary btn-sm" ${page >= pages ? 'disabled' : ''} onclick="gotoQaPage(${page + 1})">下一页</button>`;
+}
+
+function gotoQaPage(page) {
+  qaPage = page;
+  loadQaRecords();
+}
+
+function exportQaCSV() {
+  const p = qaParams();
+  const s = document.getElementById('qa-filter-start').value || '全部';
+  const e = document.getElementById('qa-filter-end').value || '全部';
+  const url = `${API}/api/admin/dashboard/qa-records/export?${p.toString()}`;
+  fetch(url, { headers: { 'Authorization': `Bearer ${getToken()}` } })
+    .then(res => { if (!res.ok) throw new Error('export failed'); return res.blob(); })
+    .then(blob => {
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `问答记录_${s}_${e}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(a.href);
+    })
+    .catch(() => showToast('导出失败', 'error'));
 }
 
 async function loadAll() {

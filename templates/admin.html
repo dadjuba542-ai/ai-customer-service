@@ -69,6 +69,9 @@
         <div class="nav-item" data-page="team-stats" onclick="switchPage('team-stats')" data-page-node-id="iLXSttTbaxfIjUkQ3qnCXT">
           <svg class="icon" data-page-node-id="FfpXuTd0er8gNEpE8ZE5Hl" viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true"><path fill-rule="evenodd" d="M13 6.4h6.6a1 1 0 0 1 1 1v12.4a1 1 0 0 1-1 1H13a1 1 0 0 1-1-1V7.4a1 1 0 0 1 1-1ZM14.8 9.4h2.9v2.4h-2.9V9.4ZM14.8 14.6h2.9v2.4h-2.9v-2.4Z" fill="currentColor"/><path fill-rule="evenodd" d="M3.4 10.6h7.4a1 1 0 0 1 1 1v8.2a1 1 0 0 1-1 1H3.4a1 1 0 0 1-1-1v-8.2a1 1 0 0 1 1-1ZM5 13.4h1.9v2H5v-2ZM7.9 13.4h1.9v2h-1.9v-2ZM5 16.8h1.9v2H5v-2ZM7.9 16.8h1.9v2h-1.9v-2Z" fill="currentColor"/></svg><span data-page-node-id="moP8wXX5ZmW2VGTW3vQsbE">团队提问统计</span>
         </div>
+        <div class="nav-item" data-page="qa-records" onclick="switchPage('qa-records')" data-page-node-id="Kb7QaRecordsNav001">
+          <svg class="icon" viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true"><path fill-rule="evenodd" d="M5 4.2h14A2.2 2.2 0 0 1 21.2 6.4v8.2a2.2 2.2 0 0 1-2.2 2.2H9.6l-4.4 3.2v-3.2H5a2.2 2.2 0 0 1-2.2-2.2V6.4A2.2 2.2 0 0 1 5 4.2Zm1.6 4h10.8v1.8H6.6V8.2Zm0 3.6h7.8v1.8H6.6v-1.8Z" fill="currentColor"/></svg><span>问答记录</span>
+        </div>
         <div class="nav-item" data-page="leads" onclick="switchPage('leads')" data-page-node-id="o8B8NH1fT9ADE9de78FB5o">
           <svg class="icon" data-page-node-id="8CzpElh86MNy10TfkLopg4" viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true"><path fill-rule="evenodd" d="M7 4.2h10a4.2 4.2 0 0 1 4.2 4.2V13a4.2 4.2 0 0 1-4.2 4.2H7A4.2 4.2 0 0 1 2.8 13V8.4A4.2 4.2 0 0 1 7 4.2ZM8.4 8.4a1.4 1.4 0 1 0 0 2.8 1.4 1.4 0 0 0 0-2.8ZM12 8.4a1.4 1.4 0 1 0 0 2.8 1.4 1.4 0 0 0 0-2.8ZM15.6 8.4a1.4 1.4 0 1 0 0 2.8 1.4 1.4 0 0 0 0-2.8Z" fill="currentColor"/><path fill="currentColor" d="M8.8 16.6h4.4L7.4 21.8l1.4-5.2Z"/></svg><span data-page-node-id="Swz8qIDaDQvjkARgRv7P85">客户需求</span>
         </div>
@@ -779,6 +782,60 @@
           </div>
         </div>
       </div>
+      <!-- ===== Page: QA Records ===== -->
+      <div id="page-qa-records" class="page-content" data-page-node-id="Kb7QaRecordsPage01">
+        <div class="date-filter team-filter" data-page-node-id="Kb7QaRecordsFilter01">
+          <div class="team-filter-row top" data-page-node-id="Kb7QaRecordsFilterTop">
+            <div class="team-filter-main" data-page-node-id="Kb7QaRecordsFilterMain">
+              <span class="filter-label">日期：</span>
+              <input type="date" id="qa-filter-start" data-page-node-id="Kb7QaRecordsStart">
+              <span class="range-sep">~</span>
+              <input type="date" id="qa-filter-end" data-page-node-id="Kb7QaRecordsEnd">
+              <span class="filter-label">智能体：</span>
+              <select id="qa-filter-type" class="team-select" data-page-node-id="Kb7QaRecordsType">
+                <option value="">全部智能体</option>
+              </select>
+              <span class="filter-label">关键词：</span>
+              <input type="text" id="qa-filter-keyword" class="member-input" placeholder="提问或回答" onkeydown="if(event.key==='Enter') applyQaFilter()" data-page-node-id="Kb7QaRecordsKeyword">
+            </div>
+          </div>
+          <div class="team-filter-row" data-page-node-id="Kb7QaRecordsFilterActions">
+            <div class="quick-group" data-page-node-id="Kb7QaRecordsQuick">
+              <button class="quick-btn" data-range="week" onclick="setQaRange('week')">本周</button>
+              <button class="quick-btn" data-range="lastweek" onclick="setQaRange('lastweek')">上周</button>
+              <button class="quick-btn active" data-range="month" onclick="setQaRange('month')">本月</button>
+              <button class="quick-btn" data-range="lastmonth" onclick="setQaRange('lastmonth')">上月</button>
+              <button class="quick-btn" data-range="7" onclick="setQaRange('7')">近7天</button>
+              <button class="quick-btn" data-range="30" onclick="setQaRange('30')">近30天</button>
+              <button class="quick-btn" data-range="all" onclick="setQaRange('all')">全部</button>
+            </div>
+            <div class="action-group" data-page-node-id="Kb7QaRecordsActionGroup">
+              <button class="btn btn-primary btn-sm" onclick="applyQaFilter()" data-page-node-id="Kb7QaRecordsSearch">查询</button>
+              <button class="btn btn-secondary btn-sm" onclick="exportQaCSV()" data-page-node-id="Kb7QaRecordsExport"><svg class="icon icon-download" viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true"><path d="M11 9v7.2l-3.6-3.6L6 14l6 6 6-6-1.4-1.4L13 16.2V9h-2zM4 4h16v2H4V4z" fill="currentColor"/></svg> 导出CSV</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="table-card" data-page-node-id="Kb7QaRecordsCard">
+          <div class="table-title" data-page-node-id="Kb7QaRecordsTitle">
+            <span data-page-node-id="Kb7QaRecordsTitleText"><svg class="icon icon-chats" viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true"><path d="M6 3h10a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-5l-4 3v-3H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z" fill="currentColor"/><path d="M13 11h5a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2h-1v2l-3-2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2z" fill="currentColor"/></svg>问答记录 <span class="count-badge" id="qa-total">0</span></span>
+            <span id="qa-page-info" style="font-weight:400;color:var(--slate-500);font-size:13px"></span>
+          </div>
+          <div id="qa-loading" class="loading" data-page-node-id="Kb7QaRecordsLoading"><svg class="icon icon-spinner" viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true"><path d="M12 2.6a9.4 9.4 0 1 0 9.4 9.4" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg> 加载中...</div>
+          <div id="qa-wrap" style="display:none" data-page-node-id="Kb7QaRecordsWrap">
+            <table data-page-node-id="Kb7QaRecordsTable">
+              <thead><tr>
+                <th style="width:130px">时间</th>
+                <th style="width:110px">智能体</th>
+                <th style="width:24%">用户提问</th>
+                <th>AI 回答</th>
+              </tr></thead>
+              <tbody id="qa-body" data-page-node-id="Kb7QaRecordsBody"></tbody>
+            </table>
+            <div id="qa-pager" style="display:flex;gap:10px;justify-content:center;align-items:center;padding:14px 0"></div>
+          </div>
+        </div>
+      </div>
       <!-- ===== Page: Customer Leads ===== -->
       <div id="page-leads" class="page-content" data-page-node-id="G7UEDtEOuzjaLq7bHixmis">
         <div class="admin-card" data-page-node-id="8bDAlLnW1ymlPagnEDvEql"><div class="table-title" data-page-node-id="Oi4J6TvUqJ9FzbRGe7Y1E1"><span data-page-node-id="60dEL8KjdneiKZcqW3CpBu"><svg class="icon icon-chat-circle-text" viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true" data-page-node-id="qDQaT5FOJ38uDUj8vLLXtR">
@@ -920,7 +977,7 @@
 
 <div class="toast" id="toast" data-page-node-id="8Ztsru779Gl5WfFgBlEIOZ"></div>
 
-<script src="/js/admin.js?v=20260914-survey1"></script>
+<script src="/js/admin.js?v=20260923-qarecords1"></script>
 <script src="/admin/cases.js?v=20260902-casebatch1"></script>
 <script src="/admin/audio-courses.js?v=20260914-audio4"></script>
 </body>

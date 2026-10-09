@@ -1,6 +1,8 @@
+import csv
+import io
 import json
 
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, Response, request, jsonify
 from models import get_db_connection, get_feedback_reasons, get_feedback_stats, get_setting, set_setting
 from models import get_agent_options, parse_question_binding_payload, MAX_PRESET_HOT_QUESTIONS
 from models import list_research_surveys
@@ -284,3 +286,90 @@ def team_question_stats(current_user):
     ).fetchall()
     conn.close()
     return jsonify({'items': [dict(r) for r in rows]})
+
+
+# ===== 问答记录（按周期查看全部问答） =====
+def _qa_filters():
+    """构造问答记录查询的 WHERE 片段与参数。"""
+    dclause, dparams = date_filter()
+    extra = ''
+    params = list(dparams)
+    query_type = (request.args.get('query_type') or '').strip()
+    if query_type:
+        extra += ' AND a.query_type = ?'
+        params.append(query_type)
+    keyword = (request.args.get('keyword') or '').strip()
+    if keyword:
+        esc_kw = keyword.replace('\\', '\\\\').replace('%', '\\%').replace('_', '\\_')
+        extra += " AND (a.user_message LIKE ? ESCAPE '\\' OR a.bot_response LIKE ? ESCAPE '\\')"
+        params.extend([f'%{esc_kw}%', f'%{esc_kw}%'])
+    return dclause + extra, params
+
+
+@dashboard_bp.route('/qa-records')
+@admin_required
+def qa_records(current_user):
+    page = max(1, request.args.get('page', 1, type=int) or 1)
+    limit = min(max(request.args.get('limit', 20, type=int) or 20, 1), 100)
+    where, params = _qa_filters()
+    conn = get_db_connection()
+    total = conn.execute(
+        f'SELECT COUNT(*) AS cnt FROM chat_history a WHERE 1=1{where}', params
+    ).fetchone()['cnt']
+    rows = conn.execute(
+        f'''SELECT a.id, a.user_message, a.bot_response, a.query_type, a.user_id,
+                   a.created_at, a.feedback,
+                   COALESCE(ac.name, a.query_type) AS agent_name
+            FROM chat_history a
+            LEFT JOIN agent_configs ac ON a.query_type = ac.type
+            WHERE 1=1{where}
+            ORDER BY a.created_at DESC
+            LIMIT ? OFFSET ?''',
+        params + [limit, (page - 1) * limit],
+    ).fetchall()
+    conn.close()
+    return jsonify({
+        'items': [dict(r) for r in rows],
+        'total': total,
+        'page': page,
+        'pages': max(1, (total + limit - 1) // limit),
+        'limit': limit,
+    })
+
+
+@dashboard_bp.route('/qa-records/export')
+@admin_required
+def qa_records_export(current_user):
+    where, params = _qa_filters()
+    limit = 20000  # 兜底上限，避免超大时间段拖垮内存
+    conn = get_db_connection()
+    rows = conn.execute(
+        f'''SELECT a.created_at, a.user_id, a.query_type,
+                   COALESCE(ac.name, a.query_type) AS agent_name,
+                   a.user_message, a.bot_response, a.feedback
+            FROM chat_history a
+            LEFT JOIN agent_configs ac ON a.query_type = ac.type
+            WHERE 1=1{where}
+            ORDER BY a.created_at DESC
+            LIMIT ?''',
+        params + [limit],
+    ).fetchall()
+    conn.close()
+
+    buffer = io.StringIO()
+    writer = csv.writer(buffer)
+    writer.writerow(['时间', '用户ID', '智能体', '提问', '回答', '评价'])
+    rating_map = {1: '好评', 0: '差评'}
+    for row in rows:
+        writer.writerow([
+            row['created_at'], row['user_id'], row['agent_name'],
+            row['user_message'], row['bot_response'] or '',
+            rating_map.get(row['feedback'], ''),
+        ])
+
+    start = request.args.get('start_date') or 'all'
+    end = request.args.get('end_date') or 'all'
+    filename = f'qa_records_{start}_{end}.csv'
+    response = Response('\ufeff' + buffer.getvalue(), content_type='text/csv; charset=utf-8')
+    response.headers['Content-Disposition'] = f'attachment; filename={filename}'
+    return response

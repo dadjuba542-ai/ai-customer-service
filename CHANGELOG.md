@@ -2,6 +2,15 @@
 
 ## 1.1.5.8 (2026-09-14)
 
+### 新增后台「问答记录」（按周期查看全部问答）
+
+- 后台新增「问答记录」页：按周期（本周/上周/本月/上月/近7天/近30天/全部 + 自定义起止）
+  成对查看用户提问与 AI 回答，支持按智能体类型、关键词筛选与分页
+- 新增 `GET /api/admin/dashboard/qa-records`（列表，分页）与
+  `.../qa-records/export`（导出 CSV，UTF-8 BOM，Excel 可直接打开）
+- 前端 `templates/admin.html` + `static/js/admin.js`；回归测试 `scripts/test_qa_records.py`
+- 数据受聊天记录保留期约束（`CHAT_RETENTION_DAYS`），超期清理后不可找回
+
 ### 新增大字档系统切换气泡溢出修复
 
 - 大字档下「已切换到『xxx』」系统气泡标题用 `nowrap` 且父级 `.sb-text` 缺
