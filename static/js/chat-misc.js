@@ -1,5 +1,5 @@
 /* ===== Clear Chat ===== */
-function clearChat() {
+async function clearChat() {
   if (state.handoff.session && ['queued', 'assigned', 'active'].includes(state.handoff.session.status)) {
     showToast('人工咨询进行中不能清空对话', 'info');
     return;
@@ -8,14 +8,26 @@ function clearChat() {
     showToast('回答生成中，请稍候完成后再清空', 'info');
     return;
   }
-  if (!confirm('确定清空当前对话？历史记录不会被删除。')) return;
+  if (!confirm('确定清空当前对话？清空后 AI 将不再记得之前的对话（历史记录仍保留在“历史”里）。')) return;
+
+  try {
+    const res = await fetch(`${API_BASE}/api/chat/context/reset`, {
+      method: 'POST',
+      headers: authHeaders({ 'Content-Type': 'application/json' }),
+      body: JSON.stringify({}),
+    });
+    if (!res.ok) throw new Error('reset failed');
+  } catch {
+    showToast('清空失败，请稍后重试', 'error');
+    return;
+  }
 
   state.messages = [];
   hideWaitingPanel();
   hideTyping();
   document.querySelectorAll('#chat-messages .msg, #chat-messages .typing-indicator').forEach(node => node.remove());
   renderMessages();
-  showToast('对话已清空', 'success');
+  showToast('对话已清空，AI 已忘记之前的对话', 'success');
 }
 
 /* ===== Feedback ===== */

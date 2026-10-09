@@ -7,7 +7,7 @@ from dataclasses import dataclass
 import requests
 
 from config import Config
-from models import get_agent_config, save_chat_history, search_case_documents_page
+from models import get_agent_config, get_context_floor, get_recent_chat_turns, save_chat_history, search_case_documents_page
 from services import feature_flags
 from services.secret_service import get_secret_setting
 
@@ -115,6 +115,9 @@ def build_chat_context(data, identity):
         'query': message,
         'stream': False,
     }
+    chat_history = build_coze_chat_history(user_id, agent_id, query_type)
+    if chat_history:
+        payload['chat_history'] = chat_history
 
     return ChatRequestContext(
         message=message,
@@ -128,6 +131,31 @@ def build_chat_context(data, identity):
         request_id=uuid.uuid4().hex[:12],
         channel=channel,
     )
+
+
+def build_coze_chat_history(user_id, agent_id, query_type, floor_id=None):
+    """把最近若干轮历史拼成 Coze v2 chat_history，让子智能体具备多轮上下文。
+
+    floor_id 为「清空即遗忘」的上下文起点；为 None 时按用户/智能体实时读取。
+    """
+    rounds = Config.CHAT_CONTEXT_ROUNDS
+    if rounds <= 0:
+        return []
+    if floor_id is None:
+        floor_id = get_context_floor(user_id, agent_id or query_type)
+    max_chars = Config.CHAT_CONTEXT_MESSAGE_MAX_CHARS
+    history = []
+    for turn in get_recent_chat_turns(user_id, agent_id, query_type, limit=rounds, floor_id=floor_id):
+        user_message = (turn.get('user_message') or '').strip()
+        bot_response = (turn.get('bot_response') or '').strip()
+        if not user_message or not bot_response:
+            continue
+        if max_chars:
+            user_message = user_message[:max_chars]
+            bot_response = bot_response[:max_chars]
+        history.append({'role': 'user', 'content': user_message, 'content_type': 'text'})
+        history.append({'role': 'assistant', 'content': bot_response, 'content_type': 'text'})
+    return history
 
 
 def execute_sync_chat(ctx):

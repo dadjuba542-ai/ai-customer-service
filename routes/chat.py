@@ -237,5 +237,25 @@ def submit_feedback(identity):
     return jsonify({'message': 'Feedback saved'})
 
 
+@chat_bp.route('/context/reset', methods=['POST'])
+@identity_required
+@rate_limit('chat-context-reset', limit=30, window_seconds=60)
+def reset_context(identity):
+    data = request.get_json(silent=True) or {}
+    agent_id = str(data.get('agent_id') or '').strip()[:64]
+    from models import reset_chat_context
+    floor = reset_chat_context(identity['user_id'], agent_id or '*')
+    return jsonify({'message': 'Context reset', 'floor_history_id': floor})
+
+
+@chat_bp.route('/context/floor', methods=['GET'])
+@identity_required
+@rate_limit('chat-context-floor', limit=120, window_seconds=60)
+def get_context_floor_route(identity):
+    agent_id = str(request.args.get('agent_id') or '').strip()[:64]
+    from models import get_context_floor
+    return jsonify({'floor_history_id': get_context_floor(identity['user_id'], agent_id)})
+
+
 def _format_sse(event_name, payload):
     return f'event: {event_name}\ndata: {json.dumps(payload, ensure_ascii=False)}\n\n'

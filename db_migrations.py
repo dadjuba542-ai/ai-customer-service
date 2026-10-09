@@ -369,6 +369,19 @@ MIGRATIONS = [
             'CREATE INDEX IF NOT EXISTS idx_research_surveys_created ON research_surveys(created_at DESC)',
         ],
     },
+    {
+        'version': '202610090001',
+        'name': 'create_chat_context_state_table',
+        'sqls': [
+            '''CREATE TABLE IF NOT EXISTS chat_context_state (
+                user_id TEXT NOT NULL,
+                agent_id TEXT NOT NULL DEFAULT '*',
+                floor_history_id INTEGER NOT NULL DEFAULT 0,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                PRIMARY KEY (user_id, agent_id)
+            )'''
+        ],
+    },
 ]
 
 

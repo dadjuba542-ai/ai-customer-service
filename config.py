@@ -28,6 +28,10 @@ class Config:
     CHAT_QUEUE_MAX_SIZE = max(1, int(os.environ.get('CHAT_QUEUE_MAX_SIZE', '10')))
     CHAT_QUEUE_TTL_SECONDS = max(60, int(os.environ.get('CHAT_QUEUE_TTL_SECONDS', '300')))
     CHAT_QUEUE_POLL_INTERVAL_SECONDS = max(1, int(os.environ.get('CHAT_QUEUE_POLL_INTERVAL_SECONDS', '2')))
+    # 随每次提问带回 Coze 的多轮上下文轮数（1 轮 = 1 问 1 答）；0 表示关闭
+    CHAT_CONTEXT_ROUNDS = max(0, int(os.environ.get('CHAT_CONTEXT_ROUNDS', '6')))
+    # 单条历史消息截断上限，避免上下文过大
+    CHAT_CONTEXT_MESSAGE_MAX_CHARS = max(0, int(os.environ.get('CHAT_CONTEXT_MESSAGE_MAX_CHARS', '2000')))
     SPEECH_RATE_LIMIT = int(os.environ.get('SPEECH_RATE_LIMIT', '20'))
     # 只读 MCP 端点（/api/mcp）的 Bearer token；留空则端点关闭
     MCP_TOKEN = os.environ.get('MCP_TOKEN', '')

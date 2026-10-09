@@ -57,6 +57,16 @@ def _init_db_locked():
     ''')
 
     cursor.execute('''
+        CREATE TABLE IF NOT EXISTS chat_context_state (
+            user_id TEXT NOT NULL,
+            agent_id TEXT NOT NULL DEFAULT '*',
+            floor_history_id INTEGER NOT NULL DEFAULT 0,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY (user_id, agent_id)
+        )
+    ''')
+
+    cursor.execute('''
         CREATE TABLE IF NOT EXISTS news (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             title TEXT NOT NULL,
@@ -1591,6 +1601,92 @@ def get_chat_history(user_id, query_type=None):
     history = cursor.fetchall()
     conn.close()
     return [dict(row) for row in history]
+
+def get_context_floor(user_id, agent_id=''):
+    """返回该用户/智能体的上下文起点（清空对话后小于等于该 id 的历史不再带入）。
+
+    agent_id 为空时只取全局 '*' 起点；否则取 '* 与具体智能体' 两者中的较大值。
+    """
+    keys = ['*']
+    if agent_id:
+        keys.append(agent_id)
+    placeholders = ','.join('?' for _ in keys)
+    conn = get_db_connection()
+    try:
+        rows = conn.execute(
+            f'''SELECT floor_history_id FROM chat_context_state
+                WHERE user_id = ? AND agent_id IN ({placeholders})''',
+            [user_id] + keys,
+        ).fetchall()
+    finally:
+        conn.close()
+    floors = [int(row['floor_history_id'] or 0) for row in rows]
+    return max(floors) if floors else 0
+
+
+def reset_chat_context(user_id, agent_id='*'):
+    """清空对话时把上下文起点推进到当前最新历史，实现「清空即遗忘」。"""
+    target = agent_id or '*'
+    conn = get_db_connection()
+    try:
+        if target == '*':
+            row = conn.execute(
+                'SELECT COALESCE(MAX(id), 0) AS floor FROM chat_history WHERE user_id = ?',
+                (user_id,),
+            ).fetchone()
+        else:
+            row = conn.execute(
+                'SELECT COALESCE(MAX(id), 0) AS floor FROM chat_history WHERE user_id = ? AND agent_id = ?',
+                (user_id, target),
+            ).fetchone()
+        floor = int(row['floor'] or 0)
+        conn.execute(
+            '''INSERT INTO chat_context_state (user_id, agent_id, floor_history_id, updated_at)
+               VALUES (?, ?, ?, CURRENT_TIMESTAMP)
+               ON CONFLICT(user_id, agent_id) DO UPDATE SET
+                   floor_history_id = excluded.floor_history_id,
+                   updated_at = CURRENT_TIMESTAMP''',
+            (user_id, target, floor),
+        )
+        conn.commit()
+    finally:
+        conn.close()
+    return floor
+
+
+def get_recent_chat_turns(user_id, agent_id='', query_type='', limit=6, floor_id=0):
+    """取某用户最近 N 轮已完成问答，用于拼装多轮上下文。
+
+    优先按 agent_id 精确匹配；agent_id 为空时回退到 query_type，
+    保证旧数据（尚未写入 agent_id）也能命中。返回按时间正序排列。
+    floor_id 用于「清空即遗忘」：只取 id 大于该值的历史。
+    """
+    limit = max(1, min(int(limit or 6), 50))
+    floor_id = max(0, int(floor_id or 0))
+    conn = get_db_connection()
+    try:
+        if agent_id:
+            rows = conn.execute(
+                '''SELECT user_message, bot_response FROM chat_history
+                   WHERE user_id = ? AND agent_id = ? AND id > ?
+                     AND bot_response IS NOT NULL AND TRIM(bot_response) != ''
+                   ORDER BY id DESC LIMIT ?''',
+                (user_id, agent_id, floor_id, limit),
+            ).fetchall()
+        elif query_type:
+            rows = conn.execute(
+                '''SELECT user_message, bot_response FROM chat_history
+                   WHERE user_id = ? AND query_type = ? AND id > ?
+                     AND bot_response IS NOT NULL AND TRIM(bot_response) != ''
+                   ORDER BY id DESC LIMIT ?''',
+                (user_id, query_type, floor_id, limit),
+            ).fetchall()
+        else:
+            rows = []
+    finally:
+        conn.close()
+    return [dict(row) for row in reversed(rows)]
+
 
 def get_chat_history_by_id(history_id, user_id):
     conn = get_db_connection()

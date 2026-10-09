@@ -12,7 +12,17 @@ async function restoreLatestChat() {
     const items = latestSession?.items || [];
     if (!items.length) return;
 
-    applyHistoryItems(items);
+    // 清空对话后（存在上下文起点），不再恢复起点之前的旧记录
+    let floor = 0;
+    try {
+      const agentId = items[0]?.agent_id || '';
+      const floorRes = await fetch(`${API_BASE}/api/chat/context/floor?agent_id=${encodeURIComponent(agentId)}`, { headers: authHeaders() });
+      if (floorRes.ok) floor = Number((await floorRes.json()).floor_history_id) || 0;
+    } catch {}
+    const visible = items.filter(item => Number(item.id) > floor);
+    if (!visible.length) return;
+
+    applyHistoryItems(visible);
   } catch {}
 }
 
