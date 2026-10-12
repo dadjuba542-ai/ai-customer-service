@@ -5,6 +5,7 @@ class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY', '')
     COZE_API_URL = os.environ.get('COZE_API_URL', 'https://api.coze.cn/open_api/v2/chat')
     COZE_V3_CHAT_URL = os.environ.get('COZE_V3_CHAT_URL', 'https://api.coze.cn/v3/chat')
+    COZE_CHAT_API_VERSION = os.environ.get('COZE_CHAT_API_VERSION', 'v3').strip().lower()
     COZE_FILE_UPLOAD_URL = os.environ.get('COZE_FILE_UPLOAD_URL', 'https://api.coze.cn/v1/files/upload')
     COZE_API_KEY = os.environ.get('COZE_API_KEY', '')
     DATABASE_DIR = os.environ.get('DATABASE_DIR', BASE_DIR)
@@ -32,7 +33,7 @@ class Config:
     CHAT_CONTEXT_ROUNDS = max(0, int(os.environ.get('CHAT_CONTEXT_ROUNDS', '6')))
     # 单条历史消息截断上限，避免上下文过大
     CHAT_CONTEXT_MESSAGE_MAX_CHARS = max(0, int(os.environ.get('CHAT_CONTEXT_MESSAGE_MAX_CHARS', '2000')))
-    # query 模式兼容只转发当前输入的 Coze 子智能体/工作流；history 使用原生历史字段。
+    # 仅 V2 回退使用：query 拼历史问题，history 使用原生历史字段；V3 始终使用原生消息。
     CHAT_CONTEXT_DELIVERY = os.environ.get('CHAT_CONTEXT_DELIVERY', 'query').strip().lower()
     SPEECH_RATE_LIMIT = int(os.environ.get('SPEECH_RATE_LIMIT', '20'))
     # 只读 MCP 端点（/api/mcp）的 Bearer token；留空则端点关闭
@@ -80,6 +81,8 @@ class Config:
 
     @classmethod
     def validate(cls):
+        if cls.COZE_CHAT_API_VERSION not in {'v2', 'v3'}:
+            raise RuntimeError('COZE_CHAT_API_VERSION must be v2 or v3')
         if cls.CHAT_CONTEXT_DELIVERY not in {'query', 'history'}:
             raise RuntimeError('CHAT_CONTEXT_DELIVERY must be query or history')
         if len(cls.SECRET_KEY) < 32:

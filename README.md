@@ -8,6 +8,7 @@ AI 智能对话系统，基于 Coze Bot API。
 
 - [PROJECT_CONTEXT.md](./PROJECT_CONTEXT.md)
 - [HANDOFF.md](./HANDOFF.md)：启动、部署、管理员、发布和故障排查说明
+- [COZE V3 部署与重启说明](./docs/COZE_V3_DEPLOYMENT.md)：环境变量、本地启动、服务器重新部署、上下文验收与回退
 
 ## 功能
 

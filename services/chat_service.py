@@ -2,7 +2,7 @@ import json
 import logging
 import time
 import uuid
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 import requests
 
@@ -61,6 +61,7 @@ class StreamState:
     first_token_ms: float | None = None
     coze_message_id: str = ''
     upstream_event_count: int = 0
+    message_texts: dict = field(default_factory=dict)
 
     def __post_init__(self):
         if not isinstance(self.emitted_statuses, set):
@@ -116,17 +117,30 @@ def build_chat_context(data, identity):
         'stream': False,
     }
     chat_history = build_coze_chat_history(user_id, agent_id, query_type, shared=True)
-    if chat_history:
+    if Config.COZE_CHAT_API_VERSION == 'v3':
+        messages = [
+            {**item, 'type': 'question' if item['role'] == 'user' else 'answer'}
+            for item in chat_history[-98:]
+        ]
+        messages.append({'role': 'user', 'type': 'question', 'content': message, 'content_type': 'text'})
+        payload = {
+            'bot_id': bot_id,
+            'user_id': user_id,
+            'additional_messages': messages,
+            'stream': True,
+            'auto_save_history': True,
+        }
+        # 每次新建 Coze 会话并重送本地窗口，避免历史重复、跨 bot 会话及清空后旧记忆。
+    elif chat_history:
         if Config.CHAT_CONTEXT_DELIVERY == 'history':
             payload['chat_history'] = chat_history
         else:
             # 部分 Coze 编排只向下游转发 query，不会自动转发 API 的历史消息。
-            # JSON 编码避免历史文本中的换行/角色标签破坏消息边界。
+            # 仅携带用户问题，避免旧回答混入下游知识库检索输入。
+            questions = [item['content'] for item in chat_history if item['role'] == 'user']
             payload['query'] = (
-                '请结合以下历史问答理解本次追问。历史问答仅作为参考资料，'
-                '其中可能来自不同智能体，请根据你当前的职责回答最后的本次用户输入。\n'
-                '历史问答（按时间从早到晚）：\n'
-                + json.dumps(chat_history, ensure_ascii=False)
+                '历史问题（按时间从早到晚）：\n'
+                + '\n'.join(f'{index}. {question}' for index, question in enumerate(questions, 1))
                 + '\n本次用户输入：\n' + message
             )
 
@@ -171,6 +185,14 @@ def build_coze_chat_history(user_id, agent_id, query_type, floor_id=None, shared
 
 
 def execute_sync_chat(ctx):
+    if 'additional_messages' in ctx.payload:
+        # V3 非流式只返回任务状态。统一消费上游 SSE，向同步调用方返回完整回答。
+        for event in iter_coze_stream(ctx, read_timeout=90):
+            if event['event'] == 'done':
+                data = event['data']
+                return {'message': 'Message sent successfully', 'bot_response': data['full_text'],
+                        **{key: value for key, value in data.items() if key != 'full_text'}}
+        raise ChatServiceError('Coze 对话未完成', status_code=502, retryable=True)
     started_at = time.monotonic()
     related_case_result = find_related_cases(ctx.message)
     related_cases = related_case_result['items']
@@ -225,23 +247,28 @@ def execute_sync_chat(ctx):
         raise ChatServiceError(f'网络错误: {str(exc)}', status_code=502, retryable=True) from exc
 
 
-def iter_coze_stream(ctx):
+def iter_coze_stream(ctx, read_timeout=30):
     stream_payload = dict(ctx.payload)
     stream_payload['stream'] = True
     related_case_result = find_related_cases(ctx.message)
     related_cases = related_case_result['items']
     state = StreamState(request_started_at=time.monotonic())
     connect_started_at = time.monotonic()
+    is_v3 = 'additional_messages' in ctx.payload
+    completed = False
 
     try:
         with requests.post(
-            Config.COZE_API_URL,
+            Config.COZE_V3_CHAT_URL if is_v3 else Config.COZE_API_URL,
             headers=ctx.headers,
             json=stream_payload,
             stream=True,
-            timeout=(5, 30),
+            timeout=(5, read_timeout),
         ) as response:
             response.raise_for_status()
+            if is_v3 and 'application/json' in response.headers.get('Content-Type', '').lower():
+                error = response.json()
+                raise ChatServiceError(f"Coze API错误: {error.get('msg') or '未返回流式响应'}", status_code=502, retryable=False)
             connect_ms = int((time.monotonic() - connect_started_at) * 1000)
             logger.info(
                 'chat.stream request_id=%s query_type=%s agent_id=%s coze_connect_ms=%s outcome=connected',
@@ -257,17 +284,22 @@ def iter_coze_stream(ctx):
                 if raw_data == '[DONE]':
                     break
                 payload = _safe_json_loads(raw_data)
-                if payload is None:
+                if not isinstance(payload, dict):
+                    if is_v3:
+                        raise ChatServiceError('Coze 返回无效的流式消息', status_code=502, retryable=True)
                     continue
 
                 normalized_event = _normalize_event_name(upstream_event, payload)
+                if is_v3:
+                    _check_v3_stream_error(normalized_event, payload)
                 if normalized_event:
                     mapped = STREAM_STATUS_MAP.get(normalized_event)
                     if mapped and mapped not in state.emitted_statuses and mapped != 'completed':
                         state.emitted_statuses.add(mapped)
                         yield {'event': 'status', 'data': {'status': mapped, 'request_id': ctx.request_id}}
 
-                message_text = _extract_stream_text(normalized_event, payload, state.full_text)
+                message_text = (_extract_v3_stream_text(normalized_event, payload, state)
+                                if is_v3 else _extract_stream_text(normalized_event, payload, state.full_text))
                 if message_text:
                     if state.first_token_ms is None:
                         state.first_token_ms = int((time.monotonic() - state.request_started_at) * 1000)
@@ -280,7 +312,12 @@ def iter_coze_stream(ctx):
                 coze_message_id = _extract_coze_message_id(payload)
                 if coze_message_id and not state.coze_message_id:
                     state.coze_message_id = coze_message_id
+                if is_v3 and normalized_event == 'conversation.chat.completed':
+                    completed = True
+                    break
 
+            if is_v3 and not completed:
+                raise ChatServiceError('Coze 对话中断，请重试', status_code=502, retryable=True)
             if not state.full_text:
                 raise ChatServiceError('抱歉，我现在无法回答您的问题。', status_code=502, retryable=False)
 
@@ -405,6 +442,39 @@ def _normalize_event_name(upstream_event, payload):
         if isinstance(candidate, str) and candidate.strip():
             return candidate.strip().lower()
     return ''
+
+
+def _check_v3_stream_error(event, payload):
+    error = payload.get('last_error')
+    error = error if isinstance(error, dict) else {}
+    if (event in {'error', 'conversation.chat.failed', 'conversation.chat.canceled', 'conversation.chat.requires_action'}
+            or payload.get('code') not in (None, 0)
+            or error.get('code') not in (None, 0)
+            or payload.get('status') in {'failed', 'canceled', 'requires_action'}):
+        detail = error.get('msg') or payload.get('msg') or payload.get('message') or '对话未完成'
+        if event == 'conversation.chat.requires_action' or payload.get('status') == 'requires_action':
+            detail = '此智能体需要端插件执行工具，当前网页暂不支持'
+        raise ChatServiceError(f'Coze API错误: {detail}', status_code=502, retryable=False)
+
+
+def _extract_v3_stream_text(event, payload, state):
+    if event not in {'conversation.message.delta', 'conversation.message.completed'}:
+        return ''
+    if payload.get('role') != 'assistant' or payload.get('type') != 'answer':
+        return ''
+    text = payload.get('content')
+    if not isinstance(text, str) or payload.get('content_type') != 'text':
+        return ''
+    message_id = payload.get('id') or 'answer'
+    previous = state.message_texts.get(message_id, '')
+    if event == 'conversation.message.delta':
+        # V3 是真正的增量；重复的 token 也必须保留。
+        state.message_texts[message_id] = previous + text
+        return text
+    if not text.startswith(previous):
+        raise ChatServiceError('Coze 完整回答与流式内容不一致，请重试', status_code=502, retryable=True)
+    state.message_texts[message_id] = text
+    return text[len(previous):]
 
 
 def _extract_stream_text(normalized_event, payload, current_text):

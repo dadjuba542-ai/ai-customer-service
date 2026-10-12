@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import os
+import json
 import sys
 import tempfile
 from pathlib import Path
@@ -14,6 +15,24 @@ def assert_true(condition, message):
 
 
 class FakeCozeResponse:
+    headers = {'Content-Type': 'text/event-stream'}
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *args):
+        pass
+
+    def iter_lines(self, **kwargs):
+        for event, payload in [
+            ('conversation.message.completed', {'id': 'fake-answer', 'conversation_id': 'fake-conversation',
+             'role': 'assistant', 'type': 'answer', 'content_type': 'text', 'content': '这是一次测试回答'}),
+            ('conversation.chat.completed', {'status': 'completed'}),
+        ]:
+            yield f'event: {event}'.encode()
+            yield ('data: ' + json.dumps(payload, ensure_ascii=False)).encode()
+            yield b''
+
     def raise_for_status(self):
         return None
 
