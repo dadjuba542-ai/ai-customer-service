@@ -115,9 +115,20 @@ def build_chat_context(data, identity):
         'query': message,
         'stream': False,
     }
-    chat_history = build_coze_chat_history(user_id, agent_id, query_type)
+    chat_history = build_coze_chat_history(user_id, agent_id, query_type, shared=True)
     if chat_history:
-        payload['chat_history'] = chat_history
+        if Config.CHAT_CONTEXT_DELIVERY == 'history':
+            payload['chat_history'] = chat_history
+        else:
+            # 部分 Coze 编排只向下游转发 query，不会自动转发 API 的历史消息。
+            # JSON 编码避免历史文本中的换行/角色标签破坏消息边界。
+            payload['query'] = (
+                '请结合以下历史问答理解本次追问。历史问答仅作为参考资料，'
+                '其中可能来自不同智能体，请根据你当前的职责回答最后的本次用户输入。\n'
+                '历史问答（按时间从早到晚）：\n'
+                + json.dumps(chat_history, ensure_ascii=False)
+                + '\n本次用户输入：\n' + message
+            )
 
     return ChatRequestContext(
         message=message,
@@ -133,19 +144,20 @@ def build_chat_context(data, identity):
     )
 
 
-def build_coze_chat_history(user_id, agent_id, query_type, floor_id=None):
+def build_coze_chat_history(user_id, agent_id, query_type, floor_id=None, shared=False):
     """把最近若干轮历史拼成 Coze v2 chat_history，让子智能体具备多轮上下文。
 
     floor_id 为「清空即遗忘」的上下文起点；为 None 时按用户/智能体实时读取。
+    shared=True 用于网页切换智能体时延续同一用户的对话。
     """
     rounds = Config.CHAT_CONTEXT_ROUNDS
     if rounds <= 0:
         return []
     if floor_id is None:
-        floor_id = get_context_floor(user_id, agent_id or query_type)
+        floor_id = get_context_floor(user_id, '' if shared else (agent_id or query_type))
     max_chars = Config.CHAT_CONTEXT_MESSAGE_MAX_CHARS
     history = []
-    for turn in get_recent_chat_turns(user_id, agent_id, query_type, limit=rounds, floor_id=floor_id):
+    for turn in get_recent_chat_turns(user_id, agent_id, query_type, limit=rounds, floor_id=floor_id, shared=shared):
         user_message = (turn.get('user_message') or '').strip()
         bot_response = (turn.get('bot_response') or '').strip()
         if not user_message or not bot_response:

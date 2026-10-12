@@ -1654,18 +1654,33 @@ def reset_chat_context(user_id, agent_id='*'):
     return floor
 
 
-def get_recent_chat_turns(user_id, agent_id='', query_type='', limit=6, floor_id=0):
+def get_recent_chat_turns(user_id, agent_id='', query_type='', limit=6, floor_id=0, shared=False):
     """取某用户最近 N 轮已完成问答，用于拼装多轮上下文。
 
     优先按 agent_id 精确匹配；agent_id 为空时回退到 query_type，
     保证旧数据（尚未写入 agent_id）也能命中。返回按时间正序排列。
     floor_id 用于「清空即遗忘」：只取 id 大于该值的历史。
+    shared=True 时按用户读取跨智能体问答，并尊重各智能体单独清空的起点。
     """
     limit = max(1, min(int(limit or 6), 50))
     floor_id = max(0, int(floor_id or 0))
     conn = get_db_connection()
     try:
-        if agent_id:
+        if shared:
+            rows = conn.execute(
+                '''SELECT h.user_message, h.bot_response FROM chat_history AS h
+                   WHERE h.user_id = ? AND h.id > ?
+                     AND h.id > COALESCE((
+                         SELECT s.floor_history_id FROM chat_context_state AS s
+                         WHERE s.user_id = h.user_id
+                           AND s.agent_id = CASE WHEN h.agent_id != '' THEN h.agent_id ELSE h.query_type END
+                     ), 0)
+                     AND h.bot_response IS NOT NULL AND TRIM(h.bot_response) != ''
+                     AND TRIM(h.user_message) != ''
+                   ORDER BY h.id DESC LIMIT ?''',
+                (user_id, floor_id, limit),
+            ).fetchall()
+        elif agent_id:
             rows = conn.execute(
                 '''SELECT user_message, bot_response FROM chat_history
                    WHERE user_id = ? AND agent_id = ? AND id > ?
