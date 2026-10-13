@@ -10,6 +10,7 @@ from config import Config
 from models import get_agent_config, get_context_floor, get_recent_chat_turns, save_chat_history, search_case_documents_page
 from services import feature_flags
 from services.secret_service import get_secret_setting
+from services.coze_diagnostics import CozeDiagnostics
 
 logger = logging.getLogger(__name__)
 
@@ -51,6 +52,7 @@ class ChatRequestContext:
     payload: dict
     request_id: str
     channel: str = ''
+    history_message_count: int = 0
 
 
 @dataclass
@@ -155,6 +157,9 @@ def build_chat_context(data, identity):
         payload=payload,
         request_id=uuid.uuid4().hex[:12],
         channel=channel,
+        history_message_count=(len(payload['additional_messages']) - 1 if 'additional_messages' in payload
+                               else len(chat_history) if 'chat_history' in payload
+                               else len(chat_history) // 2 if chat_history else 0),
     )
 
 
@@ -196,6 +201,8 @@ def execute_sync_chat(ctx):
     started_at = time.monotonic()
     related_case_result = find_related_cases(ctx.message)
     related_cases = related_case_result['items']
+    diagnostic = CozeDiagnostics(ctx, ctx.payload, Config.COZE_API_URL)
+    diagnostic.emit('request')
     try:
         response = requests.post(
             Config.COZE_API_URL,
@@ -205,8 +212,14 @@ def execute_sync_chat(ctx):
         )
         response.raise_for_status()
         coze_response = response.json()
+        diagnostic.observe('sync.response', coze_response)
+        if isinstance(coze_response, dict):
+            for index, item in enumerate(coze_response.get('messages') or []):
+                if isinstance(item, dict):
+                    diagnostic.observe('sync.message', {**item, 'id': item.get('id') or f'sync-{index}'})
         bot_response, coze_message_id = _extract_sync_reply(coze_response)
         history_id = persist_chat_history(ctx, bot_response, coze_message_id)
+        diagnostic.outcome = 'success' if coze_response.get('code') == 0 else 'upstream_error'
         total_ms = int((time.monotonic() - started_at) * 1000)
         logger.info(
             'chat.sync request_id=%s query_type=%s agent_id=%s total_ms=%s outcome=success',
@@ -225,6 +238,8 @@ def execute_sync_chat(ctx):
             'related_cases_total': related_case_result['total'],
         }
     except requests.exceptions.Timeout as exc:
+        diagnostic.outcome = 'timeout'
+        diagnostic.error_category = 'timeout'
         total_ms = int((time.monotonic() - started_at) * 1000)
         logger.warning(
             'chat.sync request_id=%s query_type=%s agent_id=%s total_ms=%s outcome=timeout',
@@ -235,6 +250,8 @@ def execute_sync_chat(ctx):
         )
         raise ChatServiceError('请求超时，请稍后重试', status_code=504, retryable=True) from exc
     except requests.exceptions.RequestException as exc:
+        diagnostic.outcome = 'network_error'
+        diagnostic.error_category = 'network_error'
         total_ms = int((time.monotonic() - started_at) * 1000)
         logger.warning(
             'chat.sync request_id=%s query_type=%s agent_id=%s total_ms=%s outcome=network_error error=%s',
@@ -245,6 +262,8 @@ def execute_sync_chat(ctx):
             exc,
         )
         raise ChatServiceError(f'网络错误: {str(exc)}', status_code=502, retryable=True) from exc
+    finally:
+        diagnostic.emit('result')
 
 
 def iter_coze_stream(ctx, read_timeout=30):
@@ -256,10 +275,13 @@ def iter_coze_stream(ctx, read_timeout=30):
     connect_started_at = time.monotonic()
     is_v3 = 'additional_messages' in ctx.payload
     completed = False
+    url = Config.COZE_V3_CHAT_URL if is_v3 else Config.COZE_API_URL
+    diagnostic = CozeDiagnostics(ctx, stream_payload, url)
+    diagnostic.emit('request')
 
     try:
         with requests.post(
-            Config.COZE_V3_CHAT_URL if is_v3 else Config.COZE_API_URL,
+            url,
             headers=ctx.headers,
             json=stream_payload,
             stream=True,
@@ -268,6 +290,7 @@ def iter_coze_stream(ctx, read_timeout=30):
             response.raise_for_status()
             if is_v3 and 'application/json' in response.headers.get('Content-Type', '').lower():
                 error = response.json()
+                diagnostic.observe('error', error)
                 raise ChatServiceError(f"Coze API错误: {error.get('msg') or '未返回流式响应'}", status_code=502, retryable=False)
             connect_ms = int((time.monotonic() - connect_started_at) * 1000)
             logger.info(
@@ -282,14 +305,17 @@ def iter_coze_stream(ctx, read_timeout=30):
             for upstream_event, raw_data in _iter_sse_events(response):
                 state.upstream_event_count += 1
                 if raw_data == '[DONE]':
+                    diagnostic.observe('done', raw_data)
                     break
                 payload = _safe_json_loads(raw_data)
                 if not isinstance(payload, dict):
+                    diagnostic.observe('other', payload)
                     if is_v3:
                         raise ChatServiceError('Coze 返回无效的流式消息', status_code=502, retryable=True)
                     continue
 
                 normalized_event = _normalize_event_name(upstream_event, payload)
+                diagnostic.observe(normalized_event, payload)
                 if is_v3:
                     _check_v3_stream_error(normalized_event, payload)
                 if normalized_event:
@@ -324,6 +350,7 @@ def iter_coze_stream(ctx, read_timeout=30):
             yield {'event': 'status', 'data': {'status': 'saving', 'request_id': ctx.request_id}}
             save_started_at = time.monotonic()
             history_id = persist_chat_history(ctx, state.full_text, state.coze_message_id)
+            diagnostic.outcome = 'success'
             save_history_ms = int((time.monotonic() - save_started_at) * 1000)
             total_ms = int((time.monotonic() - state.request_started_at) * 1000)
             logger.info(
@@ -347,7 +374,13 @@ def iter_coze_stream(ctx, read_timeout=30):
                     'related_cases_total': related_case_result['total'],
                 },
             }
+    except ChatServiceError:
+        diagnostic.outcome = 'error'
+        diagnostic.error_category = 'chat_service_error'
+        raise
     except requests.exceptions.Timeout as exc:
+        diagnostic.outcome = 'timeout'
+        diagnostic.error_category = 'timeout'
         total_ms = int((time.monotonic() - state.request_started_at) * 1000)
         logger.warning(
             'chat.stream request_id=%s query_type=%s agent_id=%s total_ms=%s outcome=timeout',
@@ -358,6 +391,8 @@ def iter_coze_stream(ctx, read_timeout=30):
         )
         raise ChatServiceError('请求超时，请稍后重试', status_code=504, retryable=True) from exc
     except requests.exceptions.RequestException as exc:
+        diagnostic.outcome = 'network_error'
+        diagnostic.error_category = 'network_error'
         total_ms = int((time.monotonic() - state.request_started_at) * 1000)
         logger.warning(
             'chat.stream request_id=%s query_type=%s agent_id=%s total_ms=%s outcome=network_error error=%s',
@@ -368,6 +403,8 @@ def iter_coze_stream(ctx, read_timeout=30):
             exc,
         )
         raise ChatServiceError(f'网络错误: {str(exc)}', status_code=502, retryable=True) from exc
+    finally:
+        diagnostic.emit('result')
 
 
 def persist_chat_history(ctx, bot_response, coze_message_id):

@@ -6,6 +6,7 @@ class Config:
     COZE_API_URL = os.environ.get('COZE_API_URL', 'https://api.coze.cn/open_api/v2/chat')
     COZE_V3_CHAT_URL = os.environ.get('COZE_V3_CHAT_URL', 'https://api.coze.cn/v3/chat')
     COZE_CHAT_API_VERSION = os.environ.get('COZE_CHAT_API_VERSION', 'v3').strip().lower()
+    COZE_DIAGNOSTICS_ENABLED = os.environ.get('COZE_DIAGNOSTICS_ENABLED', 'false').lower() == 'true'
     COZE_FILE_UPLOAD_URL = os.environ.get('COZE_FILE_UPLOAD_URL', 'https://api.coze.cn/v1/files/upload')
     COZE_API_KEY = os.environ.get('COZE_API_KEY', '')
     DATABASE_DIR = os.environ.get('DATABASE_DIR', BASE_DIR)
