@@ -52,6 +52,20 @@ async function streamChatRequest(payload, agentId) {
         continue;
       }
 
+      if (parsed.event === 'replace') {
+        if (!botMsgId) {
+          hideWaitingPanel();
+          botMsgId = createStreamingBotMessage(agentId);
+        }
+        const msg = state.messages.find(m => m.id === botMsgId);
+        if (msg) {
+          msg.content = parsed.data?.text || '';
+          updateStreamingMessageDom(botMsgId, msg.content, true);
+        }
+        sawOutput = true;
+        continue;
+      }
+
       if (parsed.event === 'delta') {
         if (!botMsgId) {
           hideWaitingPanel();
@@ -226,7 +240,7 @@ async function fallbackToSyncChat(payload, agentId) {
     method: 'POST',
     headers: authHeaders({ 'Content-Type': 'application/json' }),
     body: JSON.stringify(payload),
-  }, 120000);
+  }, 180000);
   const data = await res.json();
   if (!res.ok) {
     throw new Error(data.error || '发送失败');

@@ -1775,6 +1775,7 @@ async function loadAdminAgents() {
 
   // Load system config too
   loadAdminSystemConfig();
+  loadCozeRewriteSettings();
   loadWaitingSettings();
 }
 
@@ -1807,6 +1808,30 @@ async function loadAdminSystemConfig() {
     document.getElementById('tencent-secret-key-input').value = '';
     document.getElementById('tencent-secret-hint').textContent = tencentSecretMasked ? `已保存 SecretKey：${tencentSecretMasked}` : '尚未保存 SecretKey';
   } catch { console.error('loadAdminSystemConfig error'); }
+}
+
+async function loadCozeRewriteSettings() {
+  try {
+    const res = await fetch(`${API}/api/admin/settings/coze-rewrite`, {
+      headers: { 'Authorization': `Bearer ${getToken()}` },
+    });
+    if (!res.ok) return;
+    const data = await res.json();
+    document.getElementById('coze-rewrite-bot-input').value = data.bot_id || '';
+    if (!data.supported) document.getElementById('coze-rewrite-hint').textContent = '当前使用 V2，自动重查暂不生效；需要切换 Coze V3。';
+  } catch { showToast('改写智能体配置加载失败', 'error'); }
+}
+
+async function saveCozeRewriteSettings() {
+  try {
+    const res = await fetch(`${API}/api/admin/settings/coze-rewrite`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${getToken()}` },
+      body: JSON.stringify({ bot_id: document.getElementById('coze-rewrite-bot-input').value.trim() }),
+    });
+    const data = await res.json();
+    showToast(res.ok ? '改写智能体配置已保存' : (data.error || '保存失败'), res.ok ? 'success' : 'error');
+  } catch { showToast('保存失败', 'error'); }
 }
 
 async function loadShareSettings() {

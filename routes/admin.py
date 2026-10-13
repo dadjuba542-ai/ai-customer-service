@@ -165,6 +165,21 @@ def coze_api_key(current_user):
     masked = _mask_secret(current_key)
     return jsonify({'masked': masked or '未设置', 'configured': bool(current_key)})
 
+@admin_bp.route('/settings/coze-rewrite', methods=['GET', 'PUT'])
+@admin_required
+def coze_rewrite_settings(current_user):
+    if request.method == 'PUT':
+        data = request.get_json(silent=True) or {}
+        bot_id = data.get('bot_id', '')
+        if (not isinstance(bot_id, str) or len(bot_id) > 64
+                or (bot_id.strip() and (not bot_id.strip().isascii() or not bot_id.strip().isdigit()))):
+            return jsonify({'error': 'Bot ID 必须是最多 64 位的数字，留空可关闭'}), 400
+        set_setting('coze_rewrite_bot_id', bot_id.strip())
+        return jsonify({'message': '改写智能体配置已保存'})
+    return jsonify({'bot_id': get_setting('coze_rewrite_bot_id', ''),
+                    'supported': Config.COZE_CHAT_API_VERSION == 'v3'})
+
+
 @admin_bp.route('/settings/blocked-keywords', methods=['GET', 'PUT'])
 @admin_required
 def blocked_keywords(current_user):

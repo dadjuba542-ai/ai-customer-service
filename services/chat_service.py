@@ -2,12 +2,12 @@ import json
 import logging
 import time
 import uuid
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 
 import requests
 
 from config import Config
-from models import get_agent_config, get_context_floor, get_recent_chat_turns, save_chat_history, search_case_documents_page
+from models import get_agent_config, get_context_floor, get_recent_chat_turns, save_chat_history, search_case_documents_page, get_setting
 from services import feature_flags
 from services.secret_service import get_secret_setting
 from services.coze_diagnostics import CozeDiagnostics
@@ -266,10 +266,74 @@ def execute_sync_chat(ctx):
         diagnostic.emit('result')
 
 
+KNOWLEDGE_EMPTY_REPLY = '暂时没找到能回答这个问题的相关资料。请您补充一下具体产品名称或你想了解的内容，我再帮你查查。'
+
+
+def _collect_answer(ctx, timeout):
+    for event in _iter_coze_stream_once(ctx, read_timeout=timeout, persist=False,
+                                       include_cases=False, deadline=time.monotonic() + timeout):
+        if event['event'] == 'done':
+            return event['data']
+    raise ChatServiceError('Coze 对话未完成', retryable=True)
+
+
+def _rewrite_question(ctx, bot_id):
+    history = ctx.payload['additional_messages'][:-1]
+    question = json.dumps({'purpose': '空召回后改写', 'original_question': ctx.message,
+                           'recent_dialogue': history[-6:]}, ensure_ascii=False)
+    payload = {'bot_id': bot_id, 'user_id': ctx.user_id,
+               'additional_messages': [{'role': 'user', 'type': 'question',
+                                        'content_type': 'text', 'content': question}],
+               'stream': True, 'auto_save_history': False}
+    rewrite_ctx = replace(ctx, payload=payload, request_id=ctx.request_id + '-rewrite')
+    answer = _collect_answer(rewrite_ctx, 10)['full_text'].strip()
+    if not answer or len(answer) > 4000 or answer == ctx.message.strip() or answer == KNOWLEDGE_EMPTY_REPLY:
+        return ''
+    return answer
+
+
 def iter_coze_stream(ctx, read_timeout=30):
+    # V2 保留旧路径；改写只使用 V3，未配置时无额外调用。
+    bot_id = get_setting('coze_rewrite_bot_id', '').strip() if 'additional_messages' in ctx.payload else ''
+    if not bot_id:
+        yield from _iter_coze_stream_once(ctx, read_timeout=read_timeout)
+        return
+    final = None
+    for event in _iter_coze_stream_once(ctx, read_timeout=read_timeout, persist=False):
+        if event['event'] == 'done':
+            final = event['data']
+        else:
+            yield event
+    if final is None:
+        raise ChatServiceError('Coze 对话未完成', retryable=True)
+    if final['full_text'].strip() == KNOWLEDGE_EMPTY_REPLY:
+        logger.info('chat.recovery started request_id=%s', ctx.request_id)
+        yield {'event': 'replace', 'data': {'text': '正在换个问法查找资料…'}}
+        try:
+            rewritten = _rewrite_question(ctx, bot_id)
+            if rewritten:
+                payload = dict(ctx.payload)
+                messages = list(payload['additional_messages'])
+                messages[-1] = {**messages[-1], 'content': rewritten}
+                payload['additional_messages'] = messages
+                retry_ctx = replace(ctx, payload=payload, request_id=ctx.request_id + '-retry')
+                recovered = _collect_answer(retry_ctx, 20)
+                if recovered['full_text'].strip() and recovered['full_text'].strip() != KNOWLEDGE_EMPTY_REPLY:
+                    final = {**final, 'full_text': recovered['full_text'],
+                             'coze_message_id': recovered['coze_message_id']}
+        except (ChatServiceError, requests.exceptions.RequestException):
+            logger.warning('chat.recovery failed request_id=%s', ctx.request_id)
+        yield {'event': 'replace', 'data': {'text': final['full_text']}}
+        logger.info('chat.recovery completed request_id=%s recovered=%s', ctx.request_id,
+                    final['full_text'].strip() != KNOWLEDGE_EMPTY_REPLY)
+    final['history_id'] = persist_chat_history(ctx, final['full_text'], final['coze_message_id'])
+    yield {'event': 'done', 'data': final}
+
+
+def _iter_coze_stream_once(ctx, read_timeout=30, persist=True, include_cases=True, deadline=None):
     stream_payload = dict(ctx.payload)
     stream_payload['stream'] = True
-    related_case_result = find_related_cases(ctx.message)
+    related_case_result = find_related_cases(ctx.message) if include_cases else {'items': [], 'total': 0}
     related_cases = related_case_result['items']
     state = StreamState(request_started_at=time.monotonic())
     connect_started_at = time.monotonic()
@@ -302,7 +366,9 @@ def iter_coze_stream(ctx, read_timeout=30):
             )
             yield {'event': 'status', 'data': {'status': 'connected', 'request_id': ctx.request_id}}
 
-            for upstream_event, raw_data in _iter_sse_events(response):
+            for upstream_event, raw_data in _iter_sse_events(response, deadline=deadline):
+                if deadline is not None and time.monotonic() >= deadline:
+                    raise ChatServiceError('请求超时，请稍后重试', status_code=504, retryable=True)
                 state.upstream_event_count += 1
                 if raw_data == '[DONE]':
                     diagnostic.observe('done', raw_data)
@@ -349,7 +415,7 @@ def iter_coze_stream(ctx, read_timeout=30):
 
             yield {'event': 'status', 'data': {'status': 'saving', 'request_id': ctx.request_id}}
             save_started_at = time.monotonic()
-            history_id = persist_chat_history(ctx, state.full_text, state.coze_message_id)
+            history_id = persist_chat_history(ctx, state.full_text, state.coze_message_id) if persist else None
             diagnostic.outcome = 'success'
             save_history_ms = int((time.monotonic() - save_started_at) * 1000)
             total_ms = int((time.monotonic() - state.request_started_at) * 1000)
@@ -434,11 +500,13 @@ def _extract_sync_reply(coze_response):
     return f"Coze API错误: {coze_response.get('msg', '未知错误')}", ''
 
 
-def _iter_sse_events(response):
+def _iter_sse_events(response, deadline=None):
     event_name = ''
     data_lines = []
     response.encoding = 'utf-8'
     for raw_line in response.iter_lines(decode_unicode=False):
+        if deadline is not None and time.monotonic() >= deadline:
+            raise ChatServiceError('请求超时，请稍后重试', status_code=504, retryable=True)
         if raw_line is None:
             continue
         if isinstance(raw_line, bytes):

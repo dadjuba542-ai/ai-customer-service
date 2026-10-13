@@ -491,6 +491,15 @@
 
       <!-- ===== Page: Agents ===== -->
       <div id="page-agents" class="page-content" data-page-node-id="3eHaz6V4GfkX8fxnB1Fy3Y">
+        <div class="admin-card">
+          <h3>空召回自动重查</h3>
+          <div class="field">
+            <label for="coze-rewrite-bot-input">专用改写智能体 Bot ID</label>
+            <input type="text" id="coze-rewrite-bot-input" maxlength="64" placeholder="填写已发布的 Coze 改写智能体 ID；留空关闭">
+            <p id="coze-rewrite-hint">完整命中固定兜底后，改写并重查一次。共用系统 Coze API Key，需要有权访问该智能体。</p>
+            <button class="btn btn-primary btn-sm" onclick="saveCozeRewriteSettings()">保存配置</button>
+          </div>
+        </div>
         <div class="admin-card" data-page-node-id="nyd7naAgSUYUhBqvlTja0e">
           <h3 data-page-node-id="JTYDmycQGWqS9yhoS4rm6C"><svg class="icon icon-key" viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true" data-page-node-id="Zsj54Jg6DRIwN1oNr0I4nr"><path fill-rule="evenodd" clip-rule="evenodd" d="M8 2.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11Zm0 2.3a3.2 3.2 0 1 1 0 6.4 3.2 3.2 0 0 1 0-6.4Z" fill="currentColor"/><path d="M12.4 11.1 20.2 18.9l-1.7 1.7-7.8-7.8 1.7-1.7z" fill="currentColor"/><path d="M18.2 16.9 20 18.7l-1.5 1.5-1.8-1.8 1.5-1.5z" fill="currentColor"/></svg>系统配置</h3>
           <div class="admin-row" data-page-node-id="Nvzk7W0gGAfOGkeGBxpzv5">
@@ -977,7 +986,7 @@
 
 <div class="toast" id="toast" data-page-node-id="8Ztsru779Gl5WfFgBlEIOZ"></div>
 
-<script src="/js/admin.js?v=20260923-qarecords1"></script>
+<script src="/js/admin.js?v=20261013-recovery1"></script>
 <script src="/admin/cases.js?v=20260902-casebatch1"></script>
 <script src="/admin/audio-courses.js?v=20260914-audio4"></script>
 </body>
