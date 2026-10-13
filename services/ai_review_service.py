@@ -276,12 +276,15 @@ def list_unread_notes(user_id, limit=20):
         '''SELECT n.id, n.history_id, n.content, n.revision, n.published_at, n.updated_at,
                   h.user_message, h.bot_response, h.query_type, h.created_at
            FROM nutritionist_review_notes n JOIN chat_history h ON h.id = n.history_id
-           WHERE n.user_id = ? AND n.status = 'published' AND n.revision > n.user_read_revision
+           WHERE n.user_id = ? AND h.user_deleted_at IS NULL AND n.status = 'published' AND n.revision > n.user_read_revision
            ORDER BY n.updated_at DESC LIMIT ?''',
         (user_id, limit),
     ).fetchall()
     total = conn.execute(
-        "SELECT COUNT(*) AS total FROM nutritionist_review_notes WHERE user_id = ? AND status = 'published' AND revision > user_read_revision",
+        '''SELECT COUNT(*) AS total FROM nutritionist_review_notes n
+           JOIN chat_history h ON h.id = n.history_id
+           WHERE n.user_id = ? AND h.user_deleted_at IS NULL
+             AND n.status = 'published' AND n.revision > n.user_read_revision''',
         (user_id,),
     ).fetchone()['total']
     conn.close()
@@ -292,7 +295,8 @@ def mark_note_read(user_id, note_id):
     conn = get_db_connection()
     cursor = conn.execute(
         '''UPDATE nutritionist_review_notes SET user_read_revision = revision
-           WHERE id = ? AND user_id = ? AND status = 'published' ''',
+           WHERE id = ? AND user_id = ? AND status = 'published'
+             AND history_id IN (SELECT id FROM chat_history WHERE user_deleted_at IS NULL) ''',
         (note_id, user_id),
     )
     conn.commit(); conn.close()

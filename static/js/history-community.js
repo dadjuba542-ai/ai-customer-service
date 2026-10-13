@@ -42,6 +42,7 @@ function applyHistoryItems(items) {
         || firstAgent;
       state.messages.push({
         id: `history-user-${item.id}`,
+        historyId: item.id,
         role: 'user',
         content: item.user_message || '',
         time,
@@ -78,7 +79,7 @@ function applyHistoryItems(items) {
 async function loadHistory(queryType = '') {
   try {
     const base = `${API_BASE}/api/history/sessions`;
-    const url = queryType ? `${base}&query_type=${encodeURIComponent(queryType)}` : base;
+    const url = queryType ? `${base}?query_type=${encodeURIComponent(queryType)}` : base;
     const res = await fetch(url, { headers: authHeaders() });
     if (res.ok) {
       const data = await res.json();
@@ -112,9 +113,43 @@ function renderMemorySessions(sessions) {
   }).join('');
 }
 
+function removeDeletedHistoryFromCurrentChat(itemIds) {
+  const deletedIds = new Set(itemIds.map(Number));
+  const removedIndexes = new Set();
+  state.messages.forEach((message, index) => {
+    if (!deletedIds.has(Number(message.historyId))) return;
+    removedIndexes.add(index);
+    // Live answers carry historyId; their preceding user message does not.
+    if (message.role === 'bot') {
+      for (let i = index - 1; i >= 0; i--) {
+        const previous = state.messages[i];
+        if (previous.role === 'bot') break;
+        if (previous.role === 'user') {
+          if (!previous.historyId) removedIndexes.add(i);
+          break;
+        }
+      }
+    }
+  });
+  state.messages = state.messages.filter((_, index) => !removedIndexes.has(index));
+  const lastUser = [...state.messages].reverse().find(message => message.role === 'user');
+  lastUserText = lastUser?.content || '';
+  lastUserAgentId = lastUser?.agentId || '';
+  if (state.nutritionistNotes) {
+    const previousCount = state.nutritionistNotes.items.length;
+    state.nutritionistNotes.items = state.nutritionistNotes.items.filter(
+      note => !deletedIds.has(Number(note.history_id))
+    );
+    state.nutritionistNotes.total = Math.max(0, state.nutritionistNotes.total
+      - (previousCount - state.nutritionistNotes.items.length));
+    renderNutritionistNoteAlert();
+  }
+  renderMessages();
+}
+
 async function deleteSession(e, itemIds) {
   e.stopPropagation();
-  if (!confirm('确定删除该会话？')) return;
+  if (!confirm('确定删除该会话？删除后不再显示在你的历史中，后台服务记录仍会保留。')) return;
   try {
     const res = await fetch(`${API_BASE}/api/history/batch-delete`, {
       method: 'POST',
@@ -122,8 +157,12 @@ async function deleteSession(e, itemIds) {
       body: JSON.stringify({ ids: itemIds }),
     });
     if (res.ok) {
+      removeDeletedHistoryFromCurrentChat(itemIds);
       showToast('已删除', 'success');
-      loadHistory(document.getElementById('memory-filter').value);
+      await loadHistory(document.getElementById('memory-filter').value);
+      await pollNutritionistNotes(false);
+    } else {
+      showToast('删除失败', 'error');
     }
   } catch { showToast('删除失败', 'error'); }
 }

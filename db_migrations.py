@@ -382,6 +382,13 @@ MIGRATIONS = [
             )'''
         ],
     },
+    {
+        'version': '202610130001',
+        'name': 'add_chat_history_user_deleted_at',
+        'columns': [
+            ('chat_history', 'user_deleted_at', 'TIMESTAMP DEFAULT NULL'),
+        ],
+    },
 ]
 
 

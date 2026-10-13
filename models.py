@@ -243,50 +243,40 @@ def _init_db_locked():
     seed_case_documents()
 
     if Config.CLEANUP_ON_STARTUP:
-        # 默认关闭，避免每次部署/重启都不可逆地删除历史聊天记录。
+        # 默认关闭；启用后仅隐藏超期前台历史，后台记录保留。
         cleanup_old_history(days=Config.CHAT_RETENTION_DAYS)
 
 # ===== Cleanup =====
 def cleanup_old_history(days=30):
+    """隐藏超期前台历史，后台问答、批注和统计继续保留。"""
     conn = get_db_connection()
-    conn.execute(
-        "DELETE FROM nutritionist_review_notes WHERE history_id IN (SELECT id FROM chat_history WHERE created_at < datetime('now', ?))",
-        (f'-{int(days)} days',),
-    )
-    conn.execute(
-        "DELETE FROM chat_history WHERE created_at < datetime('now', ?)",
-        (f'-{int(days)} days',),
-    )
-    conn.commit()
-    conn.close()
+    try:
+        conn.execute(
+            "UPDATE chat_history SET user_deleted_at = CURRENT_TIMESTAMP "
+            "WHERE user_deleted_at IS NULL AND created_at < datetime('now', ?)",
+            (f'-{int(days)} days',),
+        )
+        conn.commit()
+    finally:
+        conn.close()
 
-def delete_chat_history_batch(ids, user_id=None):
-    if not ids:
+
+def delete_chat_history_batch(ids, user_id):
+    """仅隐藏当前用户的历史；返回本次新隐藏的记录数。"""
+    if not ids or not user_id:
         return 0
     conn = get_db_connection()
     placeholders = ','.join(['?'] * len(ids))
-    if user_id:
-        conn.execute(
-            f'DELETE FROM nutritionist_review_notes WHERE history_id IN (SELECT id FROM chat_history WHERE user_id = ? AND id IN ({placeholders}))',
-            [user_id] + ids
-        )
+    try:
         cursor = conn.execute(
-            f'DELETE FROM chat_history WHERE user_id = ? AND id IN ({placeholders})',
-            [user_id] + ids
+            f'''UPDATE chat_history SET user_deleted_at = CURRENT_TIMESTAMP
+                WHERE user_id = ? AND id IN ({placeholders}) AND user_deleted_at IS NULL''',
+            [user_id] + ids,
         )
-    else:
-        conn.execute(
-            f'DELETE FROM nutritionist_review_notes WHERE history_id IN ({placeholders})',
-            ids
-        )
-        cursor = conn.execute(
-            f'DELETE FROM chat_history WHERE id IN ({placeholders})',
-            ids
-        )
-    conn.commit()
-    deleted = cursor.rowcount if cursor.rowcount is not None else 0
-    conn.close()
-    return deleted
+        conn.commit()
+        return cursor.rowcount
+    finally:
+        conn.close()
 
 # ===== Settings =====
 def get_setting(key, default=''):
@@ -1590,12 +1580,12 @@ def get_chat_history(user_id, query_type=None):
     cursor = conn.cursor()
     if query_type:
         cursor.execute(
-            'SELECT * FROM chat_history WHERE user_id = ? AND query_type = ? ORDER BY created_at DESC',
+            'SELECT * FROM chat_history WHERE user_id = ? AND user_deleted_at IS NULL AND query_type = ? ORDER BY created_at DESC',
             (user_id, query_type)
         )
     else:
         cursor.execute(
-            'SELECT * FROM chat_history WHERE user_id = ? ORDER BY created_at DESC',
+            'SELECT * FROM chat_history WHERE user_id = ? AND user_deleted_at IS NULL ORDER BY created_at DESC',
             (user_id,)
         )
     history = cursor.fetchall()
@@ -1669,7 +1659,7 @@ def get_recent_chat_turns(user_id, agent_id='', query_type='', limit=6, floor_id
         if shared:
             rows = conn.execute(
                 '''SELECT h.user_message, h.bot_response FROM chat_history AS h
-                   WHERE h.user_id = ? AND h.id > ?
+                   WHERE h.user_id = ? AND h.user_deleted_at IS NULL AND h.id > ?
                      AND h.id > COALESCE((
                          SELECT s.floor_history_id FROM chat_context_state AS s
                          WHERE s.user_id = h.user_id
@@ -1683,7 +1673,7 @@ def get_recent_chat_turns(user_id, agent_id='', query_type='', limit=6, floor_id
         elif agent_id:
             rows = conn.execute(
                 '''SELECT user_message, bot_response FROM chat_history
-                   WHERE user_id = ? AND agent_id = ? AND id > ?
+                   WHERE user_id = ? AND user_deleted_at IS NULL AND agent_id = ? AND id > ?
                      AND bot_response IS NOT NULL AND TRIM(bot_response) != ''
                    ORDER BY id DESC LIMIT ?''',
                 (user_id, agent_id, floor_id, limit),
@@ -1691,7 +1681,7 @@ def get_recent_chat_turns(user_id, agent_id='', query_type='', limit=6, floor_id
         elif query_type:
             rows = conn.execute(
                 '''SELECT user_message, bot_response FROM chat_history
-                   WHERE user_id = ? AND query_type = ? AND id > ?
+                   WHERE user_id = ? AND user_deleted_at IS NULL AND query_type = ? AND id > ?
                      AND bot_response IS NOT NULL AND TRIM(bot_response) != ''
                    ORDER BY id DESC LIMIT ?''',
                 (user_id, query_type, floor_id, limit),
@@ -1707,7 +1697,7 @@ def get_chat_history_by_id(history_id, user_id):
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute(
-        'SELECT * FROM chat_history WHERE id = ? AND user_id = ?',
+        'SELECT * FROM chat_history WHERE id = ? AND user_id = ? AND user_deleted_at IS NULL',
         (history_id, user_id)
     )
     history = cursor.fetchone()
@@ -1731,7 +1721,7 @@ def get_chat_history_by_ids(history_ids, user_id, limit=20):
     placeholders = ','.join('?' for _ in ids)
     rows = conn.execute(
         f'''SELECT * FROM chat_history
-            WHERE user_id = ? AND id IN ({placeholders})
+            WHERE user_id = ? AND user_deleted_at IS NULL AND id IN ({placeholders})
             ORDER BY id ASC''',
         [user_id] + ids,
     ).fetchall()
@@ -1742,7 +1732,7 @@ def get_chat_history_by_ids(history_ids, user_id, limit=20):
 def set_chat_feedback(history_id, user_id, feedback):
     conn = get_db_connection()
     cursor = conn.execute(
-        'UPDATE chat_history SET feedback = ? WHERE id = ? AND user_id = ?',
+        'UPDATE chat_history SET feedback = ? WHERE id = ? AND user_id = ? AND user_deleted_at IS NULL',
         (feedback, history_id, user_id),
     )
     conn.commit()
@@ -1774,7 +1764,7 @@ def get_feedback_stats(start_date=None, end_date=None):
 def set_feedback_reason(history_id, user_id, reason):
     conn = get_db_connection()
     cursor = conn.execute(
-        'UPDATE chat_history SET feedback_reason = ? WHERE id = ? AND user_id = ?',
+        'UPDATE chat_history SET feedback_reason = ? WHERE id = ? AND user_id = ? AND user_deleted_at IS NULL',
         (reason, history_id, user_id),
     )
     conn.commit()
@@ -1873,12 +1863,12 @@ def get_chat_sessions(user_id='anonymous', query_type=None):
     conn = get_db_connection()
     if query_type:
         rows = conn.execute(
-            'SELECT * FROM chat_history WHERE user_id = ? AND query_type = ? ORDER BY created_at DESC',
+            'SELECT * FROM chat_history WHERE user_id = ? AND user_deleted_at IS NULL AND query_type = ? ORDER BY created_at DESC',
             (user_id, query_type)
         ).fetchall()
     else:
         rows = conn.execute(
-            'SELECT * FROM chat_history WHERE user_id = ? ORDER BY created_at DESC',
+            'SELECT * FROM chat_history WHERE user_id = ? AND user_deleted_at IS NULL ORDER BY created_at DESC',
             (user_id,)
         ).fetchall()
     conn.close()

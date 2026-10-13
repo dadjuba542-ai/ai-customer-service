@@ -30,7 +30,7 @@ def migration_count(conn):
 def assert_expected_columns(conn):
     expected = {
         'users': {'is_admin'},
-        'chat_history': {'feedback', 'feedback_reason', 'team_name', 'member_name', 'agent_id'},
+        'chat_history': {'feedback', 'feedback_reason', 'team_name', 'member_name', 'agent_id', 'user_deleted_at'},
         'news': {'views', 'pinned', 'featured', 'category'},
         'agent_configs': {'icon', 'chat_desc'},
         'replies': {'author_key', 'like_count'},
@@ -149,11 +149,23 @@ def main():
     with tempfile.TemporaryDirectory(prefix='acs-migrations-old-') as tmpdir:
         db_path = Path(tmpdir) / 'ai_customer_service.db'
         create_old_schema(db_path)
+        conn = sqlite3.connect(db_path)
+        conn.execute(
+            "INSERT INTO chat_history (user_id, query_type, user_message, bot_response) VALUES (?, ?, ?, ?)",
+            ('legacy-user', '产品咨询', 'legacy question', 'legacy answer'),
+        )
+        conn.commit()
+        conn.close()
         set_database_path(db_path)
         init_db()
         conn = sqlite3.connect(db_path)
         assert_expected_columns(conn)
         assert_true(migration_count(conn) == len(MIGRATIONS), 'old schema migrations not recorded')
+        row = conn.execute(
+            'SELECT user_message, bot_response, user_deleted_at FROM chat_history WHERE user_id = ?',
+            ('legacy-user',),
+        ).fetchone()
+        assert_true(row == ('legacy question', 'legacy answer', None), 'migration must preserve visible legacy history')
         conn.close()
 
     conn = sqlite3.connect(':memory:')
