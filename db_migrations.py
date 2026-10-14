@@ -1,4 +1,6 @@
 import sqlite3
+from services.practice_schema import SQLS as PRACTICE_SQLS
+from services.practice_bank import seed_bank
 
 
 def _split_tags(value):
@@ -390,6 +392,42 @@ MIGRATIONS = [
         ],
     },
 ]
+
+
+MIGRATIONS.append({'version': '202610140002', 'name': 'practice_decision_game', 'sqls': PRACTICE_SQLS,
+                   'fn': seed_bank})
+
+MIGRATIONS.append({'version': '202610140003', 'name': 'practice_bank_admin_operations', 'sqls': [
+    '''CREATE TABLE practice_quiz_admin_operations (request_id TEXT PRIMARY KEY, digest TEXT NOT NULL, result TEXT NOT NULL)'''
+]})
+
+MIGRATIONS.append({'version': '202610140004', 'name': 'practice_stage_banks', 'sqls': [
+    '''CREATE TABLE practice_quiz_stages (id INTEGER PRIMARY KEY, title TEXT NOT NULL,
+        description TEXT NOT NULL DEFAULT '', starts_on TEXT NOT NULL, ends_on TEXT NOT NULL,
+        enabled INTEGER NOT NULL DEFAULT 0, updated_at TEXT NOT NULL)''',
+    'ALTER TABLE practice_quiz_questions ADD COLUMN stage_id INTEGER NOT NULL DEFAULT 0',
+    'ALTER TABLE practice_quiz_questions ADD COLUMN archived INTEGER NOT NULL DEFAULT 0',
+    'ALTER TABLE practice_quiz_sessions ADD COLUMN stage_id INTEGER NOT NULL DEFAULT 0',
+    "ALTER TABLE practice_quiz_sessions ADD COLUMN stage_title TEXT NOT NULL DEFAULT ''",
+    '''CREATE TABLE practice_quiz_stage_daily (day TEXT NOT NULL, stage_id INTEGER NOT NULL,
+        batch_no INTEGER NOT NULL, snapshot TEXT NOT NULL, PRIMARY KEY(day,stage_id))''',
+    'CREATE INDEX practice_quiz_stage_questions ON practice_quiz_questions(stage_id,batch_no,enabled)',
+]})
+
+MIGRATIONS.append({'version': '202610140005', 'name': 'practice_weekly_themes', 'sqls': [
+    "ALTER TABLE practice_quiz_stages ADD COLUMN kind TEXT NOT NULL DEFAULT 'seasonal'",
+    'ALTER TABLE practice_quiz_questions ADD COLUMN source_question_id INTEGER',
+    'ALTER TABLE practice_quiz_questions ADD COLUMN weekly_new INTEGER NOT NULL DEFAULT 0',
+    'ALTER TABLE practice_quiz_sessions ADD COLUMN entry INTEGER NOT NULL DEFAULT 0',
+    'ALTER TABLE practice_quiz_sessions ADD COLUMN entry_cursor INTEGER NOT NULL DEFAULT 0',
+    '''CREATE TABLE practice_quiz_weekly_selections (stage_id INTEGER NOT NULL, question_id INTEGER NOT NULL,
+        is_new INTEGER NOT NULL DEFAULT 0, position INTEGER NOT NULL, PRIMARY KEY(stage_id,question_id))''',
+    '''CREATE TABLE practice_quiz_weekly_plans (stage_id INTEGER PRIMARY KEY, schedule TEXT NOT NULL, updated_at TEXT NOT NULL)''',
+    '''CREATE TABLE practice_quiz_entry_events (user_id TEXT NOT NULL, stage_id INTEGER NOT NULL, day TEXT NOT NULL,
+        event TEXT NOT NULL, PRIMARY KEY(user_id,stage_id,day,event))''',
+    'CREATE INDEX practice_quiz_entry_events_stage ON practice_quiz_entry_events(stage_id,day,event)',
+    '''CREATE TABLE practice_quiz_entry_requests (user_id TEXT NOT NULL, request_id TEXT NOT NULL, session_id TEXT NOT NULL, PRIMARY KEY(user_id,request_id))''',
+]})
 
 
 def quote_identifier(value):

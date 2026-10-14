@@ -36,6 +36,7 @@ from models import get_setting, set_setting
 CASES_SYSTEM = 'cases'
 AUDIO_COURSES_SYSTEM = 'audio_courses'
 HANDOFF_SYSTEM = 'handoff'
+PRACTICE_SYSTEM = 'practice'
 
 _TRUE_VALUES = {'1', 'true', 'yes', 'on'}
 _UNSET = object()
@@ -174,7 +175,21 @@ def _handoff_validate(enabled):
         )
 
 
+def _practice_validate(enabled):
+    if enabled:
+        from services.practice_service import validate_ready, PracticeError
+        try:
+            validate_ready()
+        except PracticeError as exc:
+            raise FeatureFlagError(exc.message, exc.status_code) from exc
+
+
 FLAGS = {
+    PRACTICE_SYSTEM: FeatureFlag(
+        name=PRACTICE_SYSTEM, key='practice_enabled', env='PRACTICE_ENABLED', default=Config.PRACTICE_ENABLED,
+        label='每日闯关', description='10题一局的内部培训、答题解析、每日积分、团队周榜与每周荣誉。',
+        routes=('/api/practice',),
+    ),
     CASES_SYSTEM: FeatureFlag(
         name=CASES_SYSTEM,
         key='cases_enabled',
@@ -209,6 +224,7 @@ FLAGS = {
 
 _VALIDATORS = {
     HANDOFF_SYSTEM: _handoff_validate,
+    PRACTICE_SYSTEM: _practice_validate,
 }
 
 

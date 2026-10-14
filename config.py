@@ -44,6 +44,7 @@ class Config:
     CASES_ENABLED = os.environ.get('CASES_ENABLED', 'true').lower() == 'true'
     AUDIO_COURSES_ENABLED = os.environ.get('AUDIO_COURSES_ENABLED', 'false').lower() == 'true'
     HANDOFF_ENABLED = os.environ.get('HANDOFF_ENABLED', 'false').lower() == 'true'
+    PRACTICE_ENABLED = os.environ.get('PRACTICE_ENABLED', 'false').lower() == 'true'
     HANDOFF_AI_AGENT_ID = os.environ.get('HANDOFF_AI_AGENT_ID', '')
     HANDOFF_AVG_HANDLE_SEC = max(30, int(os.environ.get('HANDOFF_AVG_HANDLE_SEC', '180')))
     HANDOFF_QUEUE_POLL_SEC = max(2, int(os.environ.get('HANDOFF_QUEUE_POLL_SEC', '4')))

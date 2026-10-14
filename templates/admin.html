@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="/icon-fallback.css?v=20260909-icons2" data-page-node-id="wVSQAXqpJsDspYqM8fA6f7">
   <link rel="stylesheet" href="/css/admin.css?v=20260908-icons1" data-page-node-id="YgX9ukhM2eftjt5Z1gfe3J">
   <link rel="stylesheet" href="/css/rich-text.css?v=20260907-prodfix2">
+  <link rel="stylesheet" href="/admin/practice.css?v=20261014-weekly8">
 </head>
 <body data-page-node-id="iHP7hfTWdAOYNwDf9SQ2my">
 
@@ -39,6 +40,9 @@
         <span data-page-node-id="OfnprSIckeEU4Yudk2YqCJ">AI宝儿后台</span>
       </div>
       <nav class="sidebar-nav" data-page-node-id="rfqJWbfQpeuX80PcJc2XDR">
+        <div class="nav-item" data-page="practice" role="button" tabindex="0" aria-label="每日闯关" title="每日闯关" onclick="switchPage('practice')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();switchPage('practice');}">
+          <svg class="icon" viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true"><path d="M12 2 22 12 12 22 2 12 12 2Z" fill="currentColor"/><path d="m7.5 12 3 3 6-6" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>每日闯关</span>
+        </div>
         <div class="nav-item active" data-page="dashboard" onclick="switchPage('dashboard')" data-page-node-id="xVqbkNr2zr7nsAaj4eJ1g4">
           <svg class="icon" data-page-node-id="KkG8Tz1dQnsUIp2ygc2IDa" viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true"><rect x="3.2" y="13.4" width="4.4" height="8.4" rx="1.4" fill="currentColor"/><rect x="9.8" y="8.6" width="4.4" height="13.2" rx="1.4" fill="currentColor"/><rect x="16.4" y="3.8" width="4.4" height="18" rx="1.4" fill="currentColor"/></svg><span data-page-node-id="Ve6V7M6jnXox9EkyrdCjLX">数据看板</span>
         </div>
@@ -302,6 +306,9 @@
       </div>
 
       <!-- ===== Page: Feature Flags ===== -->
+      <div id="page-practice" class="page-content">
+        <div id="admin-practice-content"></div>
+      </div>
       <div id="page-features" class="page-content">
         <div class="admin-card">
           <h3><svg class="icon icon-toggle-left" viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true">
@@ -986,7 +993,10 @@
 
 <div class="toast" id="toast" data-page-node-id="8Ztsru779Gl5WfFgBlEIOZ"></div>
 
-<script src="/js/admin.js?v=20261013-recovery1"></script>
+<script src="/js/admin.js?v=20261014-quiz2"></script>
+<script src="/admin/practice.js?v=20261014-weekly8"></script>
+<script src="/admin/practice-stages.js?v=20261014-weekly8"></script>
+<script src="/admin/practice-weekly.js?v=20261014-weekly8"></script>
 <script src="/admin/cases.js?v=20260902-casebatch1"></script>
 <script src="/admin/audio-courses.js?v=20260914-audio4"></script>
 </body>

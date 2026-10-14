@@ -66,6 +66,7 @@ from routes.ai_review import ai_review_bp
 from routes.nutritionist_notes import nutritionist_notes_bp
 from routes.features import features_bp
 from routes.mcp import mcp_bp
+from routes.practice import practice_bp, admin_practice_bp
 
 app = Flask(__name__, static_folder='static', static_url_path='')
 Config.validate()
@@ -158,6 +159,8 @@ app.register_blueprint(ai_review_bp, url_prefix='/api/admin/ai-review')
 app.register_blueprint(nutritionist_notes_bp, url_prefix='/api/nutritionist-notes')
 app.register_blueprint(features_bp, url_prefix='/api')
 app.register_blueprint(mcp_bp, url_prefix='/api')
+app.register_blueprint(practice_bp, url_prefix='/api/practice')
+app.register_blueprint(admin_practice_bp, url_prefix='/api/admin/practice')
 
 
 @app.after_request

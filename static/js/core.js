@@ -37,6 +37,7 @@ let FEATURE_FLAGS = {
   cases: { enabled: true, label: '案例系统' },
   audio_courses: { enabled: false, label: '音频课程' },
   handoff: { enabled: true, label: '人工客服系统' },
+  practice: { enabled: false, label: '每日闯关' },
 };
 
 function featureEnabled(name) {
@@ -180,6 +181,7 @@ function getViewerId() {
 
 document.addEventListener('DOMContentLoaded', async () => {
   await loadFeatureFlags();
+  if (typeof loadPracticePromotion === 'function') loadPracticePromotion();
   if (featureEnabled('handoff')) loadHandoffConfig();
   loadAgents();
   loadWaitingContent();
@@ -276,6 +278,8 @@ async function loadSpeechConfig() {
 
 async function enterApp() {
   document.getElementById('app').classList.add('active');
+  if (typeof loadPracticePromotion === 'function') loadPracticePromotion();
+  if (typeof handlePracticeThemeLink === 'function') handlePracticeThemeLink();
   await restoreLatestChat();
   if (typeof startNutritionistNotePolling === 'function') await startNutritionistNotePolling();
   if (typeof resumeQueuedChat === 'function' && localStorage.getItem('chat_pending_job')) {

@@ -18,6 +18,8 @@ function switchView(view) {
   if (view === 'products') loadProducts();
   if (view === 'discover') loadDiscover();
   if (view === 'audio') loadAudioCoursesPage();
+  if (view === 'practice') loadPracticePage();
+  if (view === 'home' && typeof loadPracticePromotion === 'function') loadPracticePromotion();
   if (view !== 'audio' && typeof closeAudioDrawer === 'function') closeAudioDrawer();
   if (view !== 'discover') stopCarouselAuto();
 }

@@ -149,7 +149,8 @@ async function switchPage(page) {
     'qa-records': '问答记录',
     leads: '客户需求',
     handoff: '人工客服',
-    features: '功能开关'
+    features: '功能开关',
+    practice: '每日闯关'
   };
   document.getElementById('page-title-text').textContent = titles[page] || '数据看板';
 
@@ -164,6 +165,7 @@ async function switchPage(page) {
     }
   }
   if (page === 'products') loadAdminProducts();
+  if (page === 'practice') loadAdminPractice();
   if (page === 'cases') {
     loadCaseLibraryUrl();
     loadCaseTags();
@@ -2859,6 +2861,7 @@ function applyAdminFeatureFlags() {
   // 当前停在已关闭系统的页面上时退回数据看板
   FEATURE_FLAGS.forEach((item) => {
     if (item.enabled) return;
+    if (item.name === 'practice') return; // Admins prepare content before enabling the public feature.
     const page = document.getElementById(`page-${item.name}`);
     if (page && page.classList.contains('active')) switchPage('dashboard');
   });
