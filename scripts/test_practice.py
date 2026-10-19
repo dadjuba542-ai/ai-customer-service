@@ -19,9 +19,9 @@ os.environ.update(DATABASE_DIR=TMP.name, UPLOAD_DIR=str(Path(TMP.name)/'uploads'
                   SECRET_KEY='test-practice-secret-key-at-least-32-characters', COZE_API_KEY='test-key',
                   HANDOFF_ENABLED='false', CRAWL_GUARD_ENABLED='false', PRACTICE_ENABLED='false')
 from app import app
-from models import create_user, init_db, set_setting
+from models import create_user, create_product, init_db, set_setting
 from routes.auth import generate_guest_token, generate_token, hash_password
-from services import practice_service as p, feature_flags, practice_weekly as w
+from services import practice_service as p, practice_learning as learning, feature_flags, practice_weekly as w, practice_common as common
 from services.practice_bank import seed_bank
 from services.security_service import reset_rate_limits_for_tests
 
@@ -34,10 +34,12 @@ def rid():
 
 class PracticeTests(unittest.TestCase):
     def setUp(self):
-        self.clock = patch.object(p, 'now', return_value=STAMP)
+        self.clock = patch.object(common, 'now', return_value=STAMP)
         self.mock_clock = self.clock.start()
         reset_rate_limits_for_tests()
         with p.db(True) as conn:
+            for table in ('answers','sessions','mastery','activity','unit_questions','facts','courses'):
+                conn.execute('DELETE FROM practice_learning_' + table)
             for table in ('entry_requests', 'entry_events', 'weekly_selections', 'weekly_plans', 'admin_operations', 'stage_daily', 'stages', 'visits', 'points', 'answers', 'sessions', 'daily', 'questions'):
                 conn.execute('DELETE FROM practice_quiz_' + table)
             seed_bank(conn)
@@ -182,7 +184,7 @@ class PracticeTests(unittest.TestCase):
         for _ in range(9):
             s = self.next(self.answer(s))
         payload = self.answer_payload(s)
-        with patch.object(p, 'now', side_effect=RuntimeError('simulated interruption')):
+        with patch.object(common, 'now', side_effect=RuntimeError('simulated interruption')):
             with self.assertRaises(RuntimeError):
                 p.perform(s['id'], A, 'answer', payload)
         restored = p.get_session(s['id'], A)
@@ -480,23 +482,39 @@ class PracticeTests(unittest.TestCase):
     def test_entry_resume_free_replay_and_atomic_metrics(self):
         sid,_=self.weekly_theme()
         e=w.get_entry(A)['entry']
+        self.assertEqual(e['answered_count'],0)
         self.assertEqual(p.admin_data()['entry_metrics'],[])
         w.record_impression(A,e);w.record_impression(A,e)
         key=rid();s=p.create_session(A,{'entry':True,'request_id':key})
         self.assertEqual(p.create_session(A,{'entry':True,'request_id':key})['id'],s['id'])
         s=self.answer(s)
         self.assertEqual(w.get_entry(A)['entry']['action'],'resume')
+        self.assertEqual(w.get_entry(A)['entry']['answered_count'],1)
         self.assertEqual(p.create_session(A,{'entry':True,'request_id':rid()})['id'],s['id'])
         s=self.next(s)
         restored=p.create_session(A,{'entry':True,'request_id':rid()})
         self.assertEqual(restored['cursor'],1)
         completed=self.finish(s)
         self.assertEqual(completed['points'],100)
-        self.assertEqual(w.get_entry(A)['entry']['mode'],'free')
+        free_entry=w.get_entry(A)['entry']
+        self.assertEqual(free_entry['mode'],'free')
+        self.assertEqual(w.get_entry(A)['entry']['question_id'],free_entry['question_id'])
+        daily_ids={q['id'] for q in completed['questions']}
         replay=p.create_session(A,{'entry':True,'request_id':rid()})
         self.assertEqual(replay['mode'],'free')
+        self.assertEqual(replay['questions'][0]['id'],free_entry['question_id'])
         self.assertEqual(p.create_session(A,{'entry':True,'request_id':rid()})['id'],replay['id'])
-        self.assertEqual(self.finish(replay)['points'],0)
+        replay=self.finish(replay)
+        replay_ids={q['id'] for q in replay['questions']}
+        self.assertEqual(len(replay_ids),10)
+        self.assertFalse(replay_ids & daily_ids)
+        self.assertEqual(replay['points'],0)
+        next_entry=w.get_entry(A)['entry']
+        next_replay=p.create_session(A,{'entry':True,'request_id':rid()})
+        self.assertEqual(next_replay['questions'][0]['id'],next_entry['question_id'])
+        next_replay=self.finish(next_replay)
+        self.assertFalse({q['id'] for q in next_replay['questions']} & replay_ids)
+        self.assertEqual(next_replay['points'],0)
         metric=next(m for m in p.admin_data()['entry_metrics'] if m['stage_id']==sid)
         self.assertEqual([metric[k] for k in ('impression','click','first_answer','complete')],[1,1,1,1])
         self.assertEqual(p.scores(A)['today_points'],100)
@@ -555,6 +573,164 @@ class PracticeTests(unittest.TestCase):
         self.assertEqual(enable.status_code, 200, enable.get_data(as_text=True))
         q = p.admin_data()['questions'][0]
         self.assertEqual(client.put('/api/admin/practice/questions/1', headers=admin_auth, json=dict(q, enabled=True)).status_code, 200)
+
+class LearningTests(unittest.TestCase):
+    def setUp(self):
+        self.clock=patch.object(common,'now',return_value=STAMP)
+        self.clock.start()
+        reset_rate_limits_for_tests()
+        with p.db(True) as conn:
+            for table in ('answers','sessions','mastery','activity','unit_questions','facts','courses'):
+                conn.execute('DELETE FROM practice_learning_'+table)
+            for table in ('entry_requests','entry_events','weekly_selections','weekly_plans','admin_operations','stage_daily','stages','visits','points','answers','sessions','daily','questions'):
+                conn.execute('DELETE FROM practice_quiz_'+table)
+            seed_bank(conn)
+        set_setting('practice_enabled','1')
+        set_setting('practice_learning_enabled','1')
+        self.product_id=create_product('益生菌','测试产品'+rid(),'','','','')
+        self.facts=[];self.question_ids=[]
+        for unit_no in range(1,5):
+            fact=learning.save_fact(self.product_id,unit_no,{'title':f'知识点{unit_no}','body':f'第{unit_no}单元资料','source_url':'https://example.com/material'})
+            self.facts.append(fact['id'])
+            ids=[]
+            for position in range(3):
+                q={'request_id':rid(),'batch_no':20+unit_no,'category':'益生菌','title':f'单元{unit_no}问题{position+1}',
+                   'options':['先核实资料','直接承诺','忽略问题','换个话题'],'answer_index':0,'explanation':'先核实产品资料',
+                   'method':'我先核对资料再回答您。','sources':[],'enabled':False,'product_id':self.product_id,
+                   'fact_id':fact['id'],'skill_code':'product'}
+                ids.append(p.add_question(q)['id'])
+            self.question_ids.extend(ids)
+            learning.assign_unit(self.product_id,unit_no,{'question_ids':ids})
+        learning.publish(self.product_id)
+
+    def tearDown(self):
+        self.clock.stop()
+        set_setting('practice_learning_enabled','0')
+
+    def answer(self,session,who=A,correct=True):
+        q=session['questions'][session['cursor']]
+        with p.db() as conn:
+            snapshot=json.loads(conn.execute('SELECT snapshot FROM practice_learning_sessions WHERE id=?',(session['id'],)).fetchone()[0])
+        option=snapshot['questions'][session['cursor']]['answer_index']
+        if not correct:option=(option+1)%4
+        payload={'request_id':rid(),'question_id':q['id'],'option_index':option}
+        return learning.perform(who,session['id'],'answer',payload),payload
+
+    def test_course_unlock_snapshot_and_idempotent_answer(self):
+        course=learning.course(A,self.product_id)
+        self.assertTrue(course['units'][1]['locked'])
+        with self.assertRaises(p.PracticeError):learning.create_session(A,{'request_id':rid(),'kind':'unit','product_id':self.product_id,'unit_no':2})
+        key=rid();data={'request_id':key,'kind':'unit','product_id':self.product_id,'unit_no':1}
+        session=learning.create_session(A,data)
+        self.assertEqual(session['id'],learning.create_session(A,data)['id'])
+        self.assertNotIn('answer_index',session['questions'][0])
+        old_body=session['fact']['body']
+        learning.save_fact(self.product_id,1,{'title':'新事实','body':'新版内容','source_url':'https://example.com/new'})
+        self.assertEqual(learning.get_session(A,session['id'])['fact']['body'],old_body)
+        learning.publish(self.product_id)
+        with self.assertRaises(p.PracticeError):learning.get_session(B,session['id'])
+        for _ in range(3):
+            before=session['answered_count'];session,payload=self.answer(session)
+            replay=learning.perform(A,session['id'],'answer',payload)
+            self.assertEqual(replay['answered_count'],before+1)
+            if not session['completed']:
+                qid=session['questions'][session['cursor']]['id']
+                session=learning.perform(A,session['id'],'next',{'request_id':rid(),'question_id':qid})
+        self.assertEqual(session['correct_count'],3)
+        self.assertFalse(learning.course(A,self.product_id)['units'][1]['locked'])
+        with p.db() as conn:self.assertEqual(conn.execute('SELECT COUNT(*) FROM practice_quiz_points WHERE user_id=?',(A['user_id'],)).fetchone()[0],0)
+
+    def test_wrong_answer_due_review_and_user_isolation(self):
+        session=learning.create_session(A,{'request_id':rid(),'kind':'unit','product_id':self.product_id,'unit_no':1})
+        session,_=self.answer(session,correct=False)
+        self.assertEqual(learning.home(A)['due_count'],0)
+        self.assertEqual(learning.home(B)['due_count'],0)
+        with patch.object(common,'now',return_value=STAMP+timedelta(days=1)):
+            self.assertEqual(learning.home(A)['due_count'],1)
+            review=learning.create_session(A,{'request_id':rid(),'kind':'review'})
+            self.assertNotIn('answer_index',review['questions'][0])
+            review,_=self.answer(review)
+            self.assertTrue(review['completed'])
+            self.assertEqual(learning.home(A)['due_count'],0)
+            with p.db() as conn:
+                row=conn.execute('SELECT due_day,correct_days FROM practice_learning_mastery WHERE user_id=? AND question_id=?',(A['user_id'],self.question_ids[0])).fetchone()
+            self.assertEqual(row['due_day'],(STAMP+timedelta(days=4)).date().isoformat())
+            self.assertEqual(row['correct_days'],1)
+        with patch.object(common,'now',return_value=STAMP+timedelta(days=4)):
+            review=learning.create_session(A,{'request_id':rid(),'kind':'review'})
+            review,_=self.answer(review)
+            self.assertTrue(review['completed'])
+            with p.db() as conn:
+                row=conn.execute('SELECT status,due_day FROM practice_learning_mastery WHERE user_id=? AND question_id=?',(A['user_id'],self.question_ids[0])).fetchone()
+            self.assertEqual(row['status'],'mastered')
+            self.assertEqual(row['due_day'],(STAMP+timedelta(days=11)).date().isoformat())
+        with patch.object(common,'now',return_value=STAMP+timedelta(days=11)):
+            self.assertEqual(learning.home(A)['due_count'],1)
+
+    def test_short_course_concurrent_answers_and_http_access(self):
+        s=learning.create_session(A,{'request_id':rid(),'kind':'unit','product_id':self.product_id,'unit_no':1})
+        with p.db() as conn:
+            answer=json.loads(conn.execute('SELECT snapshot FROM practice_learning_sessions WHERE id=?',(s['id'],)).fetchone()[0])['questions'][0]['answer_index']
+        qid=s['questions'][0]['id']
+        def submit(option):
+            try:return learning.perform(A,s['id'],'answer',{'request_id':rid(),'question_id':qid,'option_index':option})
+            except p.PracticeError as exc:return exc.status_code
+        with ThreadPoolExecutor(max_workers=2) as pool:
+            outcomes=list(pool.map(submit,[answer,(answer+1)%4]))
+        self.assertEqual(sum(isinstance(x,dict) for x in outcomes),1)
+        self.assertIn(409,outcomes)
+        with p.db() as conn:
+            self.assertEqual(conn.execute('SELECT COUNT(*) FROM practice_learning_answers WHERE session_id=?',(s['id'],)).fetchone()[0],1)
+            self.assertEqual(conn.execute('SELECT COUNT(*) FROM practice_quiz_points WHERE user_id=?',(A['user_id'],)).fetchone()[0],0)
+        client=app.test_client()
+        with app.app_context():token=generate_guest_token(A['user_id'],A['team_name'],A['member_name'])
+        headers={'Authorization':'Bearer '+token}
+        self.assertEqual(client.get('/api/practice/learning/home').status_code,401)
+        self.assertEqual(client.get('/api/practice/learning/home',headers=headers).status_code,200)
+        self.assertEqual(client.get('/api/admin/practice/learning',headers=headers).status_code,401)
+        set_setting('practice_learning_enabled','0')
+        self.assertEqual(client.get('/api/practice/learning/home',headers=headers).status_code,403)
+
+    def test_review_is_capped_at_three_per_day(self):
+        quiz=p.create_session(A,{'request_id':rid(),'mode':'daily','batch_no':1})
+        for _ in range(4):
+            qid=quiz['questions'][quiz['cursor']]['id']
+            with p.db() as conn:
+                raw=json.loads(conn.execute('SELECT snapshot FROM practice_quiz_sessions WHERE id=?',(quiz['id'],)).fetchone()[0])[quiz['cursor']]
+            quiz=p.perform(quiz['id'],A,'answer',{'request_id':rid(),'question_id':qid,'option_index':(raw['answer_index']+1)%4})
+            quiz=p.perform(quiz['id'],A,'next',{'request_id':rid(),'question_id':qid})
+        with patch.object(common,'now',return_value=STAMP+timedelta(days=1)):
+            self.assertEqual(learning.home(A)['due_count'],3)
+            review=learning.create_session(A,{'request_id':rid(),'kind':'review'})
+            self.assertEqual(review['total_questions'],3)
+            for _ in range(3):
+                review,_=self.answer(review)
+                if not review['completed']:
+                    review=learning.perform(A,review['id'],'next',{'request_id':rid(),'question_id':review['questions'][review['cursor']]['id']})
+            self.assertEqual(learning.home(A)['due_count'],0)
+            replay=learning.create_session(A,{'request_id':rid(),'kind':'review'})
+            self.assertEqual(replay['id'],review['id'])
+        with patch.object(common,'now',return_value=STAMP+timedelta(days=2)):
+            self.assertEqual(learning.home(A)['due_count'],1)
+
+    def test_cross_day_answers_schedule_review_from_answer_day(self):
+        unit=learning.create_session(A,{'request_id':rid(),'kind':'unit','product_id':self.product_id,'unit_no':1})
+        quiz=p.create_session(B,{'request_id':rid(),'mode':'daily'})
+        with patch.object(common,'now',return_value=STAMP+timedelta(days=2)):
+            self.answer(unit,correct=False)
+            first=quiz['questions'][0]
+            with p.db() as conn:
+                snapshot=json.loads(conn.execute('SELECT snapshot FROM practice_quiz_sessions WHERE id=?',(quiz['id'],)).fetchone()[0])
+            wrong=(snapshot[0]['answer_index']+1)%4
+            p.perform(quiz['id'],B,'answer',{'request_id':rid(),'question_id':first['id'],'option_index':wrong})
+            with p.db() as conn:
+                due=conn.execute('SELECT due_day FROM practice_learning_mastery WHERE user_id=? AND question_id=?',
+                                 (A['user_id'],self.question_ids[0])).fetchone()['due_day']
+                quiz_due=conn.execute('SELECT due_day FROM practice_learning_mastery WHERE user_id=? AND question_id=?',
+                                      (B['user_id'],first['id'])).fetchone()['due_day']
+            expected=(STAMP+timedelta(days=3)).date().isoformat()
+            self.assertEqual(due,expected)
+            self.assertEqual(quiz_due,expected)
 
 if __name__ == '__main__':
     unittest.main(verbosity=2)

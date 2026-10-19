@@ -19,7 +19,11 @@ function switchView(view) {
   if (view === 'discover') loadDiscover();
   if (view === 'audio') loadAudioCoursesPage();
   if (view === 'practice') loadPracticePage();
-  if (view === 'home' && typeof loadPracticePromotion === 'function') loadPracticePromotion();
+  if (view === 'training') loadTrainingHub();
+  if (view === 'learning') loadLearningPage();
+  if (view === 'home') {
+    if (typeof loadPracticePromotion === 'function') loadPracticePromotion();
+  }
   if (view !== 'audio' && typeof closeAudioDrawer === 'function') closeAudioDrawer();
   if (view !== 'discover') stopCarouselAuto();
 }
@@ -145,7 +149,7 @@ function renderQuickFunctions() {
   const homeAgents = HOME_AGENT_IDS
     .map(id => AGENTS.find(agent => agent.id === id))
     .filter(Boolean);
-  grid.innerHTML = homeAgents.map(a => `
+  const cards = homeAgents.map(a => `
     <button class="quick-card" onclick="quickSend('${a.id}')">
       <div class="quick-card-icon" style="background:${a.color}"><i class="ph ph-${a.icon}"></i></div>
       <div class="quick-card-text">
@@ -163,6 +167,7 @@ function renderQuickFunctions() {
         <div class="quick-card-desc">帮我们把产品做得更好</div>
       </div>
     </button>`;
+  grid.innerHTML = cards;
 }
 
 function getAgentDesc(agentId) {

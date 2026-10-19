@@ -3,6 +3,7 @@ from routes.auth import identity_required, admin_required
 from services.chat_service import ChatServiceError
 from services.security_service import rate_limit
 from services import practice_service as practice
+from services import practice_learning as learning
 
 practice_bp = Blueprint('practice', __name__)
 admin_practice_bp = Blueprint('admin_practice', __name__)
@@ -65,10 +66,66 @@ def scores(identity):
     return jsonify(practice.scores(identity))
 
 
+@practice_bp.route('/learning/home')
+@identity_required
+def learning_home(identity):
+    return jsonify(learning.home(identity))
+
+
+@practice_bp.route('/learning/products/<int:product_id>')
+@identity_required
+def learning_product(identity, product_id):
+    return jsonify(learning.course(identity, product_id))
+
+
+@practice_bp.route('/learning/sessions', methods=['POST'])
+@identity_required
+@rate_limit('practice-create', 10)
+def learning_create(identity):
+    return jsonify(learning.create_session(identity, body()))
+
+
+@practice_bp.route('/learning/sessions/<session_id>')
+@identity_required
+def learning_session(identity, session_id):
+    return jsonify(learning.get_session(identity, session_id))
+
+
+@practice_bp.route('/learning/sessions/<session_id>/<action>', methods=['POST'])
+@identity_required
+@rate_limit('practice-action', 60)
+def learning_action(identity, session_id, action):
+    return jsonify(learning.perform(identity, session_id, action, body()))
+
+
 @admin_practice_bp.route('', methods=['GET'])
 @admin_required
 def admin_data(user):
     return jsonify(practice.admin_data(request.args.get('stage_id', 0, type=int)))
+
+
+@admin_practice_bp.route('/learning')
+@admin_required
+def learning_admin_data(user):
+    return jsonify(learning.admin_data())
+
+
+@admin_practice_bp.route('/learning/products/<int:product_id>/facts/<int:unit_no>', methods=['PUT'])
+@admin_required
+def learning_admin_fact(user, product_id, unit_no):
+    return jsonify(learning.save_fact(product_id, unit_no, body()))
+
+
+@admin_practice_bp.route('/learning/products/<int:product_id>/units/<int:unit_no>', methods=['PUT'])
+@admin_required
+def learning_admin_unit(user, product_id, unit_no):
+    return jsonify(learning.assign_unit(product_id, unit_no, body()))
+
+
+@admin_practice_bp.route('/learning/products/<int:product_id>/publish', methods=['POST'])
+@admin_required
+def learning_admin_publish(user, product_id):
+    return jsonify(learning.publish(product_id))
 
 
 @admin_practice_bp.route('/questions/<int:question_id>', methods=['PUT'])

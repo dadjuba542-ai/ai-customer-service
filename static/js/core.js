@@ -38,6 +38,7 @@ let FEATURE_FLAGS = {
   audio_courses: { enabled: false, label: '音频课程' },
   handoff: { enabled: true, label: '人工客服系统' },
   practice: { enabled: false, label: '每日闯关' },
+  practice_learning: { enabled: false, label: '产品课程与学习路径' },
 };
 
 function featureEnabled(name) {
@@ -68,6 +69,9 @@ function applyFeatureFlags() {
   document.querySelectorAll('[data-feature]').forEach((el) => {
     el.hidden = !featureEnabled(el.dataset.feature);
   });
+  if (typeof renderQuickFunctions === 'function') renderQuickFunctions();
+  document.body.classList.toggle('learning-enabled', featureEnabled('practice_learning'));
+  if (state?.currentView === 'training' && typeof loadTrainingHub === 'function') loadTrainingHub();
 }
 let bulletinTimer = null;
 const assetLoaders = new Map();

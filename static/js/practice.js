@@ -53,9 +53,9 @@ async function practiceTab(tab) {
     if (tab === 'records') {
       const data = await practiceApi(`/sessions?page=${practiceState.page}`);
       if (generation !== practiceState.generation) return;
-      host.innerHTML = `<p class="practice-hint">共 ${data.total} 局 · 第 ${data.page} 页</p>` +
+      host.innerHTML = `<h2 class="practice-subpage-title">闯关记录</h2><p class="practice-hint">共 ${data.total} 局 · 第 ${data.page} 页</p>` +
         data.items.map(item => `<button class="practice-record" onclick="openPracticeRecord('${item.id}')">
-          <strong>${practiceEscape(practiceSessionLabel(item))} · 第${item.batch_no}关</strong>
+          <strong>${practiceEscape(practiceSessionLabel(item))} · ${practiceBatchLabel(item)}</strong>
           <small>${practiceEscape(new Date(item.created_at).toLocaleString('zh-CN'))}</small>
           <small>${item.completed ? `答对 ${item.correct_count}/10 · +${item.points} 积分` : `继续答题 · 第 ${item.cursor + 1}/10 题`}</small></button>`).join('') +
         (!data.items.length ? '<div class="practice-card"><p>从今天的10道题开始吧。</p></div>' : '') +
@@ -64,7 +64,7 @@ async function practiceTab(tab) {
     } else {
       const data = await practiceApi('/scores');
       if (generation !== practiceState.generation) return;
-      host.innerHTML = `<div class="practice-card"><span class="practice-eyebrow">本周一起进步</span><h3>${practiceEscape(data.team_name || '本团队')}周榜</h3>
+      host.innerHTML = `<h2 class="practice-subpage-title">团队周榜</h2><div class="practice-card"><span class="practice-eyebrow">本周一起进步</span><h3>${practiceEscape(data.team_name || '本团队')}周榜</h3>
         <p>${data.week_start} 至 ${data.week_end} · 北京时间</p>
         <div class="practice-score-grid"><div><b>${data.today_points}<small>/100</small></b><span>今日积分</span></div><div><b>${data.week_points}</b><span>本周积分</span></div><div><b>${data.my_rank ?? '—'}</b><span>我的名次</span></div></div>
         ${data.my_honor ? `<p class="practice-honor">✦ 本周荣誉 · ${practiceEscape(data.my_honor)}</p>` : ''}
@@ -88,14 +88,11 @@ function renderPracticeTraining() {
     const today = data.daily, existing = data.daily_session, stage = data.stage;
     const ordinaryOther = existing && (existing.stage_id || 0)!==0;
     host.innerHTML = (practiceState.linkLanding && data.entry ? practiceEntryCard(data.entry) : '') + renderPracticeStage(stage, existing) + (today ? `<div class="practice-card ${stage?'practice-daily-compact':'practice-hero'}"><span class="practice-eyebrow">今日挑战 · ${today.day}</span>
-      <h3>${stage?'每日闯关 · 常规练习':'每天10题，练会客户沟通'}</h3><p>把真实场景变成一次选择。选完看解析，再学一句可以直接用的回复。</p>
+      <h3>${stage?'每日闯关 · 常规练习':'每天10题，边答边学'}</h3><p>每题选完立即看解析，再学一个可以用在实际场景中的方法。</p>
       <div class="practice-category-tags">${data.categories.map(c => `<span>${practiceEscape(c)}</span>`).join('')}</div>
       <div class="practice-hero-score"><b>10</b> 道题 <i>·</i> 最高 <b>100</b> 积分</div>
       <button class="practice-button" onclick="startPractice('${ordinaryOther?'free':'daily'}',${ordinaryOther?today.batch_no:'undefined'},0)">${ordinaryOther?'自由练习常规题':existing ? existing.completed ? '查看今日成绩' : '继续今日闯关' : '开始今日闯关'} <span aria-hidden="true">→</span></button>
-      <p class="practice-hint">每日首次作答计分，完成一局后入账。答题后即可学习解析。</p></div>` : '<div class="practice-card"><p>每日关卡正在准备中。</p></div>') +
-      `<${stage?'details':'div'} class="practice-card practice-base-levels">${stage?'<summary>常规题库 · 自由练习</summary>':'<h3>自由练习</h3>'}<p>四类场景穿插练习，每关10题。可反复巩固，保留成绩和解析。</p><div class="practice-levels">
-      ${data.batches.map(b => `<button onclick="startPractice('free',${b.batch_no})"><strong>第 ${String(b.batch_no).padStart(2, '0')} 关</strong><span>10道情景题</span></button>`).join('')}</div>
-      ${data.batches.length ? '' : '<p>题目正在整理中。</p>'}</${stage?'details':'div'}>`;
+      <p class="practice-hint">每日首次作答计分，完成一局后入账。答题后即可学习解析。</p></div>` : '<div class="practice-card"><p>每日关卡正在准备中。</p></div>');
     if(practiceState.linkLanding && data.entry)recordPracticeEntryImpression(data.entry,host.querySelector('[data-practice-entry-button]'));
     return;
   }
@@ -105,30 +102,31 @@ function renderPracticeTraining() {
   if (s.completed) {
     const review = s.questions.map((q, index) => ({q,index})).sort((a,b) => Number(a.q.correct)-Number(b.q.correct));
     const wrong = review.filter(item => !item.q.correct).length;
-    const badge = s.correct_count===10 ? '接待达人' : s.correct_count>=7 ? '沟通能手' : '练习完成';
-    host.innerHTML = `<div class="practice-card practice-result reception-report ${celebrate?'reception-celebrate':''}"><span class="practice-eyebrow">${practiceEscape(practiceSessionLabel(s))} · 第${s.batch_no}关</span>
-      <div class="reception-trophy" aria-hidden="true">✦</div><h3>今日接待完成</h3><span class="reception-badge">本局徽章 · ${badge}</span>
-      <div class="reception-report-stats"><div><b>${s.correct_count}<small>/10</small></b><span>判断准确</span></div><div><b>${stats.longest}<small>位</small></b><span>最长连对</span></div><div><b>${s.points}<small>分</small></b><span>本局获得</span></div></div>
+    const badge = s.correct_count===10 ? '满分通关' : s.correct_count>=7 ? '闯关达人' : '练习完成';
+    host.innerHTML = `<div class="practice-card practice-result reception-report ${celebrate?'reception-celebrate':''}"><span class="practice-eyebrow">${practiceEscape(practiceSessionLabel(s))} · ${practiceBatchLabel(s)}</span>
+      <div class="reception-trophy" aria-hidden="true">✦</div><h3>今日闯关完成</h3><span class="reception-badge">本局徽章 · ${badge}</span>
+      <div class="reception-report-stats"><div><b>${s.correct_count}<small>/10</small></b><span>答对题数</span></div><div><b>${stats.longest}<small>题</small></b><span>最长连对</span></div><div><b>${s.points}<small>分</small></b><span>本局获得</span></div></div>
       <p class="practice-hint">${practiceEscape(s.point_reason)}</p>
       ${renderReceptionRoute(s)}
-      <div class="practice-actions"><button class="practice-button" onclick="startPractice('free',${s.batch_no},${s.stage_id || 0})">再挑战一次</button>
-      <button class="practice-button secondary" onclick="leavePracticeSession(true)">返回首页</button></div></div>
-      <div class="practice-card"><h3>接待复盘 · ${wrong ? `${wrong}个场景值得再看` : '10个场景全部接住'}</h3>
-      ${review.map(({q,index},position) => `<details class="practice-review" ${position===0?'open':''}><summary>${q.correct ? '✓' : '↗'} 客户 ${index+1} · ${practiceEscape(q.title)}</summary>
+      <div class="practice-actions"><button class="practice-button" onclick="startNextPracticeRound()">继续练习 · 随机10题</button>
+      <button class="practice-button secondary" onclick="leavePracticeSession(true)">返回问答课堂</button></div></div>
+      <div class="practice-card"><h3>答题回顾 · ${wrong ? `${wrong}道题值得再看` : '10道题全部答对'}</h3>
+      ${review.map(({q,index},position) => `<details class="practice-review" ${position===0?'open':''}><summary>${q.correct ? '✓' : '↗'} 第 ${index+1} 题 · ${practiceEscape(q.title)}</summary>
       <p>我的选择：${practiceEscape(q.options[q.selected_index])}</p><p><strong>推荐选择：</strong>${practiceEscape(q.options[q.answer_index])}</p>${renderPracticeExplanation(q,index)}</details>`).join('')}</div>`;
     return;
   }
   const q = s.questions[s.cursor], answered = q.selected_index !== undefined;
-  const milestone = s.answered_count===3 ? '已接待3位客户，继续前进！' : s.answered_count===6 ? '过半了，再接待4位客户！' : '';
-  host.innerHTML = `<div class="practice-card reception-route-card"><div class="practice-question-meta"><span class="practice-category">客户接待挑战</span><span>已接待 ${s.answered_count} / 10 位客户</span></div>
-    <p class="practice-hint">${practiceEscape(practiceSessionLabel(s))} · 第${s.batch_no}关</p>${renderReceptionRoute(s)}</div>
-    <div class="practice-card reception-conversation"><div class="reception-customer"><span class="reception-avatar" aria-hidden="true">☺</span><div><strong>客户 ${s.cursor+1} 发来消息</strong><span>${practiceEscape(q.category)} · 沟通场景</span></div></div>
-    <h3 class="practice-question-title reception-message">${practiceEscape(q.title)}</h3><h4 class="reception-prompt">你准备怎么接？</h4>
+  const milestone = s.answered_count===3 ? '热身完成！接下来用刚学的方法做判断。' : s.answered_count===7 ? '应用完成！最后3题，巩固今天的知识。' : '';
+  const segment = s.cursor < 3 ? '热身 · 1/3' : s.cursor < 7 ? '应用 · 2/3' : '巩固 · 3/3';
+  host.innerHTML = `<div class="practice-card reception-route-card"><div class="practice-question-meta"><span class="practice-category">问答闯关</span><span>已完成 ${s.answered_count} / 10 题</span></div>
+    <p class="practice-hint">${practiceEscape(practiceSessionLabel(s))} · ${practiceBatchLabel(s)} · ${segment}</p>${renderReceptionRoute(s)}</div>
+    <div class="practice-card reception-conversation"><div class="reception-customer"><span class="reception-avatar" aria-hidden="true">${s.cursor+1}</span><div><strong>第 ${s.cursor+1} 题</strong><span>${practiceEscape(q.category)} · ${segment}</span></div></div>
+    <h3 class="practice-question-title reception-message">${practiceEscape(q.title)}</h3><h4 class="reception-prompt">你会选哪一个？</h4>
     <div class="practice-options">${q.options.map((o,i) => `<button class="practice-option reception-reply ${answered && i===q.answer_index?'correct':answered && i===q.selected_index?'incorrect':''}"
       ${answered || practiceState.busy?'disabled':''} onclick="answerPractice(${i})"><span>${practiceEscape(o)}${answered && i===q.answer_index?'<em>推荐选择 ✓</em>':answered && i===q.selected_index?'<em>你的选择</em>':''}</span></button>`).join('')}</div>
-    ${answered ? `<div class="practice-feedback ${celebrate?'reception-celebrate':''}" role="status"><h4>${q.correct?'✓ 判断准确！':'这个场景，可以换一种接法'}</h4>
-      ${q.correct && stats.current>=3?`<p class="reception-streak">🔥 连续接住${stats.current}个客户问题</p>`:''}${milestone?`<p class="reception-milestone">✦ ${milestone}</p>`:''}${renderPracticeExplanation(q,s.cursor)}</div>
-      <button class="practice-button practice-next" onclick="nextPractice()">接待下一位客户 →</button>${s.entry && s.cursor===0?`<p class="practice-hint">${s.mode==='daily'?'继续剩余9题，完成后结算积分':'继续剩余9题，完成本次接待'}</p>`:''}`:'<p class="practice-hint">选择你认为最合适的回复，看看推荐接法。</p>'}
+    ${answered ? `<div class="practice-feedback ${celebrate?'reception-celebrate':''}" role="status"><h4>${q.correct?'✓ 答对了！':'再看看这题的思路'}</h4>
+      ${q.correct && stats.current>=3?`<p class="reception-streak">🔥 连续答对 ${stats.current} 题</p>`:''}${milestone?`<p class="reception-milestone">✦ ${milestone}</p>`:''}${renderPracticeExplanation(q,s.cursor)}</div>
+      <button class="practice-button practice-next" onclick="nextPractice()">下一题 →</button>${s.entry && s.cursor===0?`<p class="practice-hint">${s.mode==='daily'?'继续剩余9题，完成后结算积分':'继续剩余9题，完成本次练习'}</p>`:''}`:'<p class="practice-hint">先做选择，答完马上看解析。</p>'}
     <div class="practice-actions"><button class="practice-button secondary" onclick="leavePracticeSession()" ${practiceState.busy?'disabled':''}>稍后继续</button></div></div>`;
 }
 function practiceReceptionStats(session) {
@@ -141,10 +139,15 @@ function practiceReceptionStats(session) {
 }
 function renderReceptionRoute(session) {
   const count=Math.max(0,Math.min(10,Number(session.answered_count)||0));
-  return `<div class="reception-progress" role="progressbar" aria-label="客户接待进度" aria-valuemin="0" aria-valuemax="10" aria-valuenow="${count}" aria-valuetext="已接待${count}位，共10位客户"><span style="width:${count*10}%"></span></div>`;
+  return `<div class="reception-progress" role="progressbar" aria-label="问答闯关进度" aria-valuemin="0" aria-valuemax="10" aria-valuenow="${count}" aria-valuetext="已完成${count}题，共10题"><span style="width:${count*10}%"></span></div>`;
 }
 function renderPracticeExplanation(q,index=practiceState.session?.cursor) {
-  return `<p>${practiceEscape(q.explanation)}</p><div class="reception-method-title"><h4>下一句可以这样说</h4><button class="reception-copy" onclick="copyPracticeReply(${Number(index)},this)">复制回复</button></div><blockquote>${practiceEscape(q.method)}</blockquote>`;
+  return `<p>${practiceEscape(q.explanation)}</p><div class="reception-method-title"><h4>参考回答</h4><button class="reception-copy" onclick="copyPracticeReply(${Number(index)},this)">复制回答</button></div><blockquote>${practiceEscape(q.method)}</blockquote><button class="practice-coach-link" onclick="askPracticeCoach(${Number(index)})">追问AI教练 →</button>`;
+}
+function askPracticeCoach(index) {
+  const q=practiceState.session?.questions[index];
+  if(!q?.explanation)return;
+  quickSend('aura',`请作为培训教练，基于这道题的既有解析回答我的追问。题目：${q.title}\n推荐选择：${q.options[q.answer_index]}\n解析：${q.explanation}\n参考回答：${q.method}\n请先简短解释这道题的判断方法，再问我还有哪里不明白。不要改变题目的推荐答案。`);
 }
 async function copyPracticeReply(index,button) {
   const q=practiceState.session?.questions[index];
@@ -158,7 +161,7 @@ async function copyPracticeReply(index,button) {
       try {text.select();if(!document.execCommand('copy'))throw new Error('copy failed');}finally{text.remove();}
     }
     button.textContent='已复制 ✓';
-  } catch { button.textContent='复制失败，请长按回复复制'; }
+  } catch { button.textContent='复制失败，请长按参考回答复制'; }
   finally {button.disabled=false;}
 }
 async function startPractice(mode, batchNo, stageId=0) {
@@ -208,46 +211,67 @@ async function openPracticeRecord(id) {
 async function leavePracticeSession(home=false) {
   if (practiceState.busy) return;
   practiceState.session = null;
-  if(home) { switchView('home'); return; }
-  await loadPracticePage();
+  practiceState.tab = 'training';
+  if (state.currentView !== 'training') switchView('training');
+  else await loadTrainingHub();
 }
 
 function practiceSessionLabel(session) {
   return session.stage_title ? `${session.stage_title} · ${session.mode==='daily'?'每日专题':'自由练习'}` : session.mode==='daily'?'每日闯关':'自由练习';
 }
+function practiceBatchLabel(session) {
+  return session.mode==='free' && session.entry ? `随机第${session.batch_no}组` : `第${session.batch_no}关`;
+}
 function renderPracticeStage(stage, existing) {
   if(!stage)return '';
   const e=practiceEscape, other=existing && existing.stage_id!==stage.id;
-  return `<div class="practice-card practice-stage-hero"><span class="practice-eyebrow">阶段主题 · ${stage.starts_on} 至 ${stage.ends_on}</span><h3>${e(stage.title)}</h3><p>${e(stage.description || '集中练习本阶段的客户沟通场景。')}</p><div class="practice-hero-score"><b>${stage.question_count}</b> 道题 <i>·</i> <b>${stage.batch_count}</b> 关</div>
+  return `<div class="practice-card practice-stage-hero"><span class="practice-eyebrow">阶段主题 · ${stage.starts_on} 至 ${stage.ends_on}</span><h3>${e(stage.title)}</h3><p>${e(stage.description || '集中学习本阶段的知识与应用题。')}</p><div class="practice-hero-score"><b>${stage.question_count}</b> 道题 <i>·</i> <b>${stage.batch_count}</b> 关</div>
     <button class="practice-button" onclick="startPractice('${other?'free':'daily'}',${other?stage.daily.batch_no:'undefined'},${stage.id})">${other?'练习今日专题':existing ? existing.completed?'查看今日专题成绩':'继续今日专题':'开始今日专题'} →</button>
-    <p class="practice-hint">${other?'今天已选择一局计分，此处可自由练习。':'专题与普通每日闯关共用每天100分，每天只选一局计分。'}</p>
-    <details class="practice-stage-levels"><summary>查看全部 ${stage.batch_count} 关 · 自由练习</summary><div class="practice-levels">${stage.batches.map(b=>`<button onclick="startPractice('free',${b.batch_no},${stage.id})"><strong>第${b.batch_no}关</strong><span>10道专题题</span></button>`).join('')}</div></details></div>`;
+    <p class="practice-hint">${other?'今天已选择一局计分，此处可自由练习。':'专题与普通每日闯关共用每天100分，每天只选一局计分。'}</p></div>`;
 }
 function practiceEntryCard(entry) {
   const e=practiceEscape;
-  const title=entry.action==='resume' ? (entry.stage_title || '今日练习') : entry.kind==='weekly' ? `本周：${entry.stage_title}` : entry.stage_id ? entry.stage_title : '今日客户问题';
-  return `<button class="practice-home-card practice-question-entry ${entry.stage_id?'practice-stage-home':''}" onclick="openPracticeEntry()" data-practice-entry-button><span class="practice-eyebrow">${e(title)} · ${e(entry.label)}</span><strong>${e(entry.question_title)}</strong><span>你会怎么回应？</span><span class="practice-entry-cta">${entry.action==='resume'?'继续今天的练习':entry.mode==='free'?'再练一下，看看解析':'选一下，看看你的判断'} →</span>${entry.mode==='free'?'<small>今日计分局已完成，本次为自由练习</small>':''}</button>`;
+  const count=Math.max(0,Math.min(10,Number(entry.answered_count)||0));
+  const theme=entry.stage_id ? entry.stage_title : '今日问答闯关';
+  const title=entry.mode==='free' ? entry.action==='resume' ? `随机练习 · 已完成 ${count}/10 题` : '今日闯关已完成 · 随机10题'
+    : entry.action==='resume' && count ? `${theme} · 已完成 ${count}/10 题` : theme;
+  const action=entry.mode==='free' ? entry.action==='resume' ? '继续这组题' : '继续练习 · 随机10题'
+    : entry.action==='resume' ? '继续闯关' : '开始今日闯关';
+  return `<button class="practice-home-card practice-question-entry ${entry.stage_id?'practice-stage-home':''}" onclick="openPracticeEntry()" data-practice-entry-button><span class="practice-eyebrow">${e(title)}</span><strong>${e(entry.question_title)}</strong><span>该怎么回答？来挑战一下</span><span class="practice-entry-cta">${action} →</span>${entry.mode==='free'?'<small>本组不计分 · 今日计分上限100分</small>':''}</button>`;
+}
+function practiceHomeLink(entry) {
+  const resume = entry.action === 'resume';
+  const count = Math.max(0, Math.min(10, Number(entry.answered_count) || 0));
+  const theme = entry.stage_id ? `${entry.kind === 'weekly' ? '本周主题' : '阶段专题'} · ${entry.stage_title}` : '今日问答闯关';
+  const status = resume ? count ? `已完成 ${count} / 10 题` : '从第1题开始，答完看解析' : entry.mode === 'free' ? '今日计分已完成 · 接着学不计分' : '10道题 · 边选边学';
+  const action = resume && count ? '继续上课' : entry.mode === 'free' ? '继续练习' : '进入课堂';
+  return `<button class="training-home-card" onclick="switchView('training')">
+    <span class="training-home-top"><strong>AI宝儿问答课堂</strong><span>${entry.mode === 'free' ? '随机10题 · 不计分' : '10题 · 最高100分'}</span></span>
+    <span class="training-home-scene">${practiceEscape(theme)} · ${resume ? `第 ${Math.min(count + 1, 10)} 题` : entry.mode === 'free' ? '继续练习' : '今日推荐题'}</span>
+    <strong class="training-home-question">${practiceEscape(entry.question_title || '今天来学哪一道题？')}</strong>
+    <span class="training-home-bottom"><small>${practiceEscape(status)}</small><span class="training-home-action">${action} <span aria-hidden="true">→</span></span></span>
+    ${resume && count ? `<span class="training-home-progress" role="progressbar" aria-label="今日训练进度" aria-valuemin="0" aria-valuemax="10" aria-valuenow="${count}"><span style="width:${count * 10}%"></span></span>` : ''}
+  </button>`;
 }
 async function loadPracticePromotion() {
-  const host=document.getElementById('practice-stage-home'),daily=document.getElementById('practice-daily-home');
-  if(!host || !daily)return;
+  const host=document.getElementById('practice-stage-home');
+  if(!host)return;
   const generation=++practiceState.promotionGeneration;
   const token=state.sessionToken || state.token;
-  if(!featureEnabled('practice') || !token) {host.innerHTML='';daily.classList.remove('compact');return;}
+  if(!featureEnabled('practice') || !token) {host.innerHTML='';return;}
   try {
     const r=await fetchWithTimeout(`${API_BASE}/api/practice/entry`,{headers:authHeaders({})},8000);
     if(!r.ok)throw new Error('暂未开放');
     const data=await r.json();
     if(generation!==practiceState.promotionGeneration || token!==(state.sessionToken || state.token))return;
     practiceState.entryData=data.entry;
-    daily.classList.toggle('compact',Boolean(data.entry));
-    host.innerHTML=data.entry ? practiceEntryCard(data.entry) : '';
+    host.innerHTML=data.entry ? practiceHomeLink(data.entry) : '';
     if(data.entry && state.currentView==='home')recordPracticeEntryImpression(data.entry,host);
-  }catch {if(generation===practiceState.promotionGeneration){host.innerHTML='';daily.classList.remove('compact');practiceState.entryData=null;}}
+  }catch {if(generation===practiceState.promotionGeneration){host.innerHTML='';practiceState.entryData=null;}}
 }
 async function openPracticeEntry() {
   if(practiceState.busy || !practiceState.entryData)return;
-  const e=practiceState.entryData,signature=JSON.stringify([e.day,e.stage_id,e.question_id,e.session_id]);
+  const e=practiceState.entryData,signature=JSON.stringify([e.day,e.stage_id,e.question_id,e.session_id,e.replay_round]);
   if(practiceState.entryAttempt?.signature!==signature)practiceState.entryAttempt={signature,request_id:practiceRequestId()};
   practiceState.busy=true;
   document.querySelectorAll('[data-practice-entry-button]').forEach(b=>b.disabled=true);
@@ -259,13 +283,22 @@ async function openPracticeEntry() {
   }catch(error){showToast(error.message,'error');await loadPracticePromotion();}
   finally{practiceState.busy=false;document.querySelectorAll('[data-practice-entry-button]').forEach(b=>b.disabled=false);}
 }
+async function startNextPracticeRound() {
+  if(practiceState.busy)return;
+  try {
+    const data=await practiceApi('/entry');
+    practiceState.entryData=data.entry;
+    if(!data.entry)throw new Error('题目正在准备中');
+    await openPracticeEntry();
+  } catch(error) {showToast(error.message,'error');}
+}
 let practiceThemeLinkHandled=false;
 async function handlePracticeThemeLink() {
   if(practiceThemeLinkHandled)return;
   const value=new URLSearchParams(window.location.search).get('practice_theme');
   if(!value)return;
   practiceThemeLinkHandled=true;practiceState.linkStage=Number(value);practiceState.linkLanding=true;
-  switchView('practice');
+  switchView('training');
 }
 document.addEventListener('visibilitychange',()=>{if(!document.hidden && state.currentView==='home')loadPracticePromotion();});
 setInterval(()=>{if(!document.hidden && state.currentView==='home' && featureEnabled('practice'))loadPracticePromotion();},60000);

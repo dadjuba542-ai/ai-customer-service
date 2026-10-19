@@ -37,6 +37,7 @@ CASES_SYSTEM = 'cases'
 AUDIO_COURSES_SYSTEM = 'audio_courses'
 HANDOFF_SYSTEM = 'handoff'
 PRACTICE_SYSTEM = 'practice'
+PRACTICE_LEARNING_SYSTEM = 'practice_learning'
 
 _TRUE_VALUES = {'1', 'true', 'yes', 'on'}
 _UNSET = object()
@@ -189,6 +190,11 @@ FLAGS = {
         name=PRACTICE_SYSTEM, key='practice_enabled', env='PRACTICE_ENABLED', default=Config.PRACTICE_ENABLED,
         label='每日闯关', description='10题一局的内部培训、答题解析、每日积分、团队周榜与每周荣誉。',
         routes=('/api/practice',),
+    ),
+    PRACTICE_LEARNING_SYSTEM: FeatureFlag(
+        name=PRACTICE_LEARNING_SYSTEM, key='practice_learning_enabled', env='PRACTICE_LEARNING_ENABLED', default=False,
+        label='产品课程与学习路径', description='产品事实卡、三题短课、错题复习与连续学习记录。',
+        routes=('/api/practice/learning',),
     ),
     CASES_SYSTEM: FeatureFlag(
         name=CASES_SYSTEM,

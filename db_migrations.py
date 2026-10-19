@@ -429,6 +429,46 @@ MIGRATIONS.append({'version': '202610140005', 'name': 'practice_weekly_themes', 
     '''CREATE TABLE practice_quiz_entry_requests (user_id TEXT NOT NULL, request_id TEXT NOT NULL, session_id TEXT NOT NULL, PRIMARY KEY(user_id,request_id))''',
 ]})
 
+MIGRATIONS.append({'version': '202610190001', 'name': 'practice_learning_paths', 'sqls': [
+    'ALTER TABLE practice_quiz_questions ADD COLUMN product_id INTEGER',
+    "ALTER TABLE practice_quiz_questions ADD COLUMN skill_code TEXT NOT NULL DEFAULT ''",
+    'ALTER TABLE practice_quiz_questions ADD COLUMN fact_id INTEGER',
+    '''CREATE TABLE practice_learning_courses (
+        product_id INTEGER PRIMARY KEY, published INTEGER NOT NULL DEFAULT 0,
+        updated_at TEXT NOT NULL)''',
+    '''CREATE TABLE practice_learning_facts (
+        id INTEGER PRIMARY KEY AUTOINCREMENT, product_id INTEGER NOT NULL,
+        unit_no INTEGER NOT NULL, title TEXT NOT NULL, body TEXT NOT NULL,
+        source_url TEXT NOT NULL DEFAULT '', status TEXT NOT NULL DEFAULT 'draft',
+        version INTEGER NOT NULL DEFAULT 1, updated_at TEXT NOT NULL,
+        UNIQUE(product_id,unit_no))''',
+    '''CREATE TABLE practice_learning_unit_questions (
+        product_id INTEGER NOT NULL, unit_no INTEGER NOT NULL, position INTEGER NOT NULL,
+        question_id INTEGER NOT NULL, kind TEXT NOT NULL,
+        PRIMARY KEY(product_id,unit_no,position), UNIQUE(product_id,unit_no,question_id))''',
+    '''CREATE TABLE practice_learning_sessions (
+        id TEXT PRIMARY KEY, user_id TEXT NOT NULL, request_id TEXT NOT NULL,
+        kind TEXT NOT NULL, product_id INTEGER, unit_no INTEGER,
+        snapshot TEXT NOT NULL, cursor INTEGER NOT NULL DEFAULT 0,
+        completed INTEGER NOT NULL DEFAULT 0, correct_count INTEGER NOT NULL DEFAULT 0,
+        assigned_day TEXT NOT NULL, created_at TEXT NOT NULL, completed_at TEXT,
+        UNIQUE(user_id,request_id))''',
+    '''CREATE TABLE practice_learning_answers (
+        session_id TEXT NOT NULL, position INTEGER NOT NULL, option_index INTEGER NOT NULL,
+        correct INTEGER NOT NULL, request_id TEXT NOT NULL,
+        PRIMARY KEY(session_id,position), UNIQUE(session_id,request_id))''',
+    '''CREATE TABLE practice_learning_mastery (
+        user_id TEXT NOT NULL, question_id INTEGER NOT NULL, question_version TEXT NOT NULL,
+        correct_days INTEGER NOT NULL DEFAULT 0, last_correct_day TEXT,
+        due_day TEXT, status TEXT NOT NULL DEFAULT 'learning', updated_at TEXT NOT NULL,
+        PRIMARY KEY(user_id,question_id))''',
+    '''CREATE TABLE practice_learning_activity (
+        user_id TEXT NOT NULL, day TEXT NOT NULL, kind TEXT NOT NULL,
+        PRIMARY KEY(user_id,day,kind))''',
+    'CREATE INDEX practice_learning_due ON practice_learning_mastery(user_id,due_day)',
+    'CREATE INDEX practice_learning_sessions_user ON practice_learning_sessions(user_id,created_at)',
+]})
+
 
 def quote_identifier(value):
     return '"' + value.replace('"', '""') + '"'

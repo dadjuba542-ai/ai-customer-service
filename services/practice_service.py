@@ -6,41 +6,21 @@ import hashlib
 import random
 import re
 import uuid
-from contextlib import contextmanager
 from datetime import datetime, timedelta
-from zoneinfo import ZoneInfo
 
-from models import get_db_connection
 from services import feature_flags
-from services.chat_service import ChatServiceError
+from services import practice_common as common
 from services.practice_bank import RAW, SOURCES
 
-TZ = ZoneInfo('Asia/Shanghai')
-
-
 def now():
-    return datetime.now(TZ)
+    return common.now()
 
 
-class PracticeError(ChatServiceError):
-    pass
-
-
-@contextmanager
-def db(write=False):
-    conn = get_db_connection()
-    try:
-        if write:
-            conn.execute('BEGIN IMMEDIATE')
-        yield conn
-        if write:
-            conn.commit()
-    except Exception:
-        if write:
-            conn.rollback()
-        raise
-    finally:
-        conn.close()
+PracticeError = common.PracticeError
+db = common.db
+TZ = common.TZ
+_request_id = common.request_id
+_integer = common.integer
 
 
 def require_enabled():
@@ -72,6 +52,25 @@ def _snapshot(conn, batch, stage_id=0):
     if len(questions) != 10:
         raise PracticeError('这组题目正在整理，请选择其他关卡', 409)
     return questions
+
+
+def _random_free_questions(conn, user_id, day, stage_id, round_no):
+    """Choose a repeatable preview and session snapshot for the next unscored round."""
+    candidates = [question for batch in _batches(conn, stage_id)
+                  for question in _snapshot(conn, batch['batch_no'], stage_id)]
+    if len(candidates) < 10:
+        raise PracticeError('练习题目正在准备中', 503)
+    daily_ids = {q['id'] for q in json.loads(_daily(conn, day, stage_id)['snapshot'])}
+    last = conn.execute('''SELECT snapshot FROM practice_quiz_sessions
+        WHERE user_id=? AND assigned_day=? AND stage_id=? AND mode='free' AND entry=1 AND completed=1
+        ORDER BY completed_at DESC,id DESC LIMIT 1''', (user_id, day, stage_id)).fetchone()
+    last_ids = {q['id'] for q in json.loads(last['snapshot'])} if last else set()
+    fresh = [q for q in candidates if q['id'] not in daily_ids and q['id'] not in last_ids]
+    if len(fresh) < 10:
+        fresh = [q for q in candidates if q['id'] not in daily_ids]
+    pool = fresh if len(fresh) >= 10 else candidates
+    seed = hashlib.sha256(f'{user_id}|{day}|{stage_id}|{round_no}'.encode()).digest()
+    return random.Random(int.from_bytes(seed, 'big')).sample(pool, 10)
 
 
 def _daily(conn, day, stage_id=0):
@@ -123,18 +122,6 @@ def catalog(identity):
         entry_descriptor = weekly.entry(conn,identity)
     return {'entry':entry_descriptor, 'stage': stage, 'batches': batches, 'categories': list(RAW), 'daily': recommendation,
             'daily_session': dict(existing) if existing else None}
-
-
-def _request_id(value):
-    if not isinstance(value, str) or not re.fullmatch(r'[A-Za-z0-9_-]{8,100}', value):
-        raise PracticeError('需要有效的请求标识', 400)
-    return value
-
-
-def _integer(value, minimum, maximum):
-    if type(value) is not int or not minimum <= value <= maximum:
-        raise PracticeError('题目或选项编号无效', 400)
-    return value
 
 
 def _owned(conn, session_id, identity):
@@ -221,7 +208,8 @@ def create_session(identity, data):
         else:
             if stage_id:
                 _require_stage_open(conn, stage_id)
-            questions = json.loads(_daily(conn, day, stage_id)['snapshot']) if via_entry else _snapshot(conn, batch, stage_id)
+            questions = (_random_free_questions(conn, identity['user_id'], day, stage_id, descriptor['replay_round'])
+                         if via_entry else _snapshot(conn, batch, stage_id))
         # Shuffle options once per session; preserve the permutation on every retry/refresh.
         for q in questions:
             indexes = list(range(4))
@@ -275,6 +263,8 @@ def perform(session_id, identity, action, data):
             correct = int(option == current['answer_index'])
             conn.execute('INSERT INTO practice_quiz_answers VALUES(?,?,?,?,?,?)',
                          (session_id, question_id, session['cursor'], option, correct, request_id))
+            from services import practice_learning
+            practice_learning.note_quiz_answer(conn, identity['user_id'], current, correct, now().date().isoformat())
             if session['entry'] and session['cursor'] == session['entry_cursor']:
                 weekly.event(conn, identity, session['stage_id'], session['assigned_day'], 'first_answer')
             conn.execute('UPDATE practice_quiz_sessions SET correct_count=correct_count+? WHERE id=?', (correct, session_id))
@@ -294,6 +284,7 @@ def perform(session_id, identity, action, data):
                         reason = '跨日完成，成绩已保存；可继续挑战今天的每日局'
                 conn.execute('UPDATE practice_quiz_sessions SET completed=1,points=?,point_reason=?,completed_at=? WHERE id=?',
                              (points, reason, stamp.isoformat(), session_id))
+                practice_learning.note_quiz_complete(conn, identity['user_id'], stamp.date().isoformat())
         else:
             if not answer:
                 raise PracticeError('请先选择答案并阅读解析', 409)
@@ -308,7 +299,7 @@ def records(identity, page=1):
     page = max(1, min(page or 1, 100000))
     with db() as conn:
         total = conn.execute('SELECT COUNT(*) FROM practice_quiz_sessions WHERE user_id=?', (identity['user_id'],)).fetchone()[0]
-        rows = conn.execute('''SELECT id,mode,batch_no,completed,cursor,correct_count,points,created_at,stage_id,stage_title FROM practice_quiz_sessions
+        rows = conn.execute('''SELECT id,mode,batch_no,completed,cursor,correct_count,points,created_at,stage_id,stage_title,entry FROM practice_quiz_sessions
             WHERE user_id=? ORDER BY created_at DESC,id DESC LIMIT 20 OFFSET ?''', (identity['user_id'], (page-1)*20))
         return {'items': [dict(r) for r in rows], 'total': total, 'page': page}
 
@@ -385,7 +376,8 @@ def admin_data(stage_id=0):
             'enabled': feature_flags.is_enabled(feature_flags.PRACTICE_SYSTEM)}
 
 
-CSV_COLUMNS = ['id', '关卡', '分类', '客户场景', 'A', 'B', 'C', 'D', '推荐答案', '解析', '参考回复', '启用', '参考资料', '版本']
+CSV_COLUMNS = ['id', '关卡', '分类', '客户场景', 'A', 'B', 'C', 'D', '推荐答案', '解析', '参考回复', '启用', '参考资料', '版本', '产品ID', '能力标签', '事实卡ID']
+SKILL_CODES = ('needs', 'product', 'claims', 'price', 'usage', 'followup')
 
 
 def _validate_question(data):
@@ -414,6 +406,18 @@ def _validate_question(data):
     values.update(stage_id=stage_id, category=category.strip(), options=[o.strip() for o in options], sources=sources,
                   enabled=data['enabled'], answer_index=_integer(data.get('answer_index'), 0, 3),
                   batch_no=_integer(data.get('batch_no'), 1, 10000))
+    product_id = data.get('product_id')
+    fact_id = data.get('fact_id')
+    skill_code = data.get('skill_code', '')
+    if product_id is not None:
+        product_id = _integer(product_id, 1, 2147483647)
+    if fact_id is not None:
+        fact_id = _integer(fact_id, 1, 2147483647)
+    if fact_id is not None and product_id is None:
+        raise PracticeError('关联事实卡时请先选择产品', 400)
+    if skill_code not in ('', *SKILL_CODES):
+        raise PracticeError('能力标签无效', 400)
+    values.update(product_id=product_id, fact_id=fact_id, skill_code=skill_code)
     return values
 
 
@@ -429,13 +433,14 @@ def _check_capacity(questions):
 
 def _write_question(conn, question_id, q):
     fields = (q['stage_id'], q['batch_no'], q['category'], q['title'], json.dumps(q['options'], ensure_ascii=False), q['answer_index'],
-              q['explanation'], q['method'], json.dumps(q['sources']), int(q['enabled']), now().isoformat())
+              q['explanation'], q['method'], json.dumps(q['sources']), int(q['enabled']), now().isoformat(),
+              q.get('product_id'), q.get('skill_code', ''), q.get('fact_id'))
     if question_id is None:
         return conn.execute('''INSERT INTO practice_quiz_questions
-            (stage_id,batch_no,category,title,options,answer_index,explanation,method,sources,enabled,updated_at)
-            VALUES(?,?,?,?,?,?,?,?,?,?,?)''', fields).lastrowid
+            (stage_id,batch_no,category,title,options,answer_index,explanation,method,sources,enabled,updated_at,product_id,skill_code,fact_id)
+            VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)''', fields).lastrowid
     conn.execute('''UPDATE practice_quiz_questions SET archived=0,stage_id=?,batch_no=?,category=?,title=?,options=?,answer_index=?,
-        explanation=?,method=?,sources=?,enabled=?,updated_at=? WHERE id=?''', fields + (question_id,))
+        explanation=?,method=?,sources=?,enabled=?,updated_at=?,product_id=?,skill_code=?,fact_id=? WHERE id=?''', fields + (question_id,))
     return question_id
 
 
@@ -454,10 +459,21 @@ def save_question(question_id, data):
                 raise PracticeError('题目不属于当前题库', 409)
         if existing['stage_id'] and _stage(conn,existing['stage_id'])['kind']=='weekly' and data.get('batch_no',existing['batch_no'])!=existing['batch_no']:
             raise PracticeError('本期分组由七天安排确定，请在组题区重新生成题包',400)
-        q = _validate_question({'batch_no': existing['batch_no'], 'stage_id': existing['stage_id'], **data})
+        q = _validate_question({'batch_no': existing['batch_no'], 'stage_id': existing['stage_id'],
+                                'product_id': existing['product_id'], 'skill_code': existing['skill_code'], 'fact_id': existing['fact_id'], **data})
+        if q['product_id'] and not conn.execute('SELECT 1 FROM products WHERE id=?',(q['product_id'],)).fetchone():
+            raise PracticeError('关联产品不存在', 400)
+        if q['fact_id'] and not conn.execute('SELECT 1 FROM practice_learning_facts WHERE id=? AND product_id=?',(q['fact_id'],q['product_id'])).fetchone():
+            raise PracticeError('关联事实卡不存在', 400)
         others = [dict(r) for r in conn.execute('SELECT stage_id,batch_no,enabled FROM practice_quiz_questions WHERE id<>?', (question_id,))]
         _check_capacity(others + [q])
         _write_question(conn, question_id, q)
+        if q['stage_id']==0:
+            affected={existing['product_id'],q['product_id']}
+            affected.update(r['product_id'] for r in conn.execute('SELECT product_id FROM practice_learning_unit_questions WHERE question_id=?',(question_id,)))
+            for product_id in affected-{None}:
+                conn.execute('UPDATE practice_learning_courses SET published=0,updated_at=? WHERE product_id=?',
+                             (now().isoformat(),product_id))
 
 
 def _operation(conn, request_id, payload):
@@ -482,6 +498,10 @@ def add_question(data):
             last_count=conn.execute('SELECT COUNT(*) FROM practice_quiz_questions WHERE stage_id=0 AND archived=0 AND batch_no=?',(batch_row,)).fetchone()[0]
             payload={**payload,'stage_id':0,'enabled':False,'batch_no':batch_row if batch_row and last_count<10 else batch_row+1}
         q = _validate_question(payload)
+        if q['product_id'] and not conn.execute('SELECT 1 FROM products WHERE id=?',(q['product_id'],)).fetchone():
+            raise PracticeError('关联产品不存在', 400)
+        if q['fact_id'] and not conn.execute('SELECT 1 FROM practice_learning_facts WHERE id=? AND product_id=?',(q['fact_id'],q['product_id'])).fetchone():
+            raise PracticeError('关联事实卡不存在', 400)
         if q['stage_id']:
             _stage(conn, q['stage_id'])
         _check_capacity([dict(r) for r in conn.execute('SELECT stage_id,batch_no,enabled FROM practice_quiz_questions')] + [q])
@@ -503,7 +523,8 @@ def export_bank(stage_id=0):
         for row in conn.execute('SELECT * FROM practice_quiz_questions WHERE stage_id=? AND archived=0 ORDER BY batch_no,id', (stage_id,)):
             q = _question(row)
             values = [q['id'], q['batch_no'], q['category'], q['title'], *q['options'], 'ABCD'[q['answer_index']],
-                      q['explanation'], q['method'], '1' if q['enabled'] else '0', ';'.join(q['sources']), q['updated_at']]
+                      q['explanation'], q['method'], '1' if q['enabled'] else '0', ';'.join(q['sources']), q['updated_at'],
+                      q.get('product_id') or '', q.get('skill_code') or '', q.get('fact_id') or '']
             writer.writerow(["'" + v if isinstance(v, str) and v.startswith(('=', '+', '-', '@', '\t', '\r')) else v for v in values])
     return '\ufeff' + output.getvalue()
 
@@ -535,7 +556,7 @@ def _read_import(conn, text, stage_id=0, replace=False):
                     if question_id in seen:
                         raise ValueError('同一id在文件中出现多次')
                     seen.add(question_id)
-                    existing = conn.execute('SELECT updated_at FROM practice_quiz_questions WHERE id=? AND stage_id=? AND archived=0', (question_id, stage_id)).fetchone()
+                    existing = conn.execute('SELECT updated_at,product_id,skill_code,fact_id FROM practice_quiz_questions WHERE id=? AND stage_id=? AND archived=0', (question_id, stage_id)).fetchone()
                     if not existing:
                         raise ValueError('id不存在；新增题请留空id')
                     if not row.get('版本') or row['版本'] != existing['updated_at']:
@@ -546,7 +567,14 @@ def _read_import(conn, text, stage_id=0, replace=False):
                     raise ValueError('推荐答案填A/B/C/D，启用填0/1')
                 q = _validate_question(dict(stage_id=stage_id, batch_no=int(row['关卡']), category=row['分类'].strip(), title=row['客户场景'],
                     options=[row[k] for k in 'ABCD'], answer_index='ABCD'.index(answer), explanation=row['解析'],
-                    method=row['参考回复'], enabled=enabled == '1', sources=[s for s in row.get('参考资料', '').split(';') if s]))
+                    method=row['参考回复'], enabled=enabled == '1', sources=[s for s in row.get('参考资料', '').split(';') if s],
+                    product_id=(int(row['产品ID']) if row.get('产品ID','').strip() else existing['product_id'] if question_id and '产品ID' not in row else None),
+                    skill_code=(row['能力标签'].strip() if '能力标签' in row else existing['skill_code'] if question_id else ''),
+                    fact_id=(int(row['事实卡ID']) if row.get('事实卡ID','').strip() else existing['fact_id'] if question_id and '事实卡ID' not in row else None)))
+                if q['product_id'] and not conn.execute('SELECT 1 FROM products WHERE id=?',(q['product_id'],)).fetchone():
+                    raise ValueError('关联产品不存在')
+                if q['fact_id'] and not conn.execute('SELECT 1 FROM practice_learning_facts WHERE id=? AND product_id=?',(q['fact_id'],q['product_id'])).fetchone():
+                    raise ValueError('关联事实卡不存在')
                 changes.append({'id': question_id, **q})
             except (ValueError, PracticeError) as exc:
                 errors.append({'row': line, 'message': exc.message if isinstance(exc, PracticeError) else str(exc)})
@@ -584,6 +612,16 @@ def import_bank(data):
         if _replace_mode(data):
             conn.execute('UPDATE practice_quiz_questions SET archived=1,enabled=0 WHERE stage_id=?', (data['stage_id'],))
         ids = [_write_question(conn, q['id'], q) for q in changes]
+        affected = set()
+        if _replace_mode(data):
+            affected.update(r['product_id'] for r in conn.execute('''SELECT DISTINCT l.product_id FROM practice_learning_unit_questions l
+                JOIN practice_quiz_questions q ON q.id=l.question_id WHERE q.archived=1 AND q.stage_id=?''', (data['stage_id'],)))
+        affected.update(q['product_id'] for q in changes if q['stage_id']==0 and q['product_id'] and q['fact_id'])
+        if ids:
+            affected.update(r['product_id'] for r in conn.execute('''SELECT DISTINCT product_id FROM practice_learning_unit_questions
+                WHERE question_id IN (%s)''' % ','.join('?' for _ in ids), ids))
+        for product_id in affected:
+            conn.execute('UPDATE practice_learning_courses SET published=0,updated_at=? WHERE product_id=?', (now().isoformat(),product_id))
         result = {'added': sum(q['id'] is None for q in changes), 'updated': sum(q['id'] is not None for q in changes), 'ids': ids}
         conn.execute('INSERT INTO practice_quiz_admin_operations VALUES(?,?,?)', (key, digest, json.dumps(result)))
         return result
