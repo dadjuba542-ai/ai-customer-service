@@ -3,6 +3,8 @@ import logging
 import time
 import uuid
 from dataclasses import dataclass, field, replace
+from queue import Empty, Queue
+from threading import Event, Thread
 
 import requests
 
@@ -37,6 +39,12 @@ class ChatServiceError(Exception):
         self.chat_id = ''
         self.first_token_ms = None
         self.upstream_event_count = 0
+
+
+def _raise_if_cancelled(cancel_event):
+    if cancel_event is not None and cancel_event.is_set():
+        raise ChatServiceError('请求已取消', status_code=499, retryable=False,
+                               error_category='cancelled')
 
 
 def _attach_diagnostic(exc, diagnostic, state=None):
@@ -326,14 +334,16 @@ def _rewrite_question(ctx, bot_id):
     return answer
 
 
-def iter_coze_stream(ctx, read_timeout=30):
+def _iter_coze_stream_impl(ctx, read_timeout=30, cancel_event=None):
     # V2 保留旧路径；改写只使用 V3，未配置时无额外调用。
+    started_at = time.monotonic()
     bot_id = get_setting('coze_rewrite_bot_id', '').strip() if 'additional_messages' in ctx.payload else ''
     if not bot_id:
-        yield from _iter_coze_stream_once(ctx, read_timeout=read_timeout)
+        yield from _iter_coze_stream_once(ctx, read_timeout=read_timeout, cancel_event=cancel_event)
         return
     final = None
-    for event in _iter_coze_stream_once(ctx, read_timeout=read_timeout, persist=False):
+    for event in _iter_coze_stream_once(ctx, read_timeout=read_timeout, persist=False,
+                                       cancel_event=cancel_event):
         if event['event'] == 'done':
             final = event['data']
         else:
@@ -341,30 +351,82 @@ def iter_coze_stream(ctx, read_timeout=30):
     if final is None:
         raise ChatServiceError('Coze 对话未完成', retryable=True)
     if final['full_text'].strip() == KNOWLEDGE_EMPTY_REPLY:
-        logger.info('chat.recovery started request_id=%s', ctx.request_id)
-        yield {'event': 'replace', 'data': {'text': '正在换个问法查找资料…'}}
-        try:
-            rewritten = _rewrite_question(ctx, bot_id)
-            if rewritten:
-                payload = dict(ctx.payload)
-                messages = list(payload['additional_messages'])
-                messages[-1] = {**messages[-1], 'content': rewritten}
-                payload['additional_messages'] = messages
-                retry_ctx = replace(ctx, payload=payload, request_id=ctx.request_id + '-retry')
-                recovered = _collect_answer(retry_ctx, 20)
-                if recovered['full_text'].strip() and recovered['full_text'].strip() != KNOWLEDGE_EMPTY_REPLY:
-                    final = {**final, 'full_text': recovered['full_text'],
-                             'coze_message_id': recovered['coze_message_id']}
-        except (ChatServiceError, requests.exceptions.RequestException):
-            logger.warning('chat.recovery failed request_id=%s', ctx.request_id)
-        yield {'event': 'replace', 'data': {'text': final['full_text']}}
-        logger.info('chat.recovery completed request_id=%s recovered=%s', ctx.request_id,
-                    final['full_text'].strip() != KNOWLEDGE_EMPTY_REPLY)
+        initial_elapsed = time.monotonic() - started_at
+        if Config.CHAT_REWRITE_MAX_INITIAL_SECONDS and initial_elapsed >= Config.CHAT_REWRITE_MAX_INITIAL_SECONDS:
+            logger.info(
+                'chat.recovery skipped request_id=%s elapsed_ms=%s reason=slow_initial',
+                ctx.request_id,
+                int(initial_elapsed * 1000),
+            )
+        else:
+            logger.info('chat.recovery started request_id=%s', ctx.request_id)
+            yield {'event': 'replace', 'data': {'text': '正在换个问法查找资料…'}}
+            try:
+                rewritten = _rewrite_question(ctx, bot_id)
+                if rewritten:
+                    payload = dict(ctx.payload)
+                    messages = list(payload['additional_messages'])
+                    messages[-1] = {**messages[-1], 'content': rewritten}
+                    payload['additional_messages'] = messages
+                    retry_ctx = replace(ctx, payload=payload, request_id=ctx.request_id + '-retry')
+                    recovered = _collect_answer(retry_ctx, 20)
+                    if recovered['full_text'].strip() and recovered['full_text'].strip() != KNOWLEDGE_EMPTY_REPLY:
+                        final = {**final, 'full_text': recovered['full_text'],
+                                 'coze_message_id': recovered['coze_message_id']}
+            except (ChatServiceError, requests.exceptions.RequestException):
+                logger.warning('chat.recovery failed request_id=%s', ctx.request_id)
+            yield {'event': 'replace', 'data': {'text': final['full_text']}}
+            logger.info('chat.recovery completed request_id=%s recovered=%s', ctx.request_id,
+                        final['full_text'].strip() != KNOWLEDGE_EMPTY_REPLY)
     final['history_id'] = persist_chat_history(ctx, final['full_text'], final['coze_message_id'])
     yield {'event': 'done', 'data': final}
 
 
-def _iter_coze_stream_once(ctx, read_timeout=30, persist=True, include_cases=True, deadline=None):
+def iter_coze_stream(ctx, read_timeout=30):
+    queue = Queue()
+    stop = Event()
+    heartbeat = Config.CHAT_STREAM_HEARTBEAT_SECONDS
+    deadline = time.monotonic() + Config.CHAT_TOTAL_TIMEOUT_SECONDS
+
+    def worker():
+        try:
+            for event in _iter_coze_stream_impl(ctx, read_timeout=read_timeout, cancel_event=stop):
+                if stop.is_set():
+                    return
+                queue.put(('event', event))
+        except BaseException as exc:
+            if not stop.is_set():
+                queue.put(('error', exc))
+        finally:
+            if not stop.is_set():
+                queue.put(('end', None))
+
+    Thread(target=worker, name=f'chat-upstream-{ctx.request_id[:8]}', daemon=True).start()
+    try:
+        while True:
+            remaining = deadline - time.monotonic()
+            if remaining <= 0:
+                raise ChatServiceError('回答超时，请稍后重试', status_code=504, retryable=True,
+                                       error_category='timeout')
+            try:
+                kind, payload = queue.get(timeout=min(heartbeat, remaining))
+            except Empty:
+                yield {'event': 'status', 'data': {'status': 'waiting', 'request_id': ctx.request_id}}
+                continue
+            if kind == 'event':
+                yield payload
+                if payload.get('event') == 'done':
+                    return
+            elif kind == 'error':
+                raise payload
+            else:
+                return
+    finally:
+        stop.set()
+
+
+def _iter_coze_stream_once(ctx, read_timeout=30, persist=True, include_cases=True, deadline=None,
+                           cancel_event=None):
     stream_payload = dict(ctx.payload)
     stream_payload['stream'] = True
     related_case_result = find_related_cases(ctx.message) if include_cases else {'items': [], 'total': 0}
@@ -407,6 +469,7 @@ def _iter_coze_stream_once(ctx, read_timeout=30, persist=True, include_cases=Tru
             yield {'event': 'status', 'data': {'status': 'connected', 'request_id': ctx.request_id}}
 
             for upstream_event, raw_data in _iter_sse_events(response, deadline=deadline):
+                _raise_if_cancelled(cancel_event)
                 if deadline is not None and time.monotonic() >= deadline:
                     raise ChatServiceError('请求超时，请稍后重试', status_code=504, retryable=True,
                                            error_category='timeout')
@@ -454,6 +517,7 @@ def _iter_coze_stream_once(ctx, read_timeout=30, persist=True, include_cases=Tru
             if not state.full_text:
                 raise ChatServiceError('抱歉，我现在无法回答您的问题。', status_code=502, retryable=False)
 
+            _raise_if_cancelled(cancel_event)
             yield {'event': 'status', 'data': {'status': 'saving', 'request_id': ctx.request_id}}
             save_started_at = time.monotonic()
             history_id = persist_chat_history(ctx, state.full_text, state.coze_message_id) if persist else None

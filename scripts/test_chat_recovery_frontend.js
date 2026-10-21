@@ -27,7 +27,7 @@ global.parseSSEChunk = chunk => {
   return { event: lines[0].slice(7), data: JSON.parse(lines[1].slice(6)) };
 };
 const source = fs.readFileSync(path.join(__dirname, '..', 'static/js/chat-stream.js'), 'utf8');
-vm.runInThisContext(`${source}\nglobalThis.runStream = streamChatRequest;`);
+vm.runInThisContext(`${source}\nglobalThis.runStream = streamChatRequest;\nglobalThis.runFriendly = friendlyChatError;`);
 
 async function run(events) {
   state.messages = [];
@@ -48,6 +48,9 @@ async function run(events) {
 }
 
 (async () => {
+  assert.equal(globalThis.runFriendly('network error'), '连接超时或网络中断，请稍后重试');
+  assert.equal(globalThis.runFriendly('请求超时，请稍后重试'), '回答超时，请稍后重试');
+  assert.equal(globalThis.runFriendly('Coze API错误: token invalid'), 'Coze API错误: token invalid');
   const result = await run([
     ['delta', { text: '原兜底' }],
     ['replace', { text: '正在换个问法查找资料…' }],

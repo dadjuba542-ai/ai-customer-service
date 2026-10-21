@@ -1,3 +1,15 @@
+function friendlyChatError(message) {
+  const text = String(message || '').trim();
+  if (!text) return '发送失败，请稍后重试';
+  if (/network\s*error|failed to fetch|load failed|networkerror|fetch failed|unexpected token/i.test(text)) {
+    return '连接超时或网络中断，请稍后重试';
+  }
+  if (/timeout|timed out|请求超时|超时/i.test(text)) {
+    return '回答超时，请稍后重试';
+  }
+  return text;
+}
+
 async function streamChatRequest(payload, agentId) {
   const controller = new AbortController();
   state.chatAbortController = controller;
@@ -23,7 +35,7 @@ async function streamChatRequest(payload, agentId) {
 
   if (!res.ok || !res.body) {
     const errorPayload = await res.json().catch(() => ({}));
-    const error = new Error(errorPayload.error || '流式连接失败');
+    const error = new Error(friendlyChatError(errorPayload.error || '流式连接失败'));
     error.errorCode = errorPayload.error_code || '';
     error.retryAfter = Number(errorPayload.retry_after || res.headers?.get?.('Retry-After') || 0);
     error.canFallback = !['chat_capacity', 'chat_queue_full', 'chat_queue_unavailable', 'chat_pending'].includes(error.errorCode);
@@ -101,7 +113,7 @@ async function streamChatRequest(payload, agentId) {
       }
 
       if (parsed.event === 'error') {
-        const error = new Error(parsed.data?.message || '流式回复失败');
+        const error = new Error(friendlyChatError(parsed.data?.message || '流式回复失败'));
         if (botMsgId) {
           const msg = state.messages.find(m => m.id === botMsgId);
           const partial = msg?.content || '';
@@ -119,7 +131,7 @@ async function streamChatRequest(payload, agentId) {
   }
 
   if (!sawOutput) {
-    const error = new Error('流式回复中断，请稍后重试');
+    const error = new Error('回答超时或连接中断，请稍后重试');
     error.canFallback = true;
     throw error;
   }
@@ -160,7 +172,7 @@ async function waitForChatJob(jobId, agentId, initialPosition = 1) {
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
-        const error = new Error(data.error || '排队状态查询失败');
+        const error = new Error(friendlyChatError(data.error || '排队状态查询失败'));
         error.errorCode = data.error_code || '';
         error.canFallback = false;
         throw error;
@@ -188,7 +200,7 @@ async function waitForChatJob(jobId, agentId, initialPosition = 1) {
       } else if (['failed', 'expired', 'cancelled'].includes(data.status)) {
         localStorage.removeItem('chat_pending_job');
         state.chatJobId = null;
-        const error = new Error(data.error || '排队任务未能完成');
+        const error = new Error(friendlyChatError(data.error || '排队任务未能完成'));
         error.errorCode = data.error_code || `chat_${data.status}`;
         error.canFallback = false;
         throw error;
@@ -225,8 +237,8 @@ async function resumeQueuedChat() {
   } catch (error) {
     localStorage.removeItem('chat_pending_job');
     state.chatJobId = null;
-    addBotMessage(error.message || '排队任务未能完成', { agentId: pending.agentId || state.activeAgentId });
-    showToast(error.message || '排队任务未能完成', 'error');
+    addBotMessage(friendlyChatError(error.message) || '排队任务未能完成', { agentId: pending.agentId || state.activeAgentId });
+    showToast(friendlyChatError(error.message) || '排队任务未能完成', 'error');
     return null;
   } finally {
     state.chatAbortController = null;
@@ -243,7 +255,7 @@ async function fallbackToSyncChat(payload, agentId) {
   }, 180000);
   const data = await res.json();
   if (!res.ok) {
-    throw new Error(data.error || '发送失败');
+    throw new Error(friendlyChatError(data.error || '发送失败'));
   }
   addBotMessage(data.bot_response, {
     agentId,
@@ -275,19 +287,19 @@ async function executeChatRequest({ text, agentId }) {
         checkSurvey();
         return result;
       } catch (fallbackError) {
-        addBotMessage(fallbackError.message || '网络错误，请检查您的连接。', { agentId });
-        showToast(fallbackError.message || '发送失败', 'error');
+        addBotMessage(friendlyChatError(fallbackError.message) || '连接超时或网络中断，请稍后重试', { agentId });
+        showToast(friendlyChatError(fallbackError.message) || '发送失败', 'error');
         throw fallbackError;
       }
     }
 
     if (error.renderedInMessage) {
-      showToast(error.message || '回复中断', 'error');
+      showToast(friendlyChatError(error.message) || '回复中断', 'error');
       throw error;
     }
 
-    addBotMessage(error.message || '网络错误，请检查您的连接。', { agentId });
-    showToast(error.message || '发送失败', 'error');
+    addBotMessage(friendlyChatError(error.message) || '连接超时或网络中断，请稍后重试', { agentId });
+    showToast(friendlyChatError(error.message) || '发送失败', 'error');
     throw error;
   } finally {
     state.chatAbortController = null;

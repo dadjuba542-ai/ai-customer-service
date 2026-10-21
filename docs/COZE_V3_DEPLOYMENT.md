@@ -13,8 +13,14 @@ COZE_CHAT_API_VERSION=v3
 COZE_V3_CHAT_URL=https://api.coze.cn/v3/chat
 CHAT_CONTEXT_ROUNDS=6
 CHAT_CONTEXT_MESSAGE_MAX_CHARS=2000
+CHAT_TOTAL_TIMEOUT_SECONDS=150
+CHAT_STREAM_HEARTBEAT_SECONDS=15
+CHAT_REWRITE_MAX_INITIAL_SECONDS=30
 ```
 
+- `CHAT_TOTAL_TIMEOUT_SECONDS` 必须小于 nginx `proxy_read_timeout` 和 gunicorn `--timeout`，否则网关会先断开，前端只能看到 `network error`。推荐 nginx 180s、gunicorn 180s、应用 150s。
+- 等待 Coze 期间后端每 `CHAT_STREAM_HEARTBEAT_SECONDS` 秒发送一次 SSE status 心跳，避免反代按读空闲超时断流。
+- 首次召回为空且已经耗时超过 `CHAT_REWRITE_MAX_INITIAL_SECONDS` 时，跳过改写重查，直接返回补充产品名的提示，避免再叠加 30s。
 - 原有 Bot ID、后台配置的 COZE API Key 可以沿用。智能体需已发布到 API 渠道，令牌需具备 `chat` 权限。
 - V3 会通过 `additional_messages` 传递完整历史问答，最后一条为原始当前提问。不会把历史问答拼进当前提问。
 - `CHAT_CONTEXT_DELIVERY` 只影响 V2 回退，V3 无需修改这一项。
@@ -33,6 +39,9 @@ export COZE_CHAT_API_VERSION=v3
 export COZE_V3_CHAT_URL=https://api.coze.cn/v3/chat
 export CHAT_CONTEXT_ROUNDS=6
 export CHAT_CONTEXT_MESSAGE_MAX_CHARS=2000
+export CHAT_TOTAL_TIMEOUT_SECONDS=150
+export CHAT_STREAM_HEARTBEAT_SECONDS=15
+export CHAT_REWRITE_MAX_INITIAL_SECONDS=30
 python3 app.py
 ```
 
@@ -158,5 +167,35 @@ python3 scripts/diagnose_coze.py --agent-id translator --live
 结束后把 `COZE_DIAGNOSTICS_ENABLED` 改回 `false` 并重启。回归测试可运行 `python3 scripts/test_coze_diagnostics.py`，它模拟上游，验证日志脱敏、事件统计、回答保持一致以及对照脚本不写入数据库。
 
 除日志外，`/api/chat/send`、`/api/chat/stream` 和排队任务还会把每次请求的元信息写入 `chat_request_log`，失败和客户端断开也会记录，便于事后按 `request_id` 回查。该表不保存问题正文，只有长度和指纹；可通过只读 MCP 工具 `recent_chat_failures`、`chat_request_detail`、`server_health` 查询，详见 [MCP 集成说明](MCP_INTEGRATION.md)。回归测试：`python3 scripts/test_chat_request_log.py`。
+
+## 7. nginx / gunicorn 超时对齐
+
+聊天是 SSE 长连接，推荐三层超时按以下顺序递增：
+
+- 应用总时限：`CHAT_TOTAL_TIMEOUT_SECONDS=150`
+- gunicorn：`--timeout 180`（`railway.json` / `zeabur.json` 已同步）
+- nginx chat 路径：`proxy_read_timeout 180s`
+
+nginx 必须单独给 `/api/chat/` 配 location，否则全局 60s 会先于后端断开：
+
+```nginx
+location ^~ /api/chat/ {
+    proxy_pass http://127.0.0.1:5001;   # 预览站按实际端口修改
+    proxy_http_version 1.1;
+    proxy_set_header Connection "";
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_buffering off;
+    proxy_cache off;
+    proxy_read_timeout 180s;
+    proxy_send_timeout 180s;
+    send_timeout 180s;
+    gzip off;
+}
+```
+
+修改后执行 `nginx -t` 再 reload。`proxy_read_timeout` 是读空闲超时，不是总时长；应用侧已每 15s 发送 SSE 心跳，避免长时间等待 Coze 时被反代误判为空闲。
 
 更多实现细节见 [上下文传递说明](CHAT_CONTEXT.md)。

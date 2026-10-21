@@ -27,6 +27,12 @@ class Config:
     MAX_CONTENT_LENGTH = int(os.environ.get('MAX_CONTENT_LENGTH', 52 * 1024 * 1024))
     AUDIO_MAX_UPLOAD_BYTES = max(1, int(os.environ.get('AUDIO_MAX_UPLOAD_BYTES', 50 * 1024 * 1024)))
     CHAT_RATE_LIMIT = int(os.environ.get('CHAT_RATE_LIMIT', '12'))
+    # 单次聊天（含空召回改写/重查）的总时限，必须小于 nginx/gunicorn 超时。
+    CHAT_TOTAL_TIMEOUT_SECONDS = max(30, int(os.environ.get('CHAT_TOTAL_TIMEOUT_SECONDS', '150')))
+    # 等待上游时向前端发送 SSE 心跳的间隔，避免反代按读空闲超时断流。
+    CHAT_STREAM_HEARTBEAT_SECONDS = max(1, int(os.environ.get('CHAT_STREAM_HEARTBEAT_SECONDS', '15')))
+    # 空召回时，首次 Coze 调用超过该秒数则跳过改写重查，直接返回补充信息提示。
+    CHAT_REWRITE_MAX_INITIAL_SECONDS = max(0, int(os.environ.get('CHAT_REWRITE_MAX_INITIAL_SECONDS', '30')))
     CHAT_STREAM_MAX_CONCURRENT_PER_WORKER = max(
         1,
         int(os.environ.get('CHAT_STREAM_MAX_CONCURRENT_PER_WORKER', '3')),
@@ -91,6 +97,8 @@ class Config:
             raise RuntimeError('COZE_CHAT_API_VERSION must be v2 or v3')
         if cls.CHAT_CONTEXT_DELIVERY not in {'query', 'history'}:
             raise RuntimeError('CHAT_CONTEXT_DELIVERY must be query or history')
+        if cls.CHAT_TOTAL_TIMEOUT_SECONDS <= cls.CHAT_STREAM_HEARTBEAT_SECONDS:
+            raise RuntimeError('CHAT_TOTAL_TIMEOUT_SECONDS must be greater than CHAT_STREAM_HEARTBEAT_SECONDS')
         if len(cls.SECRET_KEY) < 32:
             raise RuntimeError('SECRET_KEY is required and must contain at least 32 characters')
         if '*' in cls.CORS_ORIGINS:
