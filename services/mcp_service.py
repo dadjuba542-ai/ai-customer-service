@@ -10,8 +10,11 @@
 
 import json
 import re
+import time
 from datetime import datetime, timedelta
+from urllib.parse import urlsplit
 
+from config import Config
 from models import (
     get_all_agent_configs,
     get_case_document_by_id,
@@ -22,7 +25,9 @@ from models import (
 )
 
 PROTOCOL_VERSION = '2024-11-05'
-SERVER_INFO = {'name': 'ai-customer-service', 'version': '0.1.0'}
+SERVER_INFO = {'name': 'ai-customer-service', 'version': Config.APP_VERSION}
+PROCESS_STARTED_AT = time.monotonic()
+PROCESS_STARTED_UTC = datetime.utcnow()
 MAX_FIELD_CHARS = 4000
 MAX_ROWS = 50
 
@@ -85,8 +90,33 @@ def _columns(conn, table):
     return {row['name'] for row in rows}
 
 
-def _to_text(payload):
-    return _truncate(json.dumps(payload, ensure_ascii=False, indent=2, default=str))
+def _to_text(payload, limit=MAX_FIELD_CHARS):
+    return _truncate(json.dumps(payload, ensure_ascii=False, indent=2, default=str), limit)
+
+
+def _table_exists(conn, table):
+    row = conn.execute(
+        "SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = ?", (table,)
+    ).fetchone()
+    return bool(row)
+
+
+def _safe_url(url):
+    parts = urlsplit(url or '')
+    host = parts.hostname or ''
+    if ':' in host:
+        host = '[%s]' % host
+    if parts.port:
+        host += ':%s' % parts.port
+    return '%s://%s%s' % (parts.scheme, host, parts.path)
+
+
+def _secret_configured(key, env_value):
+    try:
+        from services.secret_service import get_secret_setting
+        return bool((get_secret_setting(key, env_value) or '').strip())
+    except Exception:
+        return bool((env_value or '').strip())
 
 
 # ============================================================
@@ -363,6 +393,154 @@ def tool_list_agents(args):
     return _to_text({'count': len(items), 'items': items, 'note': 'prompt 与 bot_id 出于安全未返回'})
 
 
+def tool_recent_chat_failures(args):
+    days = _int_arg(args, 'days', 7, low=1, high=365)
+    limit = _int_arg(args, 'limit', 20)
+    agent_id = ((args or {}).get('agent_id') or '').strip()[:64]
+    error_category = ((args or {}).get('error_category') or '').strip()[:40]
+    since = _since(days, 7)
+
+    conn = get_db_connection()
+    try:
+        if not _table_exists(conn, 'chat_request_log'):
+            return _to_text({
+                'window_days': days,
+                'count': 0,
+                'items': [],
+                'note': 'chat_request_log 尚未创建，部署后产生的新请求才会记录',
+            })
+        where = ["created_at >= ?", "outcome != 'success'"]
+        params = [since]
+        if agent_id:
+            where.append('agent_id = ?')
+            params.append(agent_id)
+        if error_category:
+            where.append('error_category = ?')
+            params.append(error_category)
+        where_sql = ' AND '.join(where)
+        rows = conn.execute(
+            '''SELECT id, request_id, endpoint, agent_id, query_type, channel, outcome,
+                      error_category, error_code, http_status, retryable, duration_ms,
+                      first_token_ms, upstream_event_count, conversation_id, chat_id,
+                      history_id, user_ref, message_fingerprint, message_length,
+                      started_at, created_at
+               FROM chat_request_log
+               WHERE %s
+               ORDER BY created_at DESC, id DESC LIMIT ?''' % where_sql,
+            params + [limit],
+        ).fetchall()
+        summary = [dict(row) for row in conn.execute(
+            '''SELECT outcome, error_category, COUNT(*) AS cnt
+               FROM chat_request_log
+               WHERE %s
+               GROUP BY outcome, error_category
+               ORDER BY cnt DESC''' % where_sql,
+            params,
+        ).fetchall()]
+    finally:
+        conn.close()
+
+    items = [dict(row) for row in rows]
+    return _to_text({
+        'window_days': days,
+        'since_utc': since,
+        'count': len(items),
+        'summary': summary,
+        'items': items,
+        'note': '仅含请求元信息，不保存问题正文；message_fingerprint 可用于关联同一提问',
+    }, 12000)
+
+
+def tool_chat_request_detail(args):
+    request_id = ((args or {}).get('request_id') or '').strip()[:64]
+    if not request_id:
+        raise ValueError('request_id 不能为空')
+    limit = _int_arg(args, 'limit', 20)
+    conn = get_db_connection()
+    try:
+        if not _table_exists(conn, 'chat_request_log'):
+            return _to_text({'request_id': request_id, 'count': 0, 'items': [],
+                             'note': 'chat_request_log 尚未创建'})
+        rows = conn.execute(
+            '''SELECT id, request_id, endpoint, agent_id, query_type, channel, outcome,
+                      error_category, error_code, http_status, retryable, duration_ms,
+                      first_token_ms, upstream_event_count, conversation_id, chat_id,
+                      history_id, user_ref, message_fingerprint, message_length,
+                      started_at, created_at
+               FROM chat_request_log
+               WHERE request_id = ?
+               ORDER BY id ASC LIMIT ?''',
+            (request_id, limit),
+        ).fetchall()
+    finally:
+        conn.close()
+    return _to_text({
+        'request_id': request_id,
+        'count': len(rows),
+        'items': [dict(row) for row in rows],
+        'note': '同一 request_id 可能有多条记录（流式失败后回退同步、重试或排队）',
+    }, 12000)
+
+
+def tool_server_health(args):
+    coze_url = Config.COZE_V3_CHAT_URL if Config.COZE_CHAT_API_VERSION == 'v3' else Config.COZE_API_URL
+    health = {
+        'server_time_utc': datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S'),
+        'started_at_utc': PROCESS_STARTED_UTC.strftime('%Y-%m-%d %H:%M:%S'),
+        'process_uptime_seconds': int(time.monotonic() - PROCESS_STARTED_AT),
+        'app_version': Config.APP_VERSION,
+        'coze': {
+            'api_version': Config.COZE_CHAT_API_VERSION,
+            'api_url': _safe_url(coze_url),
+            'api_key_configured': _secret_configured('coze_api_key', Config.COZE_API_KEY),
+            'diagnostics_enabled': Config.COZE_DIAGNOSTICS_ENABLED,
+            'context_rounds': Config.CHAT_CONTEXT_ROUNDS,
+        },
+        'mcp': {
+            'token_configured': _secret_configured('mcp_token', Config.MCP_TOKEN),
+        },
+    }
+    conn = None
+    try:
+        conn = get_db_connection()
+        conn.execute('SELECT 1').fetchone()
+        counts = {}
+        for table in ('chat_history', 'chat_request_log', 'chat_jobs', 'settings', 'agent_configs'):
+            if _table_exists(conn, table):
+                counts[table] = conn.execute('SELECT COUNT(*) AS c FROM %s' % table).fetchone()['c']
+        queue = {}
+        if _table_exists(conn, 'chat_jobs'):
+            queue = {row['status']: row['c'] for row in conn.execute(
+                "SELECT status, COUNT(*) AS c FROM chat_jobs WHERE status IN ('queued', 'running') GROUP BY status"
+            ).fetchall()}
+        latest_migration = None
+        if _table_exists(conn, 'schema_migrations'):
+            row = conn.execute(
+                'SELECT version, name, applied_at FROM schema_migrations ORDER BY applied_at DESC, version DESC LIMIT 1'
+            ).fetchone()
+            latest_migration = dict(row) if row else None
+        recent_failures = None
+        if _table_exists(conn, 'chat_request_log'):
+            recent_failures = conn.execute(
+                '''SELECT COUNT(*) AS c FROM chat_request_log
+                   WHERE outcome != 'success' AND created_at >= datetime('now', '-1 day')'''
+            ).fetchone()['c']
+        health['database'] = {
+            'ok': True,
+            'table_counts': counts,
+            'queue': queue,
+            'latest_migration': latest_migration,
+            'recent_failures_24h': recent_failures,
+            'request_log_available': _table_exists(conn, 'chat_request_log'),
+        }
+    except Exception as exc:
+        health['database'] = {'ok': False, 'error': exc.__class__.__name__}
+    finally:
+        if conn is not None:
+            conn.close()
+    return _to_text(health)
+
+
 TOOLS = [
     {
         'name': 'chat_stats',
@@ -493,6 +671,39 @@ TOOLS = [
         'description': '列出已配置的智能体（名称/类型/描述），了解现有 AI 能力边界。',
         'inputSchema': {'type': 'object', 'properties': {}},
         'handler': tool_list_agents,
+    },
+    {
+        'name': 'recent_chat_failures',
+        'description': '查询最近失败的聊天请求（含超时/上游错误/中断），用于定位“为什么只有这一问报错”。不返回问题正文。',
+        'inputSchema': {
+            'type': 'object',
+            'properties': {
+                'days': {'type': 'integer', 'description': '窗口（天），默认 7'},
+                'limit': {'type': 'integer', 'description': '返回条数，默认 20，最大 50'},
+                'agent_id': {'type': 'string', 'description': '可选，按智能体过滤'},
+                'error_category': {'type': 'string', 'description': '可选，如 network_error / timeout / upstream_error'},
+            },
+        },
+        'handler': tool_recent_chat_failures,
+    },
+    {
+        'name': 'chat_request_detail',
+        'description': '按 request_id 查看一次聊天请求的完整诊断记录（含流式失败后的回退/重试）。不返回问题正文。',
+        'inputSchema': {
+            'type': 'object',
+            'properties': {
+                'request_id': {'type': 'string', 'description': '必填，请求 id'},
+                'limit': {'type': 'integer', 'description': '返回条数，默认 20'},
+            },
+            'required': ['request_id'],
+        },
+        'handler': tool_chat_request_detail,
+    },
+    {
+        'name': 'server_health',
+        'description': '查看服务健康摘要：版本、运行时长、数据库表数量、队列、Coze/MCP 配置是否存在（不返回密钥）。',
+        'inputSchema': {'type': 'object', 'properties': {}},
+        'handler': tool_server_health,
     },
 ]
 

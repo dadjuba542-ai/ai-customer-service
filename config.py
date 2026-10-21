@@ -2,6 +2,10 @@ import os
 
 class Config:
     BASE_DIR = os.path.dirname(__file__)
+    APP_VERSION = (os.environ.get('APP_VERSION')
+                   or os.environ.get('RAILWAY_GIT_COMMIT_SHA')
+                   or os.environ.get('ZEABUR_GIT_COMMIT_SHA')
+                   or 'dev')
     SECRET_KEY = os.environ.get('SECRET_KEY', '')
     COZE_API_URL = os.environ.get('COZE_API_URL', 'https://api.coze.cn/open_api/v2/chat')
     COZE_V3_CHAT_URL = os.environ.get('COZE_V3_CHAT_URL', 'https://api.coze.cn/v3/chat')

@@ -157,4 +157,6 @@ python3 scripts/diagnose_coze.py --agent-id translator --live
 
 结束后把 `COZE_DIAGNOSTICS_ENABLED` 改回 `false` 并重启。回归测试可运行 `python3 scripts/test_coze_diagnostics.py`，它模拟上游，验证日志脱敏、事件统计、回答保持一致以及对照脚本不写入数据库。
 
+除日志外，`/api/chat/send`、`/api/chat/stream` 和排队任务还会把每次请求的元信息写入 `chat_request_log`，失败和客户端断开也会记录，便于事后按 `request_id` 回查。该表不保存问题正文，只有长度和指纹；可通过只读 MCP 工具 `recent_chat_failures`、`chat_request_detail`、`server_health` 查询，详见 [MCP 集成说明](MCP_INTEGRATION.md)。回归测试：`python3 scripts/test_chat_request_log.py`。
+
 更多实现细节见 [上下文传递说明](CHAT_CONTEXT.md)。

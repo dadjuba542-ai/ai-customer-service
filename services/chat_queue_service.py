@@ -8,6 +8,7 @@ import uuid
 from config import Config
 from models import get_db_connection
 from services.chat_service import ChatServiceError, build_chat_context, execute_sync_chat
+from services.chat_request_log import ChatRequestLog
 
 
 logger = logging.getLogger(__name__)
@@ -346,12 +347,15 @@ class ChatQueueDispatcher:
             'chat.queue started job_id=%s request_id=%s worker_pid=%s active=%s',
             job_id, job['request_id'], os.getpid(), active,
         )
+        request_log = None
         try:
             payload = _decode_json(job['payload_json'])
             identity = _decode_json(job['identity_json'])
             ctx = build_chat_context(payload, identity)
             ctx.request_id = job['request_id']
+            request_log = ChatRequestLog(ctx, 'queue')
             result = execute_sync_chat(ctx)
+            request_log.finish_success(result)
             complete_job(job_id, result, job.get('worker_token', ''))
             logger.info(
                 'chat.queue finished job_id=%s request_id=%s worker_pid=%s active=%s duration_ms=%s outcome=success',
@@ -359,19 +363,25 @@ class ChatQueueDispatcher:
                 int((time.monotonic() - started) * 1000),
             )
         except ChatServiceError as exc:
+            if request_log:
+                request_log.finish_error(exc)
             fail_job(job_id, exc.message, f'chat_upstream_{exc.status_code}', job.get('worker_token', ''))
             logger.warning(
                 'chat.queue finished job_id=%s request_id=%s worker_pid=%s active=%s duration_ms=%s outcome=error',
                 job_id, job['request_id'], os.getpid(), self.limiter.active,
                 int((time.monotonic() - started) * 1000),
             )
-        except Exception:
+        except Exception as exc:
+            if request_log:
+                request_log.finish_error(exc, http_status=500)
             fail_job(job_id, '回答生成失败，请稍后重试', 'chat_queue_failed', job.get('worker_token', ''))
             logger.exception(
                 'chat.queue failed job_id=%s request_id=%s worker_pid=%s active=%s',
                 job_id, job['request_id'], os.getpid(), self.limiter.active,
             )
         finally:
+            if request_log:
+                request_log.finish_interrupted()
             self.limiter.release()
             with self._jobs_lock:
                 self._jobs.discard(threading.current_thread())

@@ -470,6 +470,38 @@ MIGRATIONS.append({'version': '202610190001', 'name': 'practice_learning_paths',
 ]})
 
 
+MIGRATIONS.append({'version': '202610210001', 'name': 'create_chat_request_log', 'sqls': [
+    '''CREATE TABLE IF NOT EXISTS chat_request_log (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        request_id TEXT NOT NULL,
+        endpoint TEXT NOT NULL DEFAULT '',
+        agent_id TEXT DEFAULT '',
+        query_type TEXT DEFAULT '',
+        channel TEXT DEFAULT '',
+        user_ref TEXT DEFAULT '',
+        message_fingerprint TEXT DEFAULT '',
+        message_length INTEGER DEFAULT 0,
+        outcome TEXT NOT NULL DEFAULT '',
+        error_category TEXT DEFAULT '',
+        error_code TEXT DEFAULT '',
+        http_status INTEGER DEFAULT NULL,
+        retryable INTEGER DEFAULT 0,
+        duration_ms INTEGER DEFAULT 0,
+        first_token_ms INTEGER DEFAULT NULL,
+        upstream_event_count INTEGER DEFAULT 0,
+        conversation_id TEXT DEFAULT '',
+        chat_id TEXT DEFAULT '',
+        history_id INTEGER DEFAULT NULL,
+        started_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )''',
+    'CREATE INDEX IF NOT EXISTS idx_chat_request_log_created ON chat_request_log(created_at DESC)',
+    'CREATE INDEX IF NOT EXISTS idx_chat_request_log_failure ON chat_request_log(outcome, created_at DESC)',
+    'CREATE INDEX IF NOT EXISTS idx_chat_request_log_request ON chat_request_log(request_id)',
+    'CREATE INDEX IF NOT EXISTS idx_chat_request_log_agent ON chat_request_log(agent_id, created_at DESC)',
+]})
+
+
 def quote_identifier(value):
     return '"' + value.replace('"', '""') + '"'
 

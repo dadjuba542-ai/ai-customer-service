@@ -10,6 +10,7 @@ from config import Config
 from routes.auth import identity_required
 from services.security_service import ConcurrentRequestLimiter, rate_limit
 from services.chat_service import ChatServiceError, build_chat_context, execute_sync_chat, iter_coze_stream
+from services.chat_request_log import ChatRequestLog
 from services.chat_queue_service import (
     cancel_job,
     enqueue_job,
@@ -27,11 +28,21 @@ _stream_limiter = ConcurrentRequestLimiter(Config.CHAT_STREAM_MAX_CONCURRENT_PER
 @identity_required
 @rate_limit('chat', limit=Config.CHAT_RATE_LIMIT, window_seconds=60)
 def send_to_coze(identity):
+    request_log = None
     try:
         ctx = build_chat_context(request.get_json(silent=True) or {}, identity)
-        return jsonify(execute_sync_chat(ctx))
+        request_log = ChatRequestLog(ctx, 'sync')
+        result = execute_sync_chat(ctx)
+        request_log.finish_success(result)
+        return jsonify(result)
     except ChatServiceError as exc:
+        if request_log:
+            request_log.finish_error(exc)
         return jsonify({'error': exc.message, 'retryable': exc.retryable}), exc.status_code
+    except Exception as exc:
+        if request_log:
+            request_log.finish_error(exc, http_status=500)
+        raise
 
 
 @chat_bp.route('/stream', methods=['POST'])
@@ -97,10 +108,15 @@ def stream_to_coze(identity):
 
     @stream_with_context
     def generate():
+        request_log = ChatRequestLog(ctx, 'stream')
         try:
             for event in iter_coze_stream(ctx):
+                request_log.observe(event['event'])
+                if event['event'] == 'done':
+                    request_log.finish_success(event.get('data'))
                 yield _format_sse(event['event'], event['data'])
         except ChatServiceError as exc:
+            request_log.finish_error(exc)
             yield _format_sse(
                 'error',
                 {
@@ -109,7 +125,14 @@ def stream_to_coze(identity):
                     'request_id': ctx.request_id,
                 },
             )
+        except GeneratorExit:
+            request_log.finish_interrupted()
+            raise
+        except Exception as exc:
+            request_log.finish_error(exc, http_status=500)
+            raise
         finally:
+            request_log.finish_interrupted()
             release_slot()
 
     headers = {

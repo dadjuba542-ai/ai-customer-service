@@ -1,6 +1,6 @@
 # MCP 集成（只读数据源）
 
-> 状态：**本地 + 线上均可用** ｜ 更新日期：2026-09-23
+> 状态：**本地 + 线上均可用** ｜ 更新日期：2026-10-21
 > 定位：把本站的数据与内容以 MCP 工具形式暴露给 opencode / Claude Desktop 等
 > MCP host，用于运营分析、客服质检、文案/资讯/案例创作辅助。
 
@@ -107,6 +107,25 @@ printf '%s\n' \
 | `list_news` | `limit=20` | 资讯清单 |
 | `get_news` | `news_id`(必填) | 资讯完整正文 |
 | `list_agents` | — | 已配置智能体（不含 prompt/bot_id） |
+| `recent_chat_failures` | `days=7`, `limit=20`, `agent_id`, `error_category` | 最近失败/中断的聊天请求（不含问题正文） |
+| `chat_request_detail` | `request_id`(必填), `limit=20` | 单次请求的诊断记录，含流式失败后的回退/重试 |
+| `server_health` | — | 版本、运行时长、DB/队列表数量、Coze/MCP 配置是否存在 |
+
+### 聊天请求诊断
+
+`/api/chat/send`、`/api/chat/stream` 和排队任务都会在 `chat_request_log`
+写入一条请求元信息，失败和客户端断开也会记录。用于回答“为什么只有这一问
+报错”，但**不保存问题正文**，只保存：
+
+- `request_id`、`endpoint`、`agent_id`、`query_type`、`channel`、`user_ref`
+- `outcome`、`error_category`、`error_code`、`http_status`、`retryable`
+- `duration_ms`、`first_token_ms`、`upstream_event_count`
+- Coze `conversation_id` / `chat_id`、`history_id`
+- 问题长度和 `message_fingerprint`（归一化后 SHA-256 前缀，用于关联同一提问）
+
+排查顺序：先用 `recent_chat_failures` 按时间/智能体筛选，再用
+`chat_request_detail` 看同一 `request_id` 的多次尝试；`server_health`
+用于确认数据库、队列和 Coze 配置是否正常。
 
 ## 六、安全与运维提醒
 

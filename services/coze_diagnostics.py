@@ -47,8 +47,6 @@ class CozeDiagnostics:
         self.error_category = ''
 
     def observe(self, event, payload):
-        if not self.enabled:
-            return
         self.events[event if event in EVENT_NAMES else 'other'] += 1
         if not isinstance(payload, dict):
             if payload != '[DONE]':
