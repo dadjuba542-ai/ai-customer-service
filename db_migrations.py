@@ -502,6 +502,34 @@ MIGRATIONS.append({'version': '202610210001', 'name': 'create_chat_request_log',
 ]})
 
 
+MIGRATIONS.append({'version': '202610220001', 'name': 'practice_guided_path', 'sqls': [
+    "ALTER TABLE practice_quiz_questions ADD COLUMN learning_objective TEXT NOT NULL DEFAULT ''",
+    'ALTER TABLE practice_quiz_questions ADD COLUMN difficulty_level INTEGER',
+    'ALTER TABLE practice_quiz_questions ADD COLUMN suggested_unit_id INTEGER',
+    'ALTER TABLE practice_learning_sessions ADD COLUMN path_unit_id INTEGER',
+    '''CREATE TABLE practice_learning_path_settings (
+        id INTEGER PRIMARY KEY CHECK(id=1), product_name TEXT NOT NULL,
+        legacy_product_id INTEGER,
+        published INTEGER NOT NULL DEFAULT 0, updated_at TEXT NOT NULL)''',
+    '''CREATE TABLE practice_learning_path_units (
+        id INTEGER PRIMARY KEY AUTOINCREMENT, position INTEGER NOT NULL UNIQUE,
+        kind TEXT NOT NULL, product_id INTEGER, product_unit_no INTEGER,
+        title TEXT NOT NULL, body TEXT NOT NULL DEFAULT '', level INTEGER NOT NULL,
+        updated_at TEXT NOT NULL)''',
+    '''CREATE TABLE practice_learning_path_questions (
+        unit_id INTEGER NOT NULL, position INTEGER NOT NULL, question_id INTEGER NOT NULL,
+        PRIMARY KEY(unit_id,position), UNIQUE(question_id))''',
+    '''CREATE TABLE practice_learning_path_suggestions (
+        id INTEGER PRIMARY KEY AUTOINCREMENT, question_id INTEGER NOT NULL,
+        unit_id INTEGER NOT NULL, question_version TEXT NOT NULL, learning_objective TEXT NOT NULL,
+        difficulty_level INTEGER NOT NULL, rationale TEXT NOT NULL DEFAULT '',
+        status TEXT NOT NULL DEFAULT 'pending', created_at TEXT NOT NULL,
+        reviewed_at TEXT)''',
+    "CREATE UNIQUE INDEX practice_path_pending_unique ON practice_learning_path_suggestions(question_id,unit_id) WHERE status='pending'",
+    'CREATE INDEX practice_path_suggestions_status ON practice_learning_path_suggestions(status,created_at)',
+]})
+
+
 def quote_identifier(value):
     return '"' + value.replace('"', '""') + '"'
 

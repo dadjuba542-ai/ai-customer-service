@@ -4,6 +4,7 @@ from services.chat_service import ChatServiceError
 from services.security_service import rate_limit
 from services import practice_service as practice
 from services import practice_learning as learning
+from services import practice_path as path
 
 practice_bp = Blueprint('practice', __name__)
 admin_practice_bp = Blueprint('admin_practice', __name__)
@@ -72,6 +73,12 @@ def learning_home(identity):
     return jsonify(learning.home(identity))
 
 
+@practice_bp.route('/learning/path')
+@identity_required
+def learning_path(identity):
+    return jsonify(path.home(identity))
+
+
 @practice_bp.route('/learning/products/<int:product_id>')
 @identity_required
 def learning_product(identity, product_id):
@@ -108,6 +115,36 @@ def admin_data(user):
 @admin_required
 def learning_admin_data(user):
     return jsonify(learning.admin_data())
+
+
+@admin_practice_bp.route('/learning/path')
+@admin_required
+def path_admin_data(user):
+    return jsonify(path.admin_data())
+
+
+@admin_practice_bp.route('/learning/path/initialize', methods=['POST'])
+@admin_required
+def path_initialize(user):
+    return jsonify(path.initialize(body().get('product_name')))
+
+
+@admin_practice_bp.route('/learning/path/units/<int:unit_id>', methods=['PUT'])
+@admin_required
+def path_save_unit(user, unit_id):
+    return jsonify(path.save_unit(unit_id, body()))
+
+
+@admin_practice_bp.route('/learning/path/publish', methods=['POST'])
+@admin_required
+def path_publish(user):
+    return jsonify(path.publish())
+
+
+@admin_practice_bp.route('/learning/path/suggestions/<int:suggestion_id>', methods=['POST'])
+@admin_required
+def path_review_suggestion(user, suggestion_id):
+    return jsonify(path.review(suggestion_id, body().get('accepted')))
 
 
 @admin_practice_bp.route('/learning/products/<int:product_id>/facts/<int:unit_no>', methods=['PUT'])

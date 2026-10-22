@@ -166,6 +166,8 @@ def _public(conn, session):
                         selected_index=answers[position]['option_index'], correct=bool(answers[position]['correct']))
         questions.append(item)
     return {'id':session['id'], 'kind':session['kind'], 'product_id':session['product_id'], 'unit_no':session['unit_no'],
+            'path_unit_id':session.get('path_unit_id'),
+            'path_kind':snapshot.get('path_kind'),
             'cursor':session['cursor'], 'completed':bool(session['completed']), 'correct_count':session['correct_count'],
             'answered_count':len(answers), 'total_questions':len(snapshot['questions']), 'fact':snapshot.get('fact'), 'questions':questions,
             'assigned_day':session['assigned_day']}
@@ -187,14 +189,14 @@ def create_session(identity, data):
     require_learning()
     request_id = common.request_id(data.get('request_id'))
     kind = data.get('kind')
-    if kind not in ('unit', 'review'):
+    if kind not in ('unit', 'path', 'review'):
         raise common.PracticeError('短课类型无效', 400)
     day, stamp = common.now().date().isoformat(), common.now().isoformat()
     with common.db(True) as conn:
         previous = conn.execute('SELECT * FROM practice_learning_sessions WHERE user_id=? AND request_id=?',
                                 (identity['user_id'], request_id)).fetchone()
         if previous:
-            if previous['kind']!=kind or (kind=='unit' and (previous['product_id']!=data.get('product_id') or previous['unit_no']!=data.get('unit_no'))):
+            if previous['kind']!=kind or (kind=='unit' and (previous['product_id']!=data.get('product_id') or previous['unit_no']!=data.get('unit_no'))) or (kind=='path' and previous['path_unit_id']!=data.get('path_unit_id')):
                 raise common.PracticeError('请求标识已用于其他短课', 409)
             return _public(conn, dict(previous))
         if kind=='unit':
@@ -220,7 +222,38 @@ def create_session(identity, data):
                 raise common.PracticeError('课程内容尚未准备完整',409)
             snapshot={'fact':{k:fact[k] for k in ('id','title','body','source_url','version')},
                       'questions':[_snapshot_question(row,row['kind']) for row in selected]}
+        elif kind=='path':
+            from services import practice_path
+            path_unit_id=common.integer(data.get('path_unit_id'),1,2147483647)
+            units=practice_path._units(conn)
+            if not practice_path._ready(conn,units):
+                raise common.PracticeError('学习主线正在准备中',409)
+            unit=next((item for item in units if item['id']==path_unit_id),None)
+            if not unit:
+                raise common.PracticeError('学习单元不存在',404)
+            for prior in units:
+                if prior['position']>=unit['position']:
+                    break
+                if not practice_path._unit_done(conn,identity['user_id'],prior):
+                    raise common.PracticeError('请先完成上一单元',409)
+            existing=conn.execute('''SELECT * FROM practice_learning_sessions WHERE user_id=? AND kind='path'
+                AND path_unit_id=? AND completed=0 ORDER BY created_at DESC LIMIT 1''',
+                (identity['user_id'],path_unit_id)).fetchone()
+            if existing:
+                return _public(conn,dict(existing))
+            selected=conn.execute('''SELECT q.* FROM practice_learning_path_questions l
+                JOIN practice_quiz_questions q ON q.id=l.question_id AND q.archived=0 AND q.stage_id=0
+                WHERE l.unit_id=? ORDER BY l.position''',(path_unit_id,)).fetchall()
+            if len(selected)!=3:
+                raise common.PracticeError('沟通单元内容尚未准备完整',409)
+            snapshot={'path_kind':unit['kind'],
+                      'fact':{'id':unit['id'],'title':unit['title'],'body':unit['body'],
+                              'source_url':'','version':1},
+                      'questions':[_snapshot_question(row,'knowledge' if unit['kind']=='product' and index<2 else 'application')
+                                   for index,row in enumerate(selected)]}
+            product_id,unit_no=None,None
         else:
+            path_unit_id=None
             product_id,unit_no=None,None
             existing=conn.execute('''SELECT * FROM practice_learning_sessions WHERE user_id=? AND kind='review'
                 AND assigned_day=? ORDER BY created_at DESC LIMIT 1''',(identity['user_id'],day)).fetchone()
@@ -238,9 +271,9 @@ def create_session(identity, data):
             snapshot={'fact':None,'questions':selected}
         session_id=uuid.uuid4().hex
         conn.execute('''INSERT INTO practice_learning_sessions
-            (id,user_id,request_id,kind,product_id,unit_no,snapshot,assigned_day,created_at)
-            VALUES(?,?,?,?,?,?,?,?,?)''',(session_id,identity['user_id'],request_id,kind,product_id,unit_no,
-                                           json.dumps(snapshot,ensure_ascii=False),day,stamp))
+            (id,user_id,request_id,kind,product_id,unit_no,path_unit_id,snapshot,assigned_day,created_at)
+            VALUES(?,?,?,?,?,?,?,?,?,?)''',(session_id,identity['user_id'],request_id,kind,product_id,unit_no,
+                                           path_unit_id if kind=='path' else None,json.dumps(snapshot,ensure_ascii=False),day,stamp))
         return _public(conn,_owned(conn,session_id,identity))
 
 
@@ -285,7 +318,7 @@ def perform(identity,session_id,action,data):
             conn.execute('UPDATE practice_learning_sessions SET correct_count=correct_count+? WHERE id=?',(correct,session_id))
             if position==len(questions)-1:
                 conn.execute('UPDATE practice_learning_sessions SET completed=1,completed_at=? WHERE id=?',(common.now().isoformat(),session_id))
-                if s['kind']=='unit':
+                if s['kind'] in ('unit','path'):
                     conn.execute("INSERT OR IGNORE INTO practice_learning_activity VALUES(?,?,'unit')",(identity['user_id'],common.now().date().isoformat()))
         else:
             if not answer:

@@ -1,11 +1,11 @@
 /* Product lessons and due review never write to the weekly score ledger. */
-const learningState = { home:null, product:null, course:null, session:null, factSeen:false, busy:false, attempt:null, identity:null };
+const learningState = { home:null, path:null, product:null, course:null, session:null, factSeen:false, completionSeen:false, busy:false, attempt:null, identity:null };
 const learningEscape = practiceEscape;
 function learningNotice(text='') { const el=document.getElementById('learning-notice'); if(el)el.textContent=text; }
 function learningApi(path,options={}) { return practiceApi(`/learning${path}`,options); }
 function learningIdentity() {
   const identity=state.sessionToken || state.token;
-  if(learningState.identity!==identity)Object.assign(learningState,{home:null,product:null,course:null,session:null,factSeen:false,attempt:null,identity});
+  if(learningState.identity!==identity)Object.assign(learningState,{home:null,path:null,product:null,course:null,session:null,factSeen:false,completionSeen:false,attempt:null,identity});
 }
 async function loadLearningPage() {
   if(!featureEnabled('practice_learning'))return;
@@ -15,6 +15,7 @@ async function loadLearningPage() {
     if(learningState.session)learningState.session=await learningApi(`/sessions/${learningState.session.id}`);
     if(learningState.product)learningState.course=await learningApi(`/products/${learningState.product}`);
     learningState.home=await learningApi('/home');
+    learningState.path=await learningApi('/path').catch(()=>null);
     learningNotice();renderLearningPage();
   }catch(e){learningNotice(e.message);document.getElementById('learning-body').innerHTML='<button class="practice-button" onclick="loadLearningPage()">重试</button>';}
 }
@@ -39,15 +40,32 @@ async function openLearningProduct(productId) {
 }
 function leaveLearningCourse(){learningState.course=null;learningState.product=null;switchView('training');}
 async function resumeLearning(id){
-  try{learningState.session=await learningApi(`/sessions/${id}`);learningState.product=learningState.session.product_id;learningState.course=null;learningState.factSeen=learningState.session.answered_count>0;switchView('learning');renderLearningPage();}
+  try{learningState.session=await learningApi(`/sessions/${id}`);learningState.product=learningState.session.product_id;learningState.course=null;learningState.factSeen=learningState.session.answered_count>0;learningState.completionSeen=false;switchView('learning');renderLearningPage();}
   catch(e){trainingHubNotice(e.message);}
 }
-async function createLearningSession(kind,productId=null,unitNo=null){
+async function openNextLearning(){
+  if(!featureEnabled('practice_learning')||learningState.busy)return;
+  learningIdentity();
+  try{
+    const path=await learningApi('/path');learningState.path=path;
+    if(!path.available||!path.next_unit){
+      if(practiceState.entryData)return openPracticeEntry();
+      return switchView('training');
+    }
+    if(path.resume_id)return resumeLearning(path.resume_id);
+    const next=path.next_unit;
+    learningState.product=null;learningState.course=null;learningState.session=null;
+    const session=await createLearningSession('path',null,null,next.id);
+    if(session)switchView('learning');
+    else trainingHubNotice(document.getElementById('learning-notice')?.textContent||'短课暂时无法开始，请重试。');
+  }catch(e){trainingHubNotice(e.message);}
+}
+async function createLearningSession(kind,productId=null,unitNo=null,pathUnitId=null){
   if(learningState.busy)return;
-  const key=JSON.stringify([kind,productId,unitNo]);
+  const key=JSON.stringify([kind,productId,unitNo,pathUnitId]);
   if(learningState.attempt?.key!==key)learningState.attempt={key,request_id:practiceRequestId()};
   learningState.busy=true;learningNotice('正在准备短课…');
-  try{learningState.session=await learningApi('/sessions',{method:'POST',body:JSON.stringify({request_id:learningState.attempt.request_id,kind,product_id:productId,unit_no:unitNo})});learningState.attempt=null;learningState.factSeen=false;learningNotice();renderLearningPage();return learningState.session;}
+  try{learningState.session=await learningApi('/sessions',{method:'POST',body:JSON.stringify({request_id:learningState.attempt.request_id,kind,product_id:productId,unit_no:unitNo,path_unit_id:pathUnitId})});learningState.attempt=null;learningState.factSeen=false;learningState.completionSeen=false;learningNotice();renderLearningPage();return learningState.session;}
   catch(e){learningNotice(e.message);return null;}
   finally{learningState.busy=false;}
 }
@@ -68,24 +86,26 @@ async function openLearningReview(){
 }
 function renderLearningSession(){
   const s=learningState.session,host=document.getElementById('learning-body');
-  if(s.completed){
-    host.innerHTML=`<div class="learning-complete"><div class="learning-complete-badge">✦</div><span>完成学习 · 点亮一个节点</span><h2>${s.kind==='unit'?'单元完成！':'复习完成！'}</h2><p>答对 ${s.correct_count}/${s.total_questions} 题。知识点会按复习节奏再次出现。</p><button class="practice-button" onclick="finishLearningSession()">${s.kind==='unit'?'返回课程':'返回学习路径'} →</button></div>`;
+  if(s.completed&&learningState.completionSeen){
+    const next=learningState.path?.next_unit;
+    host.innerHTML=`<div class="learning-complete"><div class="learning-complete-badge">✦</div><span>完成学习 · 点亮一个节点</span><h2>${s.kind==='review'?'复习完成！':'这一单元学会了！'}</h2><p>${s.kind==='review'?'知识点会按复习节奏再次出现。':`本单元答对 ${s.correct_count}/${s.total_questions} 题。${s.fact?`你刚学了「${learningEscape(s.fact.title)}」。`:''}`}</p>${s.kind!=='review'&&next?`<p>下一步：${learningEscape(next.title)}</p>`:''}<button class="practice-button" onclick="finishLearningSession()">${s.kind==='review'?'返回问答课堂':next?'学习下一单元':'返回问答课堂'} →</button></div>`;
     return;
   }
-  if(s.kind==='unit' && s.fact && !learningState.factSeen){
+  if((s.kind==='unit'||s.kind==='path') && s.fact && !learningState.factSeen){
     host.innerHTML=`<div class="learning-fact"><span class="learning-eyebrow">先学一张事实卡 · 约1分钟</span><h2>${learningEscape(s.fact.title)}</h2><p>${learningEscape(s.fact.body).replace(/\n/g,'<br>')}</p>${s.fact.source_url?`<a href="${learningEscape(s.fact.source_url)}" target="_blank" rel="noopener noreferrer">查看素材库来源 ↗</a>`:''}<small>资料版本 v${s.fact.version}</small><button class="practice-button" onclick="learningState.factSeen=true;renderLearningPage()">我了解了，开始3题 →</button></div>`;return;
   }
   const q=s.questions[s.cursor],answered=q.selected_index!==undefined;
-  host.innerHTML=`<button class="learning-back" onclick="leaveLearningSession()">← 保存退出</button><div class="learning-progress"><span>${s.kind==='unit'?'产品小单元':'错题复习'} · ${s.cursor+1}/${s.total_questions}</span><div class="reception-progress" role="progressbar" aria-valuemin="0" aria-valuemax="${s.total_questions}" aria-valuenow="${s.answered_count}"><span style="width:${s.answered_count/s.total_questions*100}%"></span></div></div>
+  host.innerHTML=`<button class="learning-back" onclick="leaveLearningSession()">← 保存退出</button><div class="learning-progress"><span>${s.kind==='unit'||s.path_kind==='product'?'产品知识':s.kind==='path'?'沟通方法':'错题复习'} · ${s.cursor+1}/${s.total_questions}</span><div class="reception-progress" role="progressbar" aria-valuemin="0" aria-valuemax="${s.total_questions}" aria-valuenow="${s.answered_count}"><span style="width:${s.answered_count/s.total_questions*100}%"></span></div></div>
     <div class="learning-question ${q.kind==='application'?'application':''}"><span class="learning-eyebrow">${q.kind==='knowledge'?'记住这个知识点':q.kind==='review'?'再想一想':'应用练习'}</span><h2>${learningEscape(q.title)}</h2><div class="practice-options">${q.options.map((option,i)=>`<button class="practice-option ${answered&&i===q.answer_index?'correct':answered&&i===q.selected_index?'incorrect':''}" ${answered||learningState.busy?'disabled':''} onclick="answerLearning(${i})">${learningEscape(option)}</button>`).join('')}</div>
-    ${answered?`<div class="practice-feedback"><h4>${q.correct?'✓ 回答准确':'再记住这个处理方法'}</h4><p>${learningEscape(q.explanation)}</p><blockquote>${learningEscape(q.method)}</blockquote><button class="practice-coach-link" onclick="askLearningCoach()">追问AI教练 →</button></div><button class="practice-button" onclick="nextLearning()">下一题 →</button>`:''}</div>`;
+    ${answered?`<div class="practice-feedback"><h4>${q.correct?'✓ 回答准确':'再记住这个处理方法'}</h4><p>${learningEscape(q.explanation)}</p><blockquote>${learningEscape(q.method)}</blockquote>${s.kind==='path'?'':'<button class="practice-coach-link" onclick="askLearningCoach()">追问AI教练 →</button>'}</div><button class="practice-button" onclick="${s.completed?'showLearningCompletion()':'nextLearning()'}">${s.completed?'查看学习成果':'下一题'} →</button>`:''}</div>`;
 }
+function showLearningCompletion(){learningState.completionSeen=true;renderLearningPage();}
 async function learningAction(action,optionIndex){
   if(learningState.busy||!learningState.session)return;
   const s=learningState.session,q=s.questions[s.cursor];learningState.busy=true;
   try{learningState.session=await learningApi(`/sessions/${s.id}/${action}`,{method:'POST',body:JSON.stringify({request_id:practiceRequestId(),question_id:q.id,option_index:optionIndex})});learningNotice();}
   catch(e){learningNotice(e.message);try{learningState.session=await learningApi(`/sessions/${s.id}`);}catch{}}
-  finally{learningState.busy=false;renderLearningPage();}
+  finally{learningState.busy=false;if(learningState.session?.completed&&action==='answer'&&learningState.session.kind!=='review')learningState.path=await learningApi('/path').catch(()=>null);renderLearningPage();}
 }
 function answerLearning(index){return learningAction('answer',index);}
 function nextLearning(){return learningAction('next');}
@@ -94,9 +114,14 @@ function askLearningCoach(){
   quickSend('aura',`请作为产品学习教练，依据已发布的事实卡和题目解析简短回答，不改变推荐答案。\n事实卡：${s.fact?.body||'本题没有产品事实卡'}\n题目：${q.title}\n推荐选择：${q.options[q.answer_index]}\n解析：${q.explanation}\n参考回复：${q.method}\n我想继续理解这道题。`);
 }
 async function leaveLearningSession(){
-  const kind=learningState.session?.kind;
   learningState.session=null;learningState.factSeen=false;
-  if(kind==='unit' && learningState.product)await loadLearningPage();
-  else switchView('training');
+  learningState.completionSeen=false;
+  switchView('training');
 }
-async function finishLearningSession(){return leaveLearningSession();}
+async function finishLearningSession(){
+  const kind=learningState.session?.kind,next=learningState.path?.next_unit;
+  learningState.session=null;learningState.factSeen=false;
+  learningState.completionSeen=false;
+  if(kind!=='review'&&next)return openNextLearning();
+  switchView('training');
+}

@@ -24,7 +24,8 @@ from models import (
     search_case_documents_page,
 )
 
-PROTOCOL_VERSION = '2024-11-05'
+PROTOCOL_VERSION = '2025-06-18'
+SUPPORTED_PROTOCOL_VERSIONS = frozenset(('2024-11-05', '2025-03-26', PROTOCOL_VERSION))
 SERVER_INFO = {'name': 'ai-customer-service', 'version': Config.APP_VERSION}
 PROCESS_STARTED_AT = time.monotonic()
 PROCESS_STARTED_UTC = datetime.utcnow()
@@ -735,10 +736,10 @@ def _error(request_id, code, message):
     return {'jsonrpc': '2.0', 'id': request_id, 'error': {'code': code, 'message': message}}
 
 
-def _handle_tools_call(request_id, params):
+def _handle_tools_call(request_id, params, call=call_tool):
     name = params.get('name')
     try:
-        text = call_tool(name, params.get('arguments'))
+        text = call(name, params.get('arguments'))
         return _result(request_id, {'content': [{'type': 'text', 'text': text}]})
     except KeyError:
         return _result(request_id, {
@@ -752,30 +753,33 @@ def _handle_tools_call(request_id, params):
         })
 
 
-def dispatch(message):
-    """处理单条 JSON-RPC 消息。通知（无 id）返回 None。"""
+def dispatch(message, *, toolset=None):
+    """处理单条 JSON-RPC 消息。独立工具集复用协议层，但不会混用权限。"""
     if not isinstance(message, dict):
         return _error(None, -32600, 'Invalid Request')
     method = message.get('method')
     request_id = message.get('id')
     params = message.get('params') or {}
+    if not isinstance(params, dict):
+        return _error(request_id, -32602, 'Invalid params')
 
     if method == 'initialize':
-        client_version = params.get('protocolVersion') or PROTOCOL_VERSION
+        client_version = params.get('protocolVersion')
+        version = client_version if isinstance(client_version, str) and client_version in SUPPORTED_PROTOCOL_VERSIONS else PROTOCOL_VERSION
         return _result(request_id, {
-            'protocolVersion': client_version,
+            'protocolVersion': version,
             'capabilities': {'tools': {'listChanged': False}},
-            'serverInfo': SERVER_INFO,
+            'serverInfo': toolset.SERVER_INFO if toolset else SERVER_INFO,
         })
     if method in ('notifications/initialized', 'initialized'):
         return None
     if method == 'tools/list':
-        return _result(request_id, {'tools': list_tools()})
+        return _result(request_id, {'tools': toolset.list_tools() if toolset else list_tools()})
     if method == 'tools/call':
-        return _handle_tools_call(request_id, params)
+        return _handle_tools_call(request_id, params, toolset.call_tool if toolset else call_tool)
     if method == 'ping':
         return _result(request_id, {})
-    if method and method.startswith('notifications/'):
+    if isinstance(method, str) and method.startswith('notifications/'):
         return None
     if request_id is not None:
         return _error(request_id, -32601, 'Method not found: %s' % method)

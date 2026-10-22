@@ -49,6 +49,8 @@ class Config:
     SPEECH_RATE_LIMIT = int(os.environ.get('SPEECH_RATE_LIMIT', '20'))
     # 只读 MCP 端点（/api/mcp）的 Bearer token；留空则端点关闭
     MCP_TOKEN = os.environ.get('MCP_TOKEN', '')
+    # 题库管理 MCP 独立令牌；不能复用只读令牌，留空则管理端点关闭
+    PRACTICE_BANK_MCP_TOKEN = os.environ.get('PRACTICE_BANK_MCP_TOKEN', '')
     SPEECH_REALTIME_SESSION_LIMIT = int(os.environ.get('SPEECH_REALTIME_SESSION_LIMIT', '20'))
     # 功能开关默认值（运行时状态以 settings 表为准，详见 services/feature_flags.py）
     CASES_ENABLED = os.environ.get('CASES_ENABLED', 'true').lower() == 'true'

@@ -237,11 +237,19 @@ function practiceEntryCard(entry) {
     : entry.action==='resume' && count ? `${theme} · 已完成 ${count}/10 题` : theme;
   const action=entry.mode==='free' ? entry.action==='resume' ? '继续这组题' : '继续练习 · 随机10题'
     : entry.action==='resume' ? '继续闯关' : '开始今日闯关';
-  return `<button class="practice-home-card practice-question-entry ${entry.stage_id?'practice-stage-home':''}" onclick="openPracticeEntry()" data-practice-entry-button><span class="practice-eyebrow">${e(title)}</span><strong>${e(entry.question_title)}</strong><span>该怎么回答？来挑战一下</span><span class="practice-entry-cta">${action} →</span>${entry.mode==='free'?'<small>本组不计分 · 今日计分上限100分</small>':''}</button>`;
+  return `<button class="practice-home-card practice-question-entry ${entry.stage_id?'practice-stage-home':''}" onclick="openPracticeEntry()" data-practice-entry-button>${entry.stage_id || entry.mode === 'free' ? `<span class="practice-eyebrow">${e(title)}</span>` : ''}<strong>${e(entry.question_title)}</strong><span>该怎么回答？来挑战一下</span><span class="practice-entry-cta">${action} →</span>${entry.mode==='free'?'<small>本组不计分 · 今日计分上限100分</small>':''}</button>`;
 }
-function practiceHomeLink(entry) {
+function practiceHomeLink(entry,path=null) {
   const resume = entry.action === 'resume';
   const count = Math.max(0, Math.min(10, Number(entry.answered_count) || 0));
+  if(path?.available){
+    const next=path.next_unit;
+    return `<button class="training-home-card" onclick="switchView('training')"><span class="training-home-top"><strong>AI宝儿问答课堂</strong><span>${path.completed_count}/${path.units.length} 单元</span></span>
+      <span class="training-home-scene">${next?`${practiceEscape(next.level_label)} · 第${next.position}单元`:'主线已完成 · 今天继续巩固'}</span>
+      <strong class="training-home-question">${next?practiceEscape(next.title):'每日10题，巩固所学'}</strong>
+      <span class="training-home-bottom"><small>${next?practiceEscape(next.subtitle):'到课堂查看今日练习与复习'}</small><span class="training-home-action">${next?'继续学习':'进入课堂'} →</span></span>
+      <span class="training-home-progress" role="progressbar" aria-label="主线学习进度" aria-valuemin="0" aria-valuemax="${path.units.length}" aria-valuenow="${path.completed_count}"><span style="width:${path.completed_count/path.units.length*100}%"></span></span></button>`;
+  }
   const theme = entry.stage_id ? `${entry.kind === 'weekly' ? '本周主题' : '阶段专题'} · ${entry.stage_title}` : '今日问答闯关';
   const status = resume ? count ? `已完成 ${count} / 10 题` : '从第1题开始，答完看解析' : entry.mode === 'free' ? '今日计分已完成 · 接着学不计分' : '10道题 · 边选边学';
   const action = resume && count ? '继续上课' : entry.mode === 'free' ? '继续练习' : '进入课堂';
@@ -265,7 +273,9 @@ async function loadPracticePromotion() {
     const data=await r.json();
     if(generation!==practiceState.promotionGeneration || token!==(state.sessionToken || state.token))return;
     practiceState.entryData=data.entry;
-    host.innerHTML=data.entry ? practiceHomeLink(data.entry) : '';
+    const path=featureEnabled('practice_learning')?await practiceApi('/learning/path').catch(()=>null):null;
+    if(generation!==practiceState.promotionGeneration || token!==(state.sessionToken || state.token))return;
+    host.innerHTML=data.entry ? practiceHomeLink(data.entry,path) : '';
     if(data.entry && state.currentView==='home')recordPracticeEntryImpression(data.entry,host);
   }catch {if(generation===practiceState.promotionGeneration){host.innerHTML='';practiceState.entryData=null;}}
 }

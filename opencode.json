@@ -13,6 +13,15 @@
       "type": "local",
       "command": ["python3", "scripts/mcp_server.py"],
       "enabled": false
+    },
+    "ai-practice-bank-manager": {
+      "type": "remote",
+      "url": "https://aibao.jzzbaizhushou.com/api/mcp/practice-bank",
+      "oauth": false,
+      "headers": {
+        "Authorization": "Bearer {file:./.mcp_bank_token}"
+      },
+      "enabled": false
     }
   }
 }

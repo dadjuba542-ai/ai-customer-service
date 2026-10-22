@@ -193,7 +193,7 @@ FLAGS = {
     ),
     PRACTICE_LEARNING_SYSTEM: FeatureFlag(
         name=PRACTICE_LEARNING_SYSTEM, key='practice_learning_enabled', env='PRACTICE_LEARNING_ENABLED', default=False,
-        label='产品课程与学习路径', description='产品事实卡、三题短课、错题复习与连续学习记录。',
+        label='问答课堂进阶主线', description='独立录入产品知识与沟通方法、三题短课、错题复习与连续学习记录。',
         routes=('/api/practice/learning',),
     ),
     CASES_SYSTEM: FeatureFlag(

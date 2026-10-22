@@ -4,7 +4,7 @@ const vm = require('vm');
 const assert = require('assert');
 const elements = new Map();
 function element(id) {
-  if (!elements.has(id)) elements.set(id, { id, innerHTML: '', textContent: '', value: '', disabled: false });
+  if (!elements.has(id)) elements.set(id, { id, innerHTML: '', textContent: '', value: '', disabled: false, querySelector: () => null });
   return elements.get(id);
 }
 const sandbox = {
@@ -179,6 +179,9 @@ function response(data, status=200) { return { ok: status===200, json: async () 
   assert.doesNotMatch(homeCard,/客户发来消息|已接待/);
   assert.match(homeCard,/客户说价格太贵/);
   assert.match(homeCard,/本周主题 · 价格沟通周/);
+  const guidedPath={available:true,completed_count:2,units:Array.from({length:7},(_,i)=>({id:i+1,position:i+1,title:`单元${i+1}`,completed:i<2,level_label:'理解判断'})),next_unit:{id:3,position:3,title:'判断客户需求',subtitle:'沟通方法 · 约1分钟＋3题',level_label:'理解判断'},resume_id:null};
+  assert.match(sandbox.practiceHomeLink(entry,guidedPath),/判断客户需求/);
+  assert.doesNotMatch(sandbox.practiceHomeLink(entry,guidedPath),/客户说价格太贵/);
   assert.match(sandbox.practiceHomeLink({...entry,mode:'free'}),/随机10题 · 不计分/);
   assert.match(sandbox.practiceHomeLink({...entry,mode:'free'}),/继续练习/);
   assert.match(sandbox.practiceHomeLink({...entry,action:'resume',answered_count:0}),/从第1题开始，答完看解析/);
@@ -195,6 +198,18 @@ function response(data, status=200) { return { ok: status===200, json: async () 
   assert.ok(hub.indexOf('今日问答闯关')<hub.indexOf('产品课程'));
   assert.ok(hub.indexOf('产品课程')<hub.indexOf('到期复习'));
   assert.ok(hub.indexOf('到期复习')<hub.indexOf('闯关记录'));
+  vm.runInContext(`trainingHubState.path=${JSON.stringify(guidedPath)};`,sandbox);
+  sandbox.renderTrainingHub();
+  const guidedHub=element('training-hub-body').innerHTML;
+  assert.ok(guidedHub.indexOf('学习主线')<guidedHub.indexOf('今日问答闯关'));
+  assert.match(guidedHub,/判断客户需求|开始下一单元/);
+  assert.doesNotMatch(guidedHub,/首款产品课程准备中/);
+  vm.runInContext(`learningState.home={};learningState.path=${JSON.stringify(guidedPath)};learningState.session={id:'path-done',kind:'path',path_kind:'product',completed:true,cursor:2,answered_count:3,total_questions:3,correct_count:2,fact:{title:'认识产品',body:'独立输入的产品知识'},questions:[{id:1,title:'题1',options:['A','B','C','D']},{id:2,title:'题2',options:['A','B','C','D']},{id:3,kind:'knowledge',title:'最后一题',options:['A','B','C','D'],selected_index:0,answer_index:1,correct:false,explanation:'最后一题解析',method:'参考回答'}]};learningState.factSeen=true;learningState.completionSeen=false;`,sandbox);
+  sandbox.renderLearningPage();
+  assert.match(element('learning-body').innerHTML,/最后一题解析/);
+  sandbox.showLearningCompletion();
+  assert.match(element('learning-body').innerHTML,/这一单元学会了/);
+  vm.runInContext('learningState.session=null;learningState.completionSeen=false;',sandbox);
   // Review action must consult the server instead of trusting an older home count.
   vm.runInContext('learningState.home={due_count:0};',sandbox);
   sandbox.switchView=view=>{sandbox.state.currentView=view;};
@@ -234,5 +249,10 @@ function response(data, status=200) { return { ok: status===200, json: async () 
   sandbox.renderAdminPracticeEditor({id:10,stage_id:0,batch_no:1,category:'益生菌',title:'关联产品题',options:['A','B','C','D'],answer_index:0,explanation:'原因',method:'回复',enabled:false,product_id:7,fact_id:9,skill_code:'product'});
   assert.match(element('practice-question-editor').innerHTML,/已关联产品 #7/);
   assert.match(element('practice-question-editor').innerHTML,/已关联事实卡 #9/);
+  vm.runInContext(fs.readFileSync(path.join(__dirname,'..','static/admin/practice-path.js'),'utf8'),sandbox);
+  vm.runInContext(`adminPracticePathData={settings:null,units:[],questions:[],suggestions:[],levels:{1:'识别事实',2:'理解判断',3:'场景应用',4:'组织回答',5:'综合应对'}}`,sandbox);
+  sandbox.renderAdminPracticePath();
+  assert.match(element('practice-path-manager').innerHTML,/单独输入培训产品名称/);
+  assert.doesNotMatch(element('practice-path-manager').innerHTML,/选择现有产品/);
   console.log('PASS: learning hub, fresh review, admin isolation, double clicks, durable recovery, scoring UI and bank filters');
 })().catch(error => { console.error(error); process.exitCode = 1; });

@@ -2,6 +2,7 @@
 .env
 *.env
 .mcp_token
+.mcp_bank_token
 
 # Database
 *.db

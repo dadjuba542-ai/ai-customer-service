@@ -17,20 +17,21 @@ async function loadAdminPractice() {
   const host = document.getElementById('admin-practice-content');
   host.innerHTML = '<div class="admin-card">正在加载题库…</div>';
   try {
-    const [bankResult, learningResult] = await Promise.allSettled([adminPracticeApi(), adminPracticeApi('/learning')]);
+    const [bankResult, learningResult, pathResult] = await Promise.allSettled([adminPracticeApi(), adminPracticeApi('/learning'), adminPracticeApi('/learning/path')]);
     if (bankResult.status === 'rejected') throw bankResult.reason;
     adminPracticeData = bankResult.value;
     adminPracticeLearningData = learningResult.status === 'fulfilled' ? learningResult.value : null;
+    adminPracticePathData = pathResult.status === 'fulfilled' ? pathResult.value : null;
     const data = adminPracticeData, selectedStage=data.stages?.find(s=>s.id===practiceAdminState.stageId), enabled = data.questions.filter(q => q.enabled).length;
     host.innerHTML = `<div class="bank-heading"><div><span class="bank-eyebrow">内容工作台</span><h2>${practiceAdminEscape(selectedStage ? selectedStage.title+' · 阶段题库' : '每日闯关题库')}</h2><p>查找场景、完善解析，把团队经验变成可练习的题目。</p></div><span class="bank-status">${data.enabled ? '● 闯关已开启' : '○ 闯关未开启'}</span></div>
       <div class="bank-stats"><div><b>${data.questions.length}</b><span>全部题目</span></div><div><b>${enabled}</b><span>启用题目</span></div><div><b>${data.batches.length}</b><span>可练关卡</span></div><div><b>${data.questions.length-enabled}</b><span>待完善 / 停用</span></div></div>
       <div class="bank-toolbar"><div class="bank-buttons"><button class="btn btn-primary" onclick="beginPracticeNewQuestion()">＋ 新增题目</button><button class="btn btn-secondary" onclick="togglePracticeImport()">批量导入</button><button class="btn btn-secondary" onclick="exportPracticeBank(this)">导出 CSV</button><button class="btn btn-secondary" onclick="downloadPracticeTemplate()">下载模板</button></div><span class="hint">每关启用10题后自动进入练习列表</span></div>
-      <div id="practice-stage-manager"></div><div id="practice-entry-metrics"></div><div id="practice-learning-manager"></div><div id="practice-import-panel" hidden></div>
+      <div id="practice-stage-manager"></div><div id="practice-entry-metrics"></div><div id="practice-path-manager"></div><div id="practice-learning-manager"></div><div id="practice-import-panel" hidden></div>
       <div class="bank-workspace"><section class="admin-card bank-library"><div class="bank-panel-heading"><h3>题目列表</h3><span id="practice-filter-count" class="hint"></span></div>
         <div class="bank-search"><label for="practice-bank-search">搜索题目或解析</label><input id="practice-bank-search" placeholder="输入产品、场景或关键词…" value="${practiceAdminEscape(practiceAdminState.search)}" oninput="filterAdminPractice('search',this.value)"></div>
         <div class="bank-filters"><select aria-label="按关卡查看" id="practice-admin-filter" onchange="filterAdminPractice('batch',this.value)"><option value="0">全部关卡</option>${practiceAdminBatches().map(b => `<option value="${b}" ${String(b)===practiceAdminState.batch ? 'selected' : ''}>第${b}关</option>`).join('')}</select>
         <select aria-label="按分类查看" onchange="filterAdminPractice('category',this.value)"><option value="">全部分类</option>${data.categories.map(c => `<option ${c===practiceAdminState.category?'selected':''}>${practiceAdminEscape(c)}</option>`).join('')}</select>
-        <select aria-label="按状态查看" onchange="filterAdminPractice('status',this.value)"><option value="">全部状态</option><option value="1" ${practiceAdminState.status==='1'?'selected':''}>启用</option><option value="0" ${practiceAdminState.status==='0'?'selected':''}>停用</option></select></div>
+        <select aria-label="按状态查看" onchange="filterAdminPractice('status',this.value)"><option value="">全部状态</option><option value="unclassified" ${practiceAdminState.status==='unclassified'?'selected':''}>待编排</option><option value="1" ${practiceAdminState.status==='1'?'selected':''}>启用</option><option value="0" ${practiceAdminState.status==='0'?'selected':''}>停用</option></select></div>
         <div id="practice-question-list"></div><div id="practice-bank-pagination" class="bank-pagination"></div></section>
         <section class="admin-card bank-editor" id="practice-question-editor"></section></div>
       <details class="admin-card bank-team-summary"><summary>团队学习概况 <small>${data.summary.length}个团队 · 累计数据</small></summary><p class="hint">开始率＝开始人数／访问人数；访问含问题卡片展示和练习页访问。完成率＝完成局数／开始局数。次日回访统计第二天再次访问，七日再练统计后续七天再次开始练习。</p><div class="bank-table-scroll"><table class="data-table"><thead><tr><th>团队</th><th>访问</th><th>参与</th><th>开始率</th><th>开始局数</th><th>完成局数</th><th>完成率</th><th>次日回访</th><th>七日再练</th></tr></thead><tbody>${data.summary.map(s => `<tr><td>${practiceAdminEscape(s.team_name || '未选择团队')}</td><td>${s.visitors}</td><td>${s.participants}</td><td>${s.visitors?Math.round(s.participants/s.visitors*100)+'%':'—'}</td><td>${s.started}</td><td>${s.completed}</td><td>${s.started?Math.round(s.completed/s.started*100)+'%':'—'}</td><td>${s.next_day_returns}</td><td>${s.seven_day_returns}</td></tr>`).join('')}</tbody></table>${data.summary.length?'':'<p class="hint">开始试用后，这里会显示团队学习情况。</p>'}</div></details>`;
@@ -38,6 +39,8 @@ async function loadAdminPractice() {
     renderPracticeEntryMetrics();
     if(adminPracticeLearningData)renderAdminPracticeLearning();
     else document.getElementById('practice-learning-manager').innerHTML='<div class="admin-card">产品课程暂时无法加载，题库仍可编辑。<button class="btn btn-secondary btn-sm" onclick="retryAdminPracticeLearning()">重试课程</button></div>';
+    if(adminPracticePathData)renderAdminPracticePath();
+    else document.getElementById('practice-path-manager').innerHTML='<div class="admin-card">学习主线暂时无法加载，题库仍可编辑。<button class="btn btn-secondary btn-sm" onclick="retryAdminPracticePath()">重试主线</button></div>';
     if (practiceAdminState.editing) renderAdminPracticeEditor(practiceAdminState.editing);
     else renderPracticeEditorEmpty();
   } catch (error) { host.innerHTML = `<div class="admin-card">${practiceAdminEscape(error.message)} <button class="btn btn-secondary" onclick="loadAdminPractice()">重试</button></div>`; }
@@ -52,7 +55,7 @@ function filterAdminPractice(key, value) { practiceAdminState[key]=value; practi
 function renderAdminPracticeQuestions() {
   const st = practiceAdminState, keyword = st.search.trim().toLowerCase();
   const rows = adminPracticeData.questions.filter(q => (!Number(st.batch) || q.batch_no===Number(st.batch)) && (!st.category || q.category===st.category) &&
-    (!st.status || Boolean(q.enabled)===(st.status==='1')) && (!keyword || [q.title,q.explanation,q.method,...q.options].join(' ').toLowerCase().includes(keyword)));
+    (!st.status || (st.status==='unclassified' ? !q.difficulty_level : Boolean(q.enabled)===(st.status==='1'))) && (!keyword || [q.title,q.explanation,q.method,...q.options].join(' ').toLowerCase().includes(keyword)));
   const pages = Math.max(1,Math.ceil(rows.length/15)); st.page=Math.min(st.page,pages);
   document.getElementById('practice-filter-count').textContent = `${rows.length}道题`;
   document.getElementById('practice-question-list').innerHTML = rows.slice((st.page-1)*15,st.page*15).map(q =>
@@ -65,7 +68,9 @@ function practiceEditorValue() {
   const value = key => document.getElementById('practice-q-'+key).value;
   return { ...practiceAdminState.editing, title:value('title'), category:value('category'), batch_no:Number(value('batch')),
     options:[0,1,2,3].map(i=>value('option-'+i)), answer_index:Number(value('answer')), explanation:value('explanation'), method:value('method'), enabled:document.getElementById('practice-q-enabled').checked,
-    product_id:value('product')?Number(value('product')):null, fact_id:value('fact')?Number(value('fact')):null, skill_code:value('skill') };
+    product_id:value('product')?Number(value('product')):null, fact_id:value('fact')?Number(value('fact')):null, skill_code:value('skill'),
+    learning_objective:value('objective'), difficulty_level:value('difficulty')?Number(value('difficulty')):null,
+    suggested_unit_id:value('path-unit')?Number(value('path-unit')):null };
 }
 function practiceEditorChanged() { if (document.getElementById('practice-q-title')) practiceAdminState.editing=practiceEditorValue(); if(document.querySelector('.bank-preview[open]'))renderPracticeAdminPreview(); }
 function editAdminPracticeQuestion(id, copy=false) {
@@ -85,8 +90,10 @@ function renderAdminPracticeEditor(q) {
   if(q.fact_id && !facts.some(f=>f.id===q.fact_id))facts.push({id:q.fact_id,product_id:q.product_id,unit_no:'?',title:`已关联事实卡 #${q.fact_id}`,version:'?'});
   document.getElementById('practice-question-editor').innerHTML=`<div class="bank-panel-heading"><div><span class="bank-eyebrow">${q.id?'题目 #'+q.id:'新增题目'}</span><h3>${q.id?'编辑客户场景':'把经验写成一道题'}</h3></div>${q.id?`<button class="btn btn-secondary btn-sm" onclick="editAdminPracticeQuestion(${q.id},true)">复制新增</button>`:''}</div>
     <div class="bank-editor-form" oninput="practiceEditorChanged()" onchange="practiceEditorChanged()"><div class="bank-form-pair"><div class="field"><label for="practice-q-category">产品分类</label>${practiceAdminState.stageId && adminPracticeData.stages.find(s=>s.id===practiceAdminState.stageId)?.kind!=='weekly' ? `<input id="practice-q-category" maxlength="40" value="${e(q.category)}" placeholder="例如：三伏天、夏季沟通">` : `<select id="practice-q-category">${adminPracticeData.categories.map(c=>`<option ${c===q.category?'selected':''}>${e(c)}</option>`).join('')}</select>`}</div><div class="field"><label for="practice-q-batch">所属关卡</label><input id="practice-q-batch" type="number" min="1" max="10000" value="${q.batch_no}" ${weekly?'disabled':''}>${sourceDraft?'<small class="hint">本期发布时自动分组</small>':''}</div></div>
-    <div class="bank-form-pair"><div class="field"><label for="practice-q-product">关联产品（可选）</label><select id="practice-q-product" onchange="practiceProductChanged()"><option value="">通用沟通题</option>${products.map(p=>`<option value="${p.id}" ${p.id===q.product_id?'selected':''}>${e(p.name)}</option>`).join('')}</select></div><div class="field"><label for="practice-q-skill">沟通能力标签</label><select id="practice-q-skill"><option value="">未分类</option>${[['needs','了解需求'],['product','产品知识'],['claims','准确表达'],['price','价格沟通'],['usage','使用指导'],['followup','后续跟进']].map(([v,t])=>`<option value="${v}" ${q.skill_code===v?'selected':''}>${t}</option>`).join('')}</select></div></div>
-    <div class="field"><label for="practice-q-fact">关联事实卡（课程题必选）</label><select id="practice-q-fact"><option value="">不关联事实卡</option>${facts.filter(f=>f.product_id===q.product_id).map(f=>`<option value="${f.id}" ${f.id===q.fact_id?'selected':''}>第${f.unit_no}单元 · ${e(f.title)} · v${f.version}</option>`).join('')}</select></div>
+    <div class="bank-form-pair"><div class="field"><label for="practice-q-product">旧产品课程关联（可选）</label><select id="practice-q-product" onchange="practiceProductChanged()"><option value="">不关联产品板块 · 课堂独立题</option>${products.map(p=>`<option value="${p.id}" ${p.id===q.product_id?'selected':''}>${e(p.name)}</option>`).join('')}</select></div><div class="field"><label for="practice-q-skill">沟通能力标签</label><select id="practice-q-skill"><option value="">未分类</option>${[['needs','了解需求'],['product','产品知识'],['claims','准确表达'],['price','价格沟通'],['usage','使用指导'],['followup','后续跟进']].map(([v,t])=>`<option value="${v}" ${q.skill_code===v?'selected':''}>${t}</option>`).join('')}</select></div></div>
+    <div class="field"><label for="practice-q-fact">旧产品课程事实卡（旧课程题必选）</label><select id="practice-q-fact"><option value="">不关联事实卡</option>${facts.filter(f=>f.product_id===q.product_id).map(f=>`<option value="${f.id}" ${f.id===q.fact_id?'selected':''}>第${f.unit_no}单元 · ${e(f.title)} · v${f.version}</option>`).join('')}</select></div>
+    <div class="field"><label for="practice-q-objective">学习目标</label><input id="practice-q-objective" maxlength="200" value="${e(q.learning_objective||'')}" placeholder="学完能判断或回答什么？"></div>
+    <div class="bank-form-pair"><div class="field"><label for="practice-q-difficulty">学习难度</label><select id="practice-q-difficulty"><option value="">待编排</option>${[[1,'识别事实'],[2,'理解判断'],[3,'场景应用'],[4,'组织回答'],[5,'综合应对']].map(([v,t])=>`<option value="${v}" ${q.difficulty_level===v?'selected':''}>${v} · ${t}</option>`).join('')}</select></div><div class="field"><label for="practice-q-path-unit">建议单元</label><select id="practice-q-path-unit"><option value="">待编排</option>${(adminPracticePathData?.units||[]).map(u=>`<option value="${u.id}" ${q.suggested_unit_id===u.id?'selected':''}>${u.position} · ${e(u.title)}</option>`).join('')}</select></div></div>
     <div class="field"><label for="practice-q-title">客户场景</label><textarea id="practice-q-title" rows="2" maxlength="500" placeholder="客户会怎样问？请写一个具体场景。">${e(q.title)}</textarea></div>
     <div class="bank-editor-label">四个处理方式 <small>用具体动作写选项</small></div><div class="bank-option-fields">${q.options.map((o,i)=>`<div class="field"><label for="practice-q-option-${i}"><span>${'ABCD'[i]}</span></label><textarea id="practice-q-option-${i}" rows="2" maxlength="500">${e(o)}</textarea></div>`).join('')}</div>
     <div class="bank-form-pair"><div class="field"><label for="practice-q-answer">推荐答案</label><select id="practice-q-answer">${q.options.map((_,i)=>`<option value="${i}" ${q.answer_index===i?'selected':''}>${'ABCD'[i]}</option>`).join('')}</select></div><label class="bank-enable" ${sourceDraft?'hidden':''}><input id="practice-q-enabled" type="checkbox" ${q.enabled?'checked':''}> 启用这道题</label></div>
@@ -135,8 +142,8 @@ async function exportPracticeBank(button) {
   catch(e){showToast(e.message,'error');}finally{button.disabled=false;}
 }
 function downloadPracticeTemplate() {
-  const columns=['id','关卡','分类','客户场景','A','B','C','D','推荐答案','解析','参考回复','启用','参考资料','版本','产品ID','能力标签','事实卡ID'];
-  const row=['',practiceAdminNextBatch(),practiceAdminState.stageId && adminPracticeData.stages.find(s=>s.id===practiceAdminState.stageId)?.kind!=='weekly' ? (adminPracticeData.stages.find(s=>s.id===practiceAdminState.stageId)?.title.slice(0,40) || '阶段主题') : '益生菌','客户说价格太贵，先怎么回应？','问清比较的规格与需求','立即发优惠券','只讲品牌知名度','直接推荐大套餐','A','先对齐比较对象，再解释具体差异。','您比较的是哪款、多少份装？','0','','','','',''];
+  const columns=['id','关卡','分类','客户场景','A','B','C','D','推荐答案','解析','参考回复','启用','参考资料','版本','产品ID','能力标签','事实卡ID','学习目标','难度等级','建议单元ID'];
+  const row=['',practiceAdminNextBatch(),practiceAdminState.stageId && adminPracticeData.stages.find(s=>s.id===practiceAdminState.stageId)?.kind!=='weekly' ? (adminPracticeData.stages.find(s=>s.id===practiceAdminState.stageId)?.title.slice(0,40) || '阶段主题') : '益生菌','客户说价格太贵，先怎么回应？','问清比较的规格与需求','立即发优惠券','只讲品牌知名度','直接推荐大套餐','A','先对齐比较对象，再解释具体差异。','您比较的是哪款、多少份装？','0','','','','','','','',''];
   downloadPracticeCsv('\uFEFF'+[columns,row].map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\r\n'),'题库导入模板.csv');
 }
 function togglePracticeImport(weeklyNew=false) {

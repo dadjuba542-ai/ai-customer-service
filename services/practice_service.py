@@ -376,7 +376,7 @@ def admin_data(stage_id=0):
             'enabled': feature_flags.is_enabled(feature_flags.PRACTICE_SYSTEM)}
 
 
-CSV_COLUMNS = ['id', '关卡', '分类', '客户场景', 'A', 'B', 'C', 'D', '推荐答案', '解析', '参考回复', '启用', '参考资料', '版本', '产品ID', '能力标签', '事实卡ID']
+CSV_COLUMNS = ['id', '关卡', '分类', '客户场景', 'A', 'B', 'C', 'D', '推荐答案', '解析', '参考回复', '启用', '参考资料', '版本', '产品ID', '能力标签', '事实卡ID', '学习目标', '难度等级', '建议单元ID']
 SKILL_CODES = ('needs', 'product', 'claims', 'price', 'usage', 'followup')
 
 
@@ -417,7 +417,18 @@ def _validate_question(data):
         raise PracticeError('关联事实卡时请先选择产品', 400)
     if skill_code not in ('', *SKILL_CODES):
         raise PracticeError('能力标签无效', 400)
-    values.update(product_id=product_id, fact_id=fact_id, skill_code=skill_code)
+    objective = data.get('learning_objective', '')
+    level = data.get('difficulty_level')
+    suggested_unit_id = data.get('suggested_unit_id')
+    if not isinstance(objective, str) or len(objective) > 200:
+        raise PracticeError('学习目标不能超过200字', 400)
+    if level not in (None, 1, 2, 3, 4, 5) or type(level) is bool:
+        raise PracticeError('难度等级无效', 400)
+    if suggested_unit_id is not None:
+        suggested_unit_id = _integer(suggested_unit_id, 1, 2147483647)
+    values.update(product_id=product_id, fact_id=fact_id, skill_code=skill_code,
+                  learning_objective=objective.strip(), difficulty_level=level,
+                  suggested_unit_id=suggested_unit_id)
     return values
 
 
@@ -434,13 +445,17 @@ def _check_capacity(questions):
 def _write_question(conn, question_id, q):
     fields = (q['stage_id'], q['batch_no'], q['category'], q['title'], json.dumps(q['options'], ensure_ascii=False), q['answer_index'],
               q['explanation'], q['method'], json.dumps(q['sources']), int(q['enabled']), now().isoformat(),
-              q.get('product_id'), q.get('skill_code', ''), q.get('fact_id'))
+              q.get('product_id'), q.get('skill_code', ''), q.get('fact_id'),
+              q.get('learning_objective', ''), q.get('difficulty_level'), q.get('suggested_unit_id'))
     if question_id is None:
         return conn.execute('''INSERT INTO practice_quiz_questions
-            (stage_id,batch_no,category,title,options,answer_index,explanation,method,sources,enabled,updated_at,product_id,skill_code,fact_id)
-            VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)''', fields).lastrowid
+            (stage_id,batch_no,category,title,options,answer_index,explanation,method,sources,enabled,updated_at,product_id,skill_code,fact_id,learning_objective,difficulty_level,suggested_unit_id)
+            VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)''', fields).lastrowid
     conn.execute('''UPDATE practice_quiz_questions SET archived=0,stage_id=?,batch_no=?,category=?,title=?,options=?,answer_index=?,
-        explanation=?,method=?,sources=?,enabled=?,updated_at=?,product_id=?,skill_code=?,fact_id=? WHERE id=?''', fields + (question_id,))
+        explanation=?,method=?,sources=?,enabled=?,updated_at=?,product_id=?,skill_code=?,fact_id=?,
+        learning_objective=?,difficulty_level=?,suggested_unit_id=? WHERE id=?''', fields + (question_id,))
+    if conn.execute('SELECT 1 FROM practice_learning_path_questions WHERE question_id=?', (question_id,)).fetchone():
+        conn.execute('UPDATE practice_learning_path_settings SET published=0,updated_at=? WHERE id=1', (now().isoformat(),))
     return question_id
 
 
@@ -460,7 +475,9 @@ def save_question(question_id, data):
         if existing['stage_id'] and _stage(conn,existing['stage_id'])['kind']=='weekly' and data.get('batch_no',existing['batch_no'])!=existing['batch_no']:
             raise PracticeError('本期分组由七天安排确定，请在组题区重新生成题包',400)
         q = _validate_question({'batch_no': existing['batch_no'], 'stage_id': existing['stage_id'],
-                                'product_id': existing['product_id'], 'skill_code': existing['skill_code'], 'fact_id': existing['fact_id'], **data})
+                                'product_id': existing['product_id'], 'skill_code': existing['skill_code'], 'fact_id': existing['fact_id'],
+                                'learning_objective': existing['learning_objective'], 'difficulty_level': existing['difficulty_level'],
+                                'suggested_unit_id': existing['suggested_unit_id'], **data})
         if q['product_id'] and not conn.execute('SELECT 1 FROM products WHERE id=?',(q['product_id'],)).fetchone():
             raise PracticeError('关联产品不存在', 400)
         if q['fact_id'] and not conn.execute('SELECT 1 FROM practice_learning_facts WHERE id=? AND product_id=?',(q['fact_id'],q['product_id'])).fetchone():
@@ -524,7 +541,8 @@ def export_bank(stage_id=0):
             q = _question(row)
             values = [q['id'], q['batch_no'], q['category'], q['title'], *q['options'], 'ABCD'[q['answer_index']],
                       q['explanation'], q['method'], '1' if q['enabled'] else '0', ';'.join(q['sources']), q['updated_at'],
-                      q.get('product_id') or '', q.get('skill_code') or '', q.get('fact_id') or '']
+                      q.get('product_id') or '', q.get('skill_code') or '', q.get('fact_id') or '',
+                      q.get('learning_objective') or '', q.get('difficulty_level') or '', q.get('suggested_unit_id') or '']
             writer.writerow(["'" + v if isinstance(v, str) and v.startswith(('=', '+', '-', '@', '\t', '\r')) else v for v in values])
     return '\ufeff' + output.getvalue()
 
@@ -556,7 +574,7 @@ def _read_import(conn, text, stage_id=0, replace=False):
                     if question_id in seen:
                         raise ValueError('同一id在文件中出现多次')
                     seen.add(question_id)
-                    existing = conn.execute('SELECT updated_at,product_id,skill_code,fact_id FROM practice_quiz_questions WHERE id=? AND stage_id=? AND archived=0', (question_id, stage_id)).fetchone()
+                    existing = conn.execute('SELECT updated_at,product_id,skill_code,fact_id,learning_objective,difficulty_level,suggested_unit_id FROM practice_quiz_questions WHERE id=? AND stage_id=? AND archived=0', (question_id, stage_id)).fetchone()
                     if not existing:
                         raise ValueError('id不存在；新增题请留空id')
                     if not row.get('版本') or row['版本'] != existing['updated_at']:
@@ -570,7 +588,10 @@ def _read_import(conn, text, stage_id=0, replace=False):
                     method=row['参考回复'], enabled=enabled == '1', sources=[s for s in row.get('参考资料', '').split(';') if s],
                     product_id=(int(row['产品ID']) if row.get('产品ID','').strip() else existing['product_id'] if question_id and '产品ID' not in row else None),
                     skill_code=(row['能力标签'].strip() if '能力标签' in row else existing['skill_code'] if question_id else ''),
-                    fact_id=(int(row['事实卡ID']) if row.get('事实卡ID','').strip() else existing['fact_id'] if question_id and '事实卡ID' not in row else None)))
+                    fact_id=(int(row['事实卡ID']) if row.get('事实卡ID','').strip() else existing['fact_id'] if question_id and '事实卡ID' not in row else None),
+                    learning_objective=(row['学习目标'] if '学习目标' in row else existing['learning_objective'] if question_id else ''),
+                    difficulty_level=(int(row['难度等级']) if row.get('难度等级','').strip() else existing['difficulty_level'] if question_id and '难度等级' not in row else None),
+                    suggested_unit_id=(int(row['建议单元ID']) if row.get('建议单元ID','').strip() else existing['suggested_unit_id'] if question_id and '建议单元ID' not in row else None)))
                 if q['product_id'] and not conn.execute('SELECT 1 FROM products WHERE id=?',(q['product_id'],)).fetchone():
                     raise ValueError('关联产品不存在')
                 if q['fact_id'] and not conn.execute('SELECT 1 FROM practice_learning_facts WHERE id=? AND product_id=?',(q['fact_id'],q['product_id'])).fetchone():
