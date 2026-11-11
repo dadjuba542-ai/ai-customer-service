@@ -107,8 +107,9 @@ def update_handoff_settings(data):
         raise HandoffError('启用在线营养咨询前，请先选择营养咨询 AI 智能体')
     if ai_agent_id:
         agent = get_agent_config(ai_agent_id)
-        if not agent or not (agent.get('bot_id') or '').strip():
-            raise HandoffError('请选择已配置 Bot ID 的有效智能体')
+        if not agent or (get_setting('chat_provider', 'coze') != 'deepseek'
+                         and not (agent.get('bot_id') or '').strip()):
+            raise HandoffError('请选择已配置 AI 服务的有效智能体')
     values = {
         'handoff_ai_agent_id': ai_agent_id,
         'handoff_button_label': str(data.get('button_label', current['button_label']) or '').strip()[:40] or DEFAULTS['button_label'],
@@ -206,7 +207,8 @@ def get_public_config():
             'avatar_url': agent.get('avatar_url', ''),
             'chat_desc': agent.get('chat_desc', ''),
             'type': agent.get('type', ''),
-        } if agent and (agent.get('bot_id') or '').strip() else None,
+        } if agent and (get_setting('chat_provider', 'coze') == 'deepseek'
+                        or (agent.get('bot_id') or '').strip()) else None,
     }
 
 

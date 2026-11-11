@@ -98,6 +98,7 @@ _CRAWL_GUARD_LIMITS = {
 ROBOTS_TXT = """User-agent: *
 Allow: /
 Disallow: /admin
+Disallow: /agent-studio
 Disallow: /consultant
 Disallow: /api/
 Disallow: /uploads/
@@ -166,7 +167,7 @@ app.register_blueprint(admin_practice_bp, url_prefix='/api/admin/practice')
 @app.after_request
 def add_cache_headers(response):
     path = request.path.lower()
-    if path.endswith('.html') or path in ('/', '/admin'):
+    if path.endswith('.html') or path in ('/', '/admin', '/agent-studio'):
         response.headers['Cache-Control'] = 'no-cache'
     elif path.startswith('/uploads/'):
         response.headers['Cache-Control'] = 'public, max-age=31536000, immutable'
@@ -188,7 +189,7 @@ def add_cache_headers(response):
     if request.is_secure:
         response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'
     # 后台与数据接口不进搜索引擎索引；首页保持可索引，微信分享卡片依赖其 og 标签。
-    if path.startswith(('/admin', '/consultant', '/api/')):
+    if path.startswith(('/admin', '/agent-studio', '/consultant', '/api/')):
         response.headers['X-Robots-Tag'] = 'noindex, nofollow, noarchive, nosnippet'
     return response
 
@@ -243,6 +244,16 @@ def index():
 @app.route('/admin')
 def admin_page():
     return render_template('admin.html')
+
+
+@app.route('/agent-studio')
+def agent_studio_page():
+    return render_template('agent_studio.html', agent_id='')
+
+
+@app.route('/agent-studio/agents/<agent_id>')
+def agent_prompt_page(agent_id):
+    return render_template('agent_studio.html', agent_id=agent_id)
 
 
 @app.route('/consultant')

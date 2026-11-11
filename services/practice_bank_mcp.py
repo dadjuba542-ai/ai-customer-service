@@ -1,6 +1,8 @@
 """Question-bank MCP tools. All writes use the same validated admin services as the UI."""
 
 import json
+import csv
+import io
 
 from config import Config
 from services import practice_service as practice
@@ -16,7 +18,11 @@ _EDITABLE = frozenset(('batch_no', 'category', 'title', 'options', 'answer_index
 def learning_outline(args):
     _object(args)
     data = path.admin_data()
-    return {'settings': data['settings'], 'units': data['units'],
+    settings = data['settings']
+    units = [{key: unit[key] for key in ('id', 'position', 'kind', 'title', 'level', 'question_ids')}
+             for unit in data['units']]
+    return {'settings': {'product_name': settings['product_name']} if settings else None,
+            'units': units,
             'unclassified_count': data['unclassified_count'], 'level_gaps': data['level_gaps'],
             'levels': data['levels']}
 
@@ -125,37 +131,6 @@ def get_question(args):
         return _question(conn, question_id)
 
 
-def list_products(args):
-    args = _object(args)
-    keyword = args.get('keyword', '')
-    if not isinstance(keyword, str) or len(keyword) > 100:
-        raise practice.PracticeError('产品关键词不能超过100字', 400)
-    term = '%' + keyword.strip() + '%'
-    with practice.db() as conn:
-        rows = conn.execute('''SELECT p.id,p.name,p.category,p.summary,
-            COUNT(f.id) AS fact_count,COALESCE(c.published,0) AS course_published
-            FROM products p LEFT JOIN practice_learning_facts f ON f.product_id=p.id
-            LEFT JOIN practice_learning_courses c ON c.product_id=p.id
-            WHERE p.name LIKE ? OR p.category LIKE ?
-            GROUP BY p.id ORDER BY p.sort_order,p.id LIMIT 100''', (term, term)).fetchall()
-    return {'items': [dict(row) | {'course_published': bool(row['course_published'])}
-                      for row in rows]}
-
-
-def get_product_context(args):
-    args = _object(args)
-    product_id = _integer(args.get('product_id'), '产品编号', 1)
-    with practice.db() as conn:
-        product = conn.execute('SELECT id,name,category,summary FROM products WHERE id=?',
-                               (product_id,)).fetchone()
-        if not product:
-            raise practice.PracticeError('产品不存在', 404)
-        facts = conn.execute('''SELECT id,unit_no,title,body,source_url,status,version,updated_at
-            FROM practice_learning_facts WHERE product_id=? ORDER BY unit_no''',
-            (product_id,)).fetchall()
-    return {'product': dict(product), 'facts': [dict(row) for row in facts]}
-
-
 def create_question(args):
     args = _object(args)
     request_id = practice._request_id(args.get('request_id'))
@@ -191,7 +166,7 @@ def preview_csv(args):
     stage_id = _stage_id(args)
     if type(args.get('weekly_new_import', False)) is not bool:
         raise practice.PracticeError('每周新题标识无效', 400)
-    data = {'stage_id': stage_id, 'csv': args.get('csv'), 'replace': False}
+    data = {'stage_id': stage_id, 'csv': _course_safe_csv(args.get('csv')), 'replace': False}
     if args.get('weekly_new_import', False):
         if not stage_id:
             raise practice.PracticeError('每周新题需要主题编号', 400)
@@ -205,13 +180,33 @@ def import_csv(args):
     stage_id = _stage_id(args)
     if type(args.get('weekly_new_import', False)) is not bool:
         raise practice.PracticeError('每周新题标识无效', 400)
-    data = {'stage_id': stage_id, 'csv': args.get('csv'), 'replace': False,
+    data = {'stage_id': stage_id, 'csv': _course_safe_csv(args.get('csv')), 'replace': False,
             'request_id': practice._request_id(args.get('request_id'))}
     if args.get('weekly_new_import', False):
         if not stage_id:
             raise practice.PracticeError('每周新题需要主题编号', 400)
         return weekly.import_new(stage_id, data)
     return practice.import_bank(data)
+
+
+def _course_safe_csv(csv_text):
+    """Reject proposed classifications and preserve existing approved fields on batch edits."""
+    if not isinstance(csv_text, str):
+        return csv_text  # The bank parser reports the malformed CSV.
+    rows = list(csv.reader(io.StringIO(csv_text.lstrip('\ufeff'))))
+    if not rows:
+        return csv_text
+    fields = {'学习目标', '难度等级', '建议单元ID'}
+    removed = {i for i, name in enumerate(rows[0]) if name in fields}
+    if any(any(i < len(row) and row[i].strip() for i in removed) for row in rows[1:]):
+        raise practice.PracticeError('MCP批量导入不能填写课程分级；请用 practice_suggest_placement 提交待审核建议', 400)
+    if not removed:
+        return csv_text
+    output = io.StringIO()
+    writer = csv.writer(output)
+    for row in rows:
+        writer.writerow([value for i, value in enumerate(row) if i not in removed])
+    return output.getvalue()
 
 
 def _schema(properties, required=()):
@@ -230,14 +225,9 @@ TOOLS = [
     {'name': 'practice_get_question', 'description': '获取题目完整编辑内容、推荐答案和更新版本。',
      'inputSchema': _schema({'question_id': {'type': 'integer'}}, ('question_id',)),
      'handler': get_question},
-    {'name': 'practice_list_products', 'description': '查找可关联题目的产品编号及已维护事实卡数量。',
-     'inputSchema': _schema({'keyword': {'type': 'string'}}), 'handler': list_products},
-    {'name': 'practice_get_product_context', 'description': '查看产品摘要与培训事实卡正文、来源、审核状态，供编写产品题时核对依据。',
-     'inputSchema': _schema({'product_id': {'type': 'integer'}}, ('product_id',)),
-     'handler': get_product_context},
     {'name': 'practice_learning_guidelines', 'description': '编写进阶题库前先调用：返回五级难度定义、7单元梯度、四选一出题规则、字段说明与审核流程。',
      'inputSchema': _schema({}), 'handler': learning_guidelines},
-    {'name': 'practice_learning_outline', 'description': '在读取出题规则后调用：查看当前进阶主线的单元ID、独立录入的知识卡、题目安排和各级缺口。',
+    {'name': 'practice_learning_outline', 'description': '在读取出题规则后调用：查看当前进阶主线的单元ID、已选题目和各级缺口。',
      'inputSchema': _schema({}), 'handler': learning_outline},
     {'name': 'practice_suggest_placement', 'description': '按五级出题规则提交学习目标、难度1–5与建议单元；难度须匹配单元，进入后台审核队列。',
      'inputSchema': _schema({'question_id': {'type': 'integer'}, 'unit_id': {'type': 'integer'},
@@ -261,10 +251,10 @@ TOOLS = [
      'inputSchema': _schema({'question_id': {'type': 'integer'}, 'updated_at': {'type': 'string'},
                              'changes': {'type': 'object', 'description': '可修改题干、选项、答案、解析、参考回答、启用状态等；不能改题库归属'}},
                             ('question_id', 'updated_at', 'changes')), 'handler': update_question},
-    {'name': 'practice_preview_csv', 'description': '预检 CSV 批量新增/修改，不写库。每周主题新题可设 weekly_new_import=true。',
+    {'name': 'practice_preview_csv', 'description': '预检 CSV 批量新增/修改，不写库；课程分级须走建议审核。每周主题新题可设 weekly_new_import=true。',
      'inputSchema': _schema({'stage_id': {'type': 'integer'}, 'csv': {'type': 'string'},
                              'weekly_new_import': {'type': 'boolean'}}, ('csv',)), 'handler': preview_csv},
-    {'name': 'practice_import_csv', 'description': '按 CSV 原子批量新增/修改；须先预检。合并导入，不提供整库替换。',
+    {'name': 'practice_import_csv', 'description': '按 CSV 原子批量新增/修改；须先预检。不能直接写课程分级或发布课程。',
      'inputSchema': _schema({'request_id': {'type': 'string'}, 'stage_id': {'type': 'integer'},
                              'csv': {'type': 'string'}, 'weekly_new_import': {'type': 'boolean'}},
                             ('request_id', 'csv')), 'handler': import_csv},
@@ -272,9 +262,8 @@ TOOLS = [
 
 _HANDLERS = {tool['name']: tool['handler'] for tool in TOOLS}
 _READ_ONLY = frozenset(('practice_bank_overview', 'practice_list_questions',
-                        'practice_get_question', 'practice_list_products', 'practice_learning_guidelines',
-                        'practice_learning_outline',
-                        'practice_get_product_context', 'practice_preview_csv'))
+                        'practice_get_question', 'practice_learning_guidelines',
+                        'practice_learning_outline', 'practice_preview_csv'))
 
 
 def list_tools():

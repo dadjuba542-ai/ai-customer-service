@@ -9,7 +9,7 @@ from flask import Blueprint, Response, jsonify, request, stream_with_context
 from config import Config
 from routes.auth import identity_required
 from services.security_service import ConcurrentRequestLimiter, rate_limit
-from services.chat_service import ChatServiceError, build_chat_context, execute_sync_chat, iter_coze_stream
+from services.chat_service import ChatServiceError, build_chat_context, execute_sync_chat, iter_chat_stream
 from services.chat_request_log import ChatRequestLog
 from services.chat_queue_service import (
     cancel_job,
@@ -110,7 +110,7 @@ def stream_to_coze(identity):
     def generate():
         request_log = ChatRequestLog(ctx, 'stream')
         try:
-            for event in iter_coze_stream(ctx):
+            for event in iter_chat_stream(ctx):
                 request_log.observe(event['event'])
                 if event['event'] == 'done':
                     request_log.finish_success(event.get('data'))

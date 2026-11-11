@@ -59,8 +59,9 @@
           <svg class="icon" viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true"><path fill-rule="evenodd" d="M9 5.2a2.6 2.6 0 1 0 0 5.2 2.6 2.6 0 0 0 0-5.2Zm0 2.2a.4.4 0 1 1 0 .8.4.4 0 0 1 0-.8Z" fill="currentColor"/><path d="M15.4 3.4v11.1a3 3 0 0 1-2.4 2.9v-2.1a.9.9 0 0 0 1.2-.8V5.7l-3.2-.9v9.7a3 3 0 1 1-2.2-2.9v2.2a.8.8 0 0 0-.8.8 3 3 0 0 0 3.6-.1V3.9l4.8 1.3-1 2.1V3.4Z" fill="currentColor"/><path d="M15.4 3.4l4.8 1.3v2.2l-4.8-1.3V3.4Z" fill="currentColor"/></svg><span>音频课程</span>
         </div>
         <div class="nav-item" data-page="agents" onclick="switchPage('agents')" data-page-node-id="VzQqCdb1raslbZ2KXwM5bN">
-          <svg class="icon" data-page-node-id="GDsfhgjAejVq16BrkNIPxT" viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true"><path fill-rule="evenodd" d="M8.2 7.6h7.6a3.6 3.6 0 0 1 3.6 3.6v5.2a3.6 3.6 0 0 1-3.6 3.6H8.2A3.6 3.6 0 0 1 4.6 16.4v-5.2a3.6 3.6 0 0 1 3.6-3.6ZM9.3 11.8a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3ZM14.7 11.8a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3Z" fill="currentColor"/><rect x="11.1" y="5.2" width="1.8" height="2.6" rx="0.9" fill="currentColor"/><circle cx="12" cy="3.6" r="1.7" fill="currentColor"/></svg><span data-page-node-id="mQJx5fOE7E4N5yb8Piay6x">智能体配置</span>
+          <svg class="icon" data-page-node-id="GDsfhgjAejVq16BrkNIPxT" viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true"><path fill-rule="evenodd" d="M8.2 7.6h7.6a3.6 3.6 0 0 1 3.6 3.6v5.2a3.6 3.6 0 0 1-3.6 3.6H8.2A3.6 3.6 0 0 1 4.6 16.4v-5.2a3.6 3.6 0 0 1 3.6-3.6ZM9.3 11.8a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3ZM14.7 11.8a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3Z" fill="currentColor"/><rect x="11.1" y="5.2" width="1.8" height="2.6" rx="0.9" fill="currentColor"/><circle cx="12" cy="3.6" r="1.7" fill="currentColor"/></svg><span data-page-node-id="mQJx5fOE7E4N5yb8Piay6x">系统设置</span>
         </div>
+        <a class="nav-item" href="/agent-studio"><svg class="icon" viewBox="0 0 24 24" width="24" height="24" fill="currentColor" aria-hidden="true"><path d="M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Zm2 5v2h10V8H7Zm0 5v2h7v-2H7Z"/></svg><span>自建智能体后台 ↗</span></a>
         <div class="nav-item" data-page="share" onclick="switchPage('share')" data-page-node-id="VcitDMh8BrRR5qX7AqLhMl">
           <svg class="icon" data-page-node-id="HpMpPd0arJnuowov8wNE62" viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true"><circle cx="17.4" cy="5.4" r="2.8" fill="currentColor"/><circle cx="17.4" cy="18.6" r="2.8" fill="currentColor"/><circle cx="6.6" cy="12" r="2.8" fill="currentColor"/><path fill="currentColor" d="M9.2 10.9L15 7.7l1.4 2.5-5.8 3.2-1.4-2.5ZM9.2 13.1L15 16.3l1.4-2.5-5.8-3.2-1.4 2.5Z"/></svg><span data-page-node-id="tBhh0IhhCKqLsN7cE8iA9F">分享设置</span>
         </div>
@@ -269,6 +270,16 @@
           <div class="admin-row" data-page-node-id="oDNNzwIvXe6BnHZQy5lCVr">
             <div class="field" data-page-node-id="wH08lowGmAlNjBIKMRARF9"><label data-page-node-id="vVJfIzSGScGbIFBWYV3YW9">亮点标签（逗号分隔）</label><input type="text" id="prod-highlights" placeholder="小分子, 易吸收, 零添加" data-page-node-id="jHriKRIdQmJfFPNrLdNXrn"></div>
           </div>
+          <div class="admin-row">
+            <div class="field"><label>主要成分与含量</label><textarea id="prod-ingredients" rows="3" placeholder="如：每份含蛋白质 20 克。只填写产品资料中确认的信息。"></textarea></div>
+          </div>
+          <div class="admin-row">
+            <div class="field"><label>适用场景与依据</label><textarea id="prod-use-cases" rows="3" placeholder="如：适合日常膳食蛋白质摄入不足、希望补足蛋白质的人；请写明资料依据。"></textarea></div>
+          </div>
+          <div class="admin-row">
+            <div class="field"><label>注意事项</label><textarea id="prod-precautions" rows="3" placeholder="如：过敏原、特殊人群、使用限制。未知就留空。"></textarea></div>
+          </div>
+          <p style="font-size:12px;color:var(--slate-500)">这些内容会随产品保存自动进入 DeepSeek 检索。描述宽泛时，AI 会先确认用户需求，再给出有条件的推荐。</p>
           <div class="admin-row" data-page-node-id="JZH2Jt2bImVOEx8EGLGlio">
             <div class="field" data-page-node-id="a9z9kOZlFE5Owqa2l0p5uo">
               <label data-page-node-id="3ezlJVMcDK8bRr5Xci5KgE">主图</label>
@@ -498,26 +509,8 @@
 
       <!-- ===== Page: Agents ===== -->
       <div id="page-agents" class="page-content" data-page-node-id="3eHaz6V4GfkX8fxnB1Fy3Y">
-        <div class="admin-card">
-          <h3>空召回自动重查</h3>
-          <div class="field">
-            <label for="coze-rewrite-bot-input">专用改写智能体 Bot ID</label>
-            <input type="text" id="coze-rewrite-bot-input" maxlength="64" placeholder="填写已发布的 Coze 改写智能体 ID；留空关闭">
-            <p id="coze-rewrite-hint">完整命中固定兜底后，改写并重查一次。共用系统 Coze API Key，需要有权访问该智能体。</p>
-            <button class="btn btn-primary btn-sm" onclick="saveCozeRewriteSettings()">保存配置</button>
-          </div>
-        </div>
         <div class="admin-card" data-page-node-id="nyd7naAgSUYUhBqvlTja0e">
           <h3 data-page-node-id="JTYDmycQGWqS9yhoS4rm6C"><svg class="icon icon-key" viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true" data-page-node-id="Zsj54Jg6DRIwN1oNr0I4nr"><path fill-rule="evenodd" clip-rule="evenodd" d="M8 2.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11Zm0 2.3a3.2 3.2 0 1 1 0 6.4 3.2 3.2 0 0 1 0-6.4Z" fill="currentColor"/><path d="M12.4 11.1 20.2 18.9l-1.7 1.7-7.8-7.8 1.7-1.7z" fill="currentColor"/><path d="M18.2 16.9 20 18.7l-1.5 1.5-1.8-1.8 1.5-1.5z" fill="currentColor"/></svg>系统配置</h3>
-          <div class="admin-row" data-page-node-id="Nvzk7W0gGAfOGkeGBxpzv5">
-            <div class="field" data-page-node-id="rnU9CTMDgIczZpqqJVnOYC">
-              <label id="coze-key-label" data-page-node-id="jx2MkfnmCpfL9EEPLDCQL8">Coze API Key（当前: 未设置）</label>
-              <div style="display:flex;gap:8px" data-page-node-id="b6sotCn6GlUXMPnGaSF1lg">
-                <input type="password" id="coze-api-key-input" placeholder="粘贴新的 API Key" style="flex:1;padding:8px 12px;font-size:13px;font-family:inherit;border:1.5px solid var(--slate-200);border-radius:8px;outline:none" data-page-node-id="gJeiSatmBSlhE8sD6gcANF">
-                <button class="btn btn-primary" onclick="updateCozeApiKey()" data-page-node-id="5l2jlLQ5gADGNEAS6SIUcO">更新</button>
-              </div>
-            </div>
-          </div>
           <div class="admin-row" data-page-node-id="7ktRaCkjOJXWihcR4aPY7l">
             <div class="field" data-page-node-id="vM89Q51EG5GdtDPZu8YvLV">
               <label data-page-node-id="e2eeOOGgBFNSMSKBSLuKMF">屏蔽关键词（逗号分隔）</label>
@@ -559,27 +552,6 @@
             <button class="btn btn-primary" onclick="saveWaitingTips()" data-page-node-id="Baqa83wa0mUxMELboMLDkQ">保存全部</button>
           </div>
         </div>
-        <div class="add-agent-card" onclick="showCreateAgentForm()" data-page-node-id="4j87AabzKclVOJ3yfGycFd">
-          <svg class="icon icon-plus" viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true" data-page-node-id="DTOPiwvWDJKXdmpXCHAwzF"><path d="M11 4.5h2v6.5H20v2h-7v6.5h-2V13H4v-2h7V4.5z" fill="currentColor"/></svg><span data-page-node-id="Dzn00oujGw4PRkW6jcrqbo">新建智能体</span>
-        </div>
-        <div id="create-agent-form" class="agent-card" style="display:none" data-page-node-id="2qtNb0NHvYAAMBysoqAUeB">
-          <div class="agent-header" data-page-node-id="JF1YGmw62QGAGpOUhA17OE"><div class="agent-name" data-page-node-id="ABCmOp4J1VMVYCBgarrVJz">新建智能体</div></div>
-          <div class="field" data-page-node-id="d6hasZ03FHhSLhogVEkuAm"><label data-page-node-id="oNBZdfxMhFfgavWjA1x9fX">标识 ID（英文唯一，如 mybot）</label><input type="text" id="new-agent-id" placeholder="mybot" data-page-node-id="puQjNbLktACGfD0CJlqoPd"></div>
-          <div class="field" data-page-node-id="NwQb0CNZMqYsPEKgBAJqtB"><label data-page-node-id="Pe1xpZmaWugIIJT5z9411v">名称</label><input type="text" id="new-agent-name" placeholder="智能体名称" data-page-node-id="8OMB2p0hPKjWBvXLOKz3GX"></div>
-          <div class="field" data-page-node-id="CSpOnQvTFEcQYyHCj7wDSG"><label data-page-node-id="vKBTZTD4bwCs9GqkwfPJEV">首页描述（简洁）</label><input type="text" id="new-agent-desc" placeholder="如：快速获取产品详情" data-page-node-id="EXKR5ugO6WPOtlpH7I9IM1"></div>
-          <div class="field" data-page-node-id="iXYbpdKf6fXEVFHOJdUWBC"><label data-page-node-id="3VWr61vjy79rNq43xJ3yTy">聊天描述（详细，切换时展示）</label><textarea id="new-agent-chat-desc" rows="2" placeholder="如：帮你查询产品成分、功效、使用方法等，支持多轮对话"></textarea></div>
-          <div class="field" data-page-node-id="XeuMPiDokUW5FD6xIDgf53"><label data-page-node-id="PFDAdRrX36vU7MxYGgoFYy">快捷消息</label><input type="text" id="new-agent-prompt" placeholder="点击后自动发送的消息" data-page-node-id="mc06XLl72znrok2M52rmWL"></div>
-          <div style="display:flex;gap:12px" data-page-node-id="FOosaYCopVJeyKAuXQ2Q5p">
-            <div class="field" style="flex:1" data-page-node-id="y5XtaHsHxWhx4Dq8BJO7TM"><label data-page-node-id="6ICFh1nLTljAftVRPiCc4K">颜色</label><input type="color" id="new-agent-color" value="#4F46E5" data-page-node-id="94pzwo546RjHG5nAIVLKvm"></div>
-            <div class="field" style="flex:1" data-page-node-id="ECbvBgVzsKCh1BmwjpYyz8"><label data-page-node-id="0NlNo6cc1rNFHJmvFsLq7w">图标（Phosphor 名）</label><input type="text" id="new-agent-icon" placeholder="robot" data-page-node-id="bDjRaBmHN4ZGs7rwKsDP1E"></div>
-          </div>
-          <div class="field" data-page-node-id="HbhP6E6hDRSsEAuiJ2pY8m"><label data-page-node-id="6avoiJF8PojwfTSlT3PpJI">机器人 ID（Coze Bot ID）</label><input type="text" id="new-agent-bot" placeholder="" data-page-node-id="F0biovAEmQsmAqsvhwUaKr"></div>
-          <div class="agent-actions" data-page-node-id="WoBCDg1YA68dOPPem28vEo">
-            <button class="btn btn-secondary" onclick="hideCreateAgentForm()" data-page-node-id="jdsm57OsPtKXB7h6pF1Fn0">取消</button>
-            <button class="btn btn-primary" onclick="createAgent()" data-page-node-id="x1HF3KDnyXGVpukXdfjwgT">创建</button>
-          </div>
-        </div>
-        <div id="admin-agents-list" data-page-node-id="UCazSUkl4xGzdG6hvqh2S4"></div>
       </div>
 
       <!-- ===== Page: Share Settings ===== -->
@@ -993,10 +965,9 @@
 
 <div class="toast" id="toast" data-page-node-id="8Ztsru779Gl5WfFgBlEIOZ"></div>
 
-<script src="/js/admin.js?v=20261014-quiz2"></script>
-<script src="/admin/practice.js?v=20261022-level5"></script>
-<script src="/admin/practice-learning.js?v=20261019-hub3"></script>
-<script src="/admin/practice-path.js?v=20261022-level5"></script>
+<script src="/js/admin.js?v=20261104-rag-docx1"></script>
+<script src="/admin/practice.js?v=20261023-pathonly1"></script>
+<script src="/admin/practice-path.js?v=20261023-publish2"></script>
 <script src="/admin/practice-stages.js?v=20261014-weekly8"></script>
 <script src="/admin/practice-weekly.js?v=20261014-weekly8"></script>
 <script src="/admin/cases.js?v=20260902-casebatch1"></script>

@@ -79,12 +79,6 @@ def learning_path(identity):
     return jsonify(path.home(identity))
 
 
-@practice_bp.route('/learning/products/<int:product_id>')
-@identity_required
-def learning_product(identity, product_id):
-    return jsonify(learning.course(identity, product_id))
-
-
 @practice_bp.route('/learning/sessions', methods=['POST'])
 @identity_required
 @rate_limit('practice-create', 10)
@@ -109,12 +103,6 @@ def learning_action(identity, session_id, action):
 @admin_required
 def admin_data(user):
     return jsonify(practice.admin_data(request.args.get('stage_id', 0, type=int)))
-
-
-@admin_practice_bp.route('/learning')
-@admin_required
-def learning_admin_data(user):
-    return jsonify(learning.admin_data())
 
 
 @admin_practice_bp.route('/learning/path')
@@ -145,24 +133,6 @@ def path_publish(user):
 @admin_required
 def path_review_suggestion(user, suggestion_id):
     return jsonify(path.review(suggestion_id, body().get('accepted')))
-
-
-@admin_practice_bp.route('/learning/products/<int:product_id>/facts/<int:unit_no>', methods=['PUT'])
-@admin_required
-def learning_admin_fact(user, product_id, unit_no):
-    return jsonify(learning.save_fact(product_id, unit_no, body()))
-
-
-@admin_practice_bp.route('/learning/products/<int:product_id>/units/<int:unit_no>', methods=['PUT'])
-@admin_required
-def learning_admin_unit(user, product_id, unit_no):
-    return jsonify(learning.assign_unit(product_id, unit_no, body()))
-
-
-@admin_practice_bp.route('/learning/products/<int:product_id>/publish', methods=['POST'])
-@admin_required
-def learning_admin_publish(user, product_id):
-    return jsonify(learning.publish(product_id))
 
 
 @admin_practice_bp.route('/questions/<int:question_id>', methods=['PUT'])

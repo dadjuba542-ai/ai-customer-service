@@ -3,29 +3,13 @@ import json
 import random
 import uuid
 from datetime import date, timedelta
-from urllib.parse import urlparse
 
 from services import feature_flags, practice_common as common, practice_service as p
-
-UNIT_TITLES = ('认识产品', '配料与规格', '使用方法', '客户常见提问')
-
 
 def require_learning():
     p.require_enabled()
     if not feature_flags.is_enabled(feature_flags.PRACTICE_LEARNING_SYSTEM):
-        raise common.PracticeError('产品课程正在准备中', 403)
-
-
-def _product(conn, product_id):
-    product_id = common.integer(product_id, 1, 2147483647)
-    row = conn.execute('SELECT id,name,category,summary,image_url FROM products WHERE id=?', (product_id,)).fetchone()
-    if not row:
-        raise common.PracticeError('产品不存在', 404)
-    return dict(row)
-
-
-def _unit(unit_no):
-    return common.integer(unit_no, 1, 4)
+        raise common.PracticeError('问答课堂进阶主线正在准备中', 403)
 
 
 def _canonical(question):
@@ -107,14 +91,6 @@ def home(identity):
     require_learning()
     today = common.now().date().isoformat()
     with common.db() as conn:
-        rows = conn.execute('''SELECT c.product_id,p.name,p.category,p.image_url FROM practice_learning_courses c
-            JOIN products p ON p.id=c.product_id WHERE c.published=1 ORDER BY p.sort_order,p.id''').fetchall()
-        courses = []
-        for row in rows:
-            completed = conn.execute('''SELECT COUNT(DISTINCT unit_no) FROM practice_learning_sessions
-                WHERE user_id=? AND kind='unit' AND product_id=? AND completed=1''',
-                (identity['user_id'], row['product_id'])).fetchone()[0]
-            courses.append({**dict(row), 'completed_units': completed, 'next_unit': min(completed + 1, 4)})
         streak, activity = _activity(conn, identity['user_id'], today)
         reviewed = conn.execute('''SELECT id,completed,snapshot FROM practice_learning_sessions WHERE user_id=?
             AND kind='review' AND assigned_day=? ORDER BY created_at DESC LIMIT 1''',(identity['user_id'],today)).fetchone()
@@ -122,27 +98,10 @@ def home(identity):
         if reviewed and not reviewed['completed']:
             answered = conn.execute('SELECT COUNT(*) FROM practice_learning_answers WHERE session_id=?',(reviewed['id'],)).fetchone()[0]
             due = json.loads(reviewed['snapshot'])['questions'][answered:]
-        resume = conn.execute('''SELECT id,kind,product_id,unit_no FROM practice_learning_sessions
-            WHERE user_id=? AND completed=0 ORDER BY created_at DESC LIMIT 1''', (identity['user_id'],)).fetchone()
-    return {'enabled': True, 'courses': courses, 'due_count': len(due), 'streak': streak,
+        resume = conn.execute('''SELECT id,kind,path_unit_id FROM practice_learning_sessions
+            WHERE user_id=? AND kind IN ('path','review') AND completed=0 ORDER BY created_at DESC LIMIT 1''', (identity['user_id'],)).fetchone()
+    return {'enabled': True, 'due_count': len(due), 'streak': streak,
             'activity_days': activity, 'resume': dict(resume) if resume else None, 'today': today}
-
-
-def course(identity, product_id):
-    require_learning()
-    with common.db() as conn:
-        product = _product(conn, product_id)
-        row = conn.execute('SELECT published FROM practice_learning_courses WHERE product_id=?', (product_id,)).fetchone()
-        if not row or not row['published']:
-            raise common.PracticeError('课程尚未开放', 404)
-        facts = [dict(r) for r in conn.execute('''SELECT id,unit_no,title,body,source_url,version FROM practice_learning_facts
-            WHERE product_id=? AND status='published' ORDER BY unit_no''', (product_id,))]
-        done = {r['unit_no'] for r in conn.execute('''SELECT DISTINCT unit_no FROM practice_learning_sessions
-            WHERE user_id=? AND product_id=? AND kind='unit' AND completed=1''', (identity['user_id'], product_id))}
-        units = [{'unit_no': n, 'title': UNIT_TITLES[n-1], 'fact_title': next((f['title'] for f in facts if f['unit_no']==n), ''),
-                  'completed': n in done, 'locked': n>1 and n-1 not in done}
-                 for n in range(1, 5)]
-    return {'product': product, 'units': units, 'completed_units': len(done)}
 
 
 def _owned(conn, session_id, identity):
@@ -189,45 +148,23 @@ def create_session(identity, data):
     require_learning()
     request_id = common.request_id(data.get('request_id'))
     kind = data.get('kind')
-    if kind not in ('unit', 'path', 'review'):
+    if kind not in ('path', 'review'):
         raise common.PracticeError('短课类型无效', 400)
     day, stamp = common.now().date().isoformat(), common.now().isoformat()
     with common.db(True) as conn:
         previous = conn.execute('SELECT * FROM practice_learning_sessions WHERE user_id=? AND request_id=?',
                                 (identity['user_id'], request_id)).fetchone()
         if previous:
-            if previous['kind']!=kind or (kind=='unit' and (previous['product_id']!=data.get('product_id') or previous['unit_no']!=data.get('unit_no'))) or (kind=='path' and previous['path_unit_id']!=data.get('path_unit_id')):
+            if previous['kind']!=kind or (kind=='path' and previous['path_unit_id']!=data.get('path_unit_id')):
                 raise common.PracticeError('请求标识已用于其他短课', 409)
             return _public(conn, dict(previous))
-        if kind=='unit':
-            product_id, unit_no = common.integer(data.get('product_id'),1,2147483647), _unit(data.get('unit_no'))
-            _product(conn, product_id)
-            course_row=conn.execute('SELECT published FROM practice_learning_courses WHERE product_id=?',(product_id,)).fetchone()
-            if not course_row or not course_row['published']:
-                raise common.PracticeError('课程尚未开放',404)
-            if unit_no>1 and not conn.execute('''SELECT 1 FROM practice_learning_sessions WHERE user_id=? AND product_id=?
-                AND unit_no=? AND kind='unit' AND completed=1''',(identity['user_id'],product_id,unit_no-1)).fetchone():
-                raise common.PracticeError('请先完成上一单元',409)
-            existing=conn.execute('''SELECT * FROM practice_learning_sessions WHERE user_id=? AND kind='unit'
-                AND product_id=? AND unit_no=? AND completed=0 ORDER BY created_at DESC LIMIT 1''',
-                (identity['user_id'],product_id,unit_no)).fetchone()
-            if existing:
-                return _public(conn,dict(existing))
-            fact=conn.execute('''SELECT * FROM practice_learning_facts WHERE product_id=? AND unit_no=? AND status='published' ''',
-                              (product_id,unit_no)).fetchone()
-            selected=conn.execute('''SELECT q.*,l.kind FROM practice_learning_unit_questions l
-                JOIN practice_quiz_questions q ON q.id=l.question_id WHERE l.product_id=? AND l.unit_no=?
-                ORDER BY l.position''',(product_id,unit_no)).fetchall()
-            if not fact or len(selected)!=3:
-                raise common.PracticeError('课程内容尚未准备完整',409)
-            snapshot={'fact':{k:fact[k] for k in ('id','title','body','source_url','version')},
-                      'questions':[_snapshot_question(row,row['kind']) for row in selected]}
-        elif kind=='path':
+        if kind=='path':
             from services import practice_path
             path_unit_id=common.integer(data.get('path_unit_id'),1,2147483647)
-            units=practice_path._units(conn)
-            if not practice_path._ready(conn,units):
+            publication=practice_path._publication(conn)
+            if not publication:
                 raise common.PracticeError('学习主线正在准备中',409)
+            units=publication['units']
             unit=next((item for item in units if item['id']==path_unit_id),None)
             if not unit:
                 raise common.PracticeError('学习单元不存在',404)
@@ -241,14 +178,10 @@ def create_session(identity, data):
                 (identity['user_id'],path_unit_id)).fetchone()
             if existing:
                 return _public(conn,dict(existing))
-            selected=conn.execute('''SELECT q.* FROM practice_learning_path_questions l
-                JOIN practice_quiz_questions q ON q.id=l.question_id AND q.archived=0 AND q.stage_id=0
-                WHERE l.unit_id=? ORDER BY l.position''',(path_unit_id,)).fetchall()
+            selected=unit['questions']
             if len(selected)!=3:
                 raise common.PracticeError('沟通单元内容尚未准备完整',409)
-            snapshot={'path_kind':unit['kind'],
-                      'fact':{'id':unit['id'],'title':unit['title'],'body':unit['body'],
-                              'source_url':'','version':1},
+            snapshot={'path_kind':unit['kind'], 'unit_title':unit['title'], 'fact':None,
                       'questions':[_snapshot_question(row,'knowledge' if unit['kind']=='product' and index<2 else 'application')
                                    for index,row in enumerate(selected)]}
             product_id,unit_no=None,None
@@ -290,6 +223,8 @@ def perform(identity,session_id,action,data):
     request_id=common.request_id(data.get('request_id'))
     with common.db(True) as conn:
         s=_owned(conn,session_id,identity)
+        if s['kind']=='unit':
+            raise common.PracticeError('旧产品短课已停用，请返回学习主线',410)
         questions=json.loads(s['snapshot'])['questions']
         if s['completed']:
             return _public(conn,s)
@@ -318,88 +253,10 @@ def perform(identity,session_id,action,data):
             conn.execute('UPDATE practice_learning_sessions SET correct_count=correct_count+? WHERE id=?',(correct,session_id))
             if position==len(questions)-1:
                 conn.execute('UPDATE practice_learning_sessions SET completed=1,completed_at=? WHERE id=?',(common.now().isoformat(),session_id))
-                if s['kind'] in ('unit','path'):
+                if s['kind']=='path':
                     conn.execute("INSERT OR IGNORE INTO practice_learning_activity VALUES(?,?,'unit')",(identity['user_id'],common.now().date().isoformat()))
         else:
             if not answer:
                 raise common.PracticeError('请先完成这道题',409)
             conn.execute('UPDATE practice_learning_sessions SET cursor=cursor+1 WHERE id=?',(session_id,))
         return _public(conn,_owned(conn,session_id,identity))
-
-
-def admin_data():
-    with common.db() as conn:
-        products=[dict(r) for r in conn.execute('''SELECT p.id,p.name,p.category,c.published FROM products p
-            LEFT JOIN practice_learning_courses c ON c.product_id=p.id ORDER BY p.sort_order,p.id''')]
-        facts=[dict(r) for r in conn.execute('SELECT * FROM practice_learning_facts ORDER BY product_id,unit_no')]
-        assignments=[dict(r) for r in conn.execute('SELECT * FROM practice_learning_unit_questions ORDER BY product_id,unit_no,position')]
-        questions=[dict(r) for r in conn.execute('''SELECT id,title,category,product_id,skill_code,fact_id,updated_at
-            FROM practice_quiz_questions WHERE stage_id=0 AND archived=0 ORDER BY id''')]
-    return {'products':products,'facts':facts,'assignments':assignments,'questions':questions,'unit_titles':UNIT_TITLES}
-
-
-def save_fact(product_id,unit_no,data):
-    product_id,unit_no=common.integer(product_id,1,2147483647),_unit(unit_no)
-    title,body,source=data.get('title'),data.get('body'),data.get('source_url','')
-    if not isinstance(title,str) or not title.strip() or len(title)>100 or not isinstance(body,str) or not body.strip() or len(body)>800:
-        raise common.PracticeError('请填写知识点标题与不超过800字的正文',400)
-    if not isinstance(source,str) or len(source)>1000 or source and (urlparse(source).scheme not in ('http','https') or not urlparse(source).netloc):
-        raise common.PracticeError('来源链接无效',400)
-    with common.db(True) as conn:
-        _product(conn,product_id)
-        old=conn.execute('SELECT * FROM practice_learning_facts WHERE product_id=? AND unit_no=?',(product_id,unit_no)).fetchone()
-        stamp=common.now().isoformat()
-        if old:
-            conn.execute('''UPDATE practice_learning_facts SET title=?,body=?,source_url=?,status='draft',
-                version=version+1,updated_at=? WHERE id=?''',(title.strip(),body.strip(),source.strip(),stamp,old['id']))
-            fact_id=old['id']
-        else:
-            fact_id=conn.execute('''INSERT INTO practice_learning_facts
-                (product_id,unit_no,title,body,source_url,updated_at) VALUES(?,?,?,?,?,?)''',
-                (product_id,unit_no,title.strip(),body.strip(),source.strip(),stamp)).lastrowid
-        conn.execute('''INSERT INTO practice_learning_courses VALUES(?,0,?) ON CONFLICT(product_id)
-            DO UPDATE SET published=0,updated_at=excluded.updated_at''',(product_id,stamp))
-        related=[dict(r) for r in conn.execute('SELECT id,title FROM practice_quiz_questions WHERE fact_id=? AND archived=0',(fact_id,))]
-    return {'id':fact_id,'related_questions':related,'needs_review':bool(related)}
-
-
-def assign_unit(product_id,unit_no,data):
-    product_id,unit_no=common.integer(product_id,1,2147483647),_unit(unit_no)
-    ids=data.get('question_ids')
-    if not isinstance(ids,list) or len(ids)!=3 or len(set(map(str,ids)))!=3:
-        raise common.PracticeError('每单元请选择3道不同题目',400)
-    ids=[common.integer(i,1,2147483647) for i in ids]
-    with common.db(True) as conn:
-        _product(conn,product_id)
-        fact=conn.execute('SELECT id FROM practice_learning_facts WHERE product_id=? AND unit_no=?',(product_id,unit_no)).fetchone()
-        if not fact:
-            raise common.PracticeError('请先填写本单元事实卡',409)
-        for qid in ids:
-            row=conn.execute('''SELECT product_id,fact_id FROM practice_quiz_questions
-                WHERE id=? AND stage_id=0 AND archived=0''',(qid,)).fetchone()
-            if not row or row['product_id']!=product_id or row['fact_id']!=fact['id']:
-                raise common.PracticeError('请选择关联本产品、本单元事实卡的母题',400)
-        conn.execute('DELETE FROM practice_learning_unit_questions WHERE product_id=? AND unit_no=?',(product_id,unit_no))
-        for position,qid in enumerate(ids):
-            conn.execute('INSERT INTO practice_learning_unit_questions VALUES(?,?,?,?,?)',
-                         (product_id,unit_no,position,qid,'knowledge' if position<2 else 'application'))
-        conn.execute('UPDATE practice_learning_courses SET published=0,updated_at=? WHERE product_id=?',(common.now().isoformat(),product_id))
-    return {'ok':True}
-
-
-def publish(product_id):
-    product_id=common.integer(product_id,1,2147483647)
-    with common.db(True) as conn:
-        _product(conn,product_id)
-        for unit_no in range(1,5):
-            fact=conn.execute('SELECT id,source_url FROM practice_learning_facts WHERE product_id=? AND unit_no=?',(product_id,unit_no)).fetchone()
-            rows=conn.execute('''SELECT l.position,l.kind,q.id,q.product_id,q.fact_id FROM practice_learning_unit_questions l
-                JOIN practice_quiz_questions q ON q.id=l.question_id AND q.archived=0 AND q.stage_id=0
-                WHERE l.product_id=? AND l.unit_no=? ORDER BY l.position''',(product_id,unit_no)).fetchall()
-            if not fact or not fact['source_url'] or len(rows)!=3 or [r['kind'] for r in rows]!=['knowledge','knowledge','application'] or any(r['product_id']!=product_id or r['fact_id']!=fact['id'] for r in rows):
-                raise common.PracticeError(f'第{unit_no}单元需要带素材来源的事实卡、2道理解题和1道应用题',400)
-        conn.execute("UPDATE practice_learning_facts SET status='published' WHERE product_id=?",(product_id,))
-        stamp=common.now().isoformat()
-        conn.execute('''INSERT INTO practice_learning_courses VALUES(?,1,?) ON CONFLICT(product_id)
-            DO UPDATE SET published=1,updated_at=excluded.updated_at''',(product_id,stamp))
-    return {'ok':True}

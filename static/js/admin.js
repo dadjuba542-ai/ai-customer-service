@@ -141,7 +141,7 @@ async function switchPage(page) {
     products: '产品管理',
     cases: '案例档案',
     'audio-courses': '音频课程',
-    agents: '智能体配置',
+    agents: '系统设置',
     share: '分享设置',
     feedback: '评价看板',
     community: '问答管理',
@@ -172,7 +172,7 @@ async function switchPage(page) {
     loadAdminCases();
   }
   if (page === 'audio-courses') loadAdminAudioCourses();
-  if (page === 'agents') loadAdminAgents();
+  if (page === 'agents') { loadAdminSystemConfig(); loadWaitingSettings(); }
   if (page === 'share') loadShareSettings();
   if (page === 'feedback') loadFeedbackDashboard();
   if (page === 'community') loadAdminQA();
@@ -1734,63 +1734,14 @@ async function uploadNewsImage(input) {
   } catch { showToast('上传失败', 'error'); }
 }
 
-// ===== Agent Management =====
-async function loadAdminAgents() {
-  try {
-    const res = await fetch(`${API}/api/admin/agents`, { headers: { 'Authorization': `Bearer ${getToken()}` } });
-    if (!res.ok) return;
-    const data = await res.json();
-    const agents = data.agents || [];
-    const container = document.getElementById('admin-agents-list');
-    if (!container) return;
-
-    container.innerHTML = agents.map(a => `
-      <div class="agent-card">
-        <div class="agent-header">
-          <div class="agent-avatar" style="background:${a.color}"><i class="ph ph-${a.icon || 'robot'}"></i></div>
-          <div class="agent-name">${esc(a.name)}</div>
-        </div>
-        <div class="field"><label>名称</label><input type="text" id="ag-name-${a.agent_id}" value="${esc(a.name)}"></div>
-        <div class="field"><label>首页描述（简洁）</label><input type="text" id="ag-desc-${a.agent_id}" value="${esc(a.description || '')}"></div>
-        <div class="field"><label>聊天描述（详细、切换时展示）</label><textarea id="ag-chat-desc-${a.agent_id}" rows="2">${esc(a.chat_desc || '')}</textarea></div>
-        <div class="field"><label>快捷消息</label><input type="text" id="ag-prompt-${a.agent_id}" value="${esc(a.prompt || '')}"></div>
-        <div style="display:flex;gap:12px">
-          <div class="field" style="flex:1"><label>颜色</label><input type="color" id="ag-color-${a.agent_id}" value="${a.color}"></div>
-          <div class="field" style="flex:1"><label>图标（Phosphor 名）</label><input type="text" id="ag-icon-${a.agent_id}" value="${esc(a.icon || 'robot')}"></div>
-        </div>
-        <div class="field"><label>机器人 ID</label><input type="text" id="ag-bot-${a.agent_id}" value="${esc(a.bot_id || '')}"></div>
-        <div class="field">
-          <label>头像图片</label>
-          <div class="upload-area" onclick="document.getElementById('ag-avatar-input-${a.agent_id}').click()">
-            ${a.avatar_url ? '<img src="' + esc(a.avatar_url) + '" id="ag-avatar-preview-' + a.agent_id + '">' : '<div id="ag-avatar-ph-' + a.agent_id + '"><i class="ph ph-upload"></i><span>点击上传头像</span></div>'}
-          </div>
-          <input type="file" id="ag-avatar-input-${a.agent_id}" accept="image/*" class="hidden" onchange="uploadAgentAvatar('${a.agent_id}', this)">
-          <input type="hidden" id="ag-avatar-${a.agent_id}" value="${esc(a.avatar_url || '')}">
-        </div>
-        <div class="agent-actions">
-          <button class="btn btn-primary" onclick="saveAgent('${a.agent_id}')">保存</button>
-          <button class="btn btn-danger" onclick="deleteAgent('${a.agent_id}')">删除</button>
-        </div>
-      </div>
-    `).join('');
-  } catch (e) { console.error('loadAdminAgents error:', e); }
-
-  // Load system config too
-  loadAdminSystemConfig();
-  loadCozeRewriteSettings();
-  loadWaitingSettings();
-}
-
 async function loadAdminSystemConfig() {
   try {
-    const [keyRes, blockRes, speechRes] = await Promise.all([
-      fetch(`${API}/api/admin/settings/coze-api-key`, { headers: { 'Authorization': `Bearer ${getToken()}` } }),
+    const [blockRes, speechRes] = await Promise.all([
       fetch(`${API}/api/admin/settings/blocked-keywords`, { headers: { 'Authorization': `Bearer ${getToken()}` } }),
       fetch(`${API}/api/admin/settings/speech`, { headers: { 'Authorization': `Bearer ${getToken()}` } }),
     ]);
-    let keyMasked = '未设置', blockedKW = '', defaultHint = '', speechEnabled = false;
+    let blockedKW = '', defaultHint = '', speechEnabled = false;
     let speechMode = 'auto', tencentAppId = '', tencentSecretId = '', tencentSecretMasked = '';
-    if (keyRes.ok) { const kd = await keyRes.json(); keyMasked = kd.masked || '未设置'; }
     if (blockRes.ok) { const bd = await blockRes.json(); blockedKW = bd.keywords || ''; defaultHint = bd.defaultHint || ''; }
     if (speechRes.ok) {
       const sd = await speechRes.json();
@@ -1800,7 +1751,6 @@ async function loadAdminSystemConfig() {
       tencentSecretId = sd.tencent_secret_id || '';
       tencentSecretMasked = sd.tencent_secret_key_masked || '';
     }
-    document.getElementById('coze-key-label').textContent = `Coze API Key（当前: ${keyMasked}）`;
     document.getElementById('blocked-keywords-input').value = blockedKW;
     document.getElementById('blocked-hint').textContent = `参考: ${defaultHint}`;
     document.getElementById('speech-enabled-input').checked = speechEnabled;
@@ -1810,30 +1760,6 @@ async function loadAdminSystemConfig() {
     document.getElementById('tencent-secret-key-input').value = '';
     document.getElementById('tencent-secret-hint').textContent = tencentSecretMasked ? `已保存 SecretKey：${tencentSecretMasked}` : '尚未保存 SecretKey';
   } catch { console.error('loadAdminSystemConfig error'); }
-}
-
-async function loadCozeRewriteSettings() {
-  try {
-    const res = await fetch(`${API}/api/admin/settings/coze-rewrite`, {
-      headers: { 'Authorization': `Bearer ${getToken()}` },
-    });
-    if (!res.ok) return;
-    const data = await res.json();
-    document.getElementById('coze-rewrite-bot-input').value = data.bot_id || '';
-    if (!data.supported) document.getElementById('coze-rewrite-hint').textContent = '当前使用 V2，自动重查暂不生效；需要切换 Coze V3。';
-  } catch { showToast('改写智能体配置加载失败', 'error'); }
-}
-
-async function saveCozeRewriteSettings() {
-  try {
-    const res = await fetch(`${API}/api/admin/settings/coze-rewrite`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${getToken()}` },
-      body: JSON.stringify({ bot_id: document.getElementById('coze-rewrite-bot-input').value.trim() }),
-    });
-    const data = await res.json();
-    showToast(res.ok ? '改写智能体配置已保存' : (data.error || '保存失败'), res.ok ? 'success' : 'error');
-  } catch { showToast('保存失败', 'error'); }
 }
 
 async function loadShareSettings() {
@@ -1907,116 +1833,6 @@ async function saveShareSettings() {
   } catch (e) {
     showToast(e.message || '保存失败', 'error');
   }
-}
-
-function showCreateAgentForm() {
-  document.getElementById('create-agent-form').style.display = 'block';
-}
-function hideCreateAgentForm() {
-  document.getElementById('create-agent-form').style.display = 'none';
-}
-
-async function createAgent() {
-  const agent_id = document.getElementById('new-agent-id').value.trim();
-  const name = document.getElementById('new-agent-name').value.trim();
-  if (!agent_id || !name) return showToast('标识ID和名称不能为空', 'error');
-  try {
-    const res = await fetch(`${API}/api/admin/agents`, {
-      method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${getToken()}` },
-      body: JSON.stringify({
-        agent_id, name,
-        type: 'custom',
-        description: document.getElementById('new-agent-desc').value,
-        chat_desc: document.getElementById('new-agent-chat-desc').value,
-        prompt: document.getElementById('new-agent-prompt').value,
-        color: document.getElementById('new-agent-color').value,
-        icon: document.getElementById('new-agent-icon').value || 'robot',
-        bot_id: document.getElementById('new-agent-bot').value,
-      }),
-    });
-    if (res.ok) {
-      showToast('智能体已创建', 'success');
-      hideCreateAgentForm();
-      document.getElementById('new-agent-id').value = '';
-      document.getElementById('new-agent-name').value = '';
-      document.getElementById('new-agent-desc').value = '';
-      document.getElementById('new-agent-chat-desc').value = '';
-      document.getElementById('new-agent-prompt').value = '';
-      document.getElementById('new-agent-icon').value = '';
-      document.getElementById('new-agent-bot').value = '';
-      loadAdminAgents();
-    } else { const d = await res.json(); showToast(d.error || '创建失败', 'error'); }
-  } catch { showToast('创建失败', 'error'); }
-}
-
-async function deleteAgent(agentId) {
-  if (!confirm(`确定删除智能体？`)) return;
-  try {
-    const res = await fetch(`${API}/api/admin/agents/${agentId}`, {
-      method: 'DELETE', headers: { 'Authorization': `Bearer ${getToken()}` },
-    });
-    if (res.ok) { showToast('已删除', 'success'); loadAdminAgents(); }
-    else { showToast('删除失败', 'error'); }
-  } catch { showToast('删除失败', 'error'); }
-}
-
-async function uploadAgentAvatar(agentId, input) {
-  if (!input.files[0]) return;
-  const formData = new FormData();
-  formData.append('file', input.files[0]);
-  try {
-    const res = await fetch(`${API}/api/admin/upload`, {
-      method: 'POST', headers: { 'Authorization': `Bearer ${getToken()}` }, body: formData,
-    });
-    const data = await res.json();
-    if (res.ok) {
-      document.getElementById(`ag-avatar-${agentId}`).value = data.url;
-      const preview = document.getElementById(`ag-avatar-preview-${agentId}`);
-      if (preview) { preview.src = data.url; preview.classList.remove('hidden'); }
-      document.getElementById(`ag-avatar-ph-${agentId}`)?.classList.add('hidden');
-    } else { showToast('上传失败', 'error'); }
-  } catch { showToast('上传失败', 'error'); }
-}
-
-async function saveAgent(agentId) {
-  const name = document.getElementById(`ag-name-${agentId}`).value.trim();
-  if (!name) return showToast('名称不能为空', 'error');
-  try {
-    const res = await fetch(`${API}/api/admin/agents/${agentId}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${getToken()}` },
-      body: JSON.stringify({
-        name,
-        description: document.getElementById(`ag-desc-${agentId}`).value,
-        chat_desc: document.getElementById(`ag-chat-desc-${agentId}`).value,
-        prompt: document.getElementById(`ag-prompt-${agentId}`).value,
-        color: document.getElementById(`ag-color-${agentId}`).value,
-        icon: document.getElementById(`ag-icon-${agentId}`).value || 'robot',
-        bot_id: document.getElementById(`ag-bot-${agentId}`).value,
-        avatar_url: document.getElementById(`ag-avatar-${agentId}`).value,
-      }),
-    });
-    if (res.ok) { showToast('已保存', 'success'); }
-    else { showToast('保存失败', 'error'); }
-  } catch { showToast('保存失败', 'error'); }
-}
-
-// ===== System Config =====
-async function updateCozeApiKey() {
-  const input = document.getElementById('coze-api-key-input');
-  const key = input.value.trim();
-  if (!key) return showToast('请粘贴 API Key', 'error');
-  try {
-    const res = await fetch(`${API}/api/admin/settings/coze-api-key`, {
-      method: 'PUT', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${getToken()}` },
-      body: JSON.stringify({ api_key: key }),
-    });
-    if (res.ok) {
-      showToast('API Key 已更新', 'success');
-      input.value = '';
-      loadAdminAgents();
-    } else { const d = await res.json(); showToast(d.error || '更新失败', 'error'); }
-  } catch { showToast('更新失败', 'error'); }
 }
 
 async function saveBlockedKeywords() {
@@ -2198,18 +2014,20 @@ async function loadHandoffPage() {
 
 async function loadHandoffSettings() {
   try {
-    const [settingsRes, agentsRes] = await Promise.all([
+    const [settingsRes, agentsRes, providerRes] = await Promise.all([
       fetch(apiUrl('/api/admin/settings/handoff'), { headers: { Authorization: `Bearer ${getToken()}` } }),
       fetch(apiUrl('/api/admin/agents'), { headers: { Authorization: `Bearer ${getToken()}` } }),
+      fetch(apiUrl('/api/admin/settings/ai-provider'), { headers: { Authorization: `Bearer ${getToken()}` } }),
     ]);
     const settings = await settingsRes.json();
     if (!settingsRes.ok) throw new Error(settings.error || '加载转人工设置失败');
     const agentsData = await agentsRes.json().catch(() => ({ agents: [] }));
+    const providerData = await providerRes.json().catch(() => ({}));
 
     const select = document.getElementById('handoff-ai-agent-select');
     const agents = agentsData.agents || [];
     select.innerHTML = '<option value="">（请选择营养咨询 AI）</option>' + agents.map(item => {
-      const hasBot = !!(item.bot_id || '').trim();
+      const hasBot = providerData.provider === 'deepseek' || !!(item.bot_id || '').trim();
       return `<option value="${esc(item.agent_id)}" ${hasBot ? '' : 'disabled'}>${esc(item.name || item.agent_id)}${hasBot ? '' : '（未配置Bot）'}</option>`;
     }).join('');
 
@@ -2513,6 +2331,9 @@ function showProdForm() {
   document.getElementById('prod-category').value = '';
   document.getElementById('prod-summary').value = '';
   document.getElementById('prod-highlights').value = '';
+  document.getElementById('prod-ingredients').value = '';
+  document.getElementById('prod-use-cases').value = '';
+  document.getElementById('prod-precautions').value = '';
   document.getElementById('prod-image-url').value = '';
   ensureQuill().then(() => setTimeout(() => {
     initProdQuill();
@@ -2539,6 +2360,9 @@ function editProduct(id) {
   document.getElementById('prod-category').value = p.category || '';
   document.getElementById('prod-summary').value = p.summary || '';
   document.getElementById('prod-highlights').value = p.highlights || '';
+  document.getElementById('prod-ingredients').value = p.ingredients || '';
+  document.getElementById('prod-use-cases').value = p.use_cases || '';
+  document.getElementById('prod-precautions').value = p.precautions || '';
   document.getElementById('prod-image-url').value = p.image_url || '';
   ensureQuill().then(() => {
     setTimeout(() => {
@@ -2629,6 +2453,9 @@ async function saveProduct() {
     category: document.getElementById('prod-category').value.trim(),
     summary: document.getElementById('prod-summary').value.trim(),
     highlights: document.getElementById('prod-highlights').value.trim(),
+    ingredients: document.getElementById('prod-ingredients').value.trim(),
+    use_cases: document.getElementById('prod-use-cases').value.trim(),
+    precautions: document.getElementById('prod-precautions').value.trim(),
     image_url: document.getElementById('prod-image-url').value.trim(),
     // 编辑器未就绪时不能用空串覆盖正文：编辑已有产品保留原 content，避免把数据库正文清空
     content: prodQuill ? prodQuill.root.innerHTML : (id ? (prodCache.find(x => x.id === parseInt(id)) || {}).content || '' : ''),

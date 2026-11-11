@@ -13,6 +13,8 @@ class Config:
     COZE_DIAGNOSTICS_ENABLED = os.environ.get('COZE_DIAGNOSTICS_ENABLED', 'false').lower() == 'true'
     COZE_FILE_UPLOAD_URL = os.environ.get('COZE_FILE_UPLOAD_URL', 'https://api.coze.cn/v1/files/upload')
     COZE_API_KEY = os.environ.get('COZE_API_KEY', '')
+    DEEPSEEK_API_KEY = os.environ.get('DEEPSEEK_API_KEY', '')
+    DEEPSEEK_MODEL = os.environ.get('DEEPSEEK_MODEL', 'deepseek-flash')
     DATABASE_DIR = os.environ.get('DATABASE_DIR', BASE_DIR)
     DATABASE_PATH = os.path.join(DATABASE_DIR, 'ai_customer_service.db')
     UPLOAD_DIR = os.environ.get('UPLOAD_DIR', os.path.join(BASE_DIR, 'static', 'uploads'))

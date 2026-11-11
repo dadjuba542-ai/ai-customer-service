@@ -443,6 +443,9 @@ def _check_capacity(questions):
 
 
 def _write_question(conn, question_id, q):
+    if question_id is not None and conn.execute('SELECT 1 FROM practice_learning_path_questions WHERE question_id=?', (question_id,)).fetchone():
+        from services import practice_path
+        practice_path._preserve_publication(conn)
     fields = (q['stage_id'], q['batch_no'], q['category'], q['title'], json.dumps(q['options'], ensure_ascii=False), q['answer_index'],
               q['explanation'], q['method'], json.dumps(q['sources']), int(q['enabled']), now().isoformat(),
               q.get('product_id'), q.get('skill_code', ''), q.get('fact_id'),
@@ -454,8 +457,6 @@ def _write_question(conn, question_id, q):
     conn.execute('''UPDATE practice_quiz_questions SET archived=0,stage_id=?,batch_no=?,category=?,title=?,options=?,answer_index=?,
         explanation=?,method=?,sources=?,enabled=?,updated_at=?,product_id=?,skill_code=?,fact_id=?,
         learning_objective=?,difficulty_level=?,suggested_unit_id=? WHERE id=?''', fields + (question_id,))
-    if conn.execute('SELECT 1 FROM practice_learning_path_questions WHERE question_id=?', (question_id,)).fetchone():
-        conn.execute('UPDATE practice_learning_path_settings SET published=0,updated_at=? WHERE id=1', (now().isoformat(),))
     return question_id
 
 

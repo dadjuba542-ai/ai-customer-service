@@ -9,11 +9,100 @@ from services.image_service import is_allowed_image_filename, process_uploaded_i
 from services.secret_service import get_secret_setting, set_secret_setting
 from services.handoff_service import HandoffError, get_handoff_settings, update_handoff_settings
 from services.content_security import sanitize_media_url
+from services.knowledge_service import (delete_document, extract_upload_text,
+                                        get_document, list_documents, save_document)
 
 admin_bp = Blueprint('admin', __name__)
 LEAD_STATUSES = {'pending', 'contacted', 'completed'}
 
 MAX_UPLOAD_SIZE = 8 * 1024 * 1024
+
+
+@admin_bp.route('/settings/ai-provider', methods=['GET', 'PUT'])
+@admin_required
+def ai_provider_settings(current_user):
+    if request.method == 'GET':
+        key = get_secret_setting('deepseek_api_key', Config.DEEPSEEK_API_KEY)
+        return jsonify({'provider': get_setting('chat_provider', 'coze'),
+                        'deepseek_key_configured': bool(key),
+                        'deepseek_key_masked': _mask_secret(key) if key else ''})
+    data = request.get_json(silent=True) or {}
+    provider = data.get('provider')
+    if provider not in {'coze', 'deepseek'}:
+        return jsonify({'error': 'AI 配置无效'}), 400
+    if provider == 'deepseek' and not get_secret_setting('deepseek_api_key', Config.DEEPSEEK_API_KEY):
+        return jsonify({'error': '请先配置 DeepSeek API Key'}), 400
+    set_setting('chat_provider', provider)
+    return jsonify({'provider': provider})
+
+
+@admin_bp.route('/settings/deepseek-api-key', methods=['PUT'])
+@admin_required
+def deepseek_api_key(current_user):
+    key = str((request.get_json(silent=True) or {}).get('api_key') or '').strip()
+    if not key or len(key) > 512:
+        return jsonify({'error': 'API Key 不能为空且不能超过512字符'}), 400
+    set_secret_setting('deepseek_api_key', key)
+    return jsonify({'message': 'DeepSeek API Key 已保存'})
+
+
+@admin_bp.route('/knowledge', methods=['GET', 'POST'])
+@admin_required
+def knowledge_documents(current_user):
+    if request.method == 'GET':
+        return jsonify({'documents': list_documents(request.args.get('q'), request.args.get('agent_id'))})
+    if request.files.get('file'):
+        uploaded = request.files['file']
+        filename = uploaded.filename or ''
+        try:
+            content = extract_upload_text(filename, uploaded.stream)
+        except ValueError as exc:
+            return jsonify({'error': str(exc)}), 400
+        title = request.form.get('title') or filename.rsplit('.', 1)[0]
+        try:
+            agent_ids = json.loads(request.form.get('agent_ids') or '[]')
+        except ValueError:
+            return jsonify({'error': '智能体列表格式不正确'}), 400
+        enabled = request.form.get('enabled', 'true').lower() == 'true'
+    else:
+        data = request.get_json(silent=True) or {}
+        title, content, agent_ids = data.get('title'), data.get('content'), data.get('agent_ids')
+        enabled = data.get('enabled', True)
+    try:
+        document_id = save_document(title, content, agent_ids, enabled=enabled)
+        return jsonify({'document': get_document(document_id)}), 201
+    except ValueError as exc:
+        return jsonify({'error': str(exc)}), 400
+
+
+@admin_bp.route('/knowledge/<int:document_id>', methods=['GET', 'PUT', 'DELETE'])
+@admin_required
+def knowledge_document(current_user, document_id):
+    if request.method == 'GET':
+        document = get_document(document_id)
+        return jsonify({'document': document}) if document else (jsonify({'error': '资料不存在'}), 404)
+    if request.method == 'DELETE':
+        return (jsonify({'message': '已删除'}), 200) if delete_document(document_id) else (jsonify({'error': '资料不存在'}), 404)
+    old = get_document(document_id)
+    if not old:
+        return jsonify({'error': '资料不存在'}), 404
+    if request.files.get('file'):
+        try:
+            content = extract_upload_text(request.files['file'].filename, request.files['file'].stream)
+            agent_ids = json.loads(request.form.get('agent_ids') or '[]')
+        except ValueError as exc:
+            return jsonify({'error': str(exc)}), 400
+        data = {'title': request.form.get('title', old['title']), 'content': content,
+                'agent_ids': agent_ids, 'enabled': request.form.get('enabled', 'true').lower() == 'true'}
+    else:
+        data = request.get_json(silent=True) or {}
+    try:
+        save_document(data.get('title', old['title']), data.get('content', old['content']),
+                      data.get('agent_ids', old['agent_ids']), document_id,
+                      data.get('enabled', old['enabled']))
+        return jsonify({'document': get_document(document_id)})
+    except ValueError as exc:
+        return jsonify({'error': str(exc)}), 400
 
 
 @admin_bp.route('/settings/handoff', methods=['GET', 'PUT'])
@@ -75,6 +164,9 @@ def get_agent(current_user, agent_id):
 @admin_required
 def edit_agent(current_user, agent_id):
     data = request.get_json(silent=True) or {}
+    old = get_agent_config(agent_id)
+    if not old:
+        return jsonify({'error': 'Agent not found'}), 404
     update_agent_config(
         agent_id,
         data.get('name', ''),
@@ -85,8 +177,52 @@ def edit_agent(current_user, agent_id):
         data.get('bot_id', ''),
         data.get('icon', 'robot'),
         data.get('chat_desc', ''),
+        data.get('system_prompt', old.get('system_prompt', '')),
     )
     return jsonify({'message': 'Agent updated'})
+
+
+@admin_bp.route('/agents/<agent_id>/system-prompt', methods=['PUT'])
+@admin_required
+def edit_agent_system_prompt(current_user, agent_id):
+    agent = get_agent_config(agent_id)
+    if not agent:
+        return jsonify({'error': '智能体不存在'}), 404
+    prompt = (request.get_json(silent=True) or {}).get('system_prompt')
+    if not isinstance(prompt, str) or len(prompt) > 6000:
+        return jsonify({'error': '提示词不能超过6000字'}), 400
+    from models import get_db_connection
+    conn = get_db_connection()
+    try:
+        conn.execute('UPDATE agent_configs SET system_prompt=?, updated_at=CURRENT_TIMESTAMP WHERE agent_id=?',
+                     (prompt, agent_id))
+        conn.commit()
+    finally:
+        conn.close()
+    return jsonify({'message': '提示词已保存'})
+
+
+@admin_bp.route('/agents/<agent_id>/ai-config', methods=['PUT'])
+@admin_required
+def edit_agent_ai_config(current_user, agent_id):
+    if not get_agent_config(agent_id):
+        return jsonify({'error': '智能体不存在'}), 404
+    data = request.get_json(silent=True) or {}
+    prompt = data.get('system_prompt')
+    effort = data.get('reasoning_effort')
+    if not isinstance(prompt, str) or len(prompt) > 6000:
+        return jsonify({'error': '提示词不能超过6000字'}), 400
+    if effort not in {'none', 'low', 'high', 'max'}:
+        return jsonify({'error': '思考程度无效'}), 400
+    from models import get_db_connection
+    conn = get_db_connection()
+    try:
+        conn.execute('''UPDATE agent_configs SET system_prompt=?, reasoning_effort=?,
+                        updated_at=CURRENT_TIMESTAMP WHERE agent_id=?''', (prompt, effort, agent_id))
+        conn.commit()
+    finally:
+        conn.close()
+    return jsonify({'message': '智能体设置已保存', 'reasoning_effort': effort})
 
 @admin_bp.route('/agents', methods=['POST'])
 @admin_required
@@ -106,6 +242,7 @@ def add_agent(current_user):
         data.get('bot_id', ''),
         data.get('icon', 'robot'),
         data.get('chat_desc', ''),
+        data.get('system_prompt', ''),
     )
     if not ok:
         return jsonify({'error': 'agent_id already exists'}), 409

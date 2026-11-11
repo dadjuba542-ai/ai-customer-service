@@ -84,6 +84,7 @@ class ChatRequestContext:
     request_id: str
     channel: str = ''
     history_message_count: int = 0
+    history: list | None = None
 
 
 @dataclass
@@ -125,6 +126,22 @@ def build_chat_context(data, identity):
         agent_id = handoff['ai_agent_id']
         if not agent_id:
             raise ChatServiceError('营养咨询 AI 暂未配置', status_code=503, retryable=False)
+
+    if get_setting('chat_provider', 'coze') == 'deepseek':
+        if not get_secret_setting('deepseek_api_key', Config.DEEPSEEK_API_KEY):
+            raise ChatServiceError('DeepSeek API Key 尚未配置', status_code=503)
+        if not agent_id:
+            agent_id = {'产品咨询': 'aura', '使用答疑': 'coder',
+                        '朋友圈帮写': 'translator', '口播文案帮写': 'creative'}.get(query_type, 'aura')
+        if not get_agent_config(agent_id):
+            raise ChatServiceError('智能体不存在', status_code=400)
+        history = build_coze_chat_history(user_id, agent_id, query_type, shared=True)
+        return ChatRequestContext(
+            message=message, query_type=query_type, agent_id=agent_id,
+            user_id=user_id, team_name=team_name, member_name=member_name,
+            headers={}, payload={'provider': 'deepseek'}, request_id=uuid.uuid4().hex[:12],
+            channel=channel, history_message_count=len(history), history=history,
+        )
 
     api_key = get_secret_setting('coze_api_key', Config.COZE_API_KEY)
     if not api_key:
@@ -221,6 +238,9 @@ def build_coze_chat_history(user_id, agent_id, query_type, floor_id=None, shared
 
 
 def execute_sync_chat(ctx):
+    if ctx.payload.get('provider') == 'deepseek':
+        from services.deepseek_service import execute_deepseek_sync
+        return execute_deepseek_sync(ctx)
     if 'additional_messages' in ctx.payload:
         # V3 非流式只返回任务状态。统一消费上游 SSE，向同步调用方返回完整回答。
         for event in iter_coze_stream(ctx, read_timeout=90):
@@ -380,6 +400,14 @@ def _iter_coze_stream_impl(ctx, read_timeout=30, cancel_event=None):
                         final['full_text'].strip() != KNOWLEDGE_EMPTY_REPLY)
     final['history_id'] = persist_chat_history(ctx, final['full_text'], final['coze_message_id'])
     yield {'event': 'done', 'data': final}
+
+
+def iter_chat_stream(ctx, read_timeout=30):
+    if ctx.payload.get('provider') == 'deepseek':
+        from services.deepseek_service import iter_deepseek_stream
+        yield from iter_deepseek_stream(ctx, read_timeout=max(90, read_timeout))
+    else:
+        yield from iter_coze_stream(ctx, read_timeout=read_timeout)
 
 
 def iter_coze_stream(ctx, read_timeout=30):

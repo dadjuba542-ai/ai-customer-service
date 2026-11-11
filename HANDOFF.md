@@ -31,6 +31,14 @@ templates/admin.html    管理后台页面和后台交互脚本
 scripts/                管理员初始化、密码重置和冒烟测试
 ```
 
+### DeepSeek 与文字知识库试用链路
+
+- 独立的 `/agent-studio`「API 设置」填写 DeepSeek API Key，并通过 `chat_provider` 在 Coze 与 DeepSeek 之间切换；默认仍为 Coze。切换作用于所有聊天用户，包含同步、流式及排队请求。同一页面还负责智能体管理、独立提示词页面、每个智能体自己的思考程度和文字知识库增删改查搜，沿用管理员登录。
+- `services/deepseek_service.py` 负责调用与最终回答；`services/retrieval_service.py` 控制首次检索和按需扩展；`services/knowledge_service.py` 管理文字资料和产品检索。检索使用同一 SQLite 中的 FTS5 trigram，不需要单独的向量服务。
+- 当前控制器使用轻量规则判断是否需要补查：宽泛需求、指代前文、推荐缺少候选，或用法、成分、功效、安全问题缺少对应信息时才调用检索词规划模型；直接资料足够时只发最终回答请求。规划最多生成两个补充检索词，失败时保留首次结果。
+- 用户电脑上的文件通过线上 `/agent-studio` 页上传到服务器。TXT、MD、DOCX 经提取后作为文字和索引保存在服务器 `DATABASE_DIR/ai_customer_service.db`，原文件不留存。产品管理中的现有详情和新增的成分、适用场景、注意事项也自动进入产品索引。无需为手动上传单独部署 MCP。
+- 这仍是试用实现，资料是否足够由规则近似判断，不是完整的可视化工作流或多智能体协作。实际推荐质量必须用真实资料与 DeepSeek Key 验收。详见 [试用说明](./docs/DEEPSEEK_RAG_TRIAL.md)。
+
 ## 3. 本地启动
 
 在项目根目录执行：
@@ -66,6 +74,7 @@ PUBLIC_REGISTRATION_ENABLED='false'
 可选配置：
 
 - `COZE_API_KEY`
+- `DEEPSEEK_API_KEY`、`DEEPSEEK_MODEL`（启用 DeepSeek 时；也可在后台保存 Key）
 - `BOT_PRODUCT`、`BOT_FAQ`、`BOT_MOMENT`、`BOT_SCRIPT`
 - 腾讯云 ASR 配置（AppID、SecretId、SecretKey）
 - `TRUST_PROXY=true`（反向代理后使用）

@@ -31,7 +31,7 @@ async function loadTrainingHub() {
   trainingHubState.learning = results[2]?.status === 'fulfilled' ? results[2].value : null;
   trainingHubState.path = results[3]?.status === 'fulfilled' ? results[3].value : null;
   if (trainingHubState.learning) learningState.home = trainingHubState.learning;
-  trainingHubNotice(results[2]?.status === 'rejected' ? '产品课程暂时无法加载，可先进行今日问答。' : '');
+  trainingHubNotice(results[3]?.status === 'rejected' ? '学习主线暂时无法加载，可先进行今日问答。' : '');
   renderTrainingHub();
 }
 
@@ -54,9 +54,7 @@ function renderTrainingHub() {
       <div class="learning-path-nodes" aria-label="学习主线进度">${path.units.map(unit=>`<span class="${unit.completed?'done':next?.id===unit.id?'current':''}" title="${e(unit.title)}">${unit.completed?'✓':unit.position}</span>`).join('')}</div></section>` : ''}
     <section class="training-hub-section"><div class="training-hub-heading"><h3>今日问答闯关</h3>${scores ? `<span>今日 ${scores.today_points}/100 分</span>` : ''}</div>
       ${entry ? path?.available ? `<button class="learning-daily-link" onclick="openPracticeEntry()" data-practice-entry-button><span><strong>${e(entry.stage_title || '每日10题')}</strong><small>${e(entry.question_title)} · ${entry.mode==='free'?'本轮不计分':'最高100分'}</small></span><b>进入 →</b></button>` : practiceEntryCard(entry) : '<div class="practice-card">今日题目正在准备中。</div>'}</section>
-    ${learning && !path?.available ? `<section class="training-hub-section"><div class="training-hub-heading"><h3>产品课程</h3><span>每单元约1分钟＋3题</span></div>
-      ${learning?.resume?.kind === 'unit' ? `<button class="training-hub-resume" onclick="resumeLearning('${e(learning.resume.id)}')">继续未完成的产品短课 →</button>` : ''}
-      ${learning?.courses?.length ? learning.courses.map(course => `<button class="learning-product" onclick="openLearningProduct(${course.product_id})"><span class="learning-product-icon">▣</span><span><strong>${e(course.name)}</strong><small>${e(course.category)} · ${course.completed_units}/4 单元已完成</small></span><span>→</span></button>`).join('') : '<div class="practice-card">首款产品课程准备中。</div>'}</section>` : ''}
+    ${learningEnabled && !path?.available ? '<section class="training-hub-section"><div class="training-hub-heading"><h3>学习主线</h3></div><div class="practice-card">进阶课程准备中，可以先做今日问答闯关。</div></section>' : ''}
     ${learning ? `<section class="training-hub-section"><div class="training-hub-heading"><h3>到期复习</h3><span>每天最多3题</span></div><button class="learning-review-entry" onclick="openLearningReview()"><span><b>复习容易忘的题</b><small>${learning.resume?.kind === 'review' ? '上次复习尚未完成' : '巩固已学知识点'}</small></span><strong>${learning.due_count} 道 →</strong></button></section>` : learningEnabled ? '<div class="practice-card">学习进度暂时无法读取。<button class="training-hub-text-link" onclick="loadTrainingHub()">重新加载 →</button></div>' : ''}
     <section class="training-hub-section"><div class="training-hub-heading"><h3>我的学习</h3></div>
       <div class="training-hub-links"><button onclick="openPracticeSection('records')">◷ 闯关记录 <span>→</span></button><button onclick="openPracticeSection('ranking')">✦ 团队周榜 <span>→</span></button></div></section>`;

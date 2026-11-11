@@ -1,6 +1,6 @@
-# 功能开关（案例系统 / 音频课程 / 人工客服系统）
+# 功能开关
 
-三套系统各有独立开关，互不影响。所有开关集中登记在 `services/feature_flags.py` 的
+各功能有独立开关。所有开关集中登记在 `services/feature_flags.py` 的
 `FLAGS` 注册表里，**新增开关只需要加一行**。
 
 ## 开关清单
@@ -10,6 +10,8 @@
 | `cases` | 案例系统：相关案例推荐、前台案例抽屉、后台案例/标签管理、链接识别 | `cases_enabled` | `CASES_ENABLED` | **开启** |
 | `audio_courses` | 音频课程：独立问答入口、标签/全文检索、后台课程管理、音频上传与外链 | `audio_courses_enabled` | `AUDIO_COURSES_ENABLED` | **关闭** |
 | `handoff` | 人工客服系统：转接/留言、坐席工作台、后台队列与坐席管理、派单定时任务 | `handoff_enabled` | `HANDOFF_ENABLED` | **关闭** |
+| `practice` | 每日10题、每周主题、积分与周榜 | `practice_enabled` | `PRACTICE_ENABLED` | 由配置决定 |
+| `practice_learning` | 七单元进阶主线与错题复习；须先开启 `practice` | `practice_learning_enabled` | `PRACTICE_LEARNING_ENABLED` | **关闭** |
 
 人工客服系统的 key 沿用原有的 `handoff_enabled`，后台「AI 与转接设置」里改的是同一个值，
 不会出现两个开关打架。

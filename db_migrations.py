@@ -1,4 +1,5 @@
 import sqlite3
+import re
 from services.practice_schema import SQLS as PRACTICE_SQLS
 from services.practice_bank import seed_bank
 
@@ -528,6 +529,64 @@ MIGRATIONS.append({'version': '202610220001', 'name': 'practice_guided_path', 's
     "CREATE UNIQUE INDEX practice_path_pending_unique ON practice_learning_path_suggestions(question_id,unit_id) WHERE status='pending'",
     'CREATE INDEX practice_path_suggestions_status ON practice_learning_path_suggestions(status,created_at)',
 ]})
+
+MIGRATIONS.append({'version': '202610230001', 'name': 'practice_path_publication', 'sqls': [
+    '''CREATE TABLE practice_learning_path_publication (
+        id INTEGER PRIMARY KEY CHECK(id=1), snapshot TEXT NOT NULL,
+        published_at TEXT NOT NULL)''',
+]})
+
+MIGRATIONS.append({'version': '202611040001', 'name': 'text_knowledge_base', 'sqls': [
+    '''CREATE TABLE knowledge_documents (
+        id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL,
+        content TEXT NOT NULL, agent_ids TEXT NOT NULL, enabled INTEGER NOT NULL DEFAULT 1,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)''',
+    '''CREATE TABLE knowledge_chunks (
+        id INTEGER PRIMARY KEY AUTOINCREMENT, document_id INTEGER NOT NULL,
+        position INTEGER NOT NULL, content TEXT NOT NULL,
+        FOREIGN KEY(document_id) REFERENCES knowledge_documents(id) ON DELETE CASCADE)''',
+    '''CREATE VIRTUAL TABLE knowledge_chunks_fts USING fts5(content, tokenize='trigram')''',
+    'CREATE INDEX idx_knowledge_chunks_document ON knowledge_chunks(document_id)',
+]})
+
+MIGRATIONS.append({'version': '202611040002', 'name': 'agent_system_prompts', 'columns': [
+    ('agent_configs', 'system_prompt', "TEXT NOT NULL DEFAULT ''"),
+]})
+
+def _backfill_product_fts(conn):
+    from html import unescape
+    for row in conn.execute('''SELECT id, name, category, summary, highlights, content,
+                                      ingredients, use_cases, precautions FROM products'''):
+        parts = [str(row[key] or '') for key in
+                 ('name', 'category', 'summary', 'highlights', 'ingredients', 'use_cases', 'precautions')]
+        parts.append(unescape(re.sub(r'<[^>]*>', ' ', str(row['content'] or ''))))
+        conn.execute('INSERT INTO products_fts(rowid, content) VALUES (?, ?)',
+                     (row['id'], '\n'.join(parts)[:12000]))
+
+
+MIGRATIONS.append({'version': '202611040003', 'name': 'product_retrieval', 'columns': [
+    ('products', 'ingredients', "TEXT NOT NULL DEFAULT ''"),
+    ('products', 'use_cases', "TEXT NOT NULL DEFAULT ''"),
+    ('products', 'precautions', "TEXT NOT NULL DEFAULT ''"),
+], 'sqls': [
+    "CREATE VIRTUAL TABLE products_fts USING fts5(content, tokenize='trigram')",
+], 'fn': _backfill_product_fts})
+
+
+def _backfill_agent_reasoning(conn):
+    exists = conn.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='settings'").fetchone()
+    if not exists:
+        return
+    row = conn.execute("SELECT value FROM settings WHERE key='deepseek_reasoning_effort'").fetchone()
+    effort = (row['value'] if isinstance(row, sqlite3.Row) else row[0]) if row else 'none'
+    if effort in {'none', 'low', 'high', 'max'}:
+        conn.execute('UPDATE agent_configs SET reasoning_effort=?', (effort,))
+
+
+MIGRATIONS.append({'version': '202611110001', 'name': 'agent_reasoning_effort', 'columns': [
+    ('agent_configs', 'reasoning_effort', "TEXT NOT NULL DEFAULT 'none'"),
+], 'fn': _backfill_agent_reasoning})
 
 
 def quote_identifier(value):

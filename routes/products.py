@@ -43,7 +43,10 @@ def add_product(current_user):
         sanitize_rich_html(data.get('content', '')),
         sanitize_media_url(data.get('image_url', '')),
         str(data.get('highlights') or '')[:1000],
-        data.get('sort_order', 0)
+        data.get('sort_order', 0),
+        str(data.get('ingredients') or '')[:3000],
+        str(data.get('use_cases') or '')[:3000],
+        str(data.get('precautions') or '')[:3000]
     )
     return jsonify({'id': id, 'message': 'Product created'}), 201
 
@@ -51,6 +54,9 @@ def add_product(current_user):
 @admin_required
 def edit_product(current_user, product_id):
     data = request.get_json(silent=True) or {}
+    existing = get_product_by_id(product_id)
+    if not existing:
+        return jsonify({'error': 'Not found'}), 404
     name = data.get('name', '').strip()[:200]
     if not name:
         return jsonify({'error': 'Name is required'}), 400
@@ -62,7 +68,10 @@ def edit_product(current_user, product_id):
         sanitize_rich_html(data.get('content', '')),
         sanitize_media_url(data.get('image_url', '')),
         str(data.get('highlights') or '')[:1000],
-        data.get('sort_order', 0)
+        data.get('sort_order', 0),
+        str(data.get('ingredients', existing['ingredients']) or '')[:3000],
+        str(data.get('use_cases', existing['use_cases']) or '')[:3000],
+        str(data.get('precautions', existing['precautions']) or '')[:3000]
     )
     return jsonify({'message': 'Product updated'})
 

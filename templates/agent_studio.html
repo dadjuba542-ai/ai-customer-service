@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>自建智能体后台 · AI宝儿</title>
+  <link rel="stylesheet" href="/css/agent-studio.css?v=20261111-9">
+</head>
+<body data-agent-id="{{ agent_id }}">
+  <section id="login-view" class="login-view" hidden>
+    <form id="login-form" class="login-card">
+      <div class="brand-mark">✦</div>
+      <h1>自建智能体后台</h1>
+      <p>使用管理员账号登录</p>
+      <label>账号<input id="login-username" autocomplete="username" required></label>
+      <label>密码<input id="login-password" type="password" autocomplete="current-password" required></label>
+      <p id="login-error" class="error" role="alert"></p>
+      <button class="primary" type="submit">登录</button>
+      <a href="/admin">返回管理后台</a>
+    </form>
+  </section>
+
+  <div id="studio-view" class="shell" hidden>
+    <aside class="sidebar">
+      <div class="brand"><div class="brand-mark">✦</div><div><strong>自建智能体</strong><small>内容工作台</small></div></div>
+      <nav aria-label="工作台导航">
+        <button class="nav-button active" type="button" data-panel="prompts">子智能体设置</button>
+        <button class="nav-button" type="button" data-panel="agents">智能体管理</button>
+        <button class="nav-button" type="button" data-panel="knowledge">文字知识库</button>
+        <button class="nav-button" type="button" data-panel="api">API 设置</button>
+      </nav>
+      <div class="sidebar-bottom"><a href="/admin">← 管理后台</a><button id="logout-button" type="button">退出登录</button></div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar"><div><span class="eyebrow">AI 宝儿 / 自建智能体</span><h1 id="page-title">子智能体设置</h1></div><span id="account-name" class="account"></span></header>
+      <section id="prompts-panel" class="panel">
+        <div class="intro"><h2>选择子智能体</h2><p>每个子智能体都有独立的提示词和思考程度设置。</p></div>
+        <div id="agent-list" class="agent-list" aria-live="polite"></div>
+      </section>
+
+      <section id="agent-detail-panel" class="panel" hidden>
+        <a class="back-link" href="/agent-studio">← 返回子智能体列表</a>
+        <div class="intro"><h2 id="detail-agent-name"></h2><p>单独设置这个智能体的提示词和思考程度。保存后，新发起的 DeepSeek 对话会使用这些设置。</p></div>
+        <form id="prompt-form" class="card prompt-editor">
+          <label for="detail-prompt">子智能体提示词</label>
+          <textarea id="detail-prompt" maxlength="6000" rows="18" placeholder="填写职责、语气和回答风格"></textarea>
+          <label for="detail-effort" class="effort-label">思考程度</label>
+          <select id="detail-effort"><option value="none">关闭（更快）</option><option value="low">低</option><option value="high">高</option><option value="max">最高（更慢）</option></select>
+          <p class="muted">仅影响当前智能体；较高档位可能增加等待时间和 API 用量。</p>
+          <div class="prompt-footer"><span id="prompt-count" class="muted">0 / 6000 字</span><button id="save-prompt" class="primary" type="submit">保存智能体设置</button></div>
+        </form>
+      </section>
+
+      <section id="agents-panel" class="panel" hidden>
+        <div class="intro"><h2>智能体管理</h2><p>管理前台入口的名称、描述、快捷消息和头像。回答设置在各智能体的独立页面编辑。</p></div>
+        <div class="knowledge-layout">
+          <div class="card list-card"><div class="list-heading"><strong>智能体列表</strong><button id="new-agent" class="primary" type="button">＋ 新建</button></div><div id="manage-agent-list"></div></div>
+          <form id="agent-form" class="card editor-card">
+            <div class="editor-heading"><h3 id="agent-editor-title">新建智能体</h3><button id="cancel-agent-edit" type="button">清空</button></div>
+            <label>标识 ID<input id="agent-id" maxlength="64" placeholder="英文唯一标识，如 mybot" required></label>
+            <label>名称<input id="agent-name" maxlength="80" required></label>
+            <label>首页描述<input id="agent-description" maxlength="300"></label>
+            <label>聊天描述<textarea id="agent-chat-desc" rows="3"></textarea></label>
+            <label>快捷消息<input id="agent-quick-prompt" placeholder="前台点击后发送的文字"></label>
+            <div class="field-pair"><label>颜色<input id="agent-color" type="color" value="#4F46E5"></label><label>图标名称<input id="agent-icon" placeholder="robot"></label></div>
+            <label>Coze Bot ID<input id="agent-bot-id" placeholder="使用 DeepSeek 时可留空"></label>
+            <label>头像图片<input id="agent-avatar-file" type="file" accept="image/*"></label>
+            <input id="agent-avatar-url" type="hidden"><img id="agent-avatar-preview" class="avatar-preview" alt="头像预览" hidden>
+            <div class="form-actions"><button id="delete-agent" class="danger-button" type="button" hidden>删除智能体</button><button id="save-agent" class="primary" type="submit">保存智能体</button></div>
+          </form>
+        </div>
+      </section>
+
+      <section id="api-panel" class="panel" hidden>
+        <div class="intro"><h2>API 设置</h2><p>统一管理聊天服务和密钥。各智能体的思考程度在对应提示词页面设置。</p></div>
+        <div class="settings-grid">
+          <form id="provider-form" class="card editor-card"><h3>聊天服务</h3><label>当前服务<select id="provider-select"><option value="coze">Coze</option><option value="deepseek">DeepSeek＋本地知识库</option></select></label><p class="muted">切换服务会影响所有用户。</p><button class="primary" type="submit">保存服务设置</button></form>
+          <form id="deepseek-key-form" class="card editor-card"><h3>DeepSeek API Key</h3><p id="deepseek-key-status" class="muted">读取中…</p><label>新密钥<input id="deepseek-key" type="password" autocomplete="new-password" placeholder="粘贴新的 API Key"></label><button class="primary" type="submit">保存密钥</button></form>
+          <form id="coze-key-form" class="card editor-card"><h3>Coze API Key</h3><p id="coze-key-status" class="muted">读取中…</p><label>新密钥<input id="coze-key" type="password" autocomplete="new-password" placeholder="粘贴新的 API Key"></label><button class="primary" type="submit">保存密钥</button></form>
+          <form id="rewrite-form" class="card editor-card"><h3>Coze 空召回重查</h3><p id="rewrite-hint" class="muted">使用 Coze V3 时，可指定改写智能体。</p><label>改写智能体 Bot ID<input id="rewrite-bot-id" maxlength="64" placeholder="留空关闭"></label><button class="primary" type="submit">保存重查设置</button></form>
+        </div>
+      </section>
+
+      <section id="knowledge-panel" class="panel" hidden>
+        <div class="knowledge-heading">
+          <div class="intro"><h2>资料管理</h2><p>集中管理智能体回答时可检索的文字资料。</p></div>
+          <button id="new-document" class="primary" type="button">＋ 新增资料</button>
+        </div>
+        <div class="knowledge-toolbar">
+          <label class="knowledge-search"><span class="search-symbol" aria-hidden="true">⌕</span><input id="search-input" type="search" maxlength="100" placeholder="搜索资料标题或正文内容" aria-label="搜索知识库"></label>
+          <span id="document-count" class="knowledge-count" aria-live="polite"></span>
+        </div>
+        <div id="document-list" class="card knowledge-list" aria-live="polite"></div>
+      </section>
+    </main>
+  </div>
+  <dialog id="document-dialog" class="document-dialog" aria-labelledby="editor-title">
+    <form id="document-form" class="document-editor">
+      <div class="document-editor-header"><div><span class="eyebrow">文字知识库</span><h2 id="editor-title">新增资料</h2></div><button id="cancel-edit" class="document-close" type="button" aria-label="关闭资料编辑">×</button></div>
+      <div class="document-editor-body">
+        <p class="document-editor-intro">资料保存后，即可供所选智能体检索使用。</p>
+        <label>资料标题<input id="document-title" maxlength="150" placeholder="例如：益生菌产品说明" required></label>
+        <div id="document-find" class="document-find" hidden>
+          <label for="document-find-input">在正文中查找</label>
+          <div class="document-find-row"><input id="document-find-input" type="search" placeholder="输入要修改的内容"><span id="document-find-count" aria-live="polite"></span><button id="document-find-prev" type="button" aria-label="上一个匹配">↑</button><button id="document-find-next" type="button" aria-label="下一个匹配">↓</button></div>
+        </div>
+        <label>资料正文<textarea id="document-content" rows="12" placeholder="在这里粘贴文字资料，或在下方上传文件"></textarea></label>
+        <label>上传文件 <span class="muted">TXT / MD / DOCX</span><input id="document-file" type="file" accept=".txt,.md,.docx"></label>
+        <p id="editor-note" class="muted document-editor-note">选择文件后将使用文件内容；原文件不留在服务器。DOCX 最多 5 MB，TXT/MD 最多 600 KB。</p>
+        <fieldset><legend>供哪些智能体使用</legend><div id="document-agents" class="checkbox-grid"></div></fieldset>
+        <label class="document-enabled"><input id="document-enabled" type="checkbox" checked> 启用资料，参与智能体检索</label>
+        <p id="document-error" class="document-error" role="alert" hidden></p>
+      </div>
+      <div class="document-editor-footer"><button id="dismiss-document" class="secondary-button" type="button">取消</button><button id="save-document" class="primary" type="submit">保存资料</button></div>
+    </form>
+  </dialog>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="/js/agent-studio.js?v=20261111-10" defer></script>
+</body>
+</html>

@@ -15,7 +15,7 @@
   - 满意度问卷
   - 用户调研问卷
   - 管理后台（智能体、资讯、配置、统计）
-- 外部 AI 依赖：Coze Bot API
+- 外部 AI 依赖：Coze Bot API（默认聊天链路）；DeepSeek API（后台可切换的试用链路）
 
 一句话总结：这是一个面向业务咨询场景的 AI 客服/内容运营后台一体化系统，前台给用户聊天和看内容，后台给管理员调智能体、配内容、看数据。
 
@@ -51,7 +51,10 @@ config.py               环境变量配置
 db_migrations.py        轻量 SQLite migration 执行器
 models.py               SQLite 初始化 + 全量数据访问函数
 routes/                 各业务路由
-services/chat_service.py Coze 对话同步/流式封装
+services/chat_service.py 对话入口、Coze 同步/流式封装及服务切换
+services/deepseek_service.py DeepSeek 回答生成和历史保存
+services/retrieval_service.py 按需扩展检索控制器
+services/knowledge_service.py 文字知识库、Word 提取和产品检索
 static/                 前台静态页面与脚本样式
 static/admin/cases.js   后台案例档案 JS（案例管理、标签库、链接识别、案例库 H5 设置）
 templates/consultant.html 独立 PC 营养师客服工作台
@@ -91,6 +94,14 @@ outputs/                历史生成物/设计产物，非主应用运行核心
 - 项目有轻量 SQLite migration 机制：`db_migrations.py`
 - `schema_migrations` 表记录已执行版本，历史补列不再靠裸 `ALTER TABLE ... try/except pass`
 - 新环境首次启动就会自动初始化数据库
+
+### DeepSeek 试用链路速记
+
+- 当前本地代码已实现，聊天服务默认仍为 Coze；线上是否部署以及是否已配置 DeepSeek Key 需在目标环境核对，不能由本地设置推断。
+- 聊天 API 沿用 `/api/chat/send`、`/api/chat/stream` 和现有等待队列。启用 DeepSeek 时带入同一用户最近若干轮已完成对话（默认最多 6 轮），先查当前问题，再由轻量规则判断资料是否足够。需要补查时才让 DeepSeek 生成最多两个检索词，追加检索原始产品和文字资料；最终回答只以检索到的原始资料确认产品事实。
+- 文字资料通过独立的 `/agent-studio` 页面上传 TXT、MD、DOCX 或粘贴文本，可按标题、正文和智能体搜索，并按智能体限定检索范围。用户从自己电脑用浏览器打开线上页面上传，资料保存在服务器 SQLite；无需上传 MCP。产品管理的名称、详情、成分、适用场景和注意事项会自动进入产品索引。
+- 当前使用 SQLite FTS5 trigram，不依赖向量数据库。思考程度由 `/agent-studio/agents/<agent_id>` 中每个智能体单独配置；内部思考不展示或保存。宽泛营养需求只作条件推荐或追问，不应直接判定营养缺乏。
+- 完整操作、限制和验收问题见 [DeepSeek 与知识库试用说明](./docs/DEEPSEEK_RAG_TRIAL.md)。
 
 ## 5. 前台与后台页面
 

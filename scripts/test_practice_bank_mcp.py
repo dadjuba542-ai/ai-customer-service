@@ -23,7 +23,6 @@ def main():
                           PRACTICE_BANK_MCP_TOKEN='bank-write-token-' + 'b' * 32)
         from app import app
         from config import Config
-        from models import create_product
         from services.practice_bank import RAW
         from services import practice_service as practice
 
@@ -55,9 +54,9 @@ def main():
         assert {'practice_bank_overview', 'practice_list_questions', 'practice_get_question',
                 'practice_create_question', 'practice_update_question',
                 'practice_preview_csv', 'practice_import_csv',
-                'practice_list_products', 'practice_get_product_context',
                 'practice_learning_guidelines', 'practice_learning_outline',
                 'practice_suggest_placement'} <= bank_names
+        assert 'practice_get_product_context' not in bank_names
         assert 'list_leads' not in bank_names
         negotiated = client.post('/api/mcp/practice-bank', headers=bank_auth, json={
             'jsonrpc': '2.0', 'id': 1, 'method': 'initialize',
@@ -87,9 +86,6 @@ def main():
         assert status == 'ok' and [item['level'] for item in guide['levels']] == [1, 2, 3, 4, 5]
         assert [item['level'] for item in guide['unit_sequence']] == [1, 2, 3, 3, 4, 4, 5]
         assert call('practice_learning_guidelines', {'unexpected': True})[0] == 'error'
-        product_id = create_product('益生菌', '题库测试产品', '', '', '', '')
-        assert call('practice_list_products', {'keyword': '题库测试产品'})[1]['items'][0]['id'] == product_id
-        assert call('practice_get_product_context', {'product_id': product_id})[1]['facts'] == []
         status, page = call('practice_list_questions', {'stage_id': 0, 'limit': 5})
         assert status == 'ok' and len(page['items']) == 5
 
@@ -130,6 +126,19 @@ def main():
             'learning_objective': '认识产品信息', 'difficulty_level': unit['level']})
         assert status == 'ok' and suggestion['status'] == 'pending'
         assert call('practice_get_question', {'question_id': created['id']})[1]['difficulty_level'] is None
+        practice_path.review(suggestion['id'], True)
+        classified_source = next(row for row in csv.DictReader(io.StringIO(practice.export_bank().lstrip('\ufeff')))
+                                 if row['id'] == str(created['id']))
+        classified_source['客户场景'] = '更新题干但保留已审核归属'
+        for field in ('学习目标', '难度等级', '建议单元ID'):
+            classified_source[field] = ''
+        safe_update = io.StringIO()
+        safe_writer = csv.DictWriter(safe_update, fieldnames=practice.CSV_COLUMNS)
+        safe_writer.writeheader(); safe_writer.writerow(classified_source)
+        assert call('practice_import_csv', {'request_id': uuid.uuid4().hex,
+                                            'csv': safe_update.getvalue()})[0] == 'ok'
+        preserved = call('practice_get_question', {'question_id': created['id']})[1]
+        assert preserved['difficulty_level'] == 1 and preserved['suggested_unit_id'] == unit['id']
 
         output = io.StringIO()
         writer = csv.writer(output)
@@ -138,6 +147,15 @@ def main():
                          '先看产品标签', '按其他款经验说', '猜一个温度', '随便放',
                          'A', '核对具体产品说明。', '我查一下这款的储存说明。', '0', '', '', '', '', '', '', '', ''])
         csv_text = output.getvalue()
+        classified_row = next(csv.DictReader(io.StringIO(csv_text)))
+        classified_row['学习目标'] = '识别产品信息'
+        classified = io.StringIO()
+        classified_writer = csv.DictWriter(classified, fieldnames=practice.CSV_COLUMNS)
+        classified_writer.writeheader()
+        classified_writer.writerow(classified_row)
+        assert call('practice_preview_csv', {'csv': classified.getvalue()})[0] == 'error'
+        assert call('practice_import_csv', {'request_id': uuid.uuid4().hex,
+                                            'csv': classified.getvalue()})[0] == 'error'
         status, preview = call('practice_preview_csv', {'stage_id': 0, 'csv': csv_text})
         assert status == 'ok' and preview['added'] == 1 and not preview['errors']
         import_args = {'request_id': uuid.uuid4().hex, 'stage_id': 0, 'csv': csv_text}

@@ -4,6 +4,7 @@ import re
 import os
 import json
 import fcntl
+from html import unescape
 from datetime import datetime
 from config import Config
 from db_migrations import run_migrations
@@ -495,14 +496,32 @@ def get_news_categories(exclude_category=None):
     return [r['category'] for r in rows]
 
 # ===== Products =====
-def create_product(category, name, summary, content, image_url, highlights, sort_order=0):
+def _index_product(conn, product_id):
+    row = conn.execute('''SELECT name, category, summary, highlights, content,
+                                 ingredients, use_cases, precautions FROM products WHERE id=?''',
+                       (product_id,)).fetchone()
+    conn.execute('DELETE FROM products_fts WHERE rowid=?', (product_id,))
+    if row:
+        parts = [str(row[key] or '') for key in
+                 ('name', 'category', 'summary', 'highlights', 'ingredients', 'use_cases', 'precautions')]
+        parts.append(unescape(re.sub(r'<[^>]*>', ' ', str(row['content'] or ''))))
+        conn.execute('INSERT INTO products_fts(rowid, content) VALUES (?, ?)',
+                     (product_id, '\n'.join(parts)[:12000]))
+
+
+def create_product(category, name, summary, content, image_url, highlights, sort_order=0,
+                   ingredients='', use_cases='', precautions=''):
     conn = get_db_connection()
     conn.execute(
-        'INSERT INTO products (category, name, summary, content, image_url, highlights, sort_order) VALUES (?, ?, ?, ?, ?, ?, ?)',
-        (category, name, summary, content, image_url, highlights, sort_order)
+        '''INSERT INTO products (category, name, summary, content, image_url, highlights,
+                                 sort_order, ingredients, use_cases, precautions)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',
+        (category, name, summary, content, image_url, highlights, sort_order,
+         ingredients, use_cases, precautions)
     )
-    conn.commit()
     id = conn.execute('SELECT last_insert_rowid()').fetchone()[0]
+    _index_product(conn, id)
+    conn.commit()
     conn.close()
     return id
 
@@ -518,17 +537,22 @@ def get_product_by_id(id):
     conn.close()
     return dict(row) if row else None
 
-def update_product(id, category, name, summary, content, image_url, highlights, sort_order):
+def update_product(id, category, name, summary, content, image_url, highlights, sort_order,
+                   ingredients='', use_cases='', precautions=''):
     conn = get_db_connection()
     conn.execute(
-        'UPDATE products SET category=?, name=?, summary=?, content=?, image_url=?, highlights=?, sort_order=? WHERE id=?',
-        (category, name, summary, content, image_url, highlights, sort_order, id)
+        '''UPDATE products SET category=?, name=?, summary=?, content=?, image_url=?,
+               highlights=?, sort_order=?, ingredients=?, use_cases=?, precautions=? WHERE id=?''',
+        (category, name, summary, content, image_url, highlights, sort_order,
+         ingredients, use_cases, precautions, id)
     )
+    _index_product(conn, id)
     conn.commit()
     conn.close()
 
 def delete_product(id):
     conn = get_db_connection()
+    conn.execute('DELETE FROM products_fts WHERE rowid=?', (id,))
     conn.execute('DELETE FROM products WHERE id = ?', (id,))
     conn.commit()
     conn.close()
@@ -1485,24 +1509,24 @@ def get_agent_config(agent_id):
     conn.close()
     return dict(row) if row else None
 
-def update_agent_config(agent_id, name, description, prompt, avatar_url, color, bot_id, icon, chat_desc=''):
+def update_agent_config(agent_id, name, description, prompt, avatar_url, color, bot_id, icon, chat_desc='', system_prompt=''):
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute('''
-        UPDATE agent_configs SET name=?, description=?, prompt=?, avatar_url=?, color=?, bot_id=?, icon=?, chat_desc=?, updated_at=CURRENT_TIMESTAMP
+        UPDATE agent_configs SET name=?, description=?, prompt=?, avatar_url=?, color=?, bot_id=?, icon=?, chat_desc=?, system_prompt=?, updated_at=CURRENT_TIMESTAMP
         WHERE agent_id=?
-    ''', (name, description, prompt, avatar_url, color, bot_id, icon, chat_desc, agent_id))
+    ''', (name, description, prompt, avatar_url, color, bot_id, icon, chat_desc, system_prompt, agent_id))
     conn.commit()
     conn.close()
 
-def create_agent_config(agent_id, name, type_, description, prompt, avatar_url, color, bot_id, icon, chat_desc=''):
+def create_agent_config(agent_id, name, type_, description, prompt, avatar_url, color, bot_id, icon, chat_desc='', system_prompt=''):
     conn = get_db_connection()
     cursor = conn.cursor()
     try:
         cursor.execute('''
-            INSERT INTO agent_configs (agent_id, name, type, description, prompt, avatar_url, color, bot_id, icon, chat_desc)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        ''', (agent_id, name, type_, description, prompt, avatar_url, color, bot_id, icon, chat_desc))
+            INSERT INTO agent_configs (agent_id, name, type, description, prompt, avatar_url, color, bot_id, icon, chat_desc, system_prompt)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ''', (agent_id, name, type_, description, prompt, avatar_url, color, bot_id, icon, chat_desc, system_prompt))
         conn.commit()
         conn.close()
         return True

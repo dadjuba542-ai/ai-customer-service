@@ -195,8 +195,9 @@ function response(data, status=200) { return { ok: status===200, json: async () 
   const hub=element('training-hub-body').innerHTML;
   assert.match(hub,/AI宝儿问答课堂/);
   assert.doesNotMatch(hub,/自由选关|openPracticeFree/);
-  assert.ok(hub.indexOf('今日问答闯关')<hub.indexOf('产品课程'));
-  assert.ok(hub.indexOf('产品课程')<hub.indexOf('到期复习'));
+  assert.ok(hub.indexOf('今日问答闯关')<hub.indexOf('学习主线'));
+  assert.ok(hub.indexOf('学习主线')<hub.indexOf('到期复习'));
+  assert.doesNotMatch(hub,/四单元|首款产品课程|openLearningProduct/);
   assert.ok(hub.indexOf('到期复习')<hub.indexOf('闯关记录'));
   vm.runInContext(`trainingHubState.path=${JSON.stringify(guidedPath)};`,sandbox);
   sandbox.renderTrainingHub();
@@ -237,7 +238,7 @@ function response(data, status=200) { return { ok: status===200, json: async () 
   assert.match(element('practice-question-list').innerHTML, /粉剂口感/);
   assert.doesNotMatch(element('practice-question-list').innerHTML, /客户问价格/);
   assert.equal(sandbox.practiceAdminNextBatch(),11);
-  // A course-data outage must leave the bank editor usable.
+  // A learning-path outage must leave the bank editor usable.
   sandbox.API='';sandbox.getToken=()=> 'admin-token';
   sandbox.renderAdminStages=()=>{};sandbox.renderPracticeEntryMetrics=()=>{};
   sandbox.fetch=async url=>url.includes('/learning')
@@ -245,10 +246,9 @@ function response(data, status=200) { return { ok: status===200, json: async () 
     : response({enabled:true,questions:[],stages:[],categories:[],batches:[],summary:[]});
   await sandbox.loadAdminPractice();
   assert.match(element('admin-practice-content').innerHTML,/题目列表/);
-  assert.match(element('practice-learning-manager').innerHTML,/题库仍可编辑/);
+  assert.match(element('practice-path-manager').innerHTML,/题库仍可编辑/);
   sandbox.renderAdminPracticeEditor({id:10,stage_id:0,batch_no:1,category:'益生菌',title:'关联产品题',options:['A','B','C','D'],answer_index:0,explanation:'原因',method:'回复',enabled:false,product_id:7,fact_id:9,skill_code:'product'});
-  assert.match(element('practice-question-editor').innerHTML,/已关联产品 #7/);
-  assert.match(element('practice-question-editor').innerHTML,/已关联事实卡 #9/);
+  assert.doesNotMatch(element('practice-question-editor').innerHTML,/旧产品课程|事实卡/);
   vm.runInContext(fs.readFileSync(path.join(__dirname,'..','static/admin/practice-path.js'),'utf8'),sandbox);
   vm.runInContext(`adminPracticePathData={settings:null,units:[],questions:[],suggestions:[],levels:{1:'识别事实',2:'理解判断',3:'场景应用',4:'组织回答',5:'综合应对'}}`,sandbox);
   sandbox.renderAdminPracticePath();
